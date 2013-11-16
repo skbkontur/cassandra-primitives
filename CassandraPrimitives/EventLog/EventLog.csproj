@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D4746A3E-7098-4359-A082-EC7A0897D4AB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.EventLog</RootNamespace>
+    <AssemblyName>Catalogue.CassandraPrimitives.EventLog</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Cassandra.CassandraClient">
+      <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.Linq">
+      <HintPath>..\..\Assemblies\Temp\Catalogue.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="GroBuf">
+      <HintPath>..\..\Assemblies\GroBuf.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\Assemblies\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="MoreLinq, Version=1.0.11522.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\MoreLinq\MoreLinq.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commons\CatalogueEnumerable.cs" />
+    <Compile Include="Commons\CantMoveNextException.cs" />
+    <Compile Include="EventLog\EventInfoRepository.cs" />
+    <Compile Include="EventLog\EventLoggerAdditionalInfoRepository.cs" />
+    <Compile Include="Exceptions\EventLoggerNeedInitializationException.cs" />
+    <Compile Include="Exceptions\EventLoggerWasDisposedException.cs" />
+    <Compile Include="EventLog\EventLogPointerCreator.cs" />
+    <Compile Include="EventLog\IEventInfoRepository.cs" />
+    <Compile Include="EventLog\IEventLoggerAdditionalInfoRepository.cs" />
+    <Compile Include="EventLog\IEventLogPointerCreator.cs" />
+    <Compile Include="EventLog\EventStorage.cs" />
+    <Compile Include="EventLog\IEventStorage.cs" />
+    <Compile Include="EventLog\IQueueRaker.cs" />
+    <Compile Include="EventLog\QueueRaker.cs" />
+    <Compile Include="Exceptions\BadRowKeyException.cs" />
+    <Compile Include="EventLog\EventLogger.cs" />
+    <Compile Include="Exceptions\ShardsArrayIsEmptyException.cs" />
+    <Compile Include="External\EventRepositoryColumnFamilyFullNames.cs" />
+    <Compile Include="External\EventRepositoryFactory.cs" />
+    <Compile Include="External\IEventRepositoryColumnFamilyFullNames.cs" />
+    <Compile Include="External\IEventRepositoryFactory.cs" />
+    <Compile Include="Primitives\DeferredResult.cs" />
+    <Compile Include="Primitives\EventInfo.cs" />
+    <Compile Include="Primitives\EventLogRecord.cs" />
+    <Compile Include="EventLog\EventRepository.cs" />
+    <Compile Include="EventLog\EventTypeRegistryBase.cs" />
+    <Compile Include="EventLog\IEventRepository.cs" />
+    <Compile Include="EventLog\IEventTypeIdentifierProvider.cs" />
+    <Compile Include="Primitives\Event.cs" />
+    <Compile Include="Primitives\EventId.cs" />
+    <Compile Include="Primitives\EventStorageElement.cs" />
+    <Compile Include="Exceptions\CouldNotWriteBoxEventException.cs" />
+    <Compile Include="EventLog\EventPointer.cs" />
+    <Compile Include="EventLog\IEventLogger.cs" />
+    <Compile Include="ManualResetEventPool.cs" />
+    <Compile Include="Primitives\EventContainer.cs" />
+    <Compile Include="Primitives\EventStorageElementContainer.cs" />
+    <Compile Include="Primitives\QueueEntry.cs" />
+    <Compile Include="Sharding\IKeyDistributor.cs" />
+    <Compile Include="Sharding\KeyDistributor.cs" />
+    <Compile Include="SpecificStorages\EventIdConverter.cs" />
+    <Compile Include="SpecificStorages\IScopedCassandraObject.cs" />
+    <Compile Include="SpecificStorages\ScopedCassandraObjectId.cs" />
+    <Compile Include="SpecificStorages\ScopedCassandraObjectIdConverter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sharding\GuidFactory.cs" />
+    <Compile Include="Sharding\IShardCalculator.cs" />
+    <Compile Include="Sharding\ShardCalculator.cs" />
+    <Compile Include="SpecificStorages\ScopedPersistentStorage.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RemoteLock\RemoteLock.csproj">
+      <Project>{24e35ae2-d120-4140-9e18-b9ca614eccb7}</Project>
+      <Name>RemoteLock</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Storages\Storages.csproj">
+      <Project>{706372e4-1e69-42a1-b5e5-5ba2a7ebfcca}</Project>
+      <Name>Storages</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)$(TargetName).dll $(ProjectDir)..\..\Assemblies\Temp\
+copy $(TargetDir)$(TargetName).pdb $(ProjectDir)..\..\Assemblies\Temp\</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
