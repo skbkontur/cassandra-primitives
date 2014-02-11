@@ -1,0 +1,12 @@
+bin
+obj
+Debug
+debug
+[Dd]ebug
+Assemblies/Temp
+*.suo
+desktop.ini
+/Assemblies/Cassandra/db
+/Assemblies/Cassandra/log
+*.user
+_ReSharper.*
