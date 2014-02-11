@@ -6,7 +6,7 @@ using System.Threading;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.EventContents.Contents;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Helpers.SpeedMeasurement
+namespace SKBKontur.Catalogue.CassandraPrimitives.Commons.Speed
 {
     public class TestEventWriter
     {
@@ -35,24 +35,21 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Helpers.SpeedM
                     if(stopEvent.WaitOne(0))
                         break;
 
-                    DoWrite();
                     totalCount += objectsPerBatch;
-                    var actualSpeed = OperationsSpeed.FromBatchAction(DoWrite, objectsPerBatch);
-                    if(actualSpeed > speed)
+                    DoWrite();
+                    var actualSpeed = SpeedMeasurement.FromMeasurement(totalCount, totalStopwatch.Elapsed);
+                    if(actualSpeed.Speed > speed)
                     {
-                        var timeoutToGetDesiredSpeed = actualSpeed.TimeoutToGetDesiredSpeed(speed, objectsPerBatch);
-                        Console.WriteLine("Sleeping for {0}ms to yield to desired speed", timeoutToGetDesiredSpeed.TotalMilliseconds);
+                        var timeoutToGetDesiredSpeed = actualSpeed.TimeoutToGetDesiredSpeed(speed);
                         Thread.Sleep(timeoutToGetDesiredSpeed);
-                    }
-                    else
-                        Console.WriteLine("Desired speed {0} is more than actual {1}", speed, actualSpeed);
+                    }   
                 }
             }
             finally
             {
                 totalStopwatch.Stop();
                 var totalSpeed = OperationsSpeed.PerTimeSpan(totalCount, totalStopwatch.Elapsed);
-                Console.WriteLine("Total average speed: {0}", totalSpeed);
+                ResultAverageSpeed = totalSpeed;
             }
         }
 
@@ -67,6 +64,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Helpers.SpeedM
                     .OfType<object>()
                     .ToArray());
         }
+
+        public OperationsSpeed ResultAverageSpeed { get; private set; }
 
         private readonly IEventRepository repository;
         private readonly OperationsSpeed speed;

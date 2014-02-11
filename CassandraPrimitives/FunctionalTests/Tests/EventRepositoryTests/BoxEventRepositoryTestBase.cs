@@ -31,8 +31,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.EventRep
         [TestFixtureSetUp]
         public virtual void TestFixtureSetUp()
         {
-            cassandraClusterSettings = new CassandraClusterSettings();
-            var initializerSettings = new CassandraInitializerSettings();
+                cassandraClusterSettings = new CassandraClusterSettings();
+                var initializerSettings = new CassandraInitializerSettings();
             cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings), new CassandraMetaProvider(), initializerSettings);
             cassandraSchemeActualizer.AddNewColumnFamilies();
             Log4NetConfiguration.InitializeOnce();
@@ -91,7 +91,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.EventRep
 
         protected virtual IEventRepository CreateBoxEventRepository(Func<EventId, object, string> calculateShard)
         {
-            var serializer = new Serializer(new PropertiesExtractor());
+            var serializer = new Serializer(new AllPropertiesExtractor());
             var cassandraCluster = new CassandraCluster(cassandraClusterSettings);
             var eventTypeRegistry = new EventTypeRegistry();
 

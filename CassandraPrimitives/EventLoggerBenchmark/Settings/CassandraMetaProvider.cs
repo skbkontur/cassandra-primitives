@@ -4,7 +4,7 @@ using System.Linq;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Catalogue.CassandraPrimitives.SchemeActualizer;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Settings
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLoggerBenchmark.Settings
 {
     public class CassandraMetaProvider : ICassandraMetadataProvider
     {

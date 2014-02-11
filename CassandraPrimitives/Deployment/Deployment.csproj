@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Build.xml" />
+    <Content Include="Projects\Tests\EventLogBenchmark.xml" />
     <Content Include="Projects\Tests\FunctionalTests.xml">
       <SubType>Designer</SubType>
     </Content>

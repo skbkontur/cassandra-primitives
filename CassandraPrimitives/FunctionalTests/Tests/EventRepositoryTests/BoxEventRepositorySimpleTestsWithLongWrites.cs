@@ -146,7 +146,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.EventRep
 
         private IEventRepository CreateBoxEventRepository(Func<EventId, object, string> calculateShard, double timeoutInSeconds)
         {
-            var serializer = new Serializer(new PropertiesExtractor());
+            var serializer = new Serializer(new AllPropertiesExtractor());
             var cassandraCluster = new CatalogueCassandraClusterWithLongWrites(new CassandraCluster(new CassandraClusterSettings()), TimeSpan.FromSeconds(timeoutInSeconds));
             var eventTypeRegistry = new EventTypeRegistry();
 

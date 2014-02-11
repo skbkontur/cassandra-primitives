@@ -40,7 +40,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.RemoteLo
             Log4NetConfiguration.InitializeOnce();
             var assemblies = AssembliesLoader.Load();
             container = new Container(new ContainerConfiguration(assemblies));
-            container.Configurator.ForAbstraction<ISerializer>().UseInstances(new Serializer(new PropertiesExtractor(), null, GroBufOptions.MergeOnRead));
+            container.Configurator.ForAbstraction<ISerializer>().UseInstances(new Serializer(new AllPropertiesExtractor(), null, GroBufOptions.MergeOnRead));
             ConfigureContainer(container);
             container.Configurator.ForAbstraction<ICassandraClusterSettings>().UseInstances(new CassandraClusterSettings());
             var remoteLockImplementation = container.Create<ColumnFamilyFullName, CassandraRemoteLockImplementation>(ColumnFamilies.remoteLock);

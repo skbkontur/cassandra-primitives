@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Commons
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq.Exceptions
 {
-    public class CantMoveNextException : Exception
+    internal class CantMoveNextException : Exception
     {
         public CantMoveNextException(Exception innerException)
             : base("", innerException)

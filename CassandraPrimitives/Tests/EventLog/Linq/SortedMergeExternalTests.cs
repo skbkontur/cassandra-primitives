@@ -4,7 +4,7 @@ using System.Linq;
 
 using NUnit.Framework;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Commons;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLog.Linq
 {

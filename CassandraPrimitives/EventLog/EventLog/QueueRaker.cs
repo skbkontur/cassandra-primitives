@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 
 using MoreLinq;
@@ -89,12 +91,28 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
         {
             while(!wasDisposed)
             {
+                var stopwatch = Stopwatch.StartNew();
                 @event.WaitOne(1);
                 var batch = GetBatchFromQueue();
                 @event.Reset();
                 var batchCount = batch.Sum(x => x.events.Length);
                 if(batchCount == 0)
                     continue;
+
+                totalCount++;
+                totalWaitTime += stopwatch.Elapsed;
+                totalEventCount += batchCount;
+                totalEventBatchCount += batch.Count;
+                if(DateTime.Now - outputDateTime > TimeSpan.FromMinutes(1))
+                {
+                    logger.Info(GetRakeStatistics());
+                    outputDateTime = DateTime.Now;
+                    totalEventCount = 0;
+                    totalEventBatchCount = 0;
+                    totalWaitTime = TimeSpan.FromMilliseconds(0);
+                    totalCount = 0;
+                } 
+
                 ++runs;
                 sum += batchCount;
                 var eventsBatch = batch.SelectMany(x => x.events).ToArray();
@@ -117,11 +135,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
                     eventStorage.Write(eventsBatch.Select(x => new EventLogRecord {IsBad = true, StorageElement = x}).ToArray(), nowTicks, 60);
 
                     var lastGoodEventInfo = eventLoggerAdditionalInfoRepository.GetGoodLastEventInfo();
-
-                    var lastEventInfoFromCurrentBatch = eventsBatch.MaxBy(x => x.EventInfo.Ticks).EventInfo;
-                    if(lastEventInfoFromCurrentBatch.Ticks > lastGoodEventInfo.Ticks)
-                        eventLoggerAdditionalInfoRepository.SetLastEventInfo(lastEventInfoFromCurrentBatch);
-
+                    
                     var badEvents = eventsBatch.Where(x => x.EventInfo.Ticks <= lastGoodEventInfo.Ticks).ToArray();
                     var goodEvents = eventsBatch.Where(x => x.EventInfo.Ticks > lastGoodEventInfo.Ticks).ToArray();
 
@@ -131,6 +145,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
                     if(goodEvents.Length > 0)
                     {
                         SetEventMetas(goodEvents);
+                        var lastEventInfoFromCurrentBatch = eventsBatch.MaxBy(x => x.EventInfo.Ticks).EventInfo;
+                        if (lastEventInfoFromCurrentBatch.Ticks > lastGoodEventInfo.Ticks)
+                            eventLoggerAdditionalInfoRepository.SetLastEventInfo(lastEventInfoFromCurrentBatch);
                         eventStorage.Write(goodEvents.Select(x => new EventLogRecord {IsBad = false, StorageElement = x}).ToArray(), nowTicks + 1);
                     }
 
@@ -154,11 +171,29 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
             }
         }
 
+        private string GetRakeStatistics()
+        {
+            var result = new StringBuilder();
+            result.AppendLine("Raker statistics: ");
+            result.AppendFormat("  Average event count: {0}" + Environment.NewLine, (double)totalEventCount / (totalCount + 1));
+            result.AppendFormat("  Average event batch count: {0}" + Environment.NewLine, (double)totalEventBatchCount / (totalCount + 1));
+            result.AppendFormat("  Rakes count: {0}" + Environment.NewLine, (double)totalCount);
+            result.AppendFormat("  Rake waits: {0}" + Environment.NewLine, totalWaitTime.TotalMilliseconds / (totalCount + 1));
+            return result.ToString();
+
+        }
+
         private void SetEventMetas(EventStorageElement[] events)
         {
             var metas = events.Select(x => x.EventInfo).ToArray();
             eventInfoRepository.Write(metas, DateTime.UtcNow);
         }
+
+        private DateTime outputDateTime = DateTime.Now;
+        private long totalEventCount = 0;
+        private long totalEventBatchCount = 0;
+        private TimeSpan totalWaitTime = TimeSpan.FromMilliseconds(0);
+        private long totalCount = 0;
 
         private volatile float sum;
         private volatile float runs;

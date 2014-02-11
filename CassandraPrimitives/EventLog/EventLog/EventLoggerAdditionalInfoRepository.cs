@@ -71,7 +71,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
         {
             var globalLastEventInfo = ReadEventInfo(lastGoodEventInfoRow, lastGoodEventInfoColumn);
             if(globalLastEventInfo == null)
-                return null;
+                return localLastGoodEventInfo;
             lock(lockObject)
             {
                 if(localLastGoodEventInfo == null || localLastGoodEventInfo.CompareTo(globalLastEventInfo) < 0)

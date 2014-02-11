@@ -4,8 +4,8 @@ using System.Threading;
 
 using NUnit.Framework;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Commons.Speed;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
-using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Helpers.SpeedMeasurement;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.EventRepositoryTests
 {

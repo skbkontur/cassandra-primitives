@@ -10,8 +10,8 @@ using MoreLinq;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Commons;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
@@ -99,7 +99,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
             var stableZone = true;
             foreach(var eventLogRecord in eventRecords)
             {
-                if(eventLogRecord.StorageElement.EventInfo.CompareTo(finishEventInfo) > 0)
+                if(eventLogRecord.StorageElement.EventInfo.Ticks > finishEventInfo.Ticks)
                     yield break;
 
                 if(eventLogRecord.IsBad)

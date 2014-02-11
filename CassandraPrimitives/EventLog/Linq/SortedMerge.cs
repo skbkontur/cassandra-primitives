@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Commons
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq.Exceptions;
+
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq
 {
-    public static class CatalogueEnumerable
+    internal static class CassandraPrimitivesEnumerableExtensions
     {
         public static IEnumerable<T> SortedMerge<T>(this IEnumerable<T> seq1, IEnumerable<T> seq2)
             where T : IComparable

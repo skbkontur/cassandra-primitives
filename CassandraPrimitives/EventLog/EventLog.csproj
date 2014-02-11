@@ -33,9 +33,6 @@
     <Reference Include="Cassandra.CassandraClient">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
-    <Reference Include="Catalogue.Linq">
-      <HintPath>..\..\Assemblies\Temp\Catalogue.Linq.dll</HintPath>
-    </Reference>
     <Reference Include="GroBuf">
       <HintPath>..\..\Assemblies\GroBuf.dll</HintPath>
     </Reference>
@@ -48,15 +45,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commons\CatalogueEnumerable.cs" />
-    <Compile Include="Commons\CantMoveNextException.cs" />
     <Compile Include="EventLog\EventInfoRepository.cs" />
     <Compile Include="EventLog\EventLoggerAdditionalInfoRepository.cs" />
     <Compile Include="Exceptions\EventLoggerNeedInitializationException.cs" />
@@ -76,6 +66,8 @@
     <Compile Include="External\EventRepositoryFactory.cs" />
     <Compile Include="External\IEventRepositoryColumnFamilyFullNames.cs" />
     <Compile Include="External\IEventRepositoryFactory.cs" />
+    <Compile Include="Linq\Exceptions\CantMoveNextException.cs" />
+    <Compile Include="Linq\SortedMerge.cs" />
     <Compile Include="Primitives\DeferredResult.cs" />
     <Compile Include="Primitives\EventInfo.cs" />
     <Compile Include="Primitives\EventLogRecord.cs" />
