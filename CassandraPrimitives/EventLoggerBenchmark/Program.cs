@@ -1,10 +1,14 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Threading;
 
 using GroBuf;
 using GroBuf.DataMembersExtracters;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.ClusterDeployment;
 using SKBKontur.Catalogue.CassandraPrimitives.Commons.Speed;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.External;
@@ -14,48 +18,97 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLoggerBenchmark.EventContents
 using SKBKontur.Catalogue.CassandraPrimitives.EventLoggerBenchmark.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLoggerBenchmark.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.SchemeActualizer;
-
-using System.Linq;
-
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLoggerBenchmark
 {
-    class Program
+    internal class Program
     {
-        private static CassandraClusterSettings cassandraClusterSettings;
-
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            cassandraClusterSettings = new CassandraClusterSettings();
-            var initializerSettings = new CassandraInitializerSettings();
-            var cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings), new CassandraMetaProvider(), initializerSettings);
-            cassandraSchemeActualizer.AddNewColumnFamilies();
-            Log4NetConfiguration.InitializeOnce();
-            var teamCityLogger = new TeamCityLogger(Console.Out);
-            
+            var node = CreateCassandraNode();
+            node.Restart();
+            try
+            {
+                cassandraClusterSettings = node.CreateSettings(IPAddress.Loopback);
+                var initializerSettings = new CassandraInitializerSettings();
+                var cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings), new CassandraMetaProvider(), initializerSettings);
+                cassandraSchemeActualizer.AddNewColumnFamilies();
+                Log4NetConfiguration.InitializeOnce();
+                var teamCityLogger = new TeamCityLogger(Console.Out);
+
 /*
             var totalSpeed1 = MeasureWriteSpeed(1, OperationsSpeed.PerSecond(10000));
             var totalSpeed2 = MeasureWriteSpeed(25, OperationsSpeed.PerSecond(10000));
             var totalSpeed3 = MeasureWriteSpeed(50, OperationsSpeed.PerSecond(10000));
             var totalSpeed4 = MeasureWriteSpeed(100, OperationsSpeed.PerSecond(10000));
 */
-            
-            //var totalSpeed5 = MeasureWriteSpeed(10, OperationsSpeed.PerSecond(2));
-            //var totalSpeed6 = MeasureWriteSpeed(100, OperationsSpeed.PerSecond(2));
 
-            teamCityLogger.BeginMessageBlock("Results");
-            MeasureSpeed(teamCityLogger, 1, OperationsSpeed.PerSecond(20));
-            MeasureSpeed(teamCityLogger, 1, OperationsSpeed.PerSecond(1000));
-            MeasureSpeed(teamCityLogger, 25, OperationsSpeed.PerSecond(20));
-            MeasureSpeed(teamCityLogger, 25, OperationsSpeed.PerSecond(50));
-            var speed = MeasureSpeed(teamCityLogger, 25, OperationsSpeed.PerSecond(100));
-            MeasureSpeed(teamCityLogger, 25, OperationsSpeed.PerSecond(200));
-            MeasureSpeed(teamCityLogger, 50, OperationsSpeed.PerSecond(100));
-            MeasureSpeed(teamCityLogger, 50, OperationsSpeed.PerSecond(200));
-            teamCityLogger.EndMessageBlock();
+                //var totalSpeed5 = MeasureWriteSpeed(10, OperationsSpeed.PerSecond(2));
+                //var totalSpeed6 = MeasureWriteSpeed(100, OperationsSpeed.PerSecond(2));
 
-            teamCityLogger.SetBuildStatus(TeamCityBuildStatus.Success, string.Format("20 Threads, {0} [Desired: {1}]", speed, OperationsSpeed.PerSecond(100)));
+                teamCityLogger.BeginMessageBlock("Results");
+                MeasureSpeed(teamCityLogger, 1, OperationsSpeed.PerSecond(20));
+                MeasureSpeed(teamCityLogger, 1, OperationsSpeed.PerSecond(1000));
+                MeasureSpeed(teamCityLogger, 25, OperationsSpeed.PerSecond(20));
+                MeasureSpeed(teamCityLogger, 25, OperationsSpeed.PerSecond(50));
+                var speed = MeasureSpeed(teamCityLogger, 25, OperationsSpeed.PerSecond(100));
+                MeasureSpeed(teamCityLogger, 25, OperationsSpeed.PerSecond(200));
+                MeasureSpeed(teamCityLogger, 50, OperationsSpeed.PerSecond(100));
+                MeasureSpeed(teamCityLogger, 50, OperationsSpeed.PerSecond(200));
+                teamCityLogger.EndMessageBlock();
+
+                teamCityLogger.SetBuildStatus(TeamCityBuildStatus.Success, string.Format("20 Threads, {0} [Desired: {1}]", speed, OperationsSpeed.PerSecond(100)));
+            }
+            finally
+            {
+                node.Stop();
+            }
+        }
+
+        protected static IEventRepository CreateBoxEventRepository(Func<EventId, object, string> calculateShard)
+        {
+            var serializer = new Serializer(new AllPropertiesExtractor());
+            var cassandraCluster = new CassandraCluster(cassandraClusterSettings);
+            var eventTypeRegistry = new EventTypeRegistry();
+
+            var factory = new EventRepositoryFactory(serializer, cassandraCluster, cassandraClusterSettings, eventTypeRegistry);
+            var eventRepositoryColumnFamilyFullNames = new EventRepositoryColumnFamilyFullNames(
+                ColumnFamilies.ticksHolder,
+                ColumnFamilies.eventLog,
+                ColumnFamilies.eventLogAdditionalInfo,
+                ColumnFamilies.eventMeta,
+                ColumnFamilies.remoteLock);
+            var shardCalculator = new ShardCalculator(calculateShard);
+            var eventRepository = factory.CreateEventRepository(shardCalculator, eventRepositoryColumnFamilyFullNames);
+            return eventRepository;
+        }
+
+        private static CassandraNode CreateCassandraNode()
+        {
+            return new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"1.2"))
+                {
+                    Name = "node_at_9360",
+                    JmxPort = 7399,
+                    GossipPort = 7400,
+                    RpcPort = 9360,
+                    CqlPort = 9343,
+                    DataBaseDirectory = @"../data/",
+                    DeployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\Cassandra1.2"),
+                    ListenAddress = "127.0.0.1",
+                    RpsAddress = "0.0.0.0",
+                    SeedAddresses = new[] {"127.0.0.1"},
+                    InitialToken = "",
+                    ClusterName = "test_cluster"
+                };
+        }
+
+        private static string FindCassandraTemplateDirectory(string currentDir)
+        {
+            if(currentDir == null)
+                throw new Exception("Невозможно найти каталог с Cassandra-шаблонами");
+            var cassandraTemplateDirectory = Path.Combine(currentDir, cassandraTemplates);
+            return Directory.Exists(cassandraTemplateDirectory) ? cassandraTemplateDirectory : FindCassandraTemplateDirectory(Path.GetDirectoryName(currentDir));
         }
 
         private static OperationsSpeed MeasureSpeed(TeamCityLogger teamCityLogger, int writeThreadCount, OperationsSpeed operationsSpeed)
@@ -67,7 +120,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLoggerBenchmark
 
         private static OperationsSpeed MeasureWriteSpeed(int writeThreadCount, OperationsSpeed desiredSpeed)
         {
-            using (var readEventLogRepository = CreateBoxEventRepository((x, y) => "0"))
+            using(var readEventLogRepository = CreateBoxEventRepository((x, y) => "0"))
             {
                 var writers = Enumerable.Range(0, writeThreadCount).Select(
                     i =>
@@ -113,7 +166,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLoggerBenchmark
 
         private static void ReadThreadProc(IEventRepository readEventLogRepository)
         {
-            int attempt = 0;
+            var attempt = 0;
             EventInfo exclusiveEventInfo = null;
             while(true)
             {
@@ -136,24 +189,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLoggerBenchmark
             }
         }
 
-        protected static IEventRepository CreateBoxEventRepository(Func<EventId, object, string> calculateShard)
-        {
-            var serializer = new Serializer(new AllPropertiesExtractor());
-            var cassandraCluster = new CassandraCluster(cassandraClusterSettings);
-            var eventTypeRegistry = new EventTypeRegistry();
-
-            var factory = new EventRepositoryFactory(serializer, cassandraCluster, cassandraClusterSettings, eventTypeRegistry);
-            var eventRepositoryColumnFamilyFullNames = new EventRepositoryColumnFamilyFullNames(
-                ColumnFamilies.ticksHolder,
-                ColumnFamilies.eventLog,
-                ColumnFamilies.eventLogAdditionalInfo,
-                ColumnFamilies.eventMeta,
-                ColumnFamilies.remoteLock);
-            var shardCalculator = new ShardCalculator(calculateShard);
-            var eventRepository = factory.CreateEventRepository(shardCalculator, eventRepositoryColumnFamilyFullNames);
-            return eventRepository;
-        }
-
-
+        private static ICassandraClusterSettings cassandraClusterSettings;
+        private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
     }
 }
