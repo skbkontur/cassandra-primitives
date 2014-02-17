@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 
 using GroBuf;
 using GroBuf.DataMembersExtracters;
@@ -23,6 +24,8 @@ using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.SchemeActualizer;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;
 
+using SKBKontur.Cassandra.ClusterDeployment;
+
 namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.EventRepositoryTests
 {
     [TestFixture]
@@ -31,8 +34,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.EventRep
         [TestFixtureSetUp]
         public virtual void TestFixtureSetUp()
         {
-                cassandraClusterSettings = new CassandraClusterSettings();
-                var initializerSettings = new CassandraInitializerSettings();
+            cassandraClusterSettings = StartSingleCassandraSetUp.Node.CreateSettings(IPAddress.Loopback);
+            var initializerSettings = new CassandraInitializerSettings();
             cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings), new CassandraMetaProvider(), initializerSettings);
             cassandraSchemeActualizer.AddNewColumnFamilies();
             Log4NetConfiguration.InitializeOnce();
@@ -155,7 +158,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.EventRep
         }
 
         private CassandraSchemeActualizer cassandraSchemeActualizer;
-        private CassandraClusterSettings cassandraClusterSettings;
+        private ICassandraClusterSettings cassandraClusterSettings;
         private string logDirectory;
         private Stopwatch stopwatch;
 

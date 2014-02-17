@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 using GroBuf;
 using GroBuf.DataMembersExtracters;
@@ -15,6 +16,8 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.EventContents;
 using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.LongWritesConnection;
 using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Settings;
+
+using SKBKontur.Cassandra.ClusterDeployment;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.EventRepositoryTests
 {
@@ -147,10 +150,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.EventRep
         private IEventRepository CreateBoxEventRepository(Func<EventId, object, string> calculateShard, double timeoutInSeconds)
         {
             var serializer = new Serializer(new AllPropertiesExtractor());
-            var cassandraCluster = new CatalogueCassandraClusterWithLongWrites(new CassandraCluster(new CassandraClusterSettings()), TimeSpan.FromSeconds(timeoutInSeconds));
+            var cassandraSettings = StartSingleCassandraSetUp.Node.CreateSettings(IPAddress.Loopback);
+            var cassandraCluster = new CatalogueCassandraClusterWithLongWrites(new CassandraCluster(cassandraSettings), TimeSpan.FromSeconds(timeoutInSeconds));
             var eventTypeRegistry = new EventTypeRegistry();
 
-            var factory = new EventRepositoryFactory(serializer, cassandraCluster, new CassandraClusterSettings(), eventTypeRegistry);
+            var factory = new EventRepositoryFactory(serializer, cassandraCluster, cassandraSettings, eventTypeRegistry);
             var eventRepositoryColumnFamilyFullNames = new EventRepositoryColumnFamilyFullNames(
                 ColumnFamilies.ticksHolder,
                 ColumnFamilies.eventLog,
