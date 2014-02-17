@@ -9,6 +9,7 @@ using MoreLinq;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils;
 
 using log4net;
 

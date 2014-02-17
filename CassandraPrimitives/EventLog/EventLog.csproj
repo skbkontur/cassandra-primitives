@@ -81,7 +81,7 @@
     <Compile Include="Exceptions\CouldNotWriteBoxEventException.cs" />
     <Compile Include="EventLog\EventPointer.cs" />
     <Compile Include="EventLog\IEventLogger.cs" />
-    <Compile Include="ManualResetEventPool.cs" />
+    <Compile Include="Utils\ManualResetEventPool.cs" />
     <Compile Include="Primitives\EventContainer.cs" />
     <Compile Include="Primitives\EventStorageElementContainer.cs" />
     <Compile Include="Primitives\QueueEntry.cs" />

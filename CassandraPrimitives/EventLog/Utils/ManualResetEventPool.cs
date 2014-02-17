@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils
 {
     internal class ManualResetEventPool : IDisposable
     {
