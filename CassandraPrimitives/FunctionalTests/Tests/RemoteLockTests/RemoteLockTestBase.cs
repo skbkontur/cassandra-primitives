@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 
 using GroBuf;
@@ -20,6 +21,8 @@ using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 using log4net;
 
+using SKBKontur.Cassandra.ClusterDeployment;
+
 namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.RemoteLockTests
 {
     [TestFixture]
@@ -28,7 +31,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.RemoteLo
         [TestFixtureSetUp]
         public virtual void TestFixtureSetUp()
         {
-            var cassandraClusterSettings = new CassandraClusterSettings();
+            var cassandraClusterSettings = StartSingleCassandraSetUp.Node.CreateSettings(IPAddress.Loopback);
             var initializerSettings = new CassandraInitializerSettings();
             var cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings), new CassandraMetaProvider(), initializerSettings);
             cassandraSchemeActualizer.AddNewColumnFamilies();
@@ -42,7 +45,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.RemoteLo
             container = new Container(new ContainerConfiguration(assemblies));
             container.Configurator.ForAbstraction<ISerializer>().UseInstances(new Serializer(new AllPropertiesExtractor(), null, GroBufOptions.MergeOnRead));
             ConfigureContainer(container);
-            container.Configurator.ForAbstraction<ICassandraClusterSettings>().UseInstances(new CassandraClusterSettings());
+            var cassandraClusterSettings = StartSingleCassandraSetUp.Node.CreateSettings(IPAddress.Loopback);
+            container.Configurator.ForAbstraction<ICassandraClusterSettings>().UseInstances(cassandraClusterSettings);
             var remoteLockImplementation = container.Create<ColumnFamilyFullName, CassandraRemoteLockImplementation>(ColumnFamilies.remoteLock);
             container.Configurator.ForAbstraction<IRemoteLockImplementation>().UseInstances(remoteLockImplementation);
 

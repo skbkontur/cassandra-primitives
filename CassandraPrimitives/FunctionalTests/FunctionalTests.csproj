@@ -33,6 +33,9 @@
     <Reference Include="Cassandra.CassandraClient">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
+    <Reference Include="Cassandra.ClusterDeployment">
+      <HintPath>..\..\Assemblies\Cassandra\Cassandra.ClusterDeployment.dll</HintPath>
+    </Reference>
     <Reference Include="GroboContainer">
       <HintPath>..\..\Assemblies\GroboContainer.dll</HintPath>
     </Reference>
@@ -57,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Tests\StartSingleCassandraSetUp.cs" />
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositoryConsistencyTest.cs" />
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositoryMultiThread1ShardTest.cs" />
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositoryMultiThread64ShardTest.cs" />
