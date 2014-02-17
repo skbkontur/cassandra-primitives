@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalTests", "Function
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchemeActualizer", "SchemeActualizer\SchemeActualizer.csproj", "{8832339B-D3B3-4921-B911-40938C93DFE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deployment", "Deployment\Deployment.csproj", "{D92CF499-E668-4CB3-981F-E71562BC677D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteLock", "RemoteLock\RemoteLock.csproj", "{24E35AE2-D120-4140-9E18-B9CA614ECCB7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventLoggerBenchmark", "EventLoggerBenchmark\EventLoggerBenchmark.csproj", "{EE70D693-7465-41F2-8B14-1B570C4F374B}"
@@ -45,8 +43,6 @@ Global
 		{8832339B-D3B3-4921-B911-40938C93DFE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8832339B-D3B3-4921-B911-40938C93DFE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8832339B-D3B3-4921-B911-40938C93DFE6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D92CF499-E668-4CB3-981F-E71562BC677D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D92CF499-E668-4CB3-981F-E71562BC677D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24E35AE2-D120-4140-9E18-B9CA614ECCB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{24E35AE2-D120-4140-9E18-B9CA614ECCB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24E35AE2-D120-4140-9E18-B9CA614ECCB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
