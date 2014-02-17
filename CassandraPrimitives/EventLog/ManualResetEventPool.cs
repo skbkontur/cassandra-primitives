@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
 {
-    public class ManualResetEventPool : IDisposable
+    internal class ManualResetEventPool : IDisposable
     {
         public ManualResetEventPool()
         {

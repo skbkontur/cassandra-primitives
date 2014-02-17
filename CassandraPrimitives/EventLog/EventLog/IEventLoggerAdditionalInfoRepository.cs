@@ -2,7 +2,7 @@
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
 {
-    public interface IEventLoggerAdditionalInfoRepository
+    internal interface IEventLoggerAdditionalInfoRepository
     {
         EventInfo GetFirstEventInfo();
         EventInfo GetOrCreateFirstEventInfo(EventInfo eventInfo);

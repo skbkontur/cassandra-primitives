@@ -3,7 +3,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
 {
-    public interface IEventInfoRepository : IPersistentStorage<EventInfo, EventId>
+    internal interface IEventInfoRepository : IPersistentStorage<EventInfo, EventId>
     {
     }
 }

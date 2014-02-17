@@ -11,7 +11,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
 {
-    public class EventRepository : IEventRepository
+    internal class EventRepository : IEventRepository
     {
         public EventRepository(
             IEventTypeIdentifierProvider eventTypeIdentifierProvider,

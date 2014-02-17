@@ -8,7 +8,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
 {
-    public class EventInfoRepository : PersistentBlobStorage<EventInfo, EventId>, IEventInfoRepository
+    internal class EventInfoRepository : PersistentBlobStorage<EventInfo, EventId>, IEventInfoRepository
     {
         public EventInfoRepository(ColumnFamilyFullName columnFamilyFullName, ICassandraCluster cassandraCluster, ISerializer serializer)
             : base(columnFamilyFullName, cassandraCluster, serializer, new EventIdConverter())

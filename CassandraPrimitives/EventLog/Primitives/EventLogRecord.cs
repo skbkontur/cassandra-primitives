@@ -1,6 +1,6 @@
 ﻿namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives
 {
-    public class EventLogRecord
+    internal class EventLogRecord
     {
         public EventStorageElement StorageElement { get; set; }
         public bool IsBad { get; set; }

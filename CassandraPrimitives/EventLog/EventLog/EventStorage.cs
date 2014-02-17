@@ -11,7 +11,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
 {
-    public class EventStorage : IEventStorage
+    internal class EventStorage : IEventStorage
     {
         public EventStorage(
             ColumnFamilyFullName columnFamilyFullName,

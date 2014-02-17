@@ -3,7 +3,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.EventContents.Cont
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.EventContents
 {
-    public class EventTypeRegistry : EventTypeRegistryBase
+    internal class EventTypeRegistry : EventTypeRegistryBase
     {
         public EventTypeRegistry()
         {

@@ -5,7 +5,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
 {
-    public interface IEventLogger : IDisposable
+    internal interface IEventLogger : IDisposable
     {
         EventInfo[] Write(params EventStorageElement[] events);
         EventStorageElement ReadEvent(EventId eventId);

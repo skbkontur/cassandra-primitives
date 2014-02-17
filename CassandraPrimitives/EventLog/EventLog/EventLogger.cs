@@ -20,7 +20,7 @@ using log4net;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
 {
-    public class EventLogger : IEventLogger
+    internal class EventLogger : IEventLogger
     {
         public EventLogger(
             ICassandraCluster cassandraCluster,

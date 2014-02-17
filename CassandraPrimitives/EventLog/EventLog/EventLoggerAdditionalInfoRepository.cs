@@ -10,7 +10,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
 {
-    public class EventLoggerAdditionalInfoRepository : IEventLoggerAdditionalInfoRepository
+    internal class EventLoggerAdditionalInfoRepository : IEventLoggerAdditionalInfoRepository
     {
         public EventLoggerAdditionalInfoRepository(
             ICassandraCluster cassandraCluster,

@@ -14,7 +14,7 @@ using log4net;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
 {
-    public class QueueRaker : IQueueRaker
+    internal class QueueRaker : IQueueRaker
     {
         public QueueRaker(
             IEventStorage eventStorage,
