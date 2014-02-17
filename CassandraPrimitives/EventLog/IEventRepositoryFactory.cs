@@ -1,7 +1,7 @@
-﻿using SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog;
+﻿using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.External
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
 {
     public interface IEventRepositoryFactory
     {

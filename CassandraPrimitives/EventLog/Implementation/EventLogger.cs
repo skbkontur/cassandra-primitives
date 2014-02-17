@@ -18,7 +18,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 using log4net;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
     internal class EventLogger : IEventLogger
     {

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.EventContents.Contents;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Commons.Speed

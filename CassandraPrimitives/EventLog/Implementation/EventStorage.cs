@@ -9,7 +9,7 @@ using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
     internal class EventStorage : IEventStorage
     {

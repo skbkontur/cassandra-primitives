@@ -6,7 +6,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.SpecificStorages;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
     internal class EventInfoRepository : PersistentBlobStorage<EventInfo, EventId>, IEventInfoRepository
     {

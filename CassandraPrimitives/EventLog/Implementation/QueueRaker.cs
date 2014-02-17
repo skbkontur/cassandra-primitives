@@ -13,7 +13,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils;
 
 using log4net;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
     internal class QueueRaker : IQueueRaker
     {
