@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("EventLog")]
+[assembly: AssemblyTitle("CassandraPrimitives.EventLog")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("EventLog")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany("SKBKontur")]
+[assembly: AssemblyProduct("CassandraPrimitives.EventLog")]
+[assembly: AssemblyCopyright("Copyright © SKBKontur 2014")]
+[assembly: AssemblyTrademark("SKBKontur.CassandraPrimitives.EventLog")]
 [assembly: AssemblyCulture("")]
 [assembly: InternalsVisibleTo("Catalogue.CassandraPrimitives.Tests")]
 
@@ -33,5 +33,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyInformationalVersion("1.0.0")]
