@@ -2,7 +2,7 @@
 
 using log4net.Config;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Logging
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Logging
 {
     public static class Log4NetConfiguration
     {

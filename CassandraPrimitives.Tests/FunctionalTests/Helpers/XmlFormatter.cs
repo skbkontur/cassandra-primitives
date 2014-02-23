@@ -2,7 +2,7 @@
 using System.Text;
 using System.Xml;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Helpers
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers
 {
     public static class XmlFormatter
     {

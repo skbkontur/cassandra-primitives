@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
-using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.EventContents.Contents;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Contents;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Commons.Speed
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed
 {
     public class TestEventWriter
     {

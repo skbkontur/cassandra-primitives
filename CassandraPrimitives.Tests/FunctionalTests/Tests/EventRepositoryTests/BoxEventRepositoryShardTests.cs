@@ -4,10 +4,10 @@ using System.Threading;
 
 using NUnit.Framework;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Commons.Speed;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.EventRepositoryTests
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
     [TestFixture]
     public class BoxEventRepositoryShardTests : BoxEventRepositoryTestBase

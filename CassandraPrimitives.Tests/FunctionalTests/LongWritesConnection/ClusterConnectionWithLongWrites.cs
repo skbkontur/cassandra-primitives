@@ -3,7 +3,7 @@
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.LongWritesConnection
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
 {
     public class ClusterConnectionWithLongWrites : IClusterConnection
     {

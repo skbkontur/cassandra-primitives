@@ -1,6 +1,6 @@
 ﻿using GroboSerializer.XmlNamespaces;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLoggerBenchmark.Settings
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.Settings
 {
     public class EmptyXmlNamespaceFactory : IXmlNamespaceFactory
     {

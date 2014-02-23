@@ -12,7 +12,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 
 using log4net;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.EventRepositoryTests
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
     public class SpeedTests : BoxEventRepositoryTestBase
     {

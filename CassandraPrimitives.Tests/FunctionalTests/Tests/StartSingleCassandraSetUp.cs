@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 using SKBKontur.Cassandra.ClusterDeployment;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
 {
     [SetUpFixture]
     public class StartSingleCassandraSetUp

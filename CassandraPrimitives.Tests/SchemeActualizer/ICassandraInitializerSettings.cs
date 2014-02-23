@@ -1,4 +1,4 @@
-﻿namespace SKBKontur.Catalogue.CassandraPrimitives.SchemeActualizer
+﻿namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer
 {
     public interface ICassandraInitializerSettings
     {

@@ -4,7 +4,7 @@ using System.Net;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Settings
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings
 {
     public class CassandraClusterSettings : ICassandraClusterSettings
     {

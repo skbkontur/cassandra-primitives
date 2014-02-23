@@ -4,7 +4,7 @@ using System.Linq;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.SchemeActualizer
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer
 {
     public interface ICassandraMetadataProvider
     {

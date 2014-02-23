@@ -1,4 +1,4 @@
-﻿namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.EventContents.Contents
+﻿namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Contents
 {
     public class TestContent
     {

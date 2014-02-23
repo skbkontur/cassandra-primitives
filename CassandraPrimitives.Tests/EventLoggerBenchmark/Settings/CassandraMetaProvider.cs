@@ -2,9 +2,9 @@
 using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Catalogue.CassandraPrimitives.SchemeActualizer;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLoggerBenchmark.Settings
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.Settings
 {
     public class CassandraMetaProvider : ICassandraMetadataProvider
     {

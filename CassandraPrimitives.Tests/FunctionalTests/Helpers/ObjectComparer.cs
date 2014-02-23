@@ -7,9 +7,9 @@ using GroboSerializer;
 
 using NUnit.Framework;
 
-using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Settings;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Helpers
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers
 {
     public static class ObjectComparer
     {

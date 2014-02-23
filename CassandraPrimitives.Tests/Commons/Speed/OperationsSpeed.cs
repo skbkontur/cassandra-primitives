@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Commons.Speed
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed
 {
     public class OperationsSpeed : IComparable<OperationsSpeed>
     {

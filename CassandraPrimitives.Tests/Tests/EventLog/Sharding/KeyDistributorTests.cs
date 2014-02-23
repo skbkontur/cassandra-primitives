@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLog.Sharding
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Tests.EventLog.Sharding
 {
     [TestFixture]
     public class KeyDistributorTests

@@ -13,13 +13,12 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
-using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.EventContents;
-using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.LongWritesConnection;
-using SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Settings;
-
 using SKBKontur.Cassandra.ClusterDeployment;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.Tests.EventRepositoryTests
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
     public class BoxEventRepositorySimpleTestsWithLongWrites : BoxEventRepositoryTestBase
     {

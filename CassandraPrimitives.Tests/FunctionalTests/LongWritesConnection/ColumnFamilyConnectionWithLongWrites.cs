@@ -9,7 +9,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.LongWritesConnection
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
 {
     [IgnoredImplementation]
     public class ColumnFamilyConnectionWithLongWrites : IColumnFamilyConnection

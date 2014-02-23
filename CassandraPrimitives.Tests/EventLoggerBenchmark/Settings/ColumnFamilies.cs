@@ -1,6 +1,6 @@
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLoggerBenchmark.Settings
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.Settings
 {
     public static class ColumnFamilies
     {

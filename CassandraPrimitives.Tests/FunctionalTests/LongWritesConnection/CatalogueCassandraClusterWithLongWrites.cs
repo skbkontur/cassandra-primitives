@@ -9,7 +9,7 @@ using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests.LongWritesConnection
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
 {
     [IgnoredImplementation]
     public class CatalogueCassandraClusterWithLongWrites : ICassandraCluster

@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLog.Linq
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Tests.EventLog.Linq
 {
     [TestFixture]
     public class SortedMergeExternalTests
