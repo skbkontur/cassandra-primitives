@@ -13,8 +13,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © SKBKontur 2014")]
 [assembly: AssemblyTrademark("SKBKontur.CassandraPrimitives.EventLog")]
 [assembly: AssemblyCulture("")]
-[assembly: InternalsVisibleTo("Catalogue.CassandraPrimitives.Tests")]
-[assembly: InternalsVisibleTo("Catalogue.CassandraPrimitives.FunctionalTests")]
+[assembly: InternalsVisibleTo("Catalogue.CassandraPrimitives.Tests.Tests")]
+[assembly: InternalsVisibleTo("Catalogue.CassandraPrimitives.Tests.FunctionalTests")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
