@@ -1,8 +1,8 @@
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
-    public interface IEventLogPointerCreator
+    internal interface IEventLogPointerCreator
     {
         EventPointer Create(EventInfo eventInfo, string specificShard = null);
         EventPointer ToNextRow(string rowKey);

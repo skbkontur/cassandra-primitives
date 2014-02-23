@@ -1,6 +1,6 @@
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
-    public class EventPointer
+    internal class EventPointer
     {
         public string RowKey { get; set; }
         public string ColumnName { get; set; }

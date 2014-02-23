@@ -1,8 +1,8 @@
 ﻿using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
-    public interface IEventLoggerAdditionalInfoRepository
+    internal interface IEventLoggerAdditionalInfoRepository
     {
         EventInfo GetFirstEventInfo();
         EventInfo GetOrCreateFirstEventInfo(EventInfo eventInfo);

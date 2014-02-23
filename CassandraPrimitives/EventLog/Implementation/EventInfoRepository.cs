@@ -6,9 +6,9 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.SpecificStorages;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
-    public class EventInfoRepository : PersistentBlobStorage<EventInfo, EventId>, IEventInfoRepository
+    internal class EventInfoRepository : PersistentBlobStorage<EventInfo, EventId>, IEventInfoRepository
     {
         public EventInfoRepository(ColumnFamilyFullName columnFamilyFullName, ICassandraCluster cassandraCluster, ISerializer serializer)
             : base(columnFamilyFullName, cassandraCluster, serializer, new EventIdConverter())

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
-    public interface IEventLogger : IDisposable
+    internal interface IEventLogger : IDisposable
     {
         EventInfo[] Write(params EventStorageElement[] events);
         EventStorageElement ReadEvent(EventId eventId);

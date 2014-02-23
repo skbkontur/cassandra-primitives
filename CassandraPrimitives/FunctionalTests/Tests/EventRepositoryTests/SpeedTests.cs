@@ -6,7 +6,7 @@ using System.Threading;
 
 using NUnit.Framework;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 

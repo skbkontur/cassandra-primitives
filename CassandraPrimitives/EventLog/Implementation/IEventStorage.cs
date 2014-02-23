@@ -1,8 +1,8 @@
 ﻿using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
-    public interface IEventStorage
+    internal interface IEventStorage
     {
         void Write(EventLogRecord[] events, long timestamp, int? ttl = null);
         void Delete(EventInfo[] eventInfos, long timestamp);

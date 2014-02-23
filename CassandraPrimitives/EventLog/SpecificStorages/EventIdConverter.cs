@@ -7,7 +7,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.SpecificStorages
 {
-    public class EventIdConverter : ICassandraObjectIdConverter<EventInfo, EventId>
+    internal class EventIdConverter : ICassandraObjectIdConverter<EventInfo, EventId>
     {
         public EventId GetId(EventInfo obj)
         {

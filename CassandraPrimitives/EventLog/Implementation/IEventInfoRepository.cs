@@ -1,9 +1,9 @@
 ﻿using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
-    public interface IEventInfoRepository : IPersistentStorage<EventInfo, EventId>
+    internal interface IEventInfoRepository : IPersistentStorage<EventInfo, EventId>
     {
     }
 }

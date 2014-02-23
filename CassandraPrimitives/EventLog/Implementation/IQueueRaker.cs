@@ -2,9 +2,9 @@
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
-    public interface IQueueRaker : IDisposable
+    internal interface IQueueRaker : IDisposable
     {
         DeferredResult Enqueue(EventStorageElement[] events, int priority);
     }

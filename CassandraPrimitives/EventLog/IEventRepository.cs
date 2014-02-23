@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
 {
     public interface IEventRepository : IDisposable
     {

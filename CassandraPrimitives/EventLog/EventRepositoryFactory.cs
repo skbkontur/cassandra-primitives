@@ -3,13 +3,14 @@
 using GroBuf;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.EventLog;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.TypeIdentifiers;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.External
+namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
 {
     public class EventRepositoryFactory : IEventRepositoryFactory
     {
