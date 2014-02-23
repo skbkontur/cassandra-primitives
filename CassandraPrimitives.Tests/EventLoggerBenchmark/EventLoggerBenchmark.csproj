@@ -38,6 +38,14 @@
     <Reference Include="Cassandra.ClusterDeployment">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.ClusterDeployment.dll</HintPath>
     </Reference>
+    <Reference Include="Catalogue.CassandraPrimitives.EventLog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.EventLog.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.CassandraPrimitives.Storages, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.Storages.dll</HintPath>
+    </Reference>
     <Reference Include="Catalogue.TeamCity">
       <HintPath>..\..\Assemblies\Catalogue.TeamCtiy\Catalogue.TeamCity.dll</HintPath>
     </Reference>
@@ -71,17 +79,9 @@
       <Project>{da4ac27e-eb66-4912-ac1f-5edee4f9fc4d}</Project>
       <Name>Commons</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EventLog\EventLog.csproj">
-      <Project>{d4746a3e-7098-4359-a082-ec7a0897d4ab}</Project>
-      <Name>EventLog</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SchemeActualizer\SchemeActualizer.csproj">
       <Project>{8832339B-D3B3-4921-B911-40938C93DFE6}</Project>
       <Name>SchemeActualizer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Storages\Storages.csproj">
-      <Project>{706372E4-1E69-42A1-B5E5-5BA2A7EBFCCA}</Project>
-      <Name>Storages</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
