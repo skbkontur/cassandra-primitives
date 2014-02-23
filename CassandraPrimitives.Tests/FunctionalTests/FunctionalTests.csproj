@@ -7,8 +7,8 @@
     <ProjectGuid>{141AC881-3536-4978-AD10-9D29B88A2988}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.FunctionalTests</RootNamespace>
-    <AssemblyName>Catalogue.CassandraPrimitives.FunctionalTests</AssemblyName>
+    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests</RootNamespace>
+    <AssemblyName>Catalogue.CassandraPrimitives.Tests.FunctionalTests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

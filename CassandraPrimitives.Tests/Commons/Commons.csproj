@@ -7,8 +7,8 @@
     <ProjectGuid>{DA4AC27E-EB66-4912-AC1F-5EDEE4F9FC4D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Commons</RootNamespace>
-    <AssemblyName>Catalogue.CassandraPrimitives.Commons</AssemblyName>
+    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons</RootNamespace>
+    <AssemblyName>Catalogue.CassandraPrimitives.Tests.Commons</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

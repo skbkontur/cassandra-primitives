@@ -7,8 +7,8 @@
     <ProjectGuid>{EE70D693-7465-41F2-8B14-1B570C4F374B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.EventLoggerBenchmark</RootNamespace>
-    <AssemblyName>Catalogue.CassandraPrimitives.EventLoggerBenchmark</AssemblyName>
+    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark</RootNamespace>
+    <AssemblyName>Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
