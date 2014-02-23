@@ -1,7 +1,7 @@
-del /Q Assemblies\Temp\*.*
-mkdir Assemblies\Temp
+del /Q Assemblies\Temp\*.dll
+del /Q Assemblies\Temp\*.pdb
 
-FOR %%S IN (CassandraPrimitives) DO (
+FOR %%S IN (CassandraPrimitives, CassandraPrimitives.Tests) DO (
 	pushd %%S
 	FOR /F "tokens=*" %%G IN ('DIR /B /AD /S bin') DO DEL /S /Q "%%G\*.dll" > nul 2> nul
 	FOR /F "tokens=*" %%G IN ('DIR /B /AD /S bin') DO DEL /S /Q "%%G\*.pdb" > nul 2> nul
