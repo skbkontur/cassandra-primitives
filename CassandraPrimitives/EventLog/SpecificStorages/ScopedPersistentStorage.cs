@@ -6,7 +6,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.SpecificStorages
 {
-    public class ScopedPersistentStorage<T> : PersistentBlobStorage<T, ScopedCassandraObjectId>
+    internal class ScopedPersistentStorage<T> : PersistentBlobStorage<T, ScopedCassandraObjectId>
         where T : class, IScopedCassandraObject
     {
         public ScopedPersistentStorage(

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Threading;
 
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils;
+
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives
 {
-    public class DeferredResult : IDisposable
+    internal class DeferredResult : IDisposable
     {
         public DeferredResult(ManualResetEventPool pool)
         {

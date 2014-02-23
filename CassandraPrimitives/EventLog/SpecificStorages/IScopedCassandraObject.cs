@@ -1,6 +1,6 @@
 ﻿namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.SpecificStorages
 {
-    public interface IScopedCassandraObject
+    internal interface IScopedCassandraObject
     {
         string ScopeId { get; }
         string Id { get; }

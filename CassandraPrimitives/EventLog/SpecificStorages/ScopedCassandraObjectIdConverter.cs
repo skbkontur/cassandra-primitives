@@ -6,7 +6,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.SpecificStorages
 {
-    public class ScopedCassandraObjectIdConverter<T> : ICassandraObjectIdConverter<T, ScopedCassandraObjectId>
+    internal class ScopedCassandraObjectIdConverter<T> : ICassandraObjectIdConverter<T, ScopedCassandraObjectId>
         where T : class, IScopedCassandraObject
     {
         public ScopedCassandraObjectId GetId(T obj)

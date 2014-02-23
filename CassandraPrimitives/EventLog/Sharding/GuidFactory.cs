@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding
 {
-    public static class GuidFactory
+    internal static class GuidFactory
     {
         public static Guid GetDeterministicGuid(this string input)
         {
