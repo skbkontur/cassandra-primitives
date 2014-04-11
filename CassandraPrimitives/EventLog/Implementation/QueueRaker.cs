@@ -9,6 +9,7 @@ using MoreLinq;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils;
 
 using log4net;
@@ -20,11 +21,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         public QueueRaker(
             IEventStorage eventStorage,
             IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository,
-            IEventInfoRepository eventInfoRepository)
+            IEventInfoRepository eventInfoRepository,
+            IEventLogProfiler profiler)
         {
             this.eventStorage = eventStorage;
             this.eventLoggerAdditionalInfoRepository = eventLoggerAdditionalInfoRepository;
             this.eventInfoRepository = eventInfoRepository;
+            this.profiler = profiler;
             manualResetEventPool = new ManualResetEventPool();
             queue = new Queue<QueueEntry>();
             Start();
@@ -104,6 +107,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 totalWaitTime += stopwatch.Elapsed;
                 totalEventCount += batchCount;
                 totalEventBatchCount += batch.Count;
+                profiler.BeforeRake(stopwatch.Elapsed, totalEventCount, totalEventBatchCount);
                 if(DateTime.Now - outputDateTime > TimeSpan.FromMinutes(1))
                 {
                     logger.Info(GetRakeStatistics());
@@ -120,43 +124,51 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
                 try
                 {
-                    var nowTicks = Math.Max(eventLoggerAdditionalInfoRepository.GetGoodLastEventInfo().Ticks, DateTime.UtcNow.Ticks);
-
-                    var index = 0;
-                    foreach(var entry in batch)
+                    var writeStopwatch = Stopwatch.StartNew();
+                    try
                     {
-                        foreach(var e in entry.events)
+                        var nowTicks = Math.Max(eventLoggerAdditionalInfoRepository.GetGoodLastEventInfo().Ticks, DateTime.UtcNow.Ticks);
+
+                        var index = 0;
+                        foreach(var entry in batch)
                         {
-                            e.EventInfo.Ticks = nowTicks + index + entry.priority * 10;
-                            index++;
+                            foreach(var e in entry.events)
+                            {
+                                e.EventInfo.Ticks = nowTicks + index + entry.priority * 10;
+                                index++;
+                            }
+                        }
+
+                        // todo подумать, какой TTL взять
+                        eventStorage.Write(eventsBatch.Select(x => new EventLogRecord {IsBad = true, StorageElement = x}).ToArray(), nowTicks, 60);
+
+                        var lastGoodEventInfo = eventLoggerAdditionalInfoRepository.GetGoodLastEventInfo();
+                    
+                        var badEvents = eventsBatch.Where(x => x.EventInfo.Ticks <= lastGoodEventInfo.Ticks).ToArray();
+                        var goodEvents = eventsBatch.Where(x => x.EventInfo.Ticks > lastGoodEventInfo.Ticks).ToArray();
+
+                        if(badEvents.Length > 0)
+                            eventStorage.Delete(badEvents.Select(x => x.EventInfo).ToArray(), nowTicks + 1);
+
+                        if(goodEvents.Length > 0)
+                        {
+                            SetEventMetas(goodEvents);
+                            var lastEventInfoFromCurrentBatch = eventsBatch.MaxBy(x => x.EventInfo.Ticks).EventInfo;
+                            if (lastEventInfoFromCurrentBatch.Ticks > lastGoodEventInfo.Ticks)
+                                eventLoggerAdditionalInfoRepository.SetLastEventInfo(lastEventInfoFromCurrentBatch);
+                            eventStorage.Write(goodEvents.Select(x => new EventLogRecord {IsBad = false, StorageElement = x}).ToArray(), nowTicks + 1);
+                        }
+
+                        foreach(var entry in batch)
+                        {
+                            entry.result.successInfos = entry.events.Where(x => x.EventInfo.Ticks > lastGoodEventInfo.Ticks).Select(x => x.EventInfo).ToArray();
+                            entry.result.failureIds = entry.events.Where(x => x.EventInfo.Ticks <= lastGoodEventInfo.Ticks).Select(x => x.EventInfo.Id).ToArray();
+                            entry.result.Signal();
                         }
                     }
-
-                    // todo подумать, какой TTL взять
-                    eventStorage.Write(eventsBatch.Select(x => new EventLogRecord {IsBad = true, StorageElement = x}).ToArray(), nowTicks, 60);
-
-                    var lastGoodEventInfo = eventLoggerAdditionalInfoRepository.GetGoodLastEventInfo();
-                    
-                    var badEvents = eventsBatch.Where(x => x.EventInfo.Ticks <= lastGoodEventInfo.Ticks).ToArray();
-                    var goodEvents = eventsBatch.Where(x => x.EventInfo.Ticks > lastGoodEventInfo.Ticks).ToArray();
-
-                    if(badEvents.Length > 0)
-                        eventStorage.Delete(badEvents.Select(x => x.EventInfo).ToArray(), nowTicks + 1);
-
-                    if(goodEvents.Length > 0)
+                    finally
                     {
-                        SetEventMetas(goodEvents);
-                        var lastEventInfoFromCurrentBatch = eventsBatch.MaxBy(x => x.EventInfo.Ticks).EventInfo;
-                        if (lastEventInfoFromCurrentBatch.Ticks > lastGoodEventInfo.Ticks)
-                            eventLoggerAdditionalInfoRepository.SetLastEventInfo(lastEventInfoFromCurrentBatch);
-                        eventStorage.Write(goodEvents.Select(x => new EventLogRecord {IsBad = false, StorageElement = x}).ToArray(), nowTicks + 1);
-                    }
-
-                    foreach(var entry in batch)
-                    {
-                        entry.result.successInfos = entry.events.Where(x => x.EventInfo.Ticks > lastGoodEventInfo.Ticks).Select(x => x.EventInfo).ToArray();
-                        entry.result.failureIds = entry.events.Where(x => x.EventInfo.Ticks <= lastGoodEventInfo.Ticks).Select(x => x.EventInfo.Id).ToArray();
-                        entry.result.Signal();
+                        profiler.AfterRake(writeStopwatch.Elapsed);
                     }
                 }
                 catch(Exception e)
@@ -201,6 +213,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         private readonly IEventStorage eventStorage;
         private readonly IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository;
         private readonly IEventInfoRepository eventInfoRepository;
+        private readonly IEventLogProfiler profiler;
         private readonly ManualResetEventPool manualResetEventPool;
         private readonly ManualResetEvent @event = new ManualResetEvent(false);
         private volatile bool wasDisposed;
