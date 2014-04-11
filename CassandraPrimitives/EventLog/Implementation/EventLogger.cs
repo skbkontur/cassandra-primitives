@@ -189,7 +189,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             var startRowNumber = eventLogPointerCreator.GetRowNumber(startEventInfo);
             var finishRowNumber = eventLogPointerCreator.GetRowNumber(finishEventInfo);
             var startEventPointer = eventLogPointerCreator.Create(startEventInfo);
-            var finishEventPointer = eventLogPointerCreator.Create(finishEventInfo);
 
             var getRowsBatchCount = batchCount / shards.Length;
             var rowKeys = shards.Select(shard => eventLogPointerCreator.ChangeShard(startRowNumber, shard)).ToArray();
