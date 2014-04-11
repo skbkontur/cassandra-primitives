@@ -50,7 +50,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
             var cassandraIds = ids.Select(x => cassandraObjectIdConverter.IdToRowKey(x)).ToArray();
 
             var rows = new List<KeyValuePair<string, Column[]>>();
-            cassandraIds.Batch(1000, Enumerable.ToArray).ForEach(batchIds => MakeInConnection(connection => rows.AddRange(connection.GetRows(batchIds, null, maximalColumnsCount))));
+            cassandraIds.Batch(1000, Enumerable.ToArray).ForEach(batchIds => MakeInConnection(connection => rows.AddRange(connection.GetRowsExclusive(batchIds, null, maximalColumnsCount))));
             var rowsDict = rows.ToDictionary(row => row.Key);
             var result = new T[cassandraIds.Length];
             for (var i = 0; i < cassandraIds.Length; i++)
@@ -163,7 +163,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
             if (rowKeys == null) throw new ArgumentNullException("rowKeys");
             if (rowKeys.Length == 0) return new T[0];
             var rows = new List<KeyValuePair<string, Column[]>>();
-            rowKeys.Batch(1000, Enumerable.ToArray).ForEach(batchIds => MakeInConnection(connection => rows.AddRange(connection.GetRows(batchIds, null, maximalColumnsCount))));
+            rowKeys.Batch(1000, Enumerable.ToArray).ForEach(batchIds => MakeInConnection(connection => rows.AddRange(connection.GetRowsExclusive(batchIds, null, maximalColumnsCount))));
             var rowsDict = rows.ToDictionary(row => row.Key);
             return rowKeys.Where(rowsDict.ContainsKey).Select(id => Read(rowsDict[id].Value)).Where(obj => obj != null).ToArray();
         }
