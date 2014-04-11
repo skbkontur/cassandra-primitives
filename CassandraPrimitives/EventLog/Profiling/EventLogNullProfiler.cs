@@ -2,8 +2,12 @@
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling
 {
-    internal class EventLogNullProfiler : IEventLogProfiler
+    internal sealed class EventLogNullProfiler : IEventLogProfiler
     {
+        private EventLogNullProfiler()
+        {
+        }
+
         public void BeforeRake(TimeSpan elapsed, long eventCount, long batchCount)
         {
         }
@@ -15,5 +19,24 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling
         public void AfterWriteBatch(TimeSpan elapsed, int batchLength, int attemptCount)
         {
         }
+
+        public static EventLogNullProfiler Instance
+        {
+            get
+            {
+                if(instance == null)
+                {
+                    lock(instanceLockObject)
+                    {
+                        if(instance == null)
+                            instance = new EventLogNullProfiler();
+                    }
+                }
+                return instance;
+            }
+        }
+
+        private static volatile EventLogNullProfiler instance;
+        private static readonly object instanceLockObject = new object();
     }
 }

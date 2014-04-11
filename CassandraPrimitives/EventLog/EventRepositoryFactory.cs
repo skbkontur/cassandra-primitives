@@ -31,11 +31,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
             IShardCalculator shardCalculator,
             IEventRepositoryColumnFamilyFullNames columnFamilies)
         {
+            return CreateEventRepository(shardCalculator, columnFamilies, EventLogNullProfiler.Instance);
+        }
+
+        public IEventRepository CreateEventRepository(IShardCalculator shardCalculator, IEventRepositoryColumnFamilyFullNames columnFamilies, IEventLogProfiler profiler)
+        {
             var ticksHolder = new TicksHolder(serializer, cassandraCluster, columnFamilies.TicksHolder);
             var eventInfoRepository = new EventInfoRepository(columnFamilies.EventMeta, cassandraCluster, serializer);
             var eventLogPointerCreator = new EventLogPointerCreator();
             var globalTime = new GlobalTime(ticksHolder);
-            var profiler = new EventLogNullProfiler();
 
             var remoteLockCreator = new RemoteLockCreator(new CassandraRemoteLockImplementation(cassandraCluster, cassandraClusterSettings, serializer, columnFamilies.RemoteLock));
             var eventLoggerAdditionalInfoRepository = new EventLoggerAdditionalInfoRepository(cassandraCluster, serializer, remoteLockCreator, columnFamilies.EventLogAdditionalInfo, columnFamilies.EventLog);
