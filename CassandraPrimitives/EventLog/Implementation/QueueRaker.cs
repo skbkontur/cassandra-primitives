@@ -62,7 +62,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             {
                 if(wasDisposed)
                     throw new CouldNotWriteBoxEventException("This instance of eventLogger was disposed");
-                var result = new DeferredResult(manualResetEventPool);
+                var result = new DeferredResult(manualResetEventPool, profiler);
                 queue.Enqueue(new QueueEntry
                     {
                         events = events,

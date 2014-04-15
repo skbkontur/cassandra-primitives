@@ -154,10 +154,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             var batchForWrite = eventBatch;
             var stopwatch = Stopwatch.StartNew();
             var totalAttemptCount = 0;
+            TimeSpan timeOfSleep = TimeSpan.FromTicks(0);
             try
             {
                 for(var attempt = 0; !wasDisposed && attempt < 10; ++attempt)
                 {
+                    totalAttemptCount++;
                     using(var deferredResult = queueRaker.Enqueue(batchForWrite, attempt))
                     {
                         deferredResult.WaitFinished();
@@ -166,17 +168,24 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                         if(batchForWrite.Length == 0) return result.ToArray();
                     }
                     var sleepTime = random.Next(5 * (int)Math.Exp(Math.Min(attempt, 10)));
-                    Thread.Sleep(sleepTime);
+                    var sleepStopwatch = Stopwatch.StartNew();
+                    try
+                    {
+                        Thread.Sleep(sleepTime);
+                    }
+                    finally
+                    {
+                        timeOfSleep += sleepStopwatch.Elapsed;
+                    }
                     if(attempt > 1)
                     {
                         logger.Warn(string.Format("Big attempt: attempt = {0}, sleepTime = {1}", attempt, sleepTime));
-                    }
-                    totalAttemptCount++;
+                    }                    
                 }
             }
             finally
             {
-                profiler.AfterWriteBatch(stopwatch.Elapsed, eventBatch.Length, totalAttemptCount);
+                profiler.AfterWriteBatch(stopwatch.Elapsed, eventBatch.Length, totalAttemptCount, timeOfSleep);
             }
 
             if(wasDisposed)

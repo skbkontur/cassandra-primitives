@@ -16,7 +16,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling
         {
         }
 
-        public void AfterWriteBatch(TimeSpan elapsed, int batchLength, int attemptCount)
+        public void AfterWriteBatch(TimeSpan elapsed, int batchLength, int attemptCount, TimeSpan timeOfSleep)
+        {
+        }
+
+        public void AfterDeferredResultWaitFinished(TimeSpan timeBetweenSetAndWaitOne)
         {
         }
 

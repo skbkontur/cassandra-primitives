@@ -6,6 +6,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling
     {
         void BeforeRake(TimeSpan elapsed, long eventCount, long batchCount);
         void AfterRake(TimeSpan elapsed);
-        void AfterWriteBatch(TimeSpan elapsed, int batchLength, int attemptCount);
+        void AfterWriteBatch(TimeSpan elapsed, int batchLength, int attemptCount, TimeSpan timeOfSleep);
+        void AfterDeferredResultWaitFinished(TimeSpan timeBetweenSetAndWaitOne);
     }
 }
