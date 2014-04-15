@@ -8,7 +8,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling
         {
         }
 
-        public void BeforeRake(TimeSpan elapsed, long eventCount, long batchCount)
+        public void BeforeRake(TimeSpan elapsed, long eventCount, long batchCount, TimeSpan[] sinceEventsQueuedTimes)
         {
         }
 

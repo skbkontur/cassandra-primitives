@@ -107,7 +107,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 totalWaitTime += stopwatch.Elapsed;
                 totalEventCount += batchCount;
                 totalEventBatchCount += batch.Count;
-                profiler.BeforeRake(stopwatch.Elapsed, totalEventCount, totalEventBatchCount);
+                profiler.BeforeRake(stopwatch.Elapsed, totalEventCount, totalEventBatchCount, batch.Select(x => x.SinceCreateElapsed).ToArray());
                 if(DateTime.Now - outputDateTime > TimeSpan.FromMinutes(1))
                 {
                     logger.Info(GetRakeStatistics());
