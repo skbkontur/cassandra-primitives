@@ -12,7 +12,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling
         {
         }
 
-        public void AfterRake(TimeSpan elapsed)
+        public void AfterRake(
+            TimeSpan elapsed,
+            TimeSpan getGoodLastEventInfo1Time,
+            TimeSpan getGoodLastEventInfo2Time,
+            TimeSpan writeEventsTime,
+            TimeSpan deleteBadEventsTime,
+            TimeSpan setEventMetasTime,
+            TimeSpan setLastEventInfoTime,
+            TimeSpan setEventsGoodTime)
         {
         }
 
