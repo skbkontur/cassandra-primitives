@@ -185,14 +185,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                     }
 
                     profiler.AfterRake(
-                        writeStopwatch.Elapsed,
-                        getGoodLastEventInfo1Stopwatch.Elapsed,
-                        getGoodLastEventInfo2Stopwatch.Elapsed,
-                        writeEventsStopwatch.Elapsed,
-                        deleteBadEventsStopwatch.Elapsed,
-                        setEventMetasStopwatch.Elapsed,
-                        setLastEventInfoStopwatch.Elapsed,
-                        setEventsGoodStopwatch.Elapsed);
+                        GetElapsed(writeStopwatch),
+                        GetElapsed(getGoodLastEventInfo1Stopwatch),
+                        GetElapsed(getGoodLastEventInfo2Stopwatch),
+                        GetElapsed(writeEventsStopwatch),
+                        GetElapsed(deleteBadEventsStopwatch),
+                        GetElapsed(setEventMetasStopwatch),
+                        GetElapsed(setLastEventInfoStopwatch),
+                        GetElapsed(setEventsGoodStopwatch));
                 }
                 catch(Exception e)
                 {
@@ -205,6 +205,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                     }
                 }
             }
+        }
+
+        private TimeSpan GetElapsed(Stopwatch stopwatch)
+        {
+            return stopwatch == null ? TimeSpan.FromTicks(0) : stopwatch.Elapsed;
         }
 
         private string GetRakeStatistics()
