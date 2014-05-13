@@ -17,12 +17,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
         public EventRepositoryFactory(
             ISerializer serializer,
             ICassandraCluster cassandraCluster,
-            ICassandraClusterSettings cassandraClusterSettings,
             IEventTypeIdentifierProvider eventTypeIdentifierProvider)
         {
             this.serializer = serializer;
             this.cassandraCluster = cassandraCluster;
-            this.cassandraClusterSettings = cassandraClusterSettings;
             this.eventTypeIdentifierProvider = eventTypeIdentifierProvider;
         }
 
@@ -35,7 +33,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
             var eventLogPointerCreator = new EventLogPointerCreator();
             var globalTime = new GlobalTime(ticksHolder);
 
-            var remoteLockCreator = new RemoteLockCreator(new CassandraRemoteLockImplementation(cassandraCluster, cassandraClusterSettings, serializer, columnFamilies.RemoteLock));
+            var remoteLockCreator = new RemoteLockCreator(new CassandraRemoteLockImplementation(cassandraCluster, serializer, columnFamilies.RemoteLock));
             var eventLoggerAdditionalInfoRepository = new EventLoggerAdditionalInfoRepository(cassandraCluster, serializer, remoteLockCreator, columnFamilies.EventLogAdditionalInfo, columnFamilies.EventLog);
             var eventStorage = new EventStorage(columnFamilies.EventLog, eventLogPointerCreator, cassandraCluster, serializer);
             Func<IQueueRaker> createQueueRaker = () => new QueueRaker(eventStorage, eventLoggerAdditionalInfoRepository, eventInfoRepository);
@@ -48,7 +46,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
 
         private readonly ISerializer serializer;
         private readonly ICassandraCluster cassandraCluster;
-        private readonly ICassandraClusterSettings cassandraClusterSettings;
         private readonly IEventTypeIdentifierProvider eventTypeIdentifierProvider;
     }
 }
