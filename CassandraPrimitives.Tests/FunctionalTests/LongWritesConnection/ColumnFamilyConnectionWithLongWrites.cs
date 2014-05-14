@@ -214,6 +214,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWrit
             return columnFamilyConnection.GetCounts(keys);
         }
 
+        public ICassandraConnectionParameters GetConnectionParameters()
+        {
+            BeforeExecuteCommand();
+            return columnFamilyConnection.GetConnectionParameters();
+        }
+
         private void BeforeExecuteCommand(bool withAttempts = true)
         {
             count++;
