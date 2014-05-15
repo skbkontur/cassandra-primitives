@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -13,6 +14,7 @@ using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
@@ -30,7 +32,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             IEventLogPointerCreator eventLogPointerCreator,
             Func<IQueueRaker> createQueueRaker,
             IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository,
-            IGlobalTime globalTime)
+            IGlobalTime globalTime,
+            IEventLogProfiler profiler)
         {
             this.serializer = serializer;
             this.eventInfoRepository = eventInfoRepository;
@@ -38,6 +41,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             this.createQueueRaker = createQueueRaker;
             this.eventLoggerAdditionalInfoRepository = eventLoggerAdditionalInfoRepository;
             this.globalTime = globalTime;
+            this.profiler = profiler;
             columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(eventLogColumnFamily.KeyspaceName, eventLogColumnFamily.ColumnFamilyName);
         }
 
@@ -148,19 +152,40 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             var result = new List<EventInfo>();
 
             var batchForWrite = eventBatch;
-            for(var attempt = 0; !wasDisposed && attempt < 10; ++attempt)
+            var stopwatch = Stopwatch.StartNew();
+            var totalAttemptCount = 0;
+            TimeSpan timeOfSleep = TimeSpan.FromTicks(0);
+            try
             {
-                using(var deferredResult = queueRaker.Enqueue(batchForWrite, attempt))
+                for(var attempt = 0; !wasDisposed && attempt < 10; ++attempt)
                 {
-                    deferredResult.WaitFinished();
-                    batchForWrite = deferredResult.failureIds.Select(x => dict[x]).ToArray();
-                    result.AddRange(deferredResult.successInfos);
-                    if(batchForWrite.Length == 0) return result.ToArray();
+                    totalAttemptCount++;
+                    using(var deferredResult = queueRaker.Enqueue(batchForWrite, attempt))
+                    {
+                        deferredResult.WaitFinished();
+                        batchForWrite = deferredResult.failureIds.Select(x => dict[x]).ToArray();
+                        result.AddRange(deferredResult.successInfos);
+                        if(batchForWrite.Length == 0) return result.ToArray();
+                    }
+                    var sleepTime = random.Next(5 * (int)Math.Exp(Math.Min(attempt, 10)));
+                    var sleepStopwatch = Stopwatch.StartNew();
+                    try
+                    {
+                        Thread.Sleep(sleepTime);
+                    }
+                    finally
+                    {
+                        timeOfSleep += sleepStopwatch.Elapsed;
+                    }
+                    if(attempt > 1)
+                    {
+                        logger.Warn(string.Format("Big attempt: attempt = {0}, sleepTime = {1}", attempt, sleepTime));
+                    }                    
                 }
-                var sleepTime = random.Next(5 * (int)Math.Exp(Math.Min(attempt, 10)));
-                Thread.Sleep(sleepTime);
-                if(attempt > 1)
-                    logger.Warn(string.Format("Big attempt: attempt = {0}, sleepTime = {1}", attempt, sleepTime));
+            }
+            finally
+            {
+                profiler.AfterWriteBatch(stopwatch.Elapsed, eventBatch.Length, totalAttemptCount, timeOfSleep);
             }
 
             if(wasDisposed)
@@ -173,7 +198,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             var startRowNumber = eventLogPointerCreator.GetRowNumber(startEventInfo);
             var finishRowNumber = eventLogPointerCreator.GetRowNumber(finishEventInfo);
             var startEventPointer = eventLogPointerCreator.Create(startEventInfo);
-            var finishEventPointer = eventLogPointerCreator.Create(finishEventInfo);
 
             var getRowsBatchCount = batchCount / shards.Length;
             var rowKeys = shards.Select(shard => eventLogPointerCreator.ChangeShard(startRowNumber, shard)).ToArray();
@@ -255,6 +279,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         private readonly Func<IQueueRaker> createQueueRaker;
         private readonly IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository;
         private readonly IGlobalTime globalTime;
+        private readonly IEventLogProfiler profiler;
         private readonly IColumnFamilyConnection columnFamilyConnection;
 
         private IQueueRaker queueRaker;
