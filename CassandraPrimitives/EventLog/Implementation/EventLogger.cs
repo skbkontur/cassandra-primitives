@@ -154,10 +154,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             var batchForWrite = eventBatch;
             var stopwatch = Stopwatch.StartNew();
             var totalAttemptCount = 0;
-            TimeSpan timeOfSleep = TimeSpan.FromTicks(0);
+            var timeOfSleep = TimeSpan.FromTicks(0);
             try
             {
-                for(var attempt = 0; !wasDisposed && attempt < 10; ++attempt)
+                for(var attempt = 0; !wasDisposed && attempt < attemptCount; ++attempt)
                 {
                     totalAttemptCount++;
                     using(var deferredResult = queueRaker.Enqueue(batchForWrite, attempt))
@@ -167,7 +167,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                         result.AddRange(deferredResult.successInfos);
                         if(batchForWrite.Length == 0) return result.ToArray();
                     }
-                    var sleepTime = random.Next(5 * (int)Math.Exp(Math.Min(attempt, 10)));
+                    var sleepTime = random.Next(10, 20);
                     var sleepStopwatch = Stopwatch.StartNew();
                     try
                     {
@@ -178,9 +178,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                         timeOfSleep += sleepStopwatch.Elapsed;
                     }
                     if(attempt > 1)
-                    {
                         logger.Warn(string.Format("Big attempt: attempt = {0}, sleepTime = {1}", attempt, sleepTime));
-                    }                    
                 }
             }
             finally
@@ -190,7 +188,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
             if(wasDisposed)
                 throw new CouldNotWriteBoxEventException("This instance of eventLogger was disposed");
-            throw new CouldNotWriteBoxEventException("Could not write in 10 attempts");
+            throw new CouldNotWriteBoxEventException(string.Format("Could not write in {0} attempts", attemptCount));
         }
 
         private IEnumerable<EventLogRecord> InnerReadEvents(EventInfo startEventInfo, EventInfo finishEventInfo, string[] shards, int batchCount)
@@ -287,5 +285,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         private volatile bool wasDisposed;
         private volatile bool wasInitialized;
         private readonly object lockObject = new object();
+        private const int attemptCount = 20;
     }
 }
