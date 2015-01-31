@@ -70,12 +70,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         public IEnumerable<Event> GetEvents(EventInfo exclusiveEventInfo, string[] shards)
         {
-            var events = GetEventsWithUnstableZone(exclusiveEventInfo, shards);
-            foreach(var ev in events)
-            {
-                if(ev.StableZone) yield return ev.Event;
-                else yield break;
-            }
+            EventInfo newExclusiveEventInfo;
+            return GetEvents(exclusiveEventInfo, shards, out newExclusiveEventInfo);
+        }
+
+        public IEnumerable<Event> GetEvents(EventInfo exclusiveEventInfo, string[] shards, out EventInfo newExclusiveEventInfoIfEmpty)
+        {
+            var events = GetEventsWithUnstableZone(exclusiveEventInfo, shards, out newExclusiveEventInfoIfEmpty);
+            return events.TakeWhile(x => x.StableZone).Select(x => x.Event);
         }
 
         public IEnumerable<EventContainer> GetEventsWithUnstableZone(EventInfo exclusiveEventInfo, string[] shards)
