@@ -124,6 +124,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWrit
             return columnFamilyConnection.GetRows(keys, startColumnName, count);
         }
 
+        public List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string[] columnNames)
+        {
+            BeforeExecuteCommand();
+            return columnFamilyConnection.GetRows(keys, columnNames);
+        }
+
         public List<KeyValuePair<string, Column[]>> GetRegion(IEnumerable<string> keys, string startColumnName, string finishColumnName, int limitPerRow)
         {
             BeforeExecuteCommand();
