@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{982AB5C9-F9FA-44F8-8AD6-91769296DA66}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalTests", "FunctionalTests\FunctionalTests.csproj", "{141AC881-3536-4978-AD10-9D29B88A2988}"
@@ -10,6 +12,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventLoggerBenchmark", "EventLoggerBenchmark\EventLoggerBenchmark.csproj", "{EE70D693-7465-41F2-8B14-1B570C4F374B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commons", "Commons\Commons.csproj", "{DA4AC27E-EB66-4912-AC1F-5EDEE4F9FC4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreadsBasedRemoteLockBenchmark", "RemoteLockBenchmark\ThreadsBasedRemoteLockBenchmark.csproj", "{1ADF8D8E-A425-4FCD-BF48-50F35A244640}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RemoteLockBenchmarks", "RemoteLockBenchmarks", "{6B7D41F8-B132-4B7A-8486-BE4A42D93A0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessesBasedRemoteLockBenchmark", "ProcessesBasedRemoteLockBenchmark\ProcessesBasedRemoteLockBenchmark.csproj", "{37D3B40B-3CE6-406A-AB51-E671CD88C69A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchmarkCassandraHelpers", "BenchmarkCassandraHelpers\BenchmarkCassandraHelpers.csproj", "{F5C77077-E669-4902-B31A-DA3843F62C27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LockProcess", "LockProcess\LockProcess.csproj", "{B59A2152-7B9F-49B1-8688-09E0CDFAAD16}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,8 +49,30 @@ Global
 		{DA4AC27E-EB66-4912-AC1F-5EDEE4F9FC4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA4AC27E-EB66-4912-AC1F-5EDEE4F9FC4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA4AC27E-EB66-4912-AC1F-5EDEE4F9FC4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ADF8D8E-A425-4FCD-BF48-50F35A244640}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ADF8D8E-A425-4FCD-BF48-50F35A244640}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ADF8D8E-A425-4FCD-BF48-50F35A244640}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ADF8D8E-A425-4FCD-BF48-50F35A244640}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37D3B40B-3CE6-406A-AB51-E671CD88C69A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37D3B40B-3CE6-406A-AB51-E671CD88C69A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37D3B40B-3CE6-406A-AB51-E671CD88C69A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37D3B40B-3CE6-406A-AB51-E671CD88C69A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5C77077-E669-4902-B31A-DA3843F62C27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5C77077-E669-4902-B31A-DA3843F62C27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5C77077-E669-4902-B31A-DA3843F62C27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5C77077-E669-4902-B31A-DA3843F62C27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B59A2152-7B9F-49B1-8688-09E0CDFAAD16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B59A2152-7B9F-49B1-8688-09E0CDFAAD16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B59A2152-7B9F-49B1-8688-09E0CDFAAD16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B59A2152-7B9F-49B1-8688-09E0CDFAAD16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1ADF8D8E-A425-4FCD-BF48-50F35A244640} = {6B7D41F8-B132-4B7A-8486-BE4A42D93A0B}
+		{37D3B40B-3CE6-406A-AB51-E671CD88C69A} = {6B7D41F8-B132-4B7A-8486-BE4A42D93A0B}
+		{F5C77077-E669-4902-B31A-DA3843F62C27} = {6B7D41F8-B132-4B7A-8486-BE4A42D93A0B}
+		{B59A2152-7B9F-49B1-8688-09E0CDFAAD16} = {6B7D41F8-B132-4B7A-8486-BE4A42D93A0B}
 	EndGlobalSection
 EndGlobal
