@@ -10,3 +10,4 @@ desktop.ini
 /Assemblies/Cassandra/log
 *.user
 _ReSharper.*
+Cassandra1.2
