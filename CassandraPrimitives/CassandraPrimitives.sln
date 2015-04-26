@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storages", "Storages\Storag
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteLock", "RemoteLock\RemoteLock.csproj", "{24E35AE2-D120-4140-9E18-B9CA614ECCB7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteLockBase", "RemoteLockBase\RemoteLockBase.csproj", "{5C3C35E0-5067-4BD9-98B6-D7AD13899737}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{24E35AE2-D120-4140-9E18-B9CA614ECCB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24E35AE2-D120-4140-9E18-B9CA614ECCB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24E35AE2-D120-4140-9E18-B9CA614ECCB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C3C35E0-5067-4BD9-98B6-D7AD13899737}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C3C35E0-5067-4BD9-98B6-D7AD13899737}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C3C35E0-5067-4BD9-98B6-D7AD13899737}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C3C35E0-5067-4BD9-98B6-D7AD13899737}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -103,6 +103,10 @@
     <Compile Include="SpecificStorages\ScopedPersistentStorage.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RemoteLockBase\RemoteLockBase.csproj">
+      <Project>{5c3c35e0-5067-4bd9-98b6-d7ad13899737}</Project>
+      <Name>RemoteLockBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemoteLock\RemoteLock.csproj">
       <Project>{24e35ae2-d120-4140-9e18-b9ca614eccb7}</Project>
       <Name>RemoteLock</Name>
