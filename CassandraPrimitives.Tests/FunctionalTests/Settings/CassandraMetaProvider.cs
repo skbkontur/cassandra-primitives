@@ -10,7 +10,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings
     {
         public IEnumerable<Keyspace> BuildClusterKeyspaces(ICassandraInitializerSettings cassandraInitializerSettings)
         {
-            var arr = new[] {ColumnFamilies.eventLog, ColumnFamilies.eventMeta, ColumnFamilies.ticksHolder, ColumnFamilies.eventLogAdditionalInfo, ColumnFamilies.remoteLock};
+            var arr = new[] {ColumnFamilies.eventLog, ColumnFamilies.eventMeta, ColumnFamilies.ticksHolder, ColumnFamilies.eventLogAdditionalInfo, ColumnFamilies.remoteLock, ColumnFamilies.newRemoteLock};
             var keyspaces = arr.GroupBy(x => x.KeyspaceName).Select(x => new Keyspace
                 {
                     Name = x.Key,
