@@ -39,7 +39,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
             var eventLogPointerCreator = new EventLogPointerCreator();
             var globalTime = new GlobalTime(ticksHolder);
 
-            var remoteLockCreator = new RemoteLockCreator(new CassandraRemoteLockImplementation(cassandraCluster, serializer, columnFamilies.RemoteLock));
+            var remoteLockImplementation = new CassandraRemoteLockImplementation(cassandraCluster, serializer, columnFamilies.RemoteLock);
+            var remoteLockLocalManager = new RemoteLockLocalManager(remoteLockImplementation);
+            var remoteLockCreator = new RemoteLockCreator(remoteLockLocalManager);
             var eventLoggerAdditionalInfoRepository = new EventLoggerAdditionalInfoRepository(cassandraCluster, serializer, remoteLockCreator, columnFamilies.EventLogAdditionalInfo, columnFamilies.EventLog);
             var eventStorage = new EventStorage(columnFamilies.EventLog, eventLogPointerCreator, cassandraCluster, serializer);
             Func<IQueueRaker> createQueueRaker = () => new QueueRaker(eventStorage, eventLoggerAdditionalInfoRepository, eventInfoRepository, profiler);
