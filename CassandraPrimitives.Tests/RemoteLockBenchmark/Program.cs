@@ -4,6 +4,9 @@ using System.IO;
 using System.Net;
 using System.Threading;
 
+using GroboContainer.Core;
+using GroboContainer.Impl;
+
 using GroBuf;
 using GroBuf.DataMembersExtracters;
 
@@ -16,9 +19,12 @@ using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.MetaStorage;
 using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.QueueStorage;
 using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.RentExtender;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.Storages.ExpirationMonitoringStorage;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
+using SKBKontur.Catalogue.CassandraPrimitives.TimeServiceClient;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.ThreadsBasedRemoteLockBenchmark
 {
@@ -53,15 +59,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.ThreadsBasedRemoteLockBe
 
         private NewRemoteLockCreator CreateNewRemoteLockCassandra()
         {
+            var container = new Container(new ContainerConfiguration(AssembliesLoader.Load()));
             var cassandraCluster = new CassandraCluster(cassandraClusterSettings);
             var serializer = new Serializer(new AllPropertiesExtractor());
             var columnFamilyFullName = ColumnFamilies.newRemoteLock;
+            var timeServiceClient = container.Get<ITimeServiceClient>();
+            var expirationMonitoringService = new ExpirationMonitoringStorage(cassandraCluster, serializer, ColumnFamilies.expirationMonitoring);
             var remoteLockSettings = new RemoteLockSettings(columnFamilyFullName.KeyspaceName, columnFamilyFullName.ColumnFamilyName);
             var metaStorage = new MetaStorage(cassandraCluster, serializer, remoteLockSettings);
-            var lockStorage = new LockStorage(metaStorage, cassandraCluster, remoteLockSettings);
-            var queueStorage = new QueueStorage(metaStorage, cassandraCluster, serializer, remoteLockSettings);
+            var lockStorage = new LockStorage(timeServiceClient, metaStorage, cassandraCluster, remoteLockSettings);
+            var queueStorage = new QueueStorage(timeServiceClient, metaStorage, cassandraCluster, serializer, remoteLockSettings);
             var rentExtender = new RentExtender(queueStorage, lockStorage);
-            return new NewRemoteLockCreator(new LockCreatorStorage(lockStorage, queueStorage, rentExtender), remoteLockSettings);
+            return new NewRemoteLockCreator(new LockCreatorStorage(lockStorage, queueStorage, rentExtender), expirationMonitoringService, timeServiceClient, remoteLockSettings);
         }
 
         private RemoteLockCreator CreateOldRemoteLock()

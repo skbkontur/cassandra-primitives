@@ -57,6 +57,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.Storages.dll</HintPath>
     </Reference>
+    <Reference Include="Catalogue.CassandraPrimitives.TimeServiceClient">
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.TimeServiceClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.Core.Http">
+      <HintPath>..\..\Assemblies\Catalogue.Core.Http.dll</HintPath>
+    </Reference>
     <Reference Include="GroboContainer">
       <HintPath>..\..\Assemblies\GroboContainer.dll</HintPath>
     </Reference>
@@ -81,6 +87,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Tests\ExpirationMonitoringStorageTests\ExpirationMonitoringStorageTests.cs" />
+    <None Include="Settings\timeServiceTopology">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="Tests\NewRemoteLockTests\LockRentTests.cs" />
     <Compile Include="Tests\NewRemoteLockTests\LocksQueueTests.cs" />
     <Compile Include="Tests\NewRemoteLockTests\LockTests.cs" />
@@ -135,7 +145,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Logging\log4net.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

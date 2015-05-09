@@ -10,5 +10,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings
         public static ColumnFamilyFullName eventMeta = new ColumnFamilyFullName("CassandraPrimitives", "EventMeta");
         public static ColumnFamilyFullName remoteLock = new ColumnFamilyFullName("CassandraPrimitives", "RemoteLock");
         public static ColumnFamilyFullName newRemoteLock = new ColumnFamilyFullName("CassandraPrimitives", "NewRemoteLock");
+        public static ColumnFamilyFullName timeService = new ColumnFamilyFullName("CassandraPrimitives", "TimeService");
+        public static ColumnFamilyFullName expirationMonitoring = new ColumnFamilyFullName("CassandraPrimitives", "ExpirationMonitoring");
     }
 }

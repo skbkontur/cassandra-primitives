@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventLog", "EventLog\EventLog.csproj", "{D4746A3E-7098-4359-A082-EC7A0897D4AB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storages", "Storages\Storages.csproj", "{706372E4-1E69-42A1-B5E5-5BA2A7EBFCCA}"
@@ -9,7 +11,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteLock", "RemoteLock\Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteLockBase", "RemoteLockBase\RemoteLockBase.csproj", "{5C3C35E0-5067-4BD9-98B6-D7AD13899737}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRemoteLock", "NewRemoteLock\NewRemoteLock.csproj", "{991CF57F-3378-4601-8ED0-5B34B3011C86}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeServiceCore", "TimeServiceCore\TimeServiceCore.csproj", "{E9C09C72-FF2B-49B5-9100-49631E0BBBBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeServiceClient", "TimeServiceClient\TimeServiceClient.csproj", "{B26ECEAD-F481-4AC2-9E37-125F5D17619D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpirationService", "ExpirationService\ExpirationService.csproj", "{375C1506-2663-438B-8A63-43338A25C1D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpirationServiceCore", "ExpirationServiceCore\ExpirationServiceCore.csproj", "{8CAE0561-3E1F-4FDA-94F7-9CEDD80EB8BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRemoteLock.WithExpirationService", "NewRemoteLock.WithExpirationService\NewRemoteLock.WithExpirationService.csproj", "{991CF57F-3378-4601-8ED0-5B34B3011C86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +43,22 @@ Global
 		{5C3C35E0-5067-4BD9-98B6-D7AD13899737}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C3C35E0-5067-4BD9-98B6-D7AD13899737}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C3C35E0-5067-4BD9-98B6-D7AD13899737}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9C09C72-FF2B-49B5-9100-49631E0BBBBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9C09C72-FF2B-49B5-9100-49631E0BBBBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9C09C72-FF2B-49B5-9100-49631E0BBBBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9C09C72-FF2B-49B5-9100-49631E0BBBBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B26ECEAD-F481-4AC2-9E37-125F5D17619D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B26ECEAD-F481-4AC2-9E37-125F5D17619D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B26ECEAD-F481-4AC2-9E37-125F5D17619D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B26ECEAD-F481-4AC2-9E37-125F5D17619D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{375C1506-2663-438B-8A63-43338A25C1D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{375C1506-2663-438B-8A63-43338A25C1D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{375C1506-2663-438B-8A63-43338A25C1D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{375C1506-2663-438B-8A63-43338A25C1D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CAE0561-3E1F-4FDA-94F7-9CEDD80EB8BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CAE0561-3E1F-4FDA-94F7-9CEDD80EB8BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CAE0561-3E1F-4FDA-94F7-9CEDD80EB8BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CAE0561-3E1F-4FDA-94F7-9CEDD80EB8BA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{991CF57F-3378-4601-8ED0-5B34B3011C86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{991CF57F-3378-4601-8ED0-5B34B3011C86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{991CF57F-3378-4601-8ED0-5B34B3011C86}.Release|Any CPU.ActiveCfg = Release|Any CPU

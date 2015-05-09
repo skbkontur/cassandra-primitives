@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{375C1506-2663-438B-8A63-43338A25C1D6}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.ExpirationService</RootNamespace>
+    <AssemblyName>Catalogue.CassandraPrimitives.ExpirationService</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Cassandra.CassandraClient, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.ContainerExtensions">
+      <HintPath>..\..\Assemblies\Catalogue.ContainerExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.Core.Configuration.Settings">
+      <HintPath>..\..\Assemblies\Catalogue.ServiceLib\Catalogue.Core.Configuration.Settings.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.Core.Graphite.Client">
+      <HintPath>..\..\Assemblies\GraphiteClient\Catalogue.Core.Graphite.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.Core.Http">
+      <HintPath>..\..\Assemblies\Catalogue.Core.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.DateTimeExtensions">
+      <HintPath>..\..\Assemblies\Catalogue.DateTimeExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.GrobufExtensions">
+      <HintPath>..\..\Assemblies\Catalogue.GrobufExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.Objects">
+      <HintPath>..\..\Assemblies\Catalogue.Objects.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.ServiceLib">
+      <HintPath>..\..\Assemblies\Catalogue.ServiceLib\Catalogue.ServiceLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.Statistics">
+      <HintPath>..\..\Assemblies\Catalogue.Statistics.dll</HintPath>
+    </Reference>
+    <Reference Include="GrEmit">
+      <HintPath>..\..\Assemblies\GrEmit.dll</HintPath>
+    </Reference>
+    <Reference Include="GrobExp.Mutators, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\GrobExp.Mutators.dll</HintPath>
+    </Reference>
+    <Reference Include="GroboContainer">
+      <HintPath>..\..\Assemblies\GroboContainer.dll</HintPath>
+    </Reference>
+    <Reference Include="GroboTrace">
+      <HintPath>..\..\Assemblies\GroboTrace.dll</HintPath>
+    </Reference>
+    <Reference Include="GroBuf">
+      <HintPath>..\..\Assemblies\GroBuf.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations">
+      <HintPath>..\..\Assemblies\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\Assemblies\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\json.net\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SKBKontur.Graphite.Client">
+      <HintPath>..\..\Assemblies\GraphiteClient\SKBKontur.Graphite.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EntryPoint.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\CassandraClusterSettings.cs" />
+    <None Include="Settings\expirationServiceSettings">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExpirationServiceCore\ExpirationServiceCore.csproj">
+      <Project>{8cae0561-3e1f-4fda-94f7-9cedd80eb8ba}</Project>
+      <Name>ExpirationServiceCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Storages\Storages.csproj">
+      <Project>{706372E4-1E69-42A1-B5E5-5BA2A7EBFCCA}</Project>
+      <Name>Storages</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

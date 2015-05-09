@@ -35,7 +35,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ne
             var lockCreator = container.Get<NewRemoteLockCreator>();
             var lockId = Guid.NewGuid().ToString();
             lockCreator.Lock(lockId);
-            Thread.Sleep(10000);
+            Thread.Sleep(30000);
             IRemoteLock lock2;
             Assert.That(lockCreator.TryGetLock(lockId, out lock2), Is.True);
             lock2.Dispose();

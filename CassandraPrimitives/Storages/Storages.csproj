@@ -47,6 +47,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\ObjectNotFoundException.cs" />
+    <Compile Include="ExpirationMonitoringStorage\ExpirationMonitoringStorageFactory.cs" />
+    <Compile Include="ExpirationMonitoringStorage\ExpiringObjectMeta.cs" />
+    <Compile Include="ExpirationMonitoringStorage\ExpirationMonitoringStorage.cs" />
+    <Compile Include="ExpirationMonitoringStorage\IExpirationMonitoringStorage.cs" />
+    <Compile Include="ExpirationMonitoringStorage\IExpirationMonitoringStorageFactory.cs" />
     <Compile Include="GlobalTicksHolder\GlobalTime.cs" />
     <Compile Include="GlobalTicksHolder\IGlobalTime.cs" />
     <Compile Include="GlobalTicksHolder\ITicksHolder.cs" />

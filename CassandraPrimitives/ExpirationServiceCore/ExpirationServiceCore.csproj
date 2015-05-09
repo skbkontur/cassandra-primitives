@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8CAE0561-3E1F-4FDA-94F7-9CEDD80EB8BA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.ExpirationServiceCore</RootNamespace>
+    <AssemblyName>Catalogue.CassandraPrimitives.ExpirationServiceCore</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Cassandra.CassandraClient, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.Core.Configuration.Settings">
+      <HintPath>..\..\Assemblies\Catalogue.ServiceLib\Catalogue.Core.Configuration.Settings.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.ServiceLib">
+      <HintPath>..\..\Assemblies\Catalogue.ServiceLib\Catalogue.ServiceLib.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\Assemblies\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="MoreLinq, Version=1.0.11522.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\MoreLinq\MoreLinq.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Implementation\ExpirationJudge\ExpirationJudge.cs" />
+    <Compile Include="Implementation\ExpirationJudge\ExpirationJudgeVerdict.cs" />
+    <Compile Include="Implementation\ExpirationJudge\ExpirationObjectStateUpdater.cs" />
+    <Compile Include="Implementation\ExpirationJudge\ExpiringObjectState.cs" />
+    <Compile Include="Implementation\ExpirationJudge\IExpirationJudge.cs" />
+    <Compile Include="Implementation\ExpirationJudge\IExpirationObjectStateUpdater.cs" />
+    <Compile Include="Implementation\ExpiryChecker\ExpiryChecker.cs" />
+    <Compile Include="Implementation\ExpiryChecker\IExpiryChecker.cs" />
+    <Compile Include="Implementation\LogReader\ExpiringObjectLogReader.cs" />
+    <Compile Include="Implementation\LogReader\IExpiringObjectLogReader.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scheduler\IExpiryCheckerTask.cs" />
+    <Compile Include="Scheduler\IExpiryLogReaderTask.cs" />
+    <Compile Include="Scheduler\IExpirationServiceSchedulableRunner.cs" />
+    <Compile Include="Scheduler\ExpiryCheckerTask.cs" />
+    <Compile Include="Scheduler\ExpiryLogReaderTask.cs" />
+    <Compile Include="Scheduler\ExpirationServiceSchedulableRunner.cs" />
+    <Compile Include="Settings\IExpirationServiceSettings.cs" />
+    <Compile Include="Settings\ExpirationServiceSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Storages\Storages.csproj">
+      <Project>{706372E4-1E69-42A1-B5E5-5BA2A7EBFCCA}</Project>
+      <Name>Storages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TimeServiceClient\TimeServiceClient.csproj">
+      <Project>{b26ecead-f481-4ac2-9e37-125f5d17619d}</Project>
+      <Name>TimeServiceClient</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)*.dll $(ProjectDir)..\..\Assemblies\Temp\
+copy $(TargetDir)*.pdb $(ProjectDir)..\..\Assemblies\Temp\</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

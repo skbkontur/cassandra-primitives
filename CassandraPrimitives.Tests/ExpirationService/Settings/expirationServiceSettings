@@ -1,0 +1,17 @@
+﻿LogDirectory = Logs
+
+ClusterName = test_cluster
+KeyspaceName = CassandraPrimitives
+ConnectionIdleTimeout = 00:10:00
+Endpoints = 127.0.0.1:9360
+EndpointForFierceCommands = 127.0.0.1:9360
+ReadConsistencyLevel = QUORUM
+WriteConsistencyLevel = QUORUM
+Timeout = 6000
+FierceTimeout = 6000
+Attempts = 20
+
+Keyspace = CassandraPrimitives
+ColumnFamily = ExpirationMonitoring
+ReadPeriod = 00:00:05
+ExpiryPeriod = 00:00:10

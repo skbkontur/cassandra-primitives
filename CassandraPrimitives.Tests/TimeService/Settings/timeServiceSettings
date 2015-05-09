@@ -1,0 +1,19 @@
+﻿ListeningPort = 7701
+
+LogDirectory = logs
+
+
+ClusterName = test_cluster
+KeyspaceName = CassandraPrimitives
+ConnectionIdleTimeout = 00:10:00
+Endpoints = 127.0.0.1:9360
+EndpointForFierceCommands = 127.0.0.1:9360
+ReadConsistencyLevel = QUORUM
+WriteConsistencyLevel = QUORUM
+Timeout = 6000
+FierceTimeout = 6000
+Attempts = 20
+
+ActualizeInterval = 00:00:00.500
+Keyspace = CassandraPrimitives
+ColumnFamily = TimeService

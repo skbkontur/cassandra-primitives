@@ -53,6 +53,12 @@
     <Reference Include="Catalogue.CassandraPrimitives.Storages">
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.Storages.dll</HintPath>
     </Reference>
+    <Reference Include="Catalogue.CassandraPrimitives.TimeServiceClient">
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.TimeServiceClient.dll</HintPath>
+    </Reference>
+    <Reference Include="GroboContainer">
+      <HintPath>..\..\Assemblies\GroboContainer.dll</HintPath>
+    </Reference>
     <Reference Include="GroBuf">
       <HintPath>..\..\Assemblies\Temp\GroBuf.dll</HintPath>
     </Reference>
@@ -76,6 +82,10 @@
     <ProjectReference Include="..\BenchmarkCassandraHelpers\BenchmarkCassandraHelpers.csproj">
       <Project>{F5C77077-E669-4902-B31A-DA3843F62C27}</Project>
       <Name>BenchmarkCassandraHelpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FunctionalTests\FunctionalTests.csproj">
+      <Project>{141AC881-3536-4978-AD10-9D29B88A2988}</Project>
+      <Name>FunctionalTests</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
