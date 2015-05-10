@@ -13,6 +13,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithExpirationServic
 using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithExpirationService.RentExtender;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.ExpirationMonitoringStorage;
+using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.TimeServiceClient;
@@ -21,19 +22,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.LocksFactory
 {
     public static class LocksCreatorFactory
     {
-        public static IRemoteLockCreator CreateOldLock(ICassandraCluster cassandraCluster)
+        public static IRemoteLockCreator CreateOldLock(ICassandraCluster cassandraCluster, ColumnFamilyFullName columnFamilyFullName)
         {
             var serializer = new Serializer(new AllPropertiesExtractor());
-            var remoteLockImplementation = new CassandraRemoteLockImplementation(cassandraCluster, serializer, ColumnFamilies.remoteLock);
+            var remoteLockImplementation = new CassandraRemoteLockImplementation(cassandraCluster, serializer, columnFamilyFullName);
             return new RemoteLockCreator(remoteLockImplementation);
         }
 
-        public static IRemoteLockCreator CreateNewLockWithExpirationService(ICassandraCluster cassandraCluster)
+        public static IRemoteLockCreator CreateNewLockWithExpirationService(ICassandraCluster cassandraCluster, ColumnFamilyFullName columnFamilyFullName)
         {
             var container = new Container(new ContainerConfiguration(AssembliesLoader.Load()));
             var serializer = new Serializer(new AllPropertiesExtractor());
             container.Configurator.ForAbstraction<ISerializer>().UseInstances(serializer);
-            var columnFamilyFullName = ColumnFamilies.newRemoteLock;
             var timeServiceClient = container.Get<ITimeServiceClient>();
             var expirationMonitoringService = new ExpirationMonitoringStorage(cassandraCluster, serializer, ColumnFamilies.expirationMonitoring);
             var remoteLockSettings = new RemoteLockSettings(columnFamilyFullName.KeyspaceName, columnFamilyFullName.ColumnFamilyName);
@@ -44,10 +44,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.LocksFactory
             return new NewRemoteLockCreator(new LockCreatorStorage(lockStorage, queueStorage, rentExtender), expirationMonitoringService, timeServiceClient, remoteLockSettings);
         }
 
-        public static IRemoteLockCreator CreateNewLockWithCassandraTTL(ICassandraCluster cassandraCluster)
+        public static IRemoteLockCreator CreateNewLockWithCassandraTTL(ICassandraCluster cassandraCluster, ColumnFamilyFullName columnFamilyFullName)
         {
             var serializer = new Serializer(new AllPropertiesExtractor());
-            var columnFamilyFullName = ColumnFamilies.newRemoteLock;
             var remoteLockSettings = new NewRemoteLock.WithCassanrdaTTL.RemoteLockSettings(columnFamilyFullName.KeyspaceName, columnFamilyFullName.ColumnFamilyName);
             var metaStorage = new NewRemoteLock.WithCassanrdaTTL.MetaStorage.MetaStorage(cassandraCluster, serializer, remoteLockSettings);
             var queueStorage = new NewRemoteLock.WithCassanrdaTTL.QueueStorage.QueueStorage(metaStorage, cassandraCluster, serializer, remoteLockSettings);

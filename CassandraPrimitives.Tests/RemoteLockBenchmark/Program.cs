@@ -49,9 +49,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.ThreadsBasedRemoteLockBe
                 cassandraSchemeActualizer.AddNewColumnFamilies();
                 Log4NetConfiguration.InitializeOnce();
                 var cassandraCluster = new CassandraCluster(cassandraClusterSettings);
-                var oldRemoteLock = LocksCreatorFactory.CreateOldLock(cassandraCluster);
-                var newRemoteLockWithCassandraTTL = LocksCreatorFactory.CreateNewLockWithCassandraTTL(cassandraCluster);
-                var newRemoteLockWithExpirationService = LocksCreatorFactory.CreateNewLockWithExpirationService(cassandraCluster);
+                var oldRemoteLock = LocksCreatorFactory.CreateOldLock(cassandraCluster, ColumnFamilies.newRemoteLock);
+                var newRemoteLockWithCassandraTTL = LocksCreatorFactory.CreateNewLockWithCassandraTTL(cassandraCluster, ColumnFamilies.newRemoteLock);
+                var newRemoteLockWithExpirationService = LocksCreatorFactory.CreateNewLockWithExpirationService(cassandraCluster, ColumnFamilies.newRemoteLock);
                 RunBenchmark(oldRemoteLock, "Old");
                 RunBenchmark(newRemoteLockWithCassandraTTL, "NewCassandraTTL");
                 RunBenchmark(newRemoteLockWithExpirationService, "NewExpirationService");

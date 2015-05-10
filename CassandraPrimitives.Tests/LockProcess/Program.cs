@@ -9,6 +9,7 @@ using GroBuf;
 using GroBuf.DataMembersExtracters;
 
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.LocksFactory;
 
 namespace LockProcess
@@ -48,14 +49,15 @@ namespace LockProcess
         private IRemoteLockCreator GetLockCreator(IProcessesCommunicator communicator, ProcessParameters processParameters)
         {
             var cassandraCluster = communicator.GetCassandraCluster();
+            var columnFamilyFullName = new ColumnFamilyFullName(processParameters.Keyspace, processParameters.ColumnFamily);
             switch(processParameters.LockType)
             {
             case LockType.OldLock:
-                return LocksCreatorFactory.CreateOldLock(cassandraCluster);
+                return LocksCreatorFactory.CreateOldLock(cassandraCluster, columnFamilyFullName);
             case LockType.NewLockCassandraTTL:
-                return LocksCreatorFactory.CreateNewLockWithCassandraTTL(cassandraCluster);
+                return LocksCreatorFactory.CreateNewLockWithCassandraTTL(cassandraCluster, columnFamilyFullName);
             case LockType.NewLockExpirationService:
-                return LocksCreatorFactory.CreateNewLockWithExpirationService(cassandraCluster);
+                return LocksCreatorFactory.CreateNewLockWithExpirationService(cassandraCluster, columnFamilyFullName);
             default:
                 throw new Exception(string.Format("Unknown lock type {0}", processParameters.LockType));
             }

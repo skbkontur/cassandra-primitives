@@ -116,13 +116,26 @@ namespace BenchmarkCassandraHelpers
                 RpcPort = 9360,
                 CqlPort = 9343,
                 DataBaseDirectory = @"../data/",
-                DeployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\Cassandra1.2"),
+                DeployDirectory = Path.Combine(FindSolutionRootDirectory(), @"Cassandra1.2"),
                 ListenAddress = "127.0.0.1",
                 RpsAddress = "0.0.0.0",
                 SeedAddresses = new[] {"127.0.0.1"},
                 InitialToken = "",
                 ClusterName = "test_cluster"
             };
+        }
+
+        private static string FindSolutionRootDirectory()
+        {
+            var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            while (!File.Exists(Path.Combine(currentDirectory, "Common.DotSettings")))
+            {
+                if (Directory.GetParent(currentDirectory) == null)
+                    throw new Exception(string.Format("Cannot find project root directory. Trying to find from: '{0}'", AppDomain.CurrentDomain.BaseDirectory));
+                currentDirectory = Directory.GetParent(currentDirectory).FullName;
+            }
+
+            return currentDirectory;
         }
 
         private void MakeInConnection(string keyspace, string columnFamily, Action<IColumnFamilyConnection> action)
