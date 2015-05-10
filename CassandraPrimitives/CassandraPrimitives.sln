@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRemoteLock.WithExpiratio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRemoteLock.WithCassandraTTL", "NewRemoteLock.WithCassanrdaTTL\NewRemoteLock.WithCassandraTTL.csproj", "{A2BFA9C5-5A5C-4ACC-8FEF-F2154A16F5AB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewRemoteLock", "NewRemoteLock", "{5184751D-42B8-4CFB-8D03-918A876CD935}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRemoteLock.Core", "NewRemoteLock.Core\NewRemoteLock.Core.csproj", "{F641FAC5-DC29-4CDB-8DAF-9322F31065F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,8 +73,17 @@ Global
 		{A2BFA9C5-5A5C-4ACC-8FEF-F2154A16F5AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2BFA9C5-5A5C-4ACC-8FEF-F2154A16F5AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2BFA9C5-5A5C-4ACC-8FEF-F2154A16F5AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F641FAC5-DC29-4CDB-8DAF-9322F31065F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F641FAC5-DC29-4CDB-8DAF-9322F31065F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F641FAC5-DC29-4CDB-8DAF-9322F31065F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F641FAC5-DC29-4CDB-8DAF-9322F31065F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{991CF57F-3378-4601-8ED0-5B34B3011C86} = {5184751D-42B8-4CFB-8D03-918A876CD935}
+		{A2BFA9C5-5A5C-4ACC-8FEF-F2154A16F5AB} = {5184751D-42B8-4CFB-8D03-918A876CD935}
+		{F641FAC5-DC29-4CDB-8DAF-9322F31065F5} = {5184751D-42B8-4CFB-8D03-918A876CD935}
 	EndGlobalSection
 EndGlobal

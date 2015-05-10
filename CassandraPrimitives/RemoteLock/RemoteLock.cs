@@ -3,6 +3,8 @@ using System.Threading;
 
 using log4net;
 
+using SKBKontur.Catalogue.CassandraPrimitives.RemoteLockBase;
+
 namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
 {
     public class RemoteLock : IRemoteLock

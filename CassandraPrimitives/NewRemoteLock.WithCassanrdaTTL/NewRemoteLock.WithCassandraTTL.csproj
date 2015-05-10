@@ -52,25 +52,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LockCreatorStorage\LockCreatorStorage.cs" />
-    <Compile Include="LockCreatorStorage\ILockCreatorStorage.cs" />
-    <Compile Include="LockStorage\ILockStorage.cs" />
-    <Compile Include="LockStorage\LockStorage.cs" />
-    <Compile Include="MetaStorage\IMetaStorage.cs" />
-    <Compile Include="MetaStorage\MetaStorage.cs" />
-    <Compile Include="MetaStorage\LockMeta.cs" />
-    <Compile Include="NewRemoteLockCreator.cs" />
+    <Compile Include="NewRemoteLockCreatorWithCassandraTTL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteLock.cs" />
-    <Compile Include="QueueStorage\IQueueStorage.cs" />
-    <Compile Include="QueueStorage\QueueStorage.cs" />
     <Compile Include="RemoteLockBase.cs" />
-    <Compile Include="RemoteLockSettings.cs" />
-    <Compile Include="RentExtender\IRentExtender.cs" />
-    <Compile Include="RentExtender\RentExtender.cs" />
+    <Compile Include="TimeGetter.cs" />
     <Compile Include="WeakRemoteLock.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NewRemoteLock.Core\NewRemoteLock.Core.csproj">
+      <Project>{F641FAC5-DC29-4CDB-8DAF-9322F31065F5}</Project>
+      <Name>NewRemoteLock.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RemoteLockBase\RemoteLockBase.csproj">
       <Project>{5c3c35e0-5067-4bd9-98b6-d7ad13899737}</Project>
       <Name>RemoteLockBase</Name>

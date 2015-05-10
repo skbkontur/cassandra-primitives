@@ -1,4 +1,5 @@
-﻿using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL.LockCreatorStorage;
+﻿using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.LockCreatorStorage;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.Settings;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL
 {

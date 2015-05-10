@@ -2,23 +2,24 @@
 using System.Collections.Concurrent;
 using System.Threading;
 
-using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithExpirationService.LockCreatorStorage;
-using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.LockCreatorStorage;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.Settings;
+using SKBKontur.Catalogue.CassandraPrimitives.RemoteLockBase;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.ExpirationMonitoringStorage;
-using SKBKontur.Catalogue.CassandraPrimitives.TimeServiceClient;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithExpirationService
 {
     public abstract class RemoteLockBase : IRemoteLock
     {
-        protected RemoteLockBase(string lockId, ILockCreatorStorage lockCreatorStorage, IExpirationMonitoringStorage expirationMonitoringStorage, ITimeServiceClient timeServiceClient, RemoteLockSettings remoteLockSettings)
+        protected RemoteLockBase(string lockId, ILockCreatorStorage lockCreatorStorage, IExpirationMonitoringStorage expirationMonitoringStorage, ITimeGetter timeGetter, RemoteLockSettings remoteLockSettings)
         {
             this.lockCreatorStorage = lockCreatorStorage;
             this.expirationMonitoringStorage = expirationMonitoringStorage;
             this.remoteLockSettings = remoteLockSettings;
             LockId = lockId;
             ThreadId = Guid.NewGuid().ToString();
-            Timestamp = timeServiceClient.GetNowTicks();
+            Timestamp = timeGetter.GetNowTicks();
         }
 
         public void Dispose()

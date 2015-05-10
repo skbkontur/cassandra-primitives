@@ -1,17 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{991CF57F-3378-4601-8ED0-5B34B3011C86}</ProjectGuid>
+    <ProjectGuid>{F641FAC5-DC29-4CDB-8DAF-9322F31065F5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithExpirationService</RootNamespace>
-    <AssemblyName>Catalogue.CassandraPrimitives.NewRemoteLock.WithExpirationService</AssemblyName>
+    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core</RootNamespace>
+    <AssemblyName>Catalogue.CassandraPrimitives.NewRemoteLock.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +20,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,18 +28,13 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cassandra.CassandraClient">
-      <HintPath>..\EventLog\bin\Debug\Cassandra.CassandraClient.dll</HintPath>
+      <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
     <Reference Include="GroBuf">
-      <HintPath>..\EventLog\bin\Debug\GroBuf.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\log4net.dll</HintPath>
+      <HintPath>..\..\Assemblies\GroBuf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,32 +45,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NewRemoteLockCreatorWithExpirationService.cs" />
+    <Compile Include="LockCreatorStorage\ILockCreatorStorage.cs" />
+    <Compile Include="LockStorage\ILockStorage.cs" />
+    <Compile Include="LockStorage\LockStorage.cs" />
+    <Compile Include="MetaStorage\IMetaStorage.cs" />
+    <Compile Include="QueueStorage\IQueueStorage.cs" />
+    <Compile Include="QueueStorage\QueueStorage.cs" />
+    <Compile Include="RentExtender\IRentExtender.cs" />
+    <Compile Include="ITimeGetter.cs" />
+    <Compile Include="LockCreatorStorage\LockCreatorStorage.cs" />
+    <Compile Include="MetaStorage\LockMeta.cs" />
+    <Compile Include="MetaStorage\MetaStorage.cs" />
+    <Compile Include="NamesProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RemoteLock.cs" />
-    <Compile Include="RemoteLockBase.cs" />
-    <Compile Include="TimeGetter.cs" />
-    <Compile Include="WeakRemoteLock.cs" />
+    <Compile Include="RentExtender\RentExtender.cs" />
+    <Compile Include="Settings\RemoteLockSettings.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NewRemoteLock.Core\NewRemoteLock.Core.csproj">
-      <Project>{F641FAC5-DC29-4CDB-8DAF-9322F31065F5}</Project>
-      <Name>NewRemoteLock.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RemoteLockBase\RemoteLockBase.csproj">
-      <Project>{5c3c35e0-5067-4bd9-98b6-d7ad13899737}</Project>
-      <Name>RemoteLockBase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Storages\Storages.csproj">
-      <Project>{706372E4-1E69-42A1-B5E5-5BA2A7EBFCCA}</Project>
-      <Name>Storages</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TimeServiceClient\TimeServiceClient.csproj">
-      <Project>{B26ECEAD-F481-4AC2-9E37-125F5D17619D}</Project>
-      <Name>TimeServiceClient</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetDir)*.dll $(ProjectDir)..\..\Assemblies\Temp\

@@ -1,4 +1,6 @@
-﻿namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
+﻿using SKBKontur.Catalogue.CassandraPrimitives.RemoteLockBase;
+
+namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
 {
     public class RemoteLockCreator : IRemoteLockCreator
     {

@@ -2,8 +2,9 @@
 using System.Collections.Concurrent;
 using System.Threading;
 
-using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL.LockCreatorStorage;
-using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.LockCreatorStorage;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.Settings;
+using SKBKontur.Catalogue.CassandraPrimitives.RemoteLockBase;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL
 {
@@ -22,7 +23,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL
         {
             RemoveThreadFromLock();
             RemoveThreadFromQueue();
-            if (remoteLockSettings.UseLocalOptimization)
+            if(remoteLockSettings.UseLocalOptimization)
                 RemoveFromLocal();
         }
 
@@ -93,10 +94,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL
             }
         }
 
-        private string RowName { get; set; }
-        private long Timestamp { get; set; }
-        private static readonly ConcurrentDictionary<string, string> localLocks = new ConcurrentDictionary<string, string>();
-
         private void UpdateQueueRent()
         {
             while(true)
@@ -116,6 +113,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL
                 lockCreatorStorage.ExtendLockRent(LockId, RowName, ThreadId);
             }
         }
+
+        private string RowName { get; set; }
+        private long Timestamp { get; set; }
+        private static readonly ConcurrentDictionary<string, string> localLocks = new ConcurrentDictionary<string, string>();
 
         private readonly RemoteLockSettings remoteLockSettings;
         private readonly ILockCreatorStorage lockCreatorStorage;

@@ -1,14 +1,15 @@
-﻿using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithExpirationService.LockCreatorStorage;
+﻿using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.LockCreatorStorage;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.ExpirationMonitoringStorage;
-using SKBKontur.Catalogue.CassandraPrimitives.TimeServiceClient;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithExpirationService
 {
     public class WeakRemoteLock : RemoteLockBase
     {
-        public WeakRemoteLock(string lockId, ILockCreatorStorage lockCreatorStorage, IExpirationMonitoringStorage expirationMonitoringStorage, ITimeServiceClient timeServiceClient, RemoteLockSettings settings, out bool success)
+        public WeakRemoteLock(string lockId, ILockCreatorStorage lockCreatorStorage, IExpirationMonitoringStorage expirationMonitoringStorage, ITimeGetter timeGetter, RemoteLockSettings settings, out bool success)
             :
-                base(lockId, lockCreatorStorage, expirationMonitoringStorage, timeServiceClient, settings)
+                base(lockId, lockCreatorStorage, expirationMonitoringStorage, timeGetter, settings)
         {
             if(!IsLockFree())
             {

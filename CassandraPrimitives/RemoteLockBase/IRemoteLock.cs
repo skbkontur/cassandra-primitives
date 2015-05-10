@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
+namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLockBase
 {
     public interface IRemoteLock : IDisposable
     {
