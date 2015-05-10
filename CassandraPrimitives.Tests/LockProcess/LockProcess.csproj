@@ -53,11 +53,27 @@
     <Reference Include="Catalogue.CassandraPrimitives.TimeServiceClient">
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.TimeServiceClient.dll</HintPath>
     </Reference>
+    <Reference Include="Catalogue.Core.Graphite.Client">
+      <HintPath>..\..\Assemblies\GraphiteClient\Catalogue.Core.Graphite.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.Core.Http">
+      <HintPath>..\..\Assemblies\Catalogue.Core.Http.dll</HintPath>
+    </Reference>
     <Reference Include="GroboContainer">
       <HintPath>..\..\Assemblies\GroboContainer.dll</HintPath>
     </Reference>
     <Reference Include="GroBuf">
       <HintPath>..\..\Assemblies\Temp\GroBuf.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations">
+      <HintPath>..\..\Assemblies\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\json.net\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SKBKontur.Graphite.Client">
+      <HintPath>..\..\Assemblies\GraphiteClient\SKBKontur.Graphite.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
