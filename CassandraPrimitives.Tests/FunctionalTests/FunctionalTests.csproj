@@ -46,6 +46,9 @@
     <Reference Include="Catalogue.CassandraPrimitives.NewRemoteLock.WithCassandraTTL">
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.NewRemoteLock.WithCassandraTTL.dll</HintPath>
     </Reference>
+    <Reference Include="Catalogue.CassandraPrimitives.NewRemoteLock.WithExpirationService">
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.NewRemoteLock.WithExpirationService.dll</HintPath>
+    </Reference>
     <Reference Include="Catalogue.CassandraPrimitives.RemoteLock, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.RemoteLock.dll</HintPath>
@@ -94,6 +97,7 @@
     <Compile Include="Tests\NewRemoteLockTests\LockRentTests.cs" />
     <Compile Include="Tests\NewRemoteLockTests\LocksQueueTests.cs" />
     <Compile Include="Tests\NewRemoteLockTests\LockTests.cs" />
+    <Compile Include="Tests\NewRemoteLockTests\LockType.cs" />
     <Compile Include="Tests\NewRemoteLockTests\NewLockTestsBase.cs" />
     <Compile Include="Tests\StartSingleCassandraSetUp.cs" />
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositoryConsistencyTest.cs" />

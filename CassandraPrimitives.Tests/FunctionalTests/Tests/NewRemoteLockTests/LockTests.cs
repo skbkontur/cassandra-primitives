@@ -2,21 +2,23 @@
 
 using NUnit.Framework;
 
-using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock;
-using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.NewRemoteLockTests
 {
     [TestFixture]
     public class LockTests : NewLockTestsBase
     {
+        public LockTests(LockType lockType)
+            : base(lockType)
+        {
+        }
+
         [Test]
         public void TestTryLock()
         {
-            ConfigureContainer(new RemoteLockSettings(ColumnFamilies.newRemoteLock.KeyspaceName, ColumnFamilies.newRemoteLock.ColumnFamilyName));
-            remoteLockCreator = container.Get<NewRemoteLockCreator>();
+            ConfigureContainer();
+            remoteLockCreator = container.Get<IRemoteLockCreator>();
             var lockId = Guid.NewGuid().ToString();
             IRemoteLock lock1, lock2;
             Assert.That(remoteLockCreator.TryGetLock(lockId, out lock1), Is.True);
@@ -32,8 +34,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ne
         [Test]
         public void TestLock()
         {
-            ConfigureContainer(new RemoteLockSettings(ColumnFamilies.newRemoteLock.KeyspaceName, ColumnFamilies.newRemoteLock.ColumnFamilyName));
-            remoteLockCreator = container.Get<NewRemoteLockCreator>();
+            ConfigureContainer();
+            remoteLockCreator = container.Get<IRemoteLockCreator>();
             var lockId = Guid.NewGuid().ToString();
             IRemoteLock lock1, lock2;
             lock1 = remoteLockCreator.Lock(lockId);
@@ -46,8 +48,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ne
         [Test]
         public void TestDifferentLockIds()
         {
-            ConfigureContainer(new RemoteLockSettings(ColumnFamilies.newRemoteLock.KeyspaceName, ColumnFamilies.newRemoteLock.ColumnFamilyName));
-            remoteLockCreator = container.Get<NewRemoteLockCreator>();
+            ConfigureContainer();
+            remoteLockCreator = container.Get<IRemoteLockCreator>();
             var lockId1 = Guid.NewGuid().ToString();
             var lockId2 = Guid.NewGuid().ToString();
             var lockId3 = Guid.NewGuid().ToString();
