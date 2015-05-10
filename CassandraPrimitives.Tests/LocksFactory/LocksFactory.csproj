@@ -33,6 +33,9 @@
     <Reference Include="Cassandra.CassandraClient">
       <HintPath>..\..\Assemblies\Temp\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
+    <Reference Include="Catalogue.CassandraPrimitives.NewRemoteLock.Core">
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.NewRemoteLock.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Catalogue.CassandraPrimitives.NewRemoteLock.WithCassandraTTL">
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.NewRemoteLock.WithCassandraTTL.dll</HintPath>
     </Reference>

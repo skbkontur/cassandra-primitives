@@ -10,6 +10,8 @@ using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 
 using log4net;
 
+using SKBKontur.Catalogue.CassandraPrimitives.RemoteLockBase;
+
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.RemoteLockTests
 {
     public class RemoteLockWithFailedCassandraTest : RemoteLockAndWeakLockTestBase

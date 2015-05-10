@@ -13,8 +13,12 @@ using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.ClusterDeployment;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithExpirationService;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.RemoteLockBase;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.ExpirationMonitoringStorage;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
@@ -64,9 +68,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ne
             container = new Container(new ContainerConfiguration(assemblies));
             container.Configurator.ForAbstraction<ISerializer>().UseInstances(new Serializer(new AllPropertiesExtractor(), null, GroBufOptions.MergeOnRead));
             container.Configurator.ForAbstraction<ICassandraClusterSettings>().UseInstances(cassandraClusterSettings);
+            container.Configurator.ForAbstraction<ITimeGetter>().UseType<NewRemoteLock.WithCassanrdaTTL.TimeGetter>();
             var settings = new RemoteLockSettings(ColumnFamilies.newRemoteLock.KeyspaceName, ColumnFamilies.newRemoteLock.ColumnFamilyName, maxRowLength, extendRentPeriod : extendRentPeriod, useLocalOptimization : extendRentPeriod == 5000);
             container.Configurator.ForAbstraction<RemoteLockSettings>().UseInstances(settings);
-            container.Configurator.ForAbstraction<IRemoteLockCreator>().UseType<NewRemoteLockCreator>();
+            container.Configurator.ForAbstraction<IRemoteLockCreator>().UseType<NewRemoteLockCreatorWithCassandraTTL>();
         }
 
         private void ConfigureForExpirationService(int maxRowLength, int extendRentPeriod)
@@ -75,11 +80,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ne
             container = new Container(new ContainerConfiguration(assemblies));
             container.Configurator.ForAbstraction<ISerializer>().UseInstances(new Serializer(new AllPropertiesExtractor(), null, GroBufOptions.MergeOnRead));
             container.Configurator.ForAbstraction<ICassandraClusterSettings>().UseInstances(cassandraClusterSettings);
+            container.Configurator.ForAbstraction<ITimeGetter>().UseType<NewRemoteLock.WithExpirationService.TimeGetter>();
             var storageFactory = container.Get<IExpirationMonitoringStorageFactory>();
             container.Configurator.ForAbstraction<IExpirationMonitoringStorage>().UseInstances(storageFactory.CreateStorage(ColumnFamilies.expirationMonitoring));
-            var settings = new NewRemoteLock.WithExpirationService.RemoteLockSettings(ColumnFamilies.newRemoteLock.KeyspaceName, ColumnFamilies.newRemoteLock.ColumnFamilyName, maxRowLength, extendRentPeriod : extendRentPeriod, useLocalOptimization : extendRentPeriod == 5000);
-            container.Configurator.ForAbstraction<NewRemoteLock.WithExpirationService.RemoteLockSettings>().UseInstances(settings);
-            container.Configurator.ForAbstraction<IRemoteLockCreator>().UseType<NewRemoteLock.WithExpirationService.NewRemoteLockCreator>();
+            var settings = new RemoteLockSettings(ColumnFamilies.newRemoteLock.KeyspaceName, ColumnFamilies.newRemoteLock.ColumnFamilyName, maxRowLength, extendRentPeriod : extendRentPeriod, useLocalOptimization : extendRentPeriod == 5000);
+            container.Configurator.ForAbstraction<RemoteLockSettings>().UseInstances(settings);
+            container.Configurator.ForAbstraction<IRemoteLockCreator>().UseType<NewRemoteLockCreatorWithExpirationService>();
         }
 
         private void StartServices()

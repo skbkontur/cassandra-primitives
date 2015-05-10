@@ -8,7 +8,7 @@ using BenchmarkCassandraHelpers;
 using GroBuf;
 using GroBuf.DataMembersExtracters;
 
-using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.RemoteLockBase;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.LocksFactory;
 
