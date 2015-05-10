@@ -41,9 +41,6 @@
     <Reference Include="Cassandra.ClusterDeployment">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.ClusterDeployment.dll</HintPath>
     </Reference>
-    <Reference Include="Catalogue.CassandraPrimitives.NewRemoteLock">
-      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.NewRemoteLock.dll</HintPath>
-    </Reference>
     <Reference Include="Catalogue.CassandraPrimitives.RemoteLock">
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.RemoteLock.dll</HintPath>
     </Reference>
@@ -86,6 +83,10 @@
     <ProjectReference Include="..\FunctionalTests\FunctionalTests.csproj">
       <Project>{141AC881-3536-4978-AD10-9D29B88A2988}</Project>
       <Name>FunctionalTests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LocksFactory\LocksFactory.csproj">
+      <Project>{EE2709F1-0CA4-4827-9A21-37609FDB5D07}</Project>
+      <Name>LocksFactory</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

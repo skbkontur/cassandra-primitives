@@ -3,6 +3,7 @@
     public enum LockType
     {
         OldLock,
-        NewLock,
+        NewLockCassandraTTL,
+        NewLockExpirationService,
     }
 }

@@ -4,27 +4,13 @@ using System.IO;
 using System.Net;
 using System.Threading;
 
-using GroboContainer.Core;
-using GroboContainer.Impl;
-
-using GroBuf;
-using GroBuf.DataMembersExtracters;
-
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.ClusterDeployment;
-using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock;
-using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.LockCreatorStorage;
-using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.LockStorage;
-using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.MetaStorage;
-using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.QueueStorage;
-using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.RentExtender;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.ExpirationMonitoringStorage;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.LocksFactory;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
-using SKBKontur.Catalogue.CassandraPrimitives.TimeServiceClient;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.ThreadsBasedRemoteLockBenchmark
 {
@@ -39,6 +25,22 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.ThreadsBasedRemoteLockBe
         {
             var node = CreateCassandraNode();
             node.Restart();
+            var timeServiceProcess = Process.Start(new ProcessStartInfo
+            {
+                FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\TimeService\bin\Debug\Catalogue.CassandraPrimitives.Tests.TimeService.exe"),
+                RedirectStandardOutput = false,
+                UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Normal,
+                CreateNoWindow = false,
+            });
+            var expirationServiceProcess = Process.Start(new ProcessStartInfo
+            {
+                FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\ExpirationService\bin\Debug\Catalogue.CassandraPrimitives.Tests.ExpirationService.exe"),
+                RedirectStandardOutput = false,
+                UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Normal,
+                CreateNoWindow = false,
+            });
             try
             {
                 cassandraClusterSettings = node.CreateSettings(IPAddress.Loopback);
@@ -46,47 +48,25 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.ThreadsBasedRemoteLockBe
                 var cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings), new CassandraMetaProvider(), initializerSettings);
                 cassandraSchemeActualizer.AddNewColumnFamilies();
                 Log4NetConfiguration.InitializeOnce();
-                var oldRemoteLock = CreateOldRemoteLock();
-                var newRemoteLockCassandra = CreateNewRemoteLockCassandra();
+                var cassandraCluster = new CassandraCluster(cassandraClusterSettings);
+                var oldRemoteLock = LocksCreatorFactory.CreateOldLock(cassandraCluster);
+                var newRemoteLockWithCassandraTTL = LocksCreatorFactory.CreateNewLockWithCassandraTTL(cassandraCluster);
+                var newRemoteLockWithExpirationService = LocksCreatorFactory.CreateNewLockWithExpirationService(cassandraCluster);
                 RunBenchmark(oldRemoteLock, "Old");
-                RunBenchmark(newRemoteLockCassandra, "New cassandra");
+                RunBenchmark(newRemoteLockWithCassandraTTL, "NewCassandraTTL");
+                RunBenchmark(newRemoteLockWithExpirationService, "NewExpirationService");
             }
             finally
             {
+                if(timeServiceProcess != null) timeServiceProcess.Kill();
+                if(expirationServiceProcess != null) expirationServiceProcess.Kill();
                 node.Stop();
             }
         }
 
-        private NewRemoteLockCreator CreateNewRemoteLockCassandra()
-        {
-            var container = new Container(new ContainerConfiguration(AssembliesLoader.Load()));
-            var cassandraCluster = new CassandraCluster(cassandraClusterSettings);
-            var serializer = new Serializer(new AllPropertiesExtractor());
-            var columnFamilyFullName = ColumnFamilies.newRemoteLock;
-            var timeServiceClient = container.Get<ITimeServiceClient>();
-            var expirationMonitoringService = new ExpirationMonitoringStorage(cassandraCluster, serializer, ColumnFamilies.expirationMonitoring);
-            var remoteLockSettings = new RemoteLockSettings(columnFamilyFullName.KeyspaceName, columnFamilyFullName.ColumnFamilyName);
-            var metaStorage = new MetaStorage(cassandraCluster, serializer, remoteLockSettings);
-            var lockStorage = new LockStorage(timeServiceClient, metaStorage, cassandraCluster, remoteLockSettings);
-            var queueStorage = new QueueStorage(timeServiceClient, metaStorage, cassandraCluster, serializer, remoteLockSettings);
-            var rentExtender = new RentExtender(queueStorage, lockStorage);
-            return new NewRemoteLockCreator(new LockCreatorStorage(lockStorage, queueStorage, rentExtender), expirationMonitoringService, timeServiceClient, remoteLockSettings);
-        }
-
-        private RemoteLockCreator CreateOldRemoteLock()
-        {
-            var cassandraCluster = new CassandraCluster(cassandraClusterSettings);
-            var serializer = new Serializer(new AllPropertiesExtractor());
-            var columnFamilyFullName = ColumnFamilies.remoteLock;
-            var remoteLockImplementation = new CassandraRemoteLockImplementation(cassandraCluster, serializer, columnFamilyFullName);
-            return new RemoteLockCreator(remoteLockImplementation);
-        }
-
         private void RunBenchmark(IRemoteLockCreator remoteLockCreator, string lockName)
         {
-            //RunBenchmark(remoteLockCreator, lockName, 1, 10000);
-            //RunBenchmark(remoteLockCreator, lockName, 2, 5000);
-            RunBenchmark(remoteLockCreator, lockName, 60, 20);
+            RunBenchmark(remoteLockCreator, lockName, 10, 20);
         }
 
         private void RunBenchmark(IRemoteLockCreator remoteLockCreator, string lockName, int threadsCount, int locksCount)
@@ -112,10 +92,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.ThreadsBasedRemoteLockBe
                 });
             }
             sw.Start();
-            for (int threadIndex = 0; threadIndex < threadsCount; threadIndex++) 
+            for(var threadIndex = 0; threadIndex < threadsCount; threadIndex++)
                 threads[threadIndex].Start(threadIndex);
             ms.Set();
-            for(int threadIndex = 0; threadIndex < threadsCount; threadIndex++)
+            for(var threadIndex = 0; threadIndex < threadsCount; threadIndex++)
                 threads[threadIndex].Join();
             sw.Stop();
             Console.WriteLine("{0}, threads {1}, locks {2}: {3}", lockName, threadsCount, locksCount, sw.ElapsedMilliseconds);

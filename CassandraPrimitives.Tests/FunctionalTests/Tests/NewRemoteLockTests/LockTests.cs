@@ -3,6 +3,7 @@
 using NUnit.Framework;
 
 using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
 

@@ -37,11 +37,14 @@ namespace ProcessesBasedRemoteLockBenchmark
                 var initializerSettings = new CassandraInitializerSettings();
                 var benchmarkParameters = new[]
                 {
-                    new BenchmarkParameters(3, 10000, LockType.NewLock),
+                    new BenchmarkParameters(3, 10000, LockType.NewLockCassandraTTL),
+                    new BenchmarkParameters(3, 10000, LockType.NewLockExpirationService),
                     new BenchmarkParameters(3, 10000, LockType.OldLock),
-                    new BenchmarkParameters(5, 10000, LockType.NewLock),
+                    new BenchmarkParameters(5, 10000, LockType.NewLockCassandraTTL),
+                    new BenchmarkParameters(5, 10000, LockType.NewLockExpirationService),
                     new BenchmarkParameters(5, 10000, LockType.OldLock),
-                    new BenchmarkParameters(10, 10000, LockType.NewLock),
+                    new BenchmarkParameters(10, 10000, LockType.NewLockCassandraTTL),
+                    new BenchmarkParameters(10, 10000, LockType.NewLockExpirationService),
                     new BenchmarkParameters(10, 10000, LockType.OldLock),
                 };
                 var cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings), new BenchmarkMetaProvider(benchmarkParameters.Select(x => new ColumnFamilyFullName(x.Keyspace, x.ColumnFamily)).ToArray()), initializerSettings);

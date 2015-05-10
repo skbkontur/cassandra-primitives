@@ -3,8 +3,8 @@ using System.Linq;
 
 using NUnit.Framework;
 
-using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock;
-using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.QueueStorage;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL.QueueStorage;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.NewRemoteLockTests
