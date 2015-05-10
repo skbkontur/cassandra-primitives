@@ -31,42 +31,42 @@ namespace ProcessesBasedRemoteLockBenchmark
             var communicator = new ProcessesCommunicator(new Serializer(new AllPropertiesExtractor()));
             var node = communicator.GetCassandraNode();
             node.Restart();
-            var timeServiceProcess = Process.Start(new ProcessStartInfo
-            {
-                FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\TimeService\bin\Debug\Catalogue.CassandraPrimitives.Tests.TimeService.exe"),
-                RedirectStandardOutput = false,
-                UseShellExecute = true,
-                WindowStyle = ProcessWindowStyle.Normal,
-                CreateNoWindow = false,
-            });
-            var expirationServiceProcess = Process.Start(new ProcessStartInfo
-            {
-                FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\ExpirationService\bin\Debug\Catalogue.CassandraPrimitives.Tests.ExpirationService.exe"),
-                RedirectStandardOutput = false,
-                UseShellExecute = true,
-                WindowStyle = ProcessWindowStyle.Normal,
-                CreateNoWindow = false,
-            });
             try
             {
                 cassandraClusterSettings = node.CreateSettings(IPAddress.Loopback);
                 var initializerSettings = new CassandraInitializerSettings();
                 var benchmarkParameters = new[]
                 {
-                    new BenchmarkParameters(3, 10000, LockType.NewLockCassandraTTL),
-                    new BenchmarkParameters(3, 10000, LockType.NewLockExpirationService),
-                    new BenchmarkParameters(3, 10000, LockType.OldLock),
-                    new BenchmarkParameters(5, 10000, LockType.NewLockCassandraTTL),
-                    new BenchmarkParameters(5, 10000, LockType.NewLockExpirationService),
-                    new BenchmarkParameters(5, 10000, LockType.OldLock),
-                    new BenchmarkParameters(10, 10000, LockType.NewLockCassandraTTL),
-                    new BenchmarkParameters(10, 10000, LockType.NewLockExpirationService),
-                    new BenchmarkParameters(10, 10000, LockType.OldLock),
+                    new BenchmarkParameters(3, 10, LockType.NewLockCassandraTTL),
+                    new BenchmarkParameters(3, 10, LockType.NewLockExpirationService),
+                    new BenchmarkParameters(3, 10, LockType.OldLock),
+                    new BenchmarkParameters(5, 10, LockType.NewLockCassandraTTL),
+                    new BenchmarkParameters(5, 10, LockType.NewLockExpirationService),
+                    new BenchmarkParameters(5, 10, LockType.OldLock),
+                    new BenchmarkParameters(10, 10, LockType.NewLockCassandraTTL),
+                    new BenchmarkParameters(10, 10, LockType.NewLockExpirationService),
+                    new BenchmarkParameters(10, 10, LockType.OldLock),
                 };
                 var columnFamilyFullNames = benchmarkParameters.Select(x => new ColumnFamilyFullName(x.Keyspace, x.ColumnFamily)).Concat(new[]{ColumnFamilies.expirationMonitoring, ColumnFamilies.timeService}).ToArray();
                 var cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings), new BenchmarkMetaProvider(columnFamilyFullNames), initializerSettings);
                 cassandraSchemeActualizer.AddNewColumnFamilies();
                 Log4NetConfiguration.InitializeOnce();
+                timeServiceProcess = Process.Start(new ProcessStartInfo
+                {
+                    FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\TimeService\bin\Debug\Catalogue.CassandraPrimitives.Tests.TimeService.exe"),
+                    RedirectStandardOutput = false,
+                    UseShellExecute = true,
+                    WindowStyle = ProcessWindowStyle.Normal,
+                    CreateNoWindow = false,
+                });
+                expirationServiceProcess = Process.Start(new ProcessStartInfo
+                {
+                    FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\ExpirationService\bin\Debug\Catalogue.CassandraPrimitives.Tests.ExpirationService.exe"),
+                    RedirectStandardOutput = false,
+                    UseShellExecute = true,
+                    WindowStyle = ProcessWindowStyle.Normal,
+                    CreateNoWindow = false,
+                });
                 foreach(var benchmark in benchmarkParameters)
                     RunBenchmark(benchmark, communicator);
             }
@@ -126,5 +126,7 @@ namespace ProcessesBasedRemoteLockBenchmark
         }
 
         private ICassandraClusterSettings cassandraClusterSettings;
+        private Process timeServiceProcess;
+        private Process expirationServiceProcess;
     }
 }

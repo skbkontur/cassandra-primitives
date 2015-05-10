@@ -25,22 +25,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.ThreadsBasedRemoteLockBe
         {
             var node = CreateCassandraNode();
             node.Restart();
-            var timeServiceProcess = Process.Start(new ProcessStartInfo
-            {
-                FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\TimeService\bin\Debug\Catalogue.CassandraPrimitives.Tests.TimeService.exe"),
-                RedirectStandardOutput = false,
-                UseShellExecute = true,
-                WindowStyle = ProcessWindowStyle.Normal,
-                CreateNoWindow = false,
-            });
-            var expirationServiceProcess = Process.Start(new ProcessStartInfo
-            {
-                FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\ExpirationService\bin\Debug\Catalogue.CassandraPrimitives.Tests.ExpirationService.exe"),
-                RedirectStandardOutput = false,
-                UseShellExecute = true,
-                WindowStyle = ProcessWindowStyle.Normal,
-                CreateNoWindow = false,
-            });
             try
             {
                 cassandraClusterSettings = node.CreateSettings(IPAddress.Loopback);
@@ -49,6 +33,22 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.ThreadsBasedRemoteLockBe
                 cassandraSchemeActualizer.AddNewColumnFamilies();
                 Log4NetConfiguration.InitializeOnce();
                 var cassandraCluster = new CassandraCluster(cassandraClusterSettings);
+                timeServiceProcess = Process.Start(new ProcessStartInfo
+                {
+                    FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\TimeService\bin\Debug\Catalogue.CassandraPrimitives.Tests.TimeService.exe"),
+                    RedirectStandardOutput = false,
+                    UseShellExecute = true,
+                    WindowStyle = ProcessWindowStyle.Normal,
+                    CreateNoWindow = false,
+                });
+                expirationServiceProcess = Process.Start(new ProcessStartInfo
+                {
+                    FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\ExpirationService\bin\Debug\Catalogue.CassandraPrimitives.Tests.ExpirationService.exe"),
+                    RedirectStandardOutput = false,
+                    UseShellExecute = true,
+                    WindowStyle = ProcessWindowStyle.Normal,
+                    CreateNoWindow = false,
+                });
                 var oldRemoteLock = LocksCreatorFactory.CreateOldLock(cassandraCluster, ColumnFamilies.newRemoteLock);
                 var newRemoteLockWithCassandraTTL = LocksCreatorFactory.CreateNewLockWithCassandraTTL(cassandraCluster, ColumnFamilies.newRemoteLock);
                 var newRemoteLockWithExpirationService = LocksCreatorFactory.CreateNewLockWithExpirationService(cassandraCluster, ColumnFamilies.newRemoteLock);
@@ -129,6 +129,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.ThreadsBasedRemoteLockBe
         }
 
         private ICassandraClusterSettings cassandraClusterSettings;
+        private Process timeServiceProcess;
+        private Process expirationServiceProcess;
         private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
     }
 }
