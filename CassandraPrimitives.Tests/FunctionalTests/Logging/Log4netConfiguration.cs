@@ -1,6 +1,4 @@
-﻿using System;
-
-using log4net.Config;
+﻿using log4net.Config;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Logging
 {
@@ -10,7 +8,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Logging
         {
             if(!initialized)
             {
-                Type type = typeof(Log4NetConfiguration);
+                var type = typeof(Log4NetConfiguration);
                 XmlConfigurator.Configure(type.Assembly.GetManifestResourceStream(type, "log4net.config"));
                 initialized = true;
             }

@@ -4,6 +4,7 @@ using System.IO;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.ClusterDeployment;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Logging;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
 {
@@ -13,6 +14,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
         [SetUp]
         public static void SetUp()
         {
+            Log4NetConfiguration.InitializeOnce();
             Node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"1.2"))
                 {
                     Name = "node_at_9360",

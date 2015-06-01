@@ -72,6 +72,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Tests\RemoteLockTests\BasicRemoteLockTests.cs" />
+    <Compile Include="Tests\RemoteLockTests\RemoteLockTester.cs" />
     <Compile Include="Tests\StartSingleCassandraSetUp.cs" />
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositoryConsistencyTest.cs" />
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositoryMultiThread1ShardTest.cs" />
