@@ -14,11 +14,11 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 
 namespace BenchmarksCleaner
 {
-    public class Program
+    public class BenchmarkCleanerExe
     {
         public static void Main(string[] args)
         {
-            new Program().Run();
+            new BenchmarkCleanerExe().Run();
         }
 
         private void Run()
@@ -30,6 +30,8 @@ namespace BenchmarksCleaner
                 new ColumnFamilyFullName(StartSignalCostants.Keyspace, StartSignalCostants.ColumnFamily),
                 new ColumnFamilyFullName(WriteResultsCostants.Keyspace, WriteResultsCostants.ColumnFamily),
                 new ColumnFamilyFullName(ExecutingProcessesConstants.Keyspace, ExecutingProcessesConstants.ColumnFamily),
+                new ColumnFamilyFullName(OldLockConstants.Keyspace, OldLockConstants.ColumnFamily),
+                new ColumnFamilyFullName(NewWithCassandraTTLLockConstants.Keyspace, NewWithCassandraTTLLockConstants.ColumnFamily),
             }), new CassandraInitializerSettings());
             actualizer.DropDatabase();
             actualizer.AddNewColumnFamilies();
