@@ -5,14 +5,20 @@ namespace BenchmarkCassandraHelpers
     public interface IProcessesCommunicator
     {
         void AddRunningProcess(string processId);
-        void RemoveRunningProcess(string processId);
-        int GetRunningProcessesCount();
+        void RemoveAllRunningProcesses();
+        string[] GetAllRunningProcesses();
 
-        void WriteResults(string keyspace, string columnFamily, string processId, double[] times);
-        double[] GetResults(string keyspace, string columnFamily, string processId);
+        void StartExecuting(string lockId, string processId);
+        void StopExecuting(string lockId, string processId);
+        int GetExecutingProcessesCount(string lockId);
+        void WaitAllExecutingProcesses(string lockId);
 
-        void WaitStartSignal(string keyspace, string columnFamily);
-        void SendStartSignal(string keyspace, string columnFamily);
+        void WriteResults(string lockId, string processId, double[] times);
+        double[] GetResults(string lockId, string processId);
+
+        StartSignal WaitStartSignal(string processId, string lastLockId);
+        void SendStartSignal(StartSignal signal);
+        void RemoveStartSignal();
         ICassandraCluster GetCassandraCluster();
     }
 }

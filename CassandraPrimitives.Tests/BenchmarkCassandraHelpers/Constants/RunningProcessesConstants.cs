@@ -1,4 +1,4 @@
-namespace BenchmarkCassandraHelpers
+namespace BenchmarkCassandraHelpers.Constants
 {
     public static class RunningProcessesConstants
     {

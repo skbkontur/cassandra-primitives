@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 
+using BenchmarkCassandraHelpers.Constants;
+
 using GroBuf;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -34,49 +36,139 @@ namespace BenchmarkCassandraHelpers
                 );
         }
 
-        public void RemoveRunningProcess(string processId)
+        public void RemoveAllRunningProcesses()
         {
             MakeInConnection(
                 RunningProcessesConstants.Keyspace,
                 RunningProcessesConstants.ColumnFamily,
-                connection => connection.DeleteColumn(RunningProcessesConstants.Row, processId)
+                connection => connection.DeleteRow(RunningProcessesConstants.Row)
                 );
         }
 
-        public void WaitStartSignal(string keyspace, string columnFamily)
+        public string[] GetAllRunningProcesses()
         {
-            while(true)
-            {
-                var success = false;
-                MakeInConnection(
-                    keyspace,
-                    columnFamily,
-                    connection => { success = connection.GetRow(StartSignalCostants.Row).Any(); });
-                if(success)
-                    break;
-                Console.WriteLine("Failed to get start signal in {0} {1}", keyspace, columnFamily);
-                Thread.Sleep(50);
-            }
+            string[] names = null;
+            MakeInConnection(
+                RunningProcessesConstants.Keyspace,
+                RunningProcessesConstants.ColumnFamily,
+                connection =>
+                {
+                    names = connection.GetRow(RunningProcessesConstants.Row).Select(x => x.Name).ToArray();
+                });
+            return names;
         }
 
-        public void SendStartSignal(string keyspace, string columnFamily)
+
+        public void StartExecuting(string lockId, string processId)
         {
-            Console.WriteLine("SIGNAL {0} {1}", keyspace, columnFamily);
             MakeInConnection(
-                keyspace,
-                columnFamily,
-                connection => connection.AddColumn(StartSignalCostants.Row, new Column
+                ExecutingProcessesConstants.Keyspace,
+                ExecutingProcessesConstants.ColumnFamily,
+                connection => connection.AddColumn(lockId, new Column
                 {
-                    Name = StartSignalCostants.Column,
+                    Name = processId,
                     Timestamp = DateTime.UtcNow.Ticks,
-                    Value = new byte[0],
+                    Value = serializer.Serialize("start"),
                 })
                 );
         }
 
-        public void WriteResults(string keyspace, string columnFamily, string processId, double[] times)
+        public void StopExecuting(string lockId, string processId)
         {
-            MakeInConnection(keyspace, columnFamily, connection => connection.AddBatch(processId, times.Select((value, index) => new Column
+            MakeInConnection(
+                ExecutingProcessesConstants.Keyspace,
+                ExecutingProcessesConstants.ColumnFamily,
+                connection => connection.AddColumn(lockId, new Column
+                {
+                    Name = processId,
+                    Timestamp = DateTime.UtcNow.Ticks,
+                    Value = serializer.Serialize("stop"),
+                })
+                );
+        }
+
+        public void WaitAllExecutingProcesses(string lockId)
+        {
+            while (true)
+            {
+                bool success = false;
+                MakeInConnection(
+                    ExecutingProcessesConstants.Keyspace,
+                    ExecutingProcessesConstants.ColumnFamily,
+                    connection =>
+                    {
+                        var row = connection.GetRow(lockId).ToArray();
+                        success = row.All(x => serializer.Deserialize<string>(x.Value) == "stop");
+                    });
+                if(success)
+                    return;
+                Console.WriteLine("Waiting...");
+                Thread.Sleep(1000);
+            }
+        }
+
+        public int GetExecutingProcessesCount(string lockId)
+        {
+            var result = 0;
+            MakeInConnection(
+                ExecutingProcessesConstants.Keyspace,
+                ExecutingProcessesConstants.ColumnFamily,
+                connection =>
+                {
+                    result = connection.GetCount(lockId);
+                });
+            return result;
+        }
+
+        public StartSignal WaitStartSignal(string processId, string oldLockId)
+        {
+            Console.WriteLine("Waiting for start signal");
+            while(true)
+            {
+                StartSignal signal = null;
+                MakeInConnection(
+                    StartSignalCostants.Keyspace,
+                    StartSignalCostants.ColumnFamily,
+                    connection =>
+                    {
+                        var column = connection.GetRow(StartSignalCostants.Row).FirstOrDefault();
+                        if(column != null)
+                        {
+                            signal = serializer.Deserialize<StartSignal>(column.Value);
+                        }
+                    });
+                if(signal != null && signal.ProcessIds.Contains(processId) && signal.LockId != oldLockId)
+                    return signal;
+                Thread.Sleep(50);
+            }
+        }
+
+        public void SendStartSignal(StartSignal signal)
+        {
+            MakeInConnection(
+                StartSignalCostants.Keyspace,
+                StartSignalCostants.ColumnFamily,
+                connection => connection.AddColumn(StartSignalCostants.Row, new Column
+                {
+                    Name = StartSignalCostants.Column,
+                    Timestamp = DateTime.UtcNow.Ticks,
+                    Value = serializer.Serialize(signal),
+                })
+                );
+        }
+
+        public void RemoveStartSignal()
+        {
+            MakeInConnection(
+                StartSignalCostants.Keyspace,
+                StartSignalCostants.ColumnFamily,
+                connection => connection.DeleteRow(StartSignalCostants.Row)
+                );
+        }
+
+        public void WriteResults(string lockId, string processId, double[] times)
+        {
+            MakeInConnection(WriteResultsCostants.Keyspace, WriteResultsCostants.ColumnFamily, connection => connection.AddBatch(string.Format("{0}_{1}", lockId, processId), times.Select((value, index) => new Column
             {
                 Name = index.ToString("000000000"),
                 Timestamp = DateTime.UtcNow.Ticks,
@@ -84,58 +176,16 @@ namespace BenchmarkCassandraHelpers
             })));
         }
 
-        public double[] GetResults(string keyspace, string columnFamily, string processId)
+        public double[] GetResults(string lockId, string processId)
         {
             double[] result = {};
-            MakeInConnection(keyspace, columnFamily, connection => { result = connection.GetRow(processId).Select(x => serializer.Deserialize<double>(x.Value)).ToArray(); });
+            MakeInConnection(WriteResultsCostants.Keyspace, WriteResultsCostants.ColumnFamily, connection => { result = connection.GetRow(string.Format("{0}_{1}", lockId, processId)).Select(x => serializer.Deserialize<double>(x.Value)).ToArray(); });
             return result;
         }
 
         public ICassandraCluster GetCassandraCluster()
         {
-            return new CassandraCluster(GetCassandraNode().CreateSettings(IPAddress.Loopback));
-        }
-
-        public int GetRunningProcessesCount()
-        {
-            var result = 0;
-            MakeInConnection(
-                RunningProcessesConstants.Keyspace,
-                RunningProcessesConstants.ColumnFamily,
-                connection => { result = connection.GetCount(RunningProcessesConstants.Row); });
-            return result;
-        }
-
-        public CassandraNode GetCassandraNode()
-        {
-            return new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"1.2"))
-            {
-                Name = "node_at_9360",
-                JmxPort = 7399,
-                GossipPort = 7400,
-                RpcPort = 9360,
-                CqlPort = 9343,
-                DataBaseDirectory = @"../data/",
-                DeployDirectory = Path.Combine(FindSolutionRootDirectory(), @"Cassandra1.2"),
-                ListenAddress = "127.0.0.1",
-                RpsAddress = "0.0.0.0",
-                SeedAddresses = new[] {"127.0.0.1"},
-                InitialToken = "",
-                ClusterName = "test_cluster"
-            };
-        }
-
-        private static string FindSolutionRootDirectory()
-        {
-            var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            while (!File.Exists(Path.Combine(currentDirectory, "Common.DotSettings")))
-            {
-                if (Directory.GetParent(currentDirectory) == null)
-                    throw new Exception(string.Format("Cannot find project root directory. Trying to find from: '{0}'", AppDomain.CurrentDomain.BaseDirectory));
-                currentDirectory = Directory.GetParent(currentDirectory).FullName;
-            }
-
-            return currentDirectory;
+            return new CassandraCluster(new CassandraClusterSettings());
         }
 
         private void MakeInConnection(string keyspace, string columnFamily, Action<IColumnFamilyConnection> action)
@@ -143,16 +193,6 @@ namespace BenchmarkCassandraHelpers
             action(GetCassandraCluster().RetrieveColumnFamilyConnection(keyspace, columnFamily));
         }
 
-        private string FindCassandraTemplateDirectory(string currentDir)
-        {
-            if(currentDir == null)
-                throw new Exception("Невозможно найти каталог с Cassandra-шаблонами");
-            var cassandraTemplateDirectory = Path.Combine(currentDir, cassandraTemplates);
-            return Directory.Exists(cassandraTemplateDirectory) ? cassandraTemplateDirectory : FindCassandraTemplateDirectory(Path.GetDirectoryName(currentDir));
-        }
-
         private readonly Serializer serializer;
-
-        private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
     }
 }
