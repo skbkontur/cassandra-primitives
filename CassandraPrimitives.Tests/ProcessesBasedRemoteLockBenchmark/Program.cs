@@ -37,15 +37,15 @@ namespace ProcessesBasedRemoteLockBenchmark
                 var initializerSettings = new CassandraInitializerSettings();
                 var benchmarkParameters = new[]
                 {
-                    new BenchmarkParameters(3, 10, LockType.NewLockCassandraTTL),
-                    new BenchmarkParameters(3, 10, LockType.NewLockExpirationService),
-                    new BenchmarkParameters(3, 10, LockType.OldLock),
-                    new BenchmarkParameters(5, 10, LockType.NewLockCassandraTTL),
-                    new BenchmarkParameters(5, 10, LockType.NewLockExpirationService),
-                    new BenchmarkParameters(5, 10, LockType.OldLock),
-                    new BenchmarkParameters(10, 10, LockType.NewLockCassandraTTL),
-                    new BenchmarkParameters(10, 10, LockType.NewLockExpirationService),
-                    new BenchmarkParameters(10, 10, LockType.OldLock),
+                    new BenchmarkParameters(3, 10000, LockType.NewLockCassandraTTL),
+                    new BenchmarkParameters(3, 10000, LockType.NewLockExpirationService),
+                    new BenchmarkParameters(3, 10000, LockType.OldLock),
+                    new BenchmarkParameters(5, 10000, LockType.NewLockCassandraTTL),
+                    new BenchmarkParameters(5, 10000, LockType.NewLockExpirationService),
+                    new BenchmarkParameters(5, 10000, LockType.OldLock),
+                    new BenchmarkParameters(10, 10000, LockType.NewLockCassandraTTL),
+                    new BenchmarkParameters(10, 10000, LockType.NewLockExpirationService),
+                    new BenchmarkParameters(10, 10000, LockType.OldLock),
                 };
                 var columnFamilyFullNames = benchmarkParameters.Select(x => new ColumnFamilyFullName(x.Keyspace, x.ColumnFamily)).Concat(new[]{ColumnFamilies.expirationMonitoring, ColumnFamilies.timeService}).ToArray();
                 var cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings), new BenchmarkMetaProvider(columnFamilyFullNames), initializerSettings);
@@ -114,7 +114,7 @@ namespace ProcessesBasedRemoteLockBenchmark
             communicator.SendStartSignal(benchmark.Keyspace, benchmark.ColumnFamily);
             while((running = communicator.GetRunningProcessesCount()) > 0)
             {
-                Console.WriteLine("Waiting {0} processes to stop", running);
+                Console.WriteLine("{0}, {1} processes, waiting {2} processes to stop", benchmark.LockType, benchmark.ProcessesCount, running);
                 Thread.Sleep(200);
             }
             var results = new double[benchmark.ProcessesCount][];
