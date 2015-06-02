@@ -74,7 +74,10 @@
   <ItemGroup>
     <Compile Include="Tests\RemoteLockTests\BasicRemoteLockTests.cs" />
     <Compile Include="Helpers\MultithreadingTestHelper.cs" />
+    <Compile Include="Tests\RemoteLockTests\ConcurrentRemoteLockTests.cs" />
+    <Compile Include="Tests\RemoteLockTests\LocalRivalOptimization.cs" />
     <Compile Include="Tests\RemoteLockTests\RemoteLockTester.cs" />
+    <Compile Include="Tests\RemoteLockTests\RemoteLockTesterConfig.cs" />
     <Compile Include="Tests\StartSingleCassandraSetUp.cs" />
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositoryConsistencyTest.cs" />
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositoryMultiThread1ShardTest.cs" />
