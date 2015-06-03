@@ -20,6 +20,7 @@ namespace BenchmarkCassandraHelpers
         public ProcessesCommunicator(Serializer serializer)
         {
             this.serializer = serializer;
+            this.cassandraCluster = new CassandraCluster(new CassandraClusterSettings());
         }
 
         public void AddRunningProcess(string processId)
@@ -185,7 +186,7 @@ namespace BenchmarkCassandraHelpers
 
         public ICassandraCluster GetCassandraCluster()
         {
-            return new CassandraCluster(new CassandraClusterSettings());
+            return cassandraCluster;
         }
 
         private void MakeInConnection(string keyspace, string columnFamily, Action<IColumnFamilyConnection> action)
@@ -194,5 +195,6 @@ namespace BenchmarkCassandraHelpers
         }
 
         private readonly Serializer serializer;
+        private CassandraCluster cassandraCluster;
     }
 }
