@@ -32,6 +32,7 @@ namespace BenchmarksCleaner
                 new ColumnFamilyFullName(ExecutingProcessesConstants.Keyspace, ExecutingProcessesConstants.ColumnFamily),
                 new ColumnFamilyFullName(OldLockConstants.Keyspace, OldLockConstants.ColumnFamily),
                 new ColumnFamilyFullName(NewWithCassandraTTLLockConstants.Keyspace, NewWithCassandraTTLLockConstants.ColumnFamily),
+                new ColumnFamilyFullName("CassandraPrimitives", "TimeService"), 
             }), new CassandraInitializerSettings());
             actualizer.AddNewColumnFamilies();
             communicator.RemoveAllRunningProcesses();

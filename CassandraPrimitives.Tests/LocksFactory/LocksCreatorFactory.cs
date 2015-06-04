@@ -52,8 +52,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.LocksFactory
 
         public static IRemoteLockCreator CreateNewLockWithCassandraTTL(ICassandraCluster cassandraCluster, ColumnFamilyFullName columnFamilyFullName)
         {
+            var container = new Container(new ContainerConfiguration(AssembliesLoader.Load()));
             var serializer = new Serializer(new AllPropertiesExtractor());
-            var timeGetter = new NewRemoteLock.WithCassanrdaTTL.TimeGetter();
+            container.Configurator.ForAbstraction<ISerializer>().UseInstances(serializer);
+            var timeServiceClient = container.Get<ITimeServiceClient>();
+            var timeGetter = new TimeGetter(timeServiceClient);
             var remoteLockSettings = new RemoteLockSettings(columnFamilyFullName.KeyspaceName, columnFamilyFullName.ColumnFamilyName);
             var metaStorage = new MetaStorage(timeGetter, cassandraCluster, serializer, remoteLockSettings);
             var queueStorage = new QueueStorage(timeGetter, metaStorage, cassandraCluster, serializer, remoteLockSettings);
