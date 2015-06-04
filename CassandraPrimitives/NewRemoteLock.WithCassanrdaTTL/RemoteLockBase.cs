@@ -54,32 +54,32 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL
         {
             RowName = lockCreatorStorage.AddThreadToQueue(LockId, ThreadId, Timestamp);
             queueRentEvent = new ManualResetEvent(false);
-            queueRentEvent.Reset();
             queueRenter = new Thread(UpdateQueueRent);
             queueRenter.Start();
         }
 
         protected void RemoveThreadFromQueue()
         {
-            lockCreatorStorage.RemoveThreadFromQueue(LockId, RowName, ThreadId, Timestamp);
             queueRentEvent.Set();
             queueRenter.Join();
+            queueRentEvent.Dispose();
+            lockCreatorStorage.RemoveThreadFromQueue(LockId, RowName, ThreadId, Timestamp);
         }
 
         protected void AddThreadToLock()
         {
             lockCreatorStorage.AddThreadToLock(LockId, RowName, ThreadId);
             lockRentEvent = new ManualResetEvent(false);
-            lockRentEvent.Reset();
             lockRenter = new Thread(UpdateLockRent);
             lockRenter.Start();
         }
 
         protected void RemoveThreadFromLock()
         {
-            lockCreatorStorage.RemoveThreadFromLock(LockId, RowName, ThreadId);
             lockRentEvent.Set();
             lockRenter.Join();
+            lockRentEvent.Dispose();
+            lockCreatorStorage.RemoveThreadFromLock(LockId, RowName, ThreadId);
         }
 
         protected void RemoveFromLocal()
@@ -98,9 +98,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL
         {
             while(true)
             {
+                lockCreatorStorage.ExtendQueueRent(LockId, RowName, ThreadId, Timestamp);
                 if(queueRentEvent.WaitOne(remoteLockSettings.ExtendRentPeriod))
                     break;
-                lockCreatorStorage.ExtendQueueRent(LockId, RowName, ThreadId, Timestamp);
             }
         }
 
@@ -108,9 +108,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL
         {
             while(true)
             {
+                lockCreatorStorage.ExtendLockRent(LockId, RowName, ThreadId);
                 if(lockRentEvent.WaitOne(remoteLockSettings.ExtendRentPeriod))
                     break;
-                lockCreatorStorage.ExtendLockRent(LockId, RowName, ThreadId);
             }
         }
 

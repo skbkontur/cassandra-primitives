@@ -37,7 +37,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.LockStorage
 
         public void RemoveThreadFromLock(string lockId, string rowName, string threadId)
         {
-            MakeInConnection(connection => connection.DeleteColumn(NamesProvider.GetLockRowName(rowName), NamesProvider.GetLockColumnName(threadId)));
+            MakeInConnection(connection => connection.DeleteColumn(NamesProvider.GetLockRowName(rowName), NamesProvider.GetLockColumnName(threadId), timeGetter.GetNowTicks()));
         }
 
         public int GetLocksCount(string lockId)

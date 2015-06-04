@@ -37,7 +37,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.QueueStorag
         public void Remove(string lockId, string rowName, string threadId, long timestamp)
         {
             var columnName = NamesProvider.GetQueueColumnName(threadId, timestamp);
-            MakeInConnection(connection => connection.DeleteColumn(NamesProvider.GetQueueRowName(rowName), columnName));
+            MakeInConnection(connection => connection.DeleteColumn(NamesProvider.GetQueueRowName(rowName), columnName, timeGetter.GetNowTicks()));
         }
 
         public string GetFirstElement(string lockId)
