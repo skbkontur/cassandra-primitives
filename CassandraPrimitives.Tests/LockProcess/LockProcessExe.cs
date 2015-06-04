@@ -49,7 +49,7 @@ namespace LockProcess
             {
                 var sw = new Stopwatch();
                 sw.Start();
-                using(creator.Lock(signal.LockId))
+                using(var @lock = creator.Lock(signal.LockId))
                 {
                     Console.Write("\rGot {0}", i);
                     sw.Stop();

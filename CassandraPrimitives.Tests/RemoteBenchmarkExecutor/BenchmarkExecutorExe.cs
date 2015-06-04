@@ -17,23 +17,23 @@ namespace RemoteBenchmarkExecutor
             new BenchmarkExecutorExe().Run();
         }
 
+        private BenchmarkSettings ParseSettings(string s)
+        {
+            var splitted = s.Split(' ');
+            LockType type;
+            if(!Enum.TryParse(splitted[2], out type))
+                return null;
+            return new BenchmarkSettings
+            {
+                LocksCount = int.Parse(splitted[0]),
+                ProcessesCount = int.Parse(splitted[1]),
+                LockType = type,
+            };
+        }
+
         private void Run()
         {
-            var benchmarks = new[]
-            {
-                new BenchmarkSettings
-                {
-                    LocksCount = 5,
-                    ProcessesCount = 3,
-                    LockType = LockType.OldLock,
-                },
-                new BenchmarkSettings
-                {
-                    LocksCount = 5,
-                    ProcessesCount = 3,
-                    LockType = LockType.NewLockCassandraTTL,
-                },
-            };
+            var benchmarks = File.ReadAllLines("settings").Select(ParseSettings);
             foreach (var benchmark in benchmarks)
             {
                 Run(benchmark);

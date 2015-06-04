@@ -1,0 +1,6 @@
+﻿100 3 NewLockCassandraTTL
+100 3 OldLock
+1000 3 NewLockCassandraTTL
+1000 3 OldLock
+5000 3 NewLockCassandraTTL
+5000 3 OldLock

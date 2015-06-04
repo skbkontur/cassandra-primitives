@@ -47,6 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="settings">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="BenchmarkExecutorExe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

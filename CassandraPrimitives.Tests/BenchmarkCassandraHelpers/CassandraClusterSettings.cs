@@ -14,12 +14,13 @@ namespace BenchmarkCassandraHelpers
             ClusterName = "test_cluster";
             ReadConsistencyLevel = ConsistencyLevel.QUORUM;
             WriteConsistencyLevel = ConsistencyLevel.QUORUM;
-            Endpoints = new []{ ParseEndPoint("127.0.0.1:9360") };
-            EndpointForFierceCommands = ParseEndPoint("127.0.0.1:9360");
+            Endpoints = new[] { ParseEndPoint("alco-cs-01:9360"), ParseEndPoint("alco-cs-02:9360"), ParseEndPoint("alco-cs-03:9360"),};
+            EndpointForFierceCommands = ParseEndPoint("alco-cs-01:9360");
             Attempts = 20;
             Timeout = 6000;
             FierceTimeout = 6000;
             ConnectionIdleTimeout = TimeSpan.FromMinutes(10);
+            AllowNullTimestamp = false;
         }
 
         public string ClusterName { get; private set; }

@@ -33,8 +33,8 @@ namespace BenchmarksCleaner
                 new ColumnFamilyFullName(OldLockConstants.Keyspace, OldLockConstants.ColumnFamily),
                 new ColumnFamilyFullName(NewWithCassandraTTLLockConstants.Keyspace, NewWithCassandraTTLLockConstants.ColumnFamily),
             }), new CassandraInitializerSettings());
-            actualizer.DropDatabase();
             actualizer.AddNewColumnFamilies();
+            communicator.RemoveAllRunningProcesses();
         }
     }
 
