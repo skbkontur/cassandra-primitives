@@ -83,6 +83,7 @@
     <Compile Include="Helpers\MultithreadingTestHelper.cs" />
     <Compile Include="Tests\RemoteLockTests\ConcurrentRemoteLockerTests.cs" />
     <Compile Include="Tests\RemoteLockTests\LocalRivalOptimization.cs" />
+    <Compile Include="Tests\RemoteLockTests\RemoteLockCreatorWthoutLocalRivalOptimization.cs" />
     <Compile Include="Tests\RemoteLockTests\RemoteLockerTester.cs" />
     <Compile Include="Tests\RemoteLockTests\RemoteLockerTesterConfig.cs" />
     <Compile Include="Tests\StartSingleCassandraSetUp.cs" />
