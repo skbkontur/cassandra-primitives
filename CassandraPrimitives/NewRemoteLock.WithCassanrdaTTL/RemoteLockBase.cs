@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Threading;
 
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core;
 using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.LockCreatorStorage;
 using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLockBase;
@@ -10,13 +11,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL
 {
     public abstract class RemoteLockBase : IRemoteLock
     {
-        protected RemoteLockBase(string lockId, ILockCreatorStorage lockCreatorStorage, RemoteLockSettings remoteLockSettings)
+        protected RemoteLockBase(string lockId, ILockCreatorStorage lockCreatorStorage, ITimeGetter timeGetter, RemoteLockSettings remoteLockSettings)
         {
             this.lockCreatorStorage = lockCreatorStorage;
             this.remoteLockSettings = remoteLockSettings;
             LockId = lockId;
             ThreadId = Guid.NewGuid().ToString();
-            Timestamp = DateTime.UtcNow.Ticks;
+            Timestamp = timeGetter.GetNowTicks();
         }
 
         public void Dispose()

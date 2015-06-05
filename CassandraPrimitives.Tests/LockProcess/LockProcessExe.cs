@@ -32,6 +32,8 @@ namespace LockProcess
                 var signal = communicator.WaitStartSignal(processId, lastLockId);
                 var lockId = signal.LockId;
                 Console.WriteLine("Got signal");
+                Console.WriteLine("Locks count = {0}", signal.LocksCount);
+                Console.WriteLine("Lock type = {0}", signal.LockType);
                 communicator.StartExecuting(lockId, processId);
                 Run(communicator, signal, processId);
                 communicator.StopExecuting(lockId, processId);
@@ -49,11 +51,11 @@ namespace LockProcess
             {
                 var sw = new Stopwatch();
                 sw.Start();
-                using(var @lock = creator.Lock(signal.LockId))
+                using(creator.Lock(signal.LockId))
                 {
-                    Console.Write("\rGot {0}", i);
                     sw.Stop();
                     results.Add(sw.Elapsed.TotalMilliseconds);
+                    Console.Write("\rGot {0}", i);
                 }
             }
             Console.WriteLine();

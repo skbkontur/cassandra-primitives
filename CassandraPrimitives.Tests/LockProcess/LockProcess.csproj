@@ -89,6 +89,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Settings\timeServiceTopology">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BenchmarkCassandraHelpers\BenchmarkCassandraHelpers.csproj">

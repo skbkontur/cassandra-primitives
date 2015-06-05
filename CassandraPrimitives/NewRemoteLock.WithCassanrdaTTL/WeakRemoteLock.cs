@@ -1,13 +1,14 @@
-﻿using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.LockCreatorStorage;
+﻿using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core;
+using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.LockCreatorStorage;
 using SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.Core.Settings;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.NewRemoteLock.WithCassanrdaTTL
 {
     public class WeakRemoteLock : RemoteLockBase
     {
-        public WeakRemoteLock(string lockId, ILockCreatorStorage lockCreatorStorage, RemoteLockSettings settings, out bool success)
+        public WeakRemoteLock(string lockId, ILockCreatorStorage lockCreatorStorage, RemoteLockSettings settings, ITimeGetter timeGetter, out bool success)
             :
-                base(lockId, lockCreatorStorage, settings)
+                base(lockId, lockCreatorStorage, timeGetter, settings)
         {
             if(!IsLockFree())
             {

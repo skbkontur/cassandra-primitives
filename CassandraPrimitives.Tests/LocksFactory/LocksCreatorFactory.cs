@@ -56,14 +56,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.LocksFactory
             var serializer = new Serializer(new AllPropertiesExtractor());
             container.Configurator.ForAbstraction<ISerializer>().UseInstances(serializer);
             var timeServiceClient = container.Get<ITimeServiceClient>();
-            var timeGetter = new TimeGetter(timeServiceClient);
+            var simpleTimeGetter = new NewRemoteLock.WithCassanrdaTTL.TimeGetter();
             var remoteLockSettings = new RemoteLockSettings(columnFamilyFullName.KeyspaceName, columnFamilyFullName.ColumnFamilyName);
-            var metaStorage = new MetaStorage(timeGetter, cassandraCluster, serializer, remoteLockSettings);
-            var queueStorage = new QueueStorage(timeGetter, metaStorage, cassandraCluster, serializer, remoteLockSettings);
-            var lockStorage = new LockStorage(timeGetter, metaStorage, cassandraCluster, remoteLockSettings);
+            var metaStorage = new MetaStorage(simpleTimeGetter, cassandraCluster, serializer, remoteLockSettings);
+            var queueStorage = new QueueStorage(simpleTimeGetter, metaStorage, cassandraCluster, serializer, remoteLockSettings);
+            var lockStorage = new LockStorage(simpleTimeGetter, metaStorage, cassandraCluster, remoteLockSettings);
             var rentExtender = new RentExtender(queueStorage, lockStorage);
             var lockCreatorStorage = new LockCreatorStorage(lockStorage, queueStorage, rentExtender);
-            return new NewRemoteLockCreatorWithCassandraTTL(lockCreatorStorage, remoteLockSettings);
+            return new NewRemoteLockCreatorWithCassandraTTL(lockCreatorStorage, new TimeGetter(timeServiceClient), remoteLockSettings);
         }
     }
 }
