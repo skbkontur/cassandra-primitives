@@ -81,15 +81,28 @@ namespace RemoteBenchmarkExecutor
                 Console.WriteLine("Sleeping");
                 Thread.Sleep(500);
             }
+            for(int i = 0; i < 100; i++)
+            {
+                var currentLockId = Guid.NewGuid().ToString();
+                communicator.SetLockId(currentLockId);
+                communicator.WaitLockIdRemoving();
+            }
             communicator.WaitAllExecutingProcesses(lockId);
             communicator.RemoveStartSignal();
             var results = new double[settings.ProcessesCount][];
             for(var i = 0; i < settings.ProcessesCount; i++)
             {
-                results[i] = communicator.GetResults(lockId, activeProcessesIds[i]);
+                results[i] = communicator.GetResults(lockId + "_Aggregation", activeProcessesIds[i]);
             }
-            var filename = string.Format("Proc_{0}_Locks_{1}_Type_{2}.txt", settings.ProcessesCount, settings.LocksCount, settings.LockType);
+            var filename = string.Format("Aggregation_Proc_{0}_Locks_{1}_Type_{2}.txt", settings.ProcessesCount, settings.LocksCount, settings.LockType);
             var lines = Enumerable.Range(0, settings.LocksCount).Select(lockIndex => string.Join("\t", Enumerable.Range(0, settings.ProcessesCount).Select(processIndex => results[processIndex][lockIndex]))).ToArray();
+            File.WriteAllLines(filename, lines);
+            for (var i = 0; i < settings.ProcessesCount; i++)
+            {
+                results[i] = communicator.GetResults(lockId + "_Concrete", activeProcessesIds[i]);
+            }
+            filename = string.Format("Concrete_Proc_{0}_Locks_{1}_Type_{2}.txt", settings.ProcessesCount, settings.LocksCount, settings.LockType);
+            lines = Enumerable.Range(0, settings.LocksCount).Select(lockIndex => string.Join("\t", Enumerable.Range(0, settings.ProcessesCount).Select(processIndex => results[processIndex][lockIndex]))).ToArray();
             File.WriteAllLines(filename, lines);
         }
 

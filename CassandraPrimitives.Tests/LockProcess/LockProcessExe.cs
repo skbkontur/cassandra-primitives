@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 using BenchmarkCassandraHelpers;
 using BenchmarkCassandraHelpers.Constants;
@@ -34,6 +35,7 @@ namespace LockProcess
                 Console.WriteLine("Got signal");
                 Console.WriteLine("Locks count = {0}", signal.LocksCount);
                 Console.WriteLine("Lock type = {0}", signal.LockType);
+                Console.WriteLine("Processes count = {0}", signal.ProcessIds.Length);
                 communicator.StartExecuting(lockId, processId);
                 Run(communicator, signal, processId);
                 communicator.StopExecuting(lockId, processId);
@@ -44,22 +46,28 @@ namespace LockProcess
 
         private void Run(IProcessesCommunicator communicator, StartSignal signal, string processId)
         {
+            var sw = new Stopwatch();
+            sw.Start();
             var creator = GetCreator(communicator, signal);
             var results = new List<double>();
+            var resultsLocal = new List<double>();
             Console.WriteLine();
+            var localSw = new Stopwatch();
             for(int i = 0; i < signal.LocksCount; i++)
             {
-                var sw = new Stopwatch();
-                sw.Start();
+                localSw.Restart();
                 using(creator.Lock(signal.LockId))
                 {
-                    sw.Stop();
+                    localSw.Stop();
                     results.Add(sw.Elapsed.TotalMilliseconds);
+                    resultsLocal.Add(localSw.Elapsed.TotalMilliseconds);
                     Console.Write("\rGot {0}", i);
                 }
             }
+            sw.Stop();
             Console.WriteLine();
-            communicator.WriteResults(signal.LockId, processId, results.ToArray());
+            communicator.WriteResults(string.Format("{0}_Aggregation", signal.LockId), processId, results.ToArray());
+            communicator.WriteResults(string.Format("{0}_Concrete", signal.LockId), processId, resultsLocal.ToArray());
         }
 
         private IRemoteLockCreator GetCreator(IProcessesCommunicator communicator, StartSignal signal)

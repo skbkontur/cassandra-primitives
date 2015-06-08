@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="CassandraClusterSettings.cs" />
     <Compile Include="Constants\ExecutingProcessesConstants.cs" />
+    <Compile Include="Constants\LockIdConstants.cs" />
     <Compile Include="Constants\NewWithCassandraTTLLockConstants.cs" />
     <Compile Include="Constants\OldLockConstants.cs" />
     <Compile Include="IProcessesCommunicator.cs" />

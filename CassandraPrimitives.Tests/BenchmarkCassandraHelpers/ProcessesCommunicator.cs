@@ -103,7 +103,7 @@ namespace BenchmarkCassandraHelpers
                     });
                 if(success)
                     return;
-                Console.WriteLine("Waiting...");
+                //Console.WriteLine("Waiting...");
                 Thread.Sleep(1000);
             }
         }
@@ -182,6 +182,52 @@ namespace BenchmarkCassandraHelpers
             double[] result = {};
             MakeInConnection(WriteResultsCostants.Keyspace, WriteResultsCostants.ColumnFamily, connection => { result = connection.GetRow(string.Format("{0}_{1}", lockId, processId)).Select(x => serializer.Deserialize<double>(x.Value)).ToArray(); });
             return result;
+        }
+
+        public void SetLockId(string id)
+        {
+            MakeInConnection(LockIdConstants.Keyspace, LockIdConstants.ColumnFamily, connection => connection.AddColumn(LockIdConstants.Row, new Column
+            {
+                Name = LockIdConstants.Column,
+                Timestamp = DateTime.UtcNow.Ticks,
+                Value = serializer.Serialize(id),
+            }));
+        }
+
+        public string GetLockId()
+        {
+            while(true)
+            {
+                string result = null;
+                MakeInConnection(LockIdConstants.Keyspace, LockIdConstants.ColumnFamily, connection =>
+                {
+                    Column column;
+                    if(connection.TryGetColumn(LockIdConstants.Row, LockIdConstants.Column, out column))
+                        result = serializer.Deserialize<string>(column.Value);
+                });
+                if(result != null)
+                    return result;
+            }
+        }
+
+        public void RemoveLockId(string id)
+        {
+            MakeInConnection(LockIdConstants.Keyspace, LockIdConstants.ColumnFamily, connection => connection.DeleteColumn(LockIdConstants.Row, LockIdConstants.Column));
+        }
+
+        public void WaitLockIdRemoving()
+        {
+            while(true)
+            {
+                bool result = true;
+                MakeInConnection(LockIdConstants.Keyspace, LockIdConstants.ColumnFamily, connection =>
+                {
+                    Column column;
+                    result = connection.TryGetColumn(LockIdConstants.Row, LockIdConstants.Column, out column);
+                });
+                if(result)
+                    break;
+            }
         }
 
         public ICassandraCluster GetCassandraCluster()
