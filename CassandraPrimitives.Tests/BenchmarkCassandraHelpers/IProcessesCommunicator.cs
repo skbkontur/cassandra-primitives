@@ -16,10 +16,10 @@ namespace BenchmarkCassandraHelpers
         void WriteResults(string lockId, string processId, double[] times);
         double[] GetResults(string lockId, string processId);
 
-        void SetLockId(string id);
-        string GetLockId();
-        void RemoveLockId(string id);
-        void WaitLockIdRemoving();
+        void SetLockId(string expId, int index, string id);
+        string GetLockId(string expId, int index);
+        void MarkLockIdAsDone(string lockId, string processId);
+        void WaitLockIdDone(string lockId, int processesCount);
 
         StartSignal WaitStartSignal(string processId, string lastLockId);
         void SendStartSignal(StartSignal signal);

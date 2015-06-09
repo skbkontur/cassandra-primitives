@@ -184,17 +184,17 @@ namespace BenchmarkCassandraHelpers
             return result;
         }
 
-        public void SetLockId(string id)
+        public void SetLockId(string expId, int index, string id)
         {
             MakeInConnection(LockIdConstants.Keyspace, LockIdConstants.ColumnFamily, connection => connection.AddColumn(LockIdConstants.Row, new Column
             {
-                Name = LockIdConstants.Column,
+                Name = string.Format("{0}_{1}", expId, index),
                 Timestamp = DateTime.UtcNow.Ticks,
                 Value = serializer.Serialize(id),
             }));
         }
 
-        public string GetLockId()
+        public string GetLockId(string expId, int index)
         {
             while(true)
             {
@@ -202,7 +202,7 @@ namespace BenchmarkCassandraHelpers
                 MakeInConnection(LockIdConstants.Keyspace, LockIdConstants.ColumnFamily, connection =>
                 {
                     Column column;
-                    if(connection.TryGetColumn(LockIdConstants.Row, LockIdConstants.Column, out column))
+                    if (connection.TryGetColumn(LockIdConstants.Row, string.Format("{0}_{1}", expId, index), out column))
                         result = serializer.Deserialize<string>(column.Value);
                 });
                 if(result != null)
@@ -210,20 +210,24 @@ namespace BenchmarkCassandraHelpers
             }
         }
 
-        public void RemoveLockId(string id)
+        public void MarkLockIdAsDone(string lockId, string processId)
         {
-            MakeInConnection(LockIdConstants.Keyspace, LockIdConstants.ColumnFamily, connection => connection.DeleteColumn(LockIdConstants.Row, LockIdConstants.Column));
+            MakeInConnection(LockIdConstants.Keyspace, LockIdConstants.ColumnFamily, connection => connection.AddColumn(lockId, new Column
+            {
+                Name = processId,
+                Timestamp = DateTime.UtcNow.Ticks,
+                Value = new byte[0],
+            }));
         }
 
-        public void WaitLockIdRemoving()
+        public void WaitLockIdDone(string lockId, int processesCount)
         {
             while(true)
             {
-                bool result = true;
+                bool result = false;
                 MakeInConnection(LockIdConstants.Keyspace, LockIdConstants.ColumnFamily, connection =>
                 {
-                    Column column;
-                    result = connection.TryGetColumn(LockIdConstants.Row, LockIdConstants.Column, out column);
+                    result = connection.GetCount(lockId) == processesCount;
                 });
                 if(result)
                     break;
