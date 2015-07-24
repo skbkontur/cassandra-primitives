@@ -1,13 +1,11 @@
 bin
 obj
-Debug
-debug
 [Dd]ebug
-Assemblies/Temp
 *.suo
+*.user
+_ReSharper.*
 desktop.ini
 /Assemblies/Cassandra/db
 /Assemblies/Cassandra/log
-*.user
-_ReSharper.*
-Cassandra1.2
+/Assemblies/Temp
+/Cassandra1.2
