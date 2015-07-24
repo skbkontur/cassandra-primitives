@@ -7,5 +7,4 @@ _ReSharper.*
 desktop.ini
 /Assemblies/Cassandra/db
 /Assemblies/Cassandra/log
-/Assemblies/Temp
 /Cassandra1.2
