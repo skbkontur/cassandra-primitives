@@ -28,7 +28,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             ICassandraCluster cassandraCluster,
             ISerializer serializer,
             ColumnFamilyFullName eventLogColumnFamily,
-            IEventInfoRepository eventInfoRepository,
             IEventLogPointerCreator eventLogPointerCreator,
             Func<IQueueRaker> createQueueRaker,
             IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository,
@@ -36,7 +35,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             IEventLogProfiler profiler)
         {
             this.serializer = serializer;
-            this.eventInfoRepository = eventInfoRepository;
             this.eventLogPointerCreator = eventLogPointerCreator;
             this.createQueueRaker = createQueueRaker;
             this.eventLoggerAdditionalInfoRepository = eventLoggerAdditionalInfoRepository;
@@ -53,15 +51,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 if(wasInitialized)
                     queueRaker.Dispose();
             }
-        }
-
-        public EventStorageElement ReadEvent(EventId eventId)
-        {
-            InitializeOnce();
-            var eventInfo = eventInfoRepository.TryRead(eventId);
-            var eventPointer = eventLogPointerCreator.Create(eventInfo);
-            var column = columnFamilyConnection.GetColumn(eventPointer.RowKey, eventPointer.ColumnName);
-            return serializer.Deserialize<EventLogRecord>(column.Value).StorageElement;
         }
 
         public IEnumerable<EventStorageElementContainer> ReadEventsWithUnstableZone(EventInfo startEventInfo, string[] shards, out EventInfo newExclusiveEventInfo)
@@ -272,7 +261,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         private readonly ILog logger = LogManager.GetLogger(typeof(EventLogger));
 
         private readonly ISerializer serializer;
-        private readonly IEventInfoRepository eventInfoRepository;
         private readonly IEventLogPointerCreator eventLogPointerCreator;
         private readonly Func<IQueueRaker> createQueueRaker;
         private readonly IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository;

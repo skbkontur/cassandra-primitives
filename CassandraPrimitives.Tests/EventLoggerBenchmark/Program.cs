@@ -77,7 +77,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
                 ColumnFamilies.ticksHolder,
                 ColumnFamilies.eventLog,
                 ColumnFamilies.eventLogAdditionalInfo,
-                ColumnFamilies.eventMeta,
                 ColumnFamilies.remoteLock);
             var shardCalculator = new ShardCalculator(calculateShard);
             var eventRepository = factory.CreateEventRepository(shardCalculator, eventRepositoryColumnFamilyFullNames);

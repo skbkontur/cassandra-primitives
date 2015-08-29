@@ -7,7 +7,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnF
         ColumnFamilyFullName TicksHolder { get; }
         ColumnFamilyFullName EventLog { get; }
         ColumnFamilyFullName EventLogAdditionalInfo { get; }
-        ColumnFamilyFullName EventMeta { get; }
         ColumnFamilyFullName RemoteLock { get; }
     }
 }

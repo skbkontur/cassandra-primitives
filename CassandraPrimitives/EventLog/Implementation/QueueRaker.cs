@@ -21,12 +21,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         public QueueRaker(
             IEventStorage eventStorage,
             IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository,
-            IEventInfoRepository eventInfoRepository,
             IEventLogProfiler profiler)
         {
             this.eventStorage = eventStorage;
             this.eventLoggerAdditionalInfoRepository = eventLoggerAdditionalInfoRepository;
-            this.eventInfoRepository = eventInfoRepository;
             this.profiler = profiler;
             manualResetEventPool = new ManualResetEventPool();
             queue = new Queue<QueueEntry>();
@@ -156,15 +154,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                         eventStorage.Delete(badEvents.Select(x => x.EventInfo).ToArray(), nowTicks + 1);
                     deleteBadEventsStopwatch.Stop();
 
-                    Stopwatch setEventMetasStopwatch = null;
                     Stopwatch setLastEventInfoStopwatch = null;
                     Stopwatch setEventsGoodStopwatch = null;
                     if(goodEvents.Length > 0)
                     {
-                        setEventMetasStopwatch = Stopwatch.StartNew();
-                        SetEventMetas(goodEvents);
-                        setEventMetasStopwatch.Stop();
-
                         var lastEventInfoFromCurrentBatch = eventsBatch.MaxBy(x => x.EventInfo.Ticks).EventInfo;
 
                         setLastEventInfoStopwatch = Stopwatch.StartNew();
@@ -190,7 +183,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                         GetElapsed(getGoodLastEventInfo2Stopwatch),
                         GetElapsed(writeEventsStopwatch),
                         GetElapsed(deleteBadEventsStopwatch),
-                        GetElapsed(setEventMetasStopwatch),
                         GetElapsed(setLastEventInfoStopwatch),
                         GetElapsed(setEventsGoodStopwatch));
                 }
@@ -223,12 +215,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             return result.ToString();
         }
 
-        private void SetEventMetas(EventStorageElement[] events)
-        {
-            var metas = events.Select(x => x.EventInfo).ToArray();
-            eventInfoRepository.Write(metas, DateTime.UtcNow);
-        }
-
         private DateTime outputDateTime = DateTime.Now;
         private long totalEventCount;
         private long totalEventBatchCount;
@@ -239,7 +225,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         private volatile float runs;
         private readonly IEventStorage eventStorage;
         private readonly IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository;
-        private readonly IEventInfoRepository eventInfoRepository;
         private readonly IEventLogProfiler profiler;
         private readonly ManualResetEventPool manualResetEventPool;
         private readonly ManualResetEvent @event = new ManualResetEvent(false);

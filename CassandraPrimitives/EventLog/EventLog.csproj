@@ -50,12 +50,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Implementation\EventInfoRepository.cs" />
     <Compile Include="Implementation\EventLoggerAdditionalInfoRepository.cs" />
     <Compile Include="Exceptions\EventLoggerNeedInitializationException.cs" />
     <Compile Include="Exceptions\EventLoggerWasDisposedException.cs" />
     <Compile Include="Implementation\EventLogPointerCreator.cs" />
-    <Compile Include="Implementation\IEventInfoRepository.cs" />
     <Compile Include="Implementation\IEventLoggerAdditionalInfoRepository.cs" />
     <Compile Include="Implementation\IEventLogPointerCreator.cs" />
     <Compile Include="Implementation\EventStorage.cs" />

@@ -57,12 +57,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             return eventLogger.Write(storageElements);
         }
 
-        public Event GetEvent(EventId eventId)
-        {
-            var storageElement = eventLogger.ReadEvent(eventId);
-            return FromStorageElement(storageElement);
-        }
-
         public void Dispose()
         {
             eventLogger.Dispose();

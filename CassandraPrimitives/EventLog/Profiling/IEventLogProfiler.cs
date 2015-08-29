@@ -12,7 +12,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling
             TimeSpan getGoodLastEventInfo2Time,
             TimeSpan writeEventsTime,
             TimeSpan deleteBadEventsTime,
-            TimeSpan setEventMetasTime,
             TimeSpan setLastEventInfoTime,
             TimeSpan setEventsGoodTime);
 
