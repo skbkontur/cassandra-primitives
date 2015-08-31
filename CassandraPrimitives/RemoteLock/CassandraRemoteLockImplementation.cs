@@ -31,17 +31,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
             {
                 if(lockMetadata.LockCount > changeLockRowThreshold)
                 {
-                    var newLockMetadata = new LockMetadata(lockId, Guid.NewGuid().ToString(), 1, newThreshold);
+                    var newLockMetadata = new LockMetadata(lockId, Guid.NewGuid().ToString(), 1, newThreshold, lockMetadata.PreviousPersistedTimestamp);
 
                     baseOperationsPerformer.WriteThread(lockMetadata.MainRowKey(), newThreshold, threadId, singleOperationTimeout.Multiply(3));
                     baseOperationsPerformer.WriteThread(newLockMetadata.MainRowKey(), newThreshold, threadId, singleOperationTimeout.Multiply(2) + lockTtl);
                     baseOperationsPerformer.WriteLockMetadata(newLockMetadata);
-                    baseOperationsPerformer.WriteThread(lockMetadata.MainRowKey(), newThreshold, threadId, TimeSpan.FromDays(7));
+                    baseOperationsPerformer.WriteThread(lockMetadata.MainRowKey(), newThreshold, threadId, TimeSpan.FromMinutes(20));
 
                     return LockAttemptResult.Success();
                 }
 
-                baseOperationsPerformer.WriteLockMetadata(new LockMetadata(lockId, lockMetadata.LockRowId, lockMetadata.LockCount + 1, newThreshold));
+                baseOperationsPerformer.WriteLockMetadata(new LockMetadata(lockId, lockMetadata.LockRowId, lockMetadata.LockCount + 1, newThreshold, lockMetadata.PreviousPersistedTimestamp));
             }
 
             return result;
