@@ -50,22 +50,27 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
                     CassandraClusterSettings = CassandraClusterSettings.ForNode(StartSingleCassandraSetUp.Node, cassOpAttempts, cassOpTimeout),
                 };
             var lockIds = Enumerable.Range(0, locks).Select(x => Guid.NewGuid().ToString()).ToArray();
+            var previousThresholds = Enumerable.Range(0, locks).Select(i => (long?)0L).ToArray();
             var resources = new ConcurrentDictionary<string, Guid>();
             using(var tester = new RemoteLockerTester(useSingleLockKeeperThread, config))
             {
                 var localTester = tester;
-                var actions = new Action[threads];
+                var actions = new Action<MultithreadingTestHelper.RunState>[threads];
                 for(var th = 0; th < actions.Length; th++)
                 {
                     var remoteLockCreator = tester[th];
-                    actions[th] = () =>
+                    actions[th] = (state) =>
                         {
                             var rng = new Random(Guid.NewGuid().GetHashCode());
-                            long? previousThreshold = 0L;
                             for(var op = 0; op < operationsPerThread; op++)
                             {
-                                var lockId = lockIds[rng.Next(lockIds.Length)];
-                                var @lock = Lock(remoteLockCreator, rng, lockId);
+                                if(state.ErrorOccurred)
+                                    break;
+                                var lockIndex = rng.Next(lockIds.Length);
+                                var lockId = lockIds[lockIndex];
+                                var @lock = Lock(remoteLockCreator, rng, lockId, state);
+                                if(state.ErrorOccurred)
+                                    break;
                                 var resource = Guid.NewGuid();
                                 resources[lockId] = resource;
                                 var opDuration = TimeSpan.FromMilliseconds(16);
@@ -74,12 +79,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
                                 Thread.Sleep(opDuration);
                                 Assert.That(resources[lockId], Is.EqualTo(resource));
                                 CollectionAssert.AreEqual(new[] { @lock.ThreadId }, localTester.GetThreadsInMainRow(lockId));
-                                CollectionAssert.IsEmpty(localTester.GetThreadsInShadeRow(lockId));
-                                var threshold = localTester.GetThreshold(lockId);
-                                Assert.That(threshold, Is.Not.Null);
-                                Assert.That(threshold, Is.GreaterThan(previousThreshold));
-                                previousThreshold = threshold;
+                                Assert.That(localTester.GetThreadsInShadeRow(lockId), Is.Not.Contains(@lock.ThreadId));
+                                var lockMetadata = localTester.GetLockMetadata(lockId);
+                                Assert.That(lockMetadata.PreviousThreshold, Is.GreaterThan(previousThresholds[lockIndex]));
+                                previousThresholds[lockIndex] = lockMetadata.PreviousThreshold;
+                                Assert.That(lockMetadata.ProbableOwnerThreadId, Is.EqualTo(@lock.ThreadId));
                                 @lock.Dispose();
+                                Assert.That(localTester.GetThreadsInMainRow(lockId), Is.Not.Contains(@lock.ThreadId));
                             }
                         };
                 }
@@ -87,10 +93,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
             }
         }
 
-        private static IRemoteLock Lock(IRemoteLockCreator remoteLockCreator, Random rng, string lockId)
+        private static IRemoteLock Lock(IRemoteLockCreator remoteLockCreator, Random rng, string lockId, MultithreadingTestHelper.RunState state)
         {
             IRemoteLock remoteLock;
-            while(!remoteLockCreator.TryGetLock(lockId, out remoteLock))
+            while(!remoteLockCreator.TryGetLock(lockId, out remoteLock) && !state.ErrorOccurred)
                 Thread.Sleep(rng.Next(32));
             return remoteLock;
         }

@@ -26,7 +26,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
             MakeInConnection(connection => connection.AddColumn(lockRowId, new Column
                 {
                     Name = TransformThreadIdToColumnName(threshold, threadId),
-                    Value = new byte[] {0},
+                    Value = new byte[] { 0 },
                     Timestamp = GetNowTicks(),
                     TTL = (int?)ttl.TotalSeconds
                 }));
@@ -37,21 +37,29 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
             MakeInConnection(connection => connection.DeleteColumn(lockRowId, TransformThreadIdToColumnName(threshold, threadId), GetNowTicks()));
         }
 
+        public bool ThreadAlive(string lockRowId, long? threshold, string threadId)
+        {
+            var exists = false;
+            Column threadColumn;
+            MakeInConnection(connection => exists = connection.TryGetColumn(lockRowId, TransformThreadIdToColumnName(threshold, threadId), out threadColumn));
+            return exists;
+        }
+
         public string[] SearchThreads(string lockRowId, long? threshold)
         {
             var res = new string[0];
             MakeInConnection(connection =>
                 {
                     var columns = connection.GetRow(lockRowId, ThresholdToString(threshold)).ToArray();
-                    if(columns.Length != 0)
-                        res = columns.Where(x => x.Value != null && x.Value.Length != 0).Select(x => TransformColumnNameToThreadId(x.Name)).ToArray();
+                    if (columns.Length != 0)
+                        res = columns.Where(x => x.Value != null && x.Value.Length != 0).Select(x => TransformColumnNameToThreadId(x.Name)).Distinct().ToArray();
                 });
             return res;
         }
 
-        public void WriteLockMetadata(LockMetadata lockMetadata)
+        public void WriteLockMetadata(LockMetadata lockMetadata, long? minAcceptableTimestamp)
         {
-            var newTimestamp = Math.Max(GetNowTicks(), lockMetadata.PreviousPersistedTimestamp + 1 ?? 0L);
+            var newTimestamp = Math.Max(GetNowTicks(), minAcceptableTimestamp ?? 0L);
             var columns = new List<Column>
                 {
                     new Column
@@ -65,40 +73,49 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
                             Name = lockCountColumnName,
                             Value = serializer.Serialize(lockMetadata.LockCount),
                             Timestamp = newTimestamp
+                        },
+                    new Column
+                        {
+                            Name = previousThresholdColumnName,
+                            Value = serializer.Serialize(lockMetadata.PreviousThreshold),
+                            Timestamp = newTimestamp
+                        },
+                    new Column
+                        {
+                            Name = probableOwnerThreadIdColumnName,
+                            Value = serializer.Serialize(lockMetadata.ProbableOwnerThreadId),
+                            Timestamp = newTimestamp
                         }
                 };
-            if(lockMetadata.PreviousThreshold != null)
-            {
-                columns.Add(new Column
-                    {
-                        Name = previousThresholdColumnName,
-                        Value = serializer.Serialize(lockMetadata.PreviousThreshold),
-                        Timestamp = newTimestamp
-                    });
-            }
 
             MakeInConnection(connection => connection.AddBatch(lockMetadata.LockId.ToLockMetadataRowKey(), columns.ToArray()));
         }
 
-        public LockMetadata GetLockMetadata(string lockId)
+        public LockMetadata GetLockMetadata(string lockId, out long? persistedTimestamp)
         {
             LockMetadata res = null;
+            long? maxTimestamp = null;
             MakeInConnection(connection =>
                 {
-                    var columns = connection.GetColumns(lockId.ToLockMetadataRowKey(), new[] {lockCountColumnName, lockRowIdColumnName, previousThresholdColumnName});
-                    if(!columns.Any()) return;
+                    var columns = connection.GetColumns(lockId.ToLockMetadataRowKey(), new[] { lockCountColumnName, lockRowIdColumnName, previousThresholdColumnName, probableOwnerThreadIdColumnName });
+                    if (!columns.Any()) return;
                     var lockRowId = columns.Any(column => column.Name == lockRowIdColumnName) ?
                                         serializer.Deserialize<string>(columns.First(x => x.Name == lockRowIdColumnName).Value) :
                                         lockId;
                     var lockCount = columns.Any(column => column.Name == lockCountColumnName) ?
                                         serializer.Deserialize<int>(columns.First(x => x.Name == lockCountColumnName).Value) :
                                         0;
-                    var previousThreshold = columns.Any(x => x.Name == previousThresholdColumnName)
-                                                ? serializer.Deserialize<long>(columns.First(x => x.Name == previousThresholdColumnName).Value)
-                                                : (long?)null;
-                    res = new LockMetadata(lockId, lockRowId, lockCount, previousThreshold, columns.Max(column => column.Timestamp));
+                    var previousThreshold = columns.Any(x => x.Name == previousThresholdColumnName) ?
+                                        serializer.Deserialize<long>(columns.First(x => x.Name == previousThresholdColumnName).Value) :
+                                        0L;
+                    var ownerThreadId = columns.Any(x => x.Name == probableOwnerThreadIdColumnName) ?
+                                        serializer.Deserialize<string>(columns.First(x => x.Name == probableOwnerThreadIdColumnName).Value) :
+                                        "";
+                    maxTimestamp = columns.Max(column => column.Timestamp);
+                    res = new LockMetadata(lockId, lockRowId, lockCount, previousThreshold, ownerThreadId);
                 });
-            return res ?? new LockMetadata(lockId, lockId, 0, null, null);
+            persistedTimestamp = maxTimestamp;
+            return res;
         }
 
         private void MakeInConnection(Action<IColumnFamilyConnection> action)
@@ -110,18 +127,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
         private long GetNowTicks()
         {
             var ticks = DateTime.UtcNow.Ticks;
-            while(true)
+            while (true)
             {
                 var last = Interlocked.Read(ref lastTicks);
                 var cur = Math.Max(ticks, last + 1);
-                if(Interlocked.CompareExchange(ref lastTicks, cur, last) == last)
+                if (Interlocked.CompareExchange(ref lastTicks, cur, last) == last)
                     return cur;
             }
         }
 
         private static string TransformThreadIdToColumnName(long? threshold, string threadId)
         {
-            if(string.IsNullOrEmpty(threadId))
+            if (string.IsNullOrEmpty(threadId))
                 throw new ArgumentException("Empty ThreadId is not supported", "threadId");
             return threshold == null ?
                        threadId :
@@ -142,8 +159,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
         private const string lockRowIdColumnName = "LockRowId";
         private const string lockCountColumnName = "LockCount";
         private const string previousThresholdColumnName = "PreviousThreshold";
+        private const string probableOwnerThreadIdColumnName = "ProbableOwnerThreadId";
         private static readonly int thresholdedThreadTechnicalPrefixLength = threadIdWasThresholdedIndicator.Length + 22;
-        
+
         private readonly ICassandraCluster cassandraCluster;
         private readonly ISerializer serializer;
         private readonly ColumnFamilyFullName columnFamilyFullName;
