@@ -20,6 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers
                     catch(Exception e)
                     {
                         errors.Add(e);
+                        Console.WriteLine(e);
                     }
                 })
                 {
