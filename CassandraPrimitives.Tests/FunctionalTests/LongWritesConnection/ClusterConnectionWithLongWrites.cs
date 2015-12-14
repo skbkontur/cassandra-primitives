@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Connections;
@@ -35,6 +36,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWrit
         public string DescribeVersion()
         {
             return clusterConnection.DescribeVersion();
+        }
+
+        public void WaitUntilSchemeAgreementIsReached(TimeSpan timeout)
+        {
+            throw new NotImplementedException();
         }
 
         private readonly IClusterConnection clusterConnection;
