@@ -10,19 +10,25 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers
     {
         public static IEnumerable<Assembly> Load()
         {
-            string searchPath = AppDomain.CurrentDomain.RelativeSearchPath;
-            if (string.IsNullOrEmpty(searchPath))
-                searchPath = AppDomain.CurrentDomain.BaseDirectory;
-            return Directory.EnumerateFiles(searchPath, "*", SearchOption.TopDirectoryOnly)
-                            .Where(IsOurAssembly)
-                            .Select(Assembly.LoadFrom)
-                            .ToArray();
+            return EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory)
+                .Concat(EnumerateFiles(AppDomain.CurrentDomain.RelativeSearchPath))
+                .Distinct()
+                .Where(IsOurAssembly)
+                .Select(Assembly.LoadFrom)
+                .ToArray();
+        }
+
+        private static IEnumerable<string> EnumerateFiles(string dir)
+        {
+            return string.IsNullOrWhiteSpace(dir)
+                       ? new string[0]
+                       : Directory.EnumerateFiles(dir, "*", SearchOption.TopDirectoryOnly);
         }
 
         private static bool IsOurAssembly(string fullFileName)
         {
             var fileName = Path.GetFileName(fullFileName);
-            if (string.IsNullOrEmpty(fileName))
+            if(string.IsNullOrEmpty(fileName))
                 return false;
             return (fileName.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase) ||
                     fileName.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase))
