@@ -114,7 +114,6 @@
     <Compile Include="Tests\EventRepositoryTests\SpeedTests.cs" />
     <Compile Include="Tests\EventRepositoryTests\LastEventInfoForEmptyResultTest.cs" />
     <Compile Include="Tests\RemoteLockTests\FailedCassandraCluster.cs" />
-    <Compile Include="Tests\RemoteLockTests\RemoteLockAndWeakLockTest.cs" />
     <Compile Include="Tests\RemoteLockTests\RemoteLockTest.cs" />
     <Compile Include="Tests\RemoteLockTests\RemoteLockTestBase.cs" />
     <Compile Include="LongWritesConnection\CatalogueCassandraClusterWithLongWrites.cs" />
