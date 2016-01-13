@@ -82,6 +82,8 @@
     <Compile Include="Tests\RemoteLockTests\BasicRemoteLockerTests.cs" />
     <Compile Include="Helpers\MultithreadingTestHelper.cs" />
     <Compile Include="Tests\RemoteLockTests\ConcurrentRemoteLockerTests.cs" />
+    <Compile Include="Tests\RemoteLockTests\FiledCassandra\FailedCassandraClusterException.cs" />
+    <Compile Include="Tests\RemoteLockTests\FiledCassandra\FailedColumnFamilyConnection.cs" />
     <Compile Include="Tests\RemoteLockTests\LocalRivalOptimization.cs" />
     <Compile Include="Tests\RemoteLockTests\RemoteLockerTester.cs" />
     <Compile Include="Tests\RemoteLockTests\RemoteLockerTesterConfig.cs" />
@@ -115,7 +117,7 @@
     <Compile Include="Tests\EventRepositoryTests\EventComparer.cs" />
     <Compile Include="Tests\EventRepositoryTests\SpeedTests.cs" />
     <Compile Include="Tests\EventRepositoryTests\LastEventInfoForEmptyResultTest.cs" />
-    <Compile Include="Tests\RemoteLockTests\FailedCassandraCluster.cs" />
+    <Compile Include="Tests\RemoteLockTests\FiledCassandra\FailedCassandraCluster.cs" />
     <Compile Include="Tests\RemoteLockTests\RemoteLockTest.cs" />
     <Compile Include="Tests\RemoteLockTests\RemoteLockTestBase.cs" />
     <Compile Include="LongWritesConnection\CatalogueCassandraClusterWithLongWrites.cs" />
