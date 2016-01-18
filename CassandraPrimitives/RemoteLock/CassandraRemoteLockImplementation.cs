@@ -34,8 +34,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
             var probableOwnerThreadId = lockMetadata.ProbableOwnerThreadId;
             if(!string.IsNullOrEmpty(probableOwnerThreadId) && baseOperationsPerformer.ThreadAlive(lockMetadata.LockRowId, lockMetadata.PreviousThreshold, probableOwnerThreadId))
             {
-                if (probableOwnerThreadId == threadId)
-                    throw new InvalidOperationException(string.Format("TryLock(lockId = {0}, threadId = {1}): probableOwnerThreadId = {1}, but is seems impossible case", lockId, threadId));
+                if(probableOwnerThreadId == threadId)
+                    throw new InvalidOperationException(string.Format("TryLock(lockId = {0}, threadId = {1}): probableOwnerThreadId == threadId, though it seemed to be impossible!", lockId, threadId));
                 result = LockAttemptResult.AnotherOwner(probableOwnerThreadId);
             }
             else
@@ -53,10 +53,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
                 else
                 {
                     var newLockMetadata = new NewLockMetadata(lockId, Guid.NewGuid().ToString(), 1, newThreshold, threadId);
-                    baseOperationsPerformer.WriteThread(lockMetadata.MainRowKey(), newThreshold, threadId, singleOperationTimeout.Multiply(3));
-                    baseOperationsPerformer.WriteThread(newLockMetadata.MainRowKey(), newThreshold, threadId, singleOperationTimeout.Multiply(2) + lockTtl);
+                    baseOperationsPerformer.WriteThread(newLockMetadata.MainRowKey(), newThreshold, threadId, lockTtl);
                     baseOperationsPerformer.WriteLockMetadata(newLockMetadata, lockMetadata.Timestamp);
-                    baseOperationsPerformer.WriteThread(lockMetadata.MainRowKey(), newThreshold, threadId, TimeSpan.FromMinutes(20));
+                    baseOperationsPerformer.WriteThread(lockMetadata.MainRowKey(), newThreshold, threadId, lockTtl.Multiply(10));
                 }
             }
             return result;
@@ -84,7 +83,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
                 items = baseOperationsPerformer.SearchThreads(lockMetadata.MainRowKey(), lockMetadata.PreviousThreshold);
                 if(items.Length == 0)
                 {
-                    baseOperationsPerformer.WriteThread(lockMetadata.MainRowKey(), newThreshold, threadId, singleOperationTimeout + lockTtl);
+                    baseOperationsPerformer.WriteThread(lockMetadata.MainRowKey(), newThreshold, threadId, lockTtl);
                     baseOperationsPerformer.DeleteThread(lockMetadata.ShadowRowKey(), newThreshold, threadId);
                     return LockAttemptResult.Success();
                 }
