@@ -10,8 +10,15 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
+    [TestFixture(true)]
+    [TestFixture(false)]
     public class BoxEventRepositorySimpleTests : BoxEventRepositoryTestBase
     {
+        public BoxEventRepositorySimpleTests(bool asyncWrite)
+        {
+            this.asyncWrite = asyncWrite;
+        }
+
         public override void SetUp()
         {
             base.SetUp();
@@ -24,6 +31,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         {
             eventRepository.Dispose();
             base.TearDown();
+        }
+
+        private EventInfo AddEvent(string scopeId, object eventContent)
+        {
+            if(asyncWrite)
+                return eventRepository.AddEventsAsync(new[] {new KeyValuePair<string, object>(scopeId, eventContent),}).Result.First();
+            return eventRepository.AddEvent(scopeId, eventContent);
         }
 
         [Test]
@@ -42,13 +56,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                 var ev2 = er.AddEvent(guid1, GenerateEventContent());
                 var ev3 = er.AddEvent(guid1, GenerateEventContent());
                 EventInfo eventInfo;
-                Assert.That(er.GetEventsWithUnstableZone(null, new[] { "2", "3" }, out eventInfo).ToArray().Length == 0);
+                Assert.That(er.GetEventsWithUnstableZone(null, new[] {"2", "3"}, out eventInfo).ToArray().Length == 0);
                 Assert.That(eventInfo.CompareTo(ev3) == 0);
-                Assert.That(er.GetEventsWithUnstableZone(ev1, new[] { "2", "3" }, out eventInfo).ToArray().Length == 0);
+                Assert.That(er.GetEventsWithUnstableZone(ev1, new[] {"2", "3"}, out eventInfo).ToArray().Length == 0);
                 Assert.That(eventInfo.CompareTo(ev3) == 0);
-                Assert.That(er.GetEventsWithUnstableZone(ev2, new[] { "2", "3" }, out eventInfo).ToArray().Length == 0);
+                Assert.That(er.GetEventsWithUnstableZone(ev2, new[] {"2", "3"}, out eventInfo).ToArray().Length == 0);
                 Assert.That(eventInfo.CompareTo(ev3) == 0);
-                Assert.That(er.GetEventsWithUnstableZone(ev3, new[] { "2", "3" }, out eventInfo).ToArray().Length == 0);
+                Assert.That(er.GetEventsWithUnstableZone(ev3, new[] {"2", "3"}, out eventInfo).ToArray().Length == 0);
                 Assert.That(eventInfo.CompareTo(ev3) == 0);
             }
         }
@@ -69,7 +83,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             {
                 var scopeId = GenerateScopeId();
                 var eventContent = GenerateEventContent();
-                var eventInfo = eventRepository.AddEvent(scopeId, eventContent);
+                var eventInfo = AddEvent(scopeId, eventContent);
                 Assert.AreEqual(scopeId, eventInfo.Id.ScopeId);
 
                 expectedEvents.Add(new Event
@@ -79,12 +93,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                     });
             }
 
-            var actualEvents = eventRepository.GetEvents(null, new[] { commonShard }).ToArray();
+            var actualEvents = eventRepository.GetEvents(null, new[] {commonShard}).ToArray();
             CheckEqualEvents(expectedEvents.ToArray(), actualEvents);
 
             for(var i = 0; i < expectedEvents.Count; ++i)
             {
-                actualEvents = eventRepository.GetEvents(expectedEvents[i].EventInfo, new[] { commonShard }).ToArray();
+                actualEvents = eventRepository.GetEvents(expectedEvents[i].EventInfo, new[] {commonShard}).ToArray();
                 CheckEqualEvents(expectedEvents.Skip(i + 1).ToArray(), actualEvents);
             }
         }
@@ -92,7 +106,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         [Test]
         public void TestRead()
         {
-            var actualEvents = eventRepository.GetEvents(null, new[] { commonShard }).ToArray();
+            var actualEvents = eventRepository.GetEvents(null, new[] {commonShard}).ToArray();
             Assert.That(actualEvents, Is.Empty);
         }
 
@@ -105,7 +119,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             for(var i = 0; i < 10000; ++i)
             {
                 var boxEvent = GenerateEventContent();
-                var eventInfo = eventRepository.AddEvent(GenerateScopeId(), boxEvent);
+                var eventInfo = AddEvent(GenerateScopeId(), boxEvent);
                 expectedEvents.Add(new Event
                     {
                         EventInfo = eventInfo,
@@ -115,7 +129,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             watch.Stop();
             Console.WriteLine(watch.ElapsedMilliseconds);
 
-            var actualEvents = eventRepository.GetEvents(null, new[]{commonShard}).ToArray();
+            var actualEvents = eventRepository.GetEvents(null, new[] {commonShard}).ToArray();
             CheckEqualEvents(expectedEvents.ToArray(), actualEvents);
         }
 
@@ -124,10 +138,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             return boxIds[globalRandom.Next(boxIds.Length)];
         }
 
+        private const string commonShard = "commonShard";
+        private readonly bool asyncWrite;
+
         private IEventRepository eventRepository;
         private string[] boxIds;
         private Random globalRandom;
-
-        private const string commonShard = "commonShard";
     }
 }
