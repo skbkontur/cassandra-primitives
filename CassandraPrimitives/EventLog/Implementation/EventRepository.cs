@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using GroBuf;
 
@@ -37,23 +38,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             return AddEvents(eventContents.Select(x => new KeyValuePair<string, object>(scopeId, x)).ToArray());
         }
 
+        public async Task<EventInfo[]> AddEventsAsync(KeyValuePair<string, object>[] events)
+        {
+            var storageElements = SelectStorageElements(events);
+            return await eventLogger.WriteAsync(storageElements);
+        }
+
         public EventInfo[] AddEvents(KeyValuePair<string, object>[] events)
         {
-            var storageElements = events.Select(
-                ev =>
-                {
-                    var eventId = new EventId { ScopeId = ev.Key, Id = Guid.NewGuid().ToString() };
-                    return new EventStorageElement
-                    {
-                        EventInfo = new EventInfo
-                        {
-                            Id = eventId,
-                            Shard = shardCalculator.CalculateShard(eventId, ev.Value)
-                        },
-                        EventContent = serializer.Serialize(ev.Value.GetType(), ev.Value),
-                        EventType = eventTypeIdentifierProvider.GetIdentifierByType(ev.Value.GetType())
-                    };
-                }).ToArray();
+            var storageElements = SelectStorageElements(events);
             return eventLogger.Write(storageElements);
         }
 
@@ -90,6 +83,26 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 });
         }
 
+        private EventStorageElement[] SelectStorageElements(KeyValuePair<string, object>[] events)
+        {
+            var storageElements = events.Select(
+                ev =>
+                    {
+                        var eventId = new EventId {ScopeId = ev.Key, Id = Guid.NewGuid().ToString()};
+                        return new EventStorageElement
+                            {
+                                EventInfo = new EventInfo
+                                    {
+                                        Id = eventId,
+                                        Shard = shardCalculator.CalculateShard(eventId, ev.Value)
+                                    },
+                                EventContent = serializer.Serialize(ev.Value.GetType(), ev.Value),
+                                EventType = eventTypeIdentifierProvider.GetIdentifierByType(ev.Value.GetType())
+                            };
+                    }).ToArray();
+            return storageElements;
+        }
+
         private Event FromStorageElement(EventStorageElement storageElement)
         {
             var eventContentType = eventTypeIdentifierProvider.GetTypeByIdentifier(storageElement.EventType);
@@ -101,11 +114,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 };
         }
 
+        private const int batchSize = 1000;
+
         private readonly IEventTypeIdentifierProvider eventTypeIdentifierProvider;
         private readonly IEventLogger eventLogger;
         private readonly IShardCalculator shardCalculator;
         private readonly ISerializer serializer;
-
-        private const int batchSize = 1000;
     }
 }

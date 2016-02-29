@@ -50,6 +50,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementation\ProcessResult.cs" />
     <Compile Include="Implementation\EventLoggerAdditionalInfoRepository.cs" />
     <Compile Include="Exceptions\EventLoggerNeedInitializationException.cs" />
     <Compile Include="Exceptions\EventLoggerWasDisposedException.cs" />
@@ -69,7 +70,6 @@
     <Compile Include="IEventRepositoryFactory.cs" />
     <Compile Include="Linq\Exceptions\CantMoveNextException.cs" />
     <Compile Include="Linq\SortedMerge.cs" />
-    <Compile Include="Primitives\DeferredResult.cs" />
     <Compile Include="Primitives\EventInfo.cs" />
     <Compile Include="Primitives\EventLogRecord.cs" />
     <Compile Include="Implementation\EventRepository.cs" />

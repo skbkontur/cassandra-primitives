@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 
@@ -6,6 +7,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
     internal interface IQueueRaker : IDisposable
     {
-        DeferredResult Enqueue(EventStorageElement[] events, int priority);
+        Task<ProcessResult> ProcessAsync(EventStorageElement[] events, int priority);
     }
 }

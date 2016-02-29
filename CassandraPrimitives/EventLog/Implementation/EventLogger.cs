@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 
 using GroBuf;
+
+using log4net;
 
 using MoreLinq;
 
@@ -17,8 +19,6 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
-
-using log4net;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
@@ -53,6 +53,28 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             }
         }
 
+        public async Task<EventInfo[]> WriteAsync(params EventStorageElement[] events)
+        {
+            InitializeOnce();
+            var eventBatches = events.Batch(1000).Select(x => x.ToArray());
+            var eventInfos = new List<EventInfo>();
+            foreach(var eventBatch in eventBatches)
+            {
+                //todo maybe in parallel ??
+                var writeBatch = await WriteBatchAsync(eventBatch);
+                eventInfos.AddRange(writeBatch);
+            }
+
+            var dict = eventInfos.ToDictionary(x => x.Id);
+            var result = events.Select(x => dict[x.EventInfo.Id]).ToArray();
+            return result;
+        }
+
+        public EventInfo[] Write(params EventStorageElement[] events)
+        {
+            return WriteAsync(events).Result;
+        }
+
         public IEnumerable<EventStorageElementContainer> ReadEventsWithUnstableZone(EventInfo startEventInfo, string[] shards, out EventInfo newExclusiveEventInfo)
         {
             InitializeOnce();
@@ -73,18 +95,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             return ReadEventsWithUnstableZone(startEventInfo, finishEventInfo, shards);
         }
 
-        public EventInfo[] Write(params EventStorageElement[] events)
-        {
-            InitializeOnce();
-            var eventBatches = events.Batch(1000).Select(x => x.ToArray());
-            var eventInfos = new List<EventInfo>();
-            foreach(var eventBatch in eventBatches)
-                eventInfos.AddRange(WriteBatch(eventBatch));
-
-            var dict = eventInfos.ToDictionary(x => x.Id);
-            var result = events.Select(x => dict[x.EventInfo.Id]).ToArray();
-            return result;
-        }
 
         private IEnumerable<EventStorageElementContainer> ReadEventsWithUnstableZone(EventInfo startEventInfo, EventInfo finishEventInfo, string[] shards)
         {
@@ -134,7 +144,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             }
         }
 
-        private EventInfo[] WriteBatch(EventStorageElement[] eventBatch)
+        private async Task<EventInfo[]> WriteBatchAsync(EventStorageElement[] eventBatch)
         {
             var random = new Random(Guid.NewGuid().GetHashCode());
             var dict = eventBatch.ToDictionary(x => x.EventInfo.Id);
@@ -149,18 +159,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 for(var attempt = 0; !wasDisposed && attempt < attemptCount; ++attempt)
                 {
                     totalAttemptCount++;
-                    using(var deferredResult = queueRaker.Enqueue(batchForWrite, attempt))
-                    {
-                        deferredResult.WaitFinished();
-                        batchForWrite = deferredResult.failureIds.Select(x => dict[x]).ToArray();
-                        result.AddRange(deferredResult.successInfos);
-                        if(batchForWrite.Length == 0) return result.ToArray();
-                    }
+                    var enqueueResult = await queueRaker.ProcessAsync(batchForWrite, attempt);
+                    batchForWrite = enqueueResult.failureIds.Select(x => dict[x]).ToArray();
+                    result.AddRange(enqueueResult.successInfos);
+                    if(batchForWrite.Length == 0) return result.ToArray();
                     var sleepTime = random.Next(10, 20);
                     var sleepStopwatch = Stopwatch.StartNew();
                     try
                     {
-                        Thread.Sleep(sleepTime);
+                        await Task.Delay(sleepTime);
                     }
                     finally
                     {
@@ -258,6 +265,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             return serializer.Deserialize<EventLogRecord>(columnValue);
         }
 
+        private const int attemptCount = 20;
+
         private readonly ILog logger = LogManager.GetLogger(typeof(EventLogger));
 
         private readonly ISerializer serializer;
@@ -268,11 +277,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         private readonly IEventLogProfiler profiler;
         private readonly IColumnFamilyConnection columnFamilyConnection;
 
-        private IQueueRaker queueRaker;
+        private volatile IQueueRaker queueRaker;
 
         private volatile bool wasDisposed;
         private volatile bool wasInitialized;
         private readonly object lockObject = new object();
-        private const int attemptCount = 20;
     }
 }

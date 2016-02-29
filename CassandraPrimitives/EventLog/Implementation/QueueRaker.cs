@@ -4,6 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+
+using log4net;
 
 using MoreLinq;
 
@@ -11,8 +14,6 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils;
-
-using log4net;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
@@ -44,33 +45,34 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             {
                 var batch = queue.ToList();
                 foreach(var entry in batch)
-                {
-                    entry.result.successInfos = new EventInfo[0];
-                    entry.result.failureIds = entry.events.Select(x => x.EventInfo.Id).ToArray();
-                    entry.result.Signal();
-                }
+                    entry.Completed(TotalFailedEnqueueResult(entry));
                 queue.Clear();
             }
             manualResetEventPool.Dispose();
         }
 
-        public DeferredResult Enqueue(EventStorageElement[] events, int priority)
+        private static ProcessResult TotalFailedEnqueueResult(QueueEntry entry)
         {
+            return new ProcessResult(new EventInfo[0], entry.events.Select(x => x.EventInfo.Id).ToArray());
+        }
+
+        public async Task<ProcessResult> ProcessAsync(EventStorageElement[] events, int priority)
+        {
+            if(wasDisposed)
+                throw new CouldNotWriteBoxEventException("This instance of eventLogger was disposed");
+            var tcs = new TaskCompletionSource<ProcessResult>();
+            var queueEntry = new QueueEntry(tcs, events, priority);
             lock(lockObject)
             {
-                if(wasDisposed)
-                    throw new CouldNotWriteBoxEventException("This instance of eventLogger was disposed");
-                var result = new DeferredResult(manualResetEventPool, profiler);
-                queue.Enqueue(new QueueEntry
-                    {
-                        events = events,
-                        result = result,
-                        priority = priority
-                    });
+                queue.Enqueue(queueEntry);
                 if(queue.Count * runs >= sum && queue.Count >= 10)
                     @event.Set();
-                return result;
             }
+
+            ProcessResult processResult = await tcs.Task;
+            if (queueEntry.sinceResultSetStopwatch != null)
+                profiler.AfterDeferredResultWaitFinished(queueEntry.sinceResultSetStopwatch.Elapsed);
+            return processResult;
         }
 
         public void Start()
@@ -172,9 +174,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
                     foreach(var entry in batch)
                     {
-                        entry.result.successInfos = entry.events.Where(x => x.EventInfo.Ticks > lastGoodEventInfo.Ticks).Select(x => x.EventInfo).ToArray();
-                        entry.result.failureIds = entry.events.Where(x => x.EventInfo.Ticks <= lastGoodEventInfo.Ticks).Select(x => x.EventInfo.Id).ToArray();
-                        entry.result.Signal();
+                        var enqueueResult = new ProcessResult(
+                            entry.events.Where(x => x.EventInfo.Ticks > lastGoodEventInfo.Ticks).Select(x => x.EventInfo).ToArray(),
+                            entry.events.Where(x => x.EventInfo.Ticks <= lastGoodEventInfo.Ticks).Select(x => x.EventInfo.Id).ToArray());
+                        entry.Completed(enqueueResult);
                     }
 
                     profiler.AfterRake(
@@ -190,16 +193,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 {
                     logger.Error(e);
                     foreach(var entry in batch)
-                    {
-                        entry.result.successInfos = new EventInfo[0];
-                        entry.result.failureIds = entry.events.Select(x => x.EventInfo.Id).ToArray();
-                        entry.result.Signal();
-                    }
+                        entry.Completed(TotalFailedEnqueueResult(entry));
                 }
             }
         }
 
-        private TimeSpan GetElapsed(Stopwatch stopwatch)
+        private static TimeSpan GetElapsed(Stopwatch stopwatch)
         {
             return stopwatch == null ? TimeSpan.FromTicks(0) : stopwatch.Elapsed;
         }
