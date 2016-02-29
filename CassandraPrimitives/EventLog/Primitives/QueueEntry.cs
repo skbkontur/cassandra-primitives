@@ -8,7 +8,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives
 {
     internal class QueueEntry
     {
-        public QueueEntry(TaskCompletionSource<EnqueueResult> completionSource, EventStorageElement[] events, int priority)
+        public QueueEntry(TaskCompletionSource<ProcessResult> completionSource, EventStorageElement[] events, int priority)
         {
             this.completionSource = completionSource;
             this.events = events;
@@ -18,13 +18,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives
 
         public TimeSpan SinceCreateElapsed { get { return sinceCreateStopwatch.Elapsed; } }
 
-        public void Completed(EnqueueResult result)
+        public void Completed(ProcessResult result)
         {
             sinceResultSetStopwatch = Stopwatch.StartNew();
             completionSource.SetResult(result);
         }
 
-        private readonly TaskCompletionSource<EnqueueResult> completionSource;
+        private readonly TaskCompletionSource<ProcessResult> completionSource;
         private readonly Stopwatch sinceCreateStopwatch;
 
         public readonly EventStorageElement[] events;

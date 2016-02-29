@@ -50,7 +50,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Implementation\EnqueueResult.cs" />
+    <Compile Include="Implementation\ProcessResult.cs" />
     <Compile Include="Implementation\EventLoggerAdditionalInfoRepository.cs" />
     <Compile Include="Exceptions\EventLoggerNeedInitializationException.cs" />
     <Compile Include="Exceptions\EventLoggerWasDisposedException.cs" />

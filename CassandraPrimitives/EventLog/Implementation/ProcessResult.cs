@@ -2,9 +2,9 @@
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
-    internal class EnqueueResult
+    internal class ProcessResult
     {
-        public EnqueueResult(EventInfo[] successInfos, EventId[] failureIds)
+        public ProcessResult(EventInfo[] successInfos, EventId[] failureIds)
         {
             this.successInfos = successInfos;
             this.failureIds = failureIds;

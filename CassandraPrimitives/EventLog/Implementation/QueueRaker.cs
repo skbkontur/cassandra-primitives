@@ -51,16 +51,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             manualResetEventPool.Dispose();
         }
 
-        private static EnqueueResult TotalFailedEnqueueResult(QueueEntry entry)
+        private static ProcessResult TotalFailedEnqueueResult(QueueEntry entry)
         {
-            return new EnqueueResult(new EventInfo[0], entry.events.Select(x => x.EventInfo.Id).ToArray());
+            return new ProcessResult(new EventInfo[0], entry.events.Select(x => x.EventInfo.Id).ToArray());
         }
 
-        public async Task<EnqueueResult> EnqueueAsync(EventStorageElement[] events, int priority)
+        public async Task<ProcessResult> ProcessAsync(EventStorageElement[] events, int priority)
         {
             if(wasDisposed)
                 throw new CouldNotWriteBoxEventException("This instance of eventLogger was disposed");
-            var tcs = new TaskCompletionSource<EnqueueResult>();
+            var tcs = new TaskCompletionSource<ProcessResult>();
             var queueEntry = new QueueEntry(tcs, events, priority);
             lock(lockObject)
             {
@@ -69,10 +69,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                     @event.Set();
             }
 
-            EnqueueResult enqueueResult = await tcs.Task;
+            ProcessResult processResult = await tcs.Task;
             if (queueEntry.sinceResultSetStopwatch != null)
                 profiler.AfterDeferredResultWaitFinished(queueEntry.sinceResultSetStopwatch.Elapsed);
-            return enqueueResult;
+            return processResult;
         }
 
         public void Start()
@@ -174,7 +174,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
                     foreach(var entry in batch)
                     {
-                        var enqueueResult = new EnqueueResult(
+                        var enqueueResult = new ProcessResult(
                             entry.events.Where(x => x.EventInfo.Ticks > lastGoodEventInfo.Ticks).Select(x => x.EventInfo).ToArray(),
                             entry.events.Where(x => x.EventInfo.Ticks <= lastGoodEventInfo.Ticks).Select(x => x.EventInfo.Id).ToArray());
                         entry.Completed(enqueueResult);

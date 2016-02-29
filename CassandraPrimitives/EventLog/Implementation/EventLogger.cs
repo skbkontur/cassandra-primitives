@@ -159,7 +159,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 for(var attempt = 0; !wasDisposed && attempt < attemptCount; ++attempt)
                 {
                     totalAttemptCount++;
-                    var enqueueResult = await queueRaker.EnqueueAsync(batchForWrite, attempt);
+                    var enqueueResult = await queueRaker.ProcessAsync(batchForWrite, attempt);
                     batchForWrite = enqueueResult.failureIds.Select(x => dict[x]).ToArray();
                     result.AddRange(enqueueResult.successInfos);
                     if(batchForWrite.Length == 0) return result.ToArray();

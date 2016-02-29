@@ -7,6 +7,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
     internal interface IQueueRaker : IDisposable
     {
-        Task<EnqueueResult> EnqueueAsync(EventStorageElement[] events, int priority);
+        Task<ProcessResult> ProcessAsync(EventStorageElement[] events, int priority);
     }
 }
