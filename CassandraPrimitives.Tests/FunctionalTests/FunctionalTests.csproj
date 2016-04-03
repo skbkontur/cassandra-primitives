@@ -79,12 +79,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Tests\MinMaxTicksHolderExtensions.cs" />
     <Compile Include="Tests\RemoteLockTests\BasicRemoteLockerTests.cs" />
     <Compile Include="Helpers\MultithreadingTestHelper.cs" />
     <Compile Include="Tests\RemoteLockTests\ConcurrentRemoteLockerTests.cs" />
     <Compile Include="Tests\RemoteLockTests\FiledCassandra\FailedCassandraClusterException.cs" />
     <Compile Include="Tests\RemoteLockTests\FiledCassandra\FailedColumnFamilyConnection.cs" />
     <Compile Include="Tests\RemoteLockTests\LocalRivalOptimization.cs" />
+    <Compile Include="Tests\MinMaxTicksHolderTest.cs" />
     <Compile Include="Tests\RemoteLockTests\RemoteLockerTester.cs" />
     <Compile Include="Tests\RemoteLockTests\RemoteLockerTesterConfig.cs" />
     <Compile Include="Tests\RemoteLockTests\StochasticTimestampProvider.cs" />
