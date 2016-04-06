@@ -39,6 +39,9 @@
     <Reference Include="GroBuf">
       <HintPath>..\..\Assemblies\GroBuf.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations">
+      <HintPath>..\..\Assemblies\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="MoreLinq">
       <HintPath>..\..\Assemblies\MoreLinq\MoreLinq.dll</HintPath>
     </Reference>
@@ -50,6 +53,8 @@
     <Compile Include="GlobalTicksHolder\GlobalTime.cs" />
     <Compile Include="GlobalTicksHolder\IGlobalTime.cs" />
     <Compile Include="GlobalTicksHolder\ITicksHolder.cs" />
+    <Compile Include="GlobalTicksHolder\MaxTicksHolder.cs" />
+    <Compile Include="GlobalTicksHolder\MinTicksHolder.cs" />
     <Compile Include="GlobalTicksHolder\TicksHolder.cs" />
     <Compile Include="PersistentStorages\ICassandraObjectIdConverter.cs" />
     <Compile Include="PersistentStorages\IdConverterExtensions.cs" />
