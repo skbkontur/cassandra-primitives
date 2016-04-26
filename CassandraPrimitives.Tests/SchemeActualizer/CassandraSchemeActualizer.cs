@@ -59,8 +59,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer
                     Name = x.Key,
                     Configuration = new KeyspaceConfiguration
                         {
-                            ReplicaPlacementStrategy = ReplicaPlacementStrategy.Simple,
-                            ReplicationFactor = cassandraInitializerSettings.ReplicationFactor,
+                            ReplicationStrategy = SimpleReplicationStrategy.Create(cassandraInitializerSettings.ReplicationFactor),
                             ColumnFamilies = x.ToDictionary(y => y.ColumnFamilyName, y => new ColumnFamily
                                 {
                                     Name = y.ColumnFamilyName,

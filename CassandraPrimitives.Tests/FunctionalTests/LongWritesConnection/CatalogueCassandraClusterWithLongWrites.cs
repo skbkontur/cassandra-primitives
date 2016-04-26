@@ -54,9 +54,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWrit
             return cluster.GetKnowledges();
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null)
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null, bool changeExistingKeyspaceMetadata = false)
         {
-            cluster.ActualizeKeyspaces(keyspaces);
+            cluster.ActualizeKeyspaces(keyspaces, eventListener, changeExistingKeyspaceMetadata);
         }
     }
 }
