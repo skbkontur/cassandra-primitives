@@ -41,7 +41,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         public async Task<EventInfo[]> AddEventsAsync(KeyValuePair<string, object>[] events)
         {
             var storageElements = SelectStorageElements(events);
-            return await eventLogger.WriteAsync(storageElements);
+            return await eventLogger.WriteAsync(storageElements).ConfigureAwait(false);
         }
 
         public EventInfo[] AddEvents(KeyValuePair<string, object>[] events)

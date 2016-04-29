@@ -69,7 +69,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                     @event.Set();
             }
 
-            ProcessResult processResult = await tcs.Task;
+            ProcessResult processResult = await tcs.Task.ConfigureAwait(false);
             if (queueEntry.sinceResultSetStopwatch != null)
                 profiler.AfterDeferredResultWaitFinished(queueEntry.sinceResultSetStopwatch.Elapsed);
             return processResult;
