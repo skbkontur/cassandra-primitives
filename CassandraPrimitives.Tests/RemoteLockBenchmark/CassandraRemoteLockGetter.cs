@@ -5,6 +5,8 @@ using System.Net;
 using GroBuf;
 using GroBuf.DataMembersExtracters;
 
+using log4net;
+
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.ClusterDeployment;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
@@ -14,11 +16,12 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
-    class CassandraRemoteLockGetter : IRemoteLockGetter, IDisposable
+    public class CassandraRemoteLockGetter : IRemoteLockGetter, IDisposable
     {
         private readonly CassandraNode node;
         private readonly ICassandraClusterSettings cassandraClusterSettings;
         private readonly List<RemoteLocker> remoteLockersToDispose;
+        private readonly ILog logger;
 
         public CassandraRemoteLockGetter()
         {
@@ -26,6 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             node.Restart();
             cassandraClusterSettings = node.CreateSettings(IPAddress.Loopback);
             remoteLockersToDispose = new List<RemoteLocker>();
+            logger = LogManager.GetLogger(GetType());
         }
         public IRemoteLockCreator[] Get(int amount)
         {
@@ -71,9 +75,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 {
                     remoteLocker.Dispose();
                 }
-                catch(Exception)
+                catch(Exception e)
                 {
-                    // ignored
+                    logger.Error("Exception occured while disposing remoteLocker:", e);
                 }
             }
             node.Stop();
