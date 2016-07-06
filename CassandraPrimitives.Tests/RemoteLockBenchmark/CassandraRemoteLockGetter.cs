@@ -13,6 +13,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock.RemoteLocker;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
+using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
@@ -22,14 +23,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private readonly ICassandraClusterSettings cassandraClusterSettings;
         private readonly List<RemoteLocker> remoteLockersToDispose;
         private readonly ILog logger;
+        private readonly ITeamCityLogger teamCityLogger;
 
-        public CassandraRemoteLockGetter()
+        public CassandraRemoteLockGetter(ITeamCityLogger teamCityLogger)
         {
             node = CassandraInitializer.CreateCassandraNode();
             node.Restart();
             cassandraClusterSettings = node.CreateSettings(IPAddress.Loopback);
             remoteLockersToDispose = new List<RemoteLocker>();
             logger = LogManager.GetLogger(GetType());
+            this.teamCityLogger = teamCityLogger;
         }
         public IRemoteLockCreator[] Get(int amount)
         {
@@ -78,6 +81,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 catch(Exception e)
                 {
                     logger.Error("Exception occured while disposing remoteLocker:", e);
+                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Failure, "Exception occured while disposing remoteLocker:\n{0}", e);
                 }
             }
             node.Stop();

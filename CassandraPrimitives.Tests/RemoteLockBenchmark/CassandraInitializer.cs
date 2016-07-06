@@ -31,7 +31,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private static string FindCassandraTemplateDirectory(string currentDir)
         {
             if (currentDir == null)
-                throw new Exception("Ќевозможно найти каталог с Cassandra-шаблонами");
+                throw new Exception("Can't find directory with Cassandra templates");
             var cassandraTemplateDirectory = Path.Combine(currentDir, cassandraTemplates);
             return Directory.Exists(cassandraTemplateDirectory) ? cassandraTemplateDirectory : FindCassandraTemplateDirectory(Path.GetDirectoryName(currentDir));
         }

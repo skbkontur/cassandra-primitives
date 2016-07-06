@@ -22,10 +22,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 };
 
             ITestResult testResult;
-            using(var remoteLockGetter = new CassandraRemoteLockGetter())
+            using(var remoteLockGetter = new CassandraRemoteLockGetter(teamCityLogger))
             {
                 var test = new SimpleTest(configuration, remoteLockGetter);
-                using(var testRunner = new TestRunner(configuration))
+                using(var testRunner = new TestRunner(configuration, teamCityLogger))
                 {
                     testResult = testRunner.RunTest(test);
                 }
