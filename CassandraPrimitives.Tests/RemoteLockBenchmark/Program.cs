@@ -1,5 +1,6 @@
 ﻿using System;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logging;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
@@ -8,7 +9,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
     {
         static void Main(string[] args)
         {
-            //Log4NetConfiguration.InitializeOnce();
+            Log4NetConfiguration.InitializeOnce();
             
             var teamCityLogger = new TeamCityLogger(Console.Out);
             teamCityLogger.BeginMessageBlock("Results");

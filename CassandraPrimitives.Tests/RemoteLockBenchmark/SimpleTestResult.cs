@@ -1,6 +1,6 @@
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
-    class SimpleTestResult : ITestResult
+    public class SimpleTestResult : ITestResult
     {
         public int LocksCount { get; set; }
         public long TotalWaitTime { get; set; }

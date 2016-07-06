@@ -5,7 +5,7 @@ using SKBKontur.Cassandra.ClusterDeployment;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
-    class CassandraInitializer
+    public class CassandraInitializer
     {
         private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
 

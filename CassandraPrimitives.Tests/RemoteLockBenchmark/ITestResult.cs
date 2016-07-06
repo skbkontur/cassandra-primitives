@@ -1,6 +1,6 @@
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
-    interface ITestResult
+    public interface ITestResult
     {
         string GetShortMessage();
     }
