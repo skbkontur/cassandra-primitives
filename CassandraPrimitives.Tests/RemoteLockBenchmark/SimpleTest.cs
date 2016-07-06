@@ -7,13 +7,14 @@ using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
-    class SimpleTest : ITest<SimpleTestResult>
+    public class SimpleTest : ITest<SimpleTestResult>
     {
         private readonly TestConfiguration configuration;
         private readonly IRemoteLockCreator locker;
         private readonly string lockId;
         private readonly Random rand;
         private readonly SimpleTestResult testResult;
+        private Stopwatch stopwatch;
 
         public SimpleTest(TestConfiguration configuration, IRemoteLockGetter remoteLockGetter)
         {
@@ -24,26 +25,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             testResult = new SimpleTestResult();
         }
 
-        public void Run()
+        public void SetUp()
         {
-            var threads = new Thread[configuration.amountOfThreads];
-            for (int i = 0; i < configuration.amountOfThreads; i++)
-            {
-                var threadInd = i;
-                threads[i] = new Thread(() => DoWorkInSingleThread(threadInd));
-            }
-
-            var stopwatch = Stopwatch.StartNew();
-
-            foreach (var thread in threads)
-                thread.Start();
-            foreach (var thread in threads)
-                thread.Join();//TODO timeout?
-
-            testResult.TotalTimeSpent = stopwatch.ElapsedMilliseconds;
+            stopwatch = Stopwatch.StartNew();
         }
 
-        private void DoWorkInSingleThread(int threadId)
+        public void DoWorkInSingleThread(int threadInd)
         {
             for (int i = 0; i < configuration.amountOfLocksPerThread; i++)
             {
@@ -55,6 +42,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     Thread.Sleep(waitTime);
                 }
             }
+        }
+
+        public void TearDown()
+        {
+            testResult.TotalTimeSpent = stopwatch.ElapsedMilliseconds;
         }
 
         public SimpleTestResult GetTestResult()

@@ -4,6 +4,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         where T : ITestResult
     {
         T GetTestResult();
-        void Run();
+        void SetUp();
+        void DoWorkInSingleThread(int threadInd);
+        void TearDown();
     }
 }

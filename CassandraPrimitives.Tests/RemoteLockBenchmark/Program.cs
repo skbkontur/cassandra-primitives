@@ -5,7 +5,7 @@ using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -25,8 +25,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             using(var remoteLockGetter = new CassandraRemoteLockGetter())
             {
                 var test = new SimpleTest(configuration, remoteLockGetter);
-                test.Run();
-                testResult = test.GetTestResult();
+                using(var testRunner = new TestRunner(configuration))
+                {
+                    testResult = testRunner.RunTest(test);
+                }
             }
                 
             teamCityLogger.EndMessageBlock();

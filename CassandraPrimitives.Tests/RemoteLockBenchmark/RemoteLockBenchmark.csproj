@@ -86,6 +86,7 @@
     <Compile Include="IRemoteLockGetter.cs" />
     <Compile Include="ITest.cs" />
     <Compile Include="ITestResult.cs" />
+    <Compile Include="ITestRunner.cs" />
     <Compile Include="Logging\Log4netConfiguration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="SimpleTest.cs" />
     <Compile Include="SimpleTestResult.cs" />
     <Compile Include="TestConfiguration.cs" />
+    <Compile Include="TestRunner.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Logging\log4net.config" />
