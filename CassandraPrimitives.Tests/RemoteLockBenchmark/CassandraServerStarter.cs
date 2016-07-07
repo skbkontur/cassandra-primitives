@@ -20,10 +20,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             node.Restart();
             ClusterSettings = node.CreateSettings(IPAddress.Loopback);
 
-            var serialisation = ImprovedJsonSerializer.Serialize(ClusterSettings);
-            
-            File.WriteAllText("cassandra_settings.txt", serialisation);
-
             var initializerSettings = new CassandraInitializerSettings();
             using(var cassandraCluster = new CassandraCluster(ClusterSettings))
             {
