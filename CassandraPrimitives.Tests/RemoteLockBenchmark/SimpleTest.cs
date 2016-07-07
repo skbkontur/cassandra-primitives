@@ -10,15 +10,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
     public class SimpleTest : ITest<SimpleTestResult>
     {
         private readonly TestConfiguration configuration;
+        private readonly int processInd;
         private readonly IRemoteLockCreator locker;
         private readonly string lockId;
         private readonly Random rand;
         private readonly SimpleTestResult testResult;
         private Stopwatch stopwatch;
 
-        public SimpleTest(TestConfiguration configuration, IRemoteLockGetter remoteLockGetter)
+        public SimpleTest(TestConfiguration configuration, int processInd, IRemoteLockGetter remoteLockGetter)
         {
             this.configuration = configuration;
+            this.processInd = processInd;
             locker = remoteLockGetter.Get(1).Single();
             lockId = Guid.NewGuid().ToString();
             rand = new Random(Guid.NewGuid().GetHashCode());

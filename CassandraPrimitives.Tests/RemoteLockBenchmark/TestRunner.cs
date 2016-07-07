@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 
 using log4net;
@@ -10,13 +11,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
     public class TestRunner : ITestRunner
     {
         private readonly TestConfiguration configuration;
-        private readonly ITeamCityLogger teamCityLogger;
+        private readonly Action<string> externalLogger;
         private readonly ILog logger;
 
-        public TestRunner(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
+        public TestRunner(TestConfiguration configuration, Action<string> externalLogger)
         {
             this.configuration = configuration;
-            this.teamCityLogger = teamCityLogger;
+            this.externalLogger = externalLogger;
             logger = LogManager.GetLogger(GetType());
         }
 
@@ -61,7 +62,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private void LogException(string description, Exception exception)
         {
             logger.Error(String.Format("{0}:", description), exception);
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Failure, "{0}:\n{1}", description, exception);
+            externalLogger(String.Format("{0}:\n{1}", description, exception));
         }
 
         public void Dispose()
