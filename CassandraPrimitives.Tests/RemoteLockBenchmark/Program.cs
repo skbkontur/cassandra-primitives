@@ -5,6 +5,7 @@ using System.Reflection;
 
 using Newtonsoft.Json;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logging;
 using SKBKontur.Catalogue.TeamCity;

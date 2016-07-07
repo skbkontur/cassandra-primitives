@@ -4,7 +4,7 @@ using System.Net;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons
 {
     public class CassandraClusterSettings : ICassandraClusterSettings
     {

@@ -3,7 +3,7 @@ using System.IO;
 
 using SKBKontur.Cassandra.ClusterDeployment;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons
 {
     public class CassandraInitializer
     {
