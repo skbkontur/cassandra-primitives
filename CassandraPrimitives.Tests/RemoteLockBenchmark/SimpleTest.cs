@@ -9,14 +9,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
     public class SimpleTest : ITest<SimpleTestResult>
     {
-        private readonly TestConfiguration configuration;
-        private readonly int processInd;
-        private readonly IRemoteLockCreator locker;
-        private readonly string lockId;
-        private readonly Random rand;
-        private readonly SimpleTestResult testResult;
-        private Stopwatch stopwatch;
-
         public SimpleTest(TestConfiguration configuration, int processInd, IRemoteLockGetter remoteLockGetter)
         {
             this.configuration = configuration;
@@ -55,5 +47,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         {
             return testResult;
         }
+
+        private readonly TestConfiguration configuration;
+        private readonly int processInd;
+        private readonly IRemoteLockCreator locker;
+        private readonly string lockId;
+        private readonly Random rand;
+        private readonly SimpleTestResult testResult;
+        private Stopwatch stopwatch;
     }
 }

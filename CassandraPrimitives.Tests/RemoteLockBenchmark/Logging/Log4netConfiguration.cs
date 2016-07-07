@@ -8,7 +8,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logg
     {
         public static void InitializeOnce()
         {
-            if(!initialized)
+            if (!initialized)
             {
                 Type type = typeof(Log4NetConfiguration);
                 XmlConfigurator.Configure(type.Assembly.GetManifestResourceStream(type, "log4net.config"));

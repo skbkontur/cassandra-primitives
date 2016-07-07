@@ -3,7 +3,7 @@ using System.IO;
 
 using SKBKontur.Cassandra.ClusterDeployment;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock
 {
     public class CassandraInitializer
     {
@@ -22,7 +22,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     DeployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\Cassandra1.2"),
                     ListenAddress = "127.0.0.1",
                     RpsAddress = "0.0.0.0",
-                    SeedAddresses = new[] { "127.0.0.1" },
+                    SeedAddresses = new[] {"127.0.0.1"},
                     InitialToken = "",
                     ClusterName = "test_cluster"
                 };

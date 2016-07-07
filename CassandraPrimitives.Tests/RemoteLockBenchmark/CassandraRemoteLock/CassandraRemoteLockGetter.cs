@@ -11,19 +11,10 @@ using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock.RemoteLocker;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Settings;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock
 {
     public class CassandraRemoteLockGetter : IRemoteLockGetter, IDisposable
     {
-        private readonly List<RemoteLocker> remoteLockersToDispose;
-        private readonly ILog logger;
-        private readonly Action<string> externalLogger;
-        
-        private readonly TimeSpan lockTtl;
-        private readonly TimeSpan keepLockAliveInterval;
-        private readonly int changeLockRowThreshold;
-        private readonly ICassandraCluster cassandraCluster;
-
         public CassandraRemoteLockGetter(ICassandraClusterSettings cassandraClusterSettings, Action<string> externalLogger)
         {
             remoteLockersToDispose = new List<RemoteLocker>();
@@ -59,13 +50,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         public void Dispose()
         {
-            foreach(var remoteLocker in remoteLockersToDispose)
+            foreach (var remoteLocker in remoteLockersToDispose)
             {
                 try
                 {
                     remoteLocker.Dispose();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     logger.Error("Exception occured while disposing remoteLocker:", e);
                     externalLogger(String.Format("Exception occured while disposing remoteLocker:\n{0}", e));
@@ -73,5 +64,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             }
             cassandraCluster.Dispose();
         }
+
+        private readonly List<RemoteLocker> remoteLockersToDispose;
+        private readonly ILog logger;
+        private readonly Action<string> externalLogger;
+
+        private readonly TimeSpan lockTtl;
+        private readonly TimeSpan keepLockAliveInterval;
+        private readonly int changeLockRowThreshold;
+        private readonly ICassandraCluster cassandraCluster;
     }
 }

@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 
 using log4net;
 
-using SKBKontur.Catalogue.TeamCity;
-
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
-    public class TestRunner : ITestRunner
+    public class TestRunner : IDisposable
     {
-        private readonly TestConfiguration configuration;
-        private readonly Action<string> externalLogger;
-        private readonly ILog logger;
-
         public TestRunner(TestConfiguration configuration, Action<string> externalLogger)
         {
             this.configuration = configuration;
@@ -26,7 +19,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             test.SetUp();
 
             var threads = new Thread[configuration.amountOfThreads];
-            for(int i = 0; i < configuration.amountOfThreads; i++)
+            for (int i = 0; i < configuration.amountOfThreads; i++)
             {
                 var threadInd = i;
                 threads[i] = new Thread(() =>
@@ -35,7 +28,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                         {
                             test.DoWorkInSingleThread(threadInd);
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
                             LogException("Exception occured in one of test threads", e);
                         }
@@ -44,9 +37,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
             try
             {
-                foreach(var thread in threads)
+                foreach (var thread in threads)
                     thread.Start();
-                foreach(var thread in threads)
+                foreach (var thread in threads)
                     thread.Join(); //TODO timeout?
             }
             catch (Exception e)
@@ -67,7 +60,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         public void Dispose()
         {
-
         }
+
+        private readonly TestConfiguration configuration;
+        private readonly Action<string> externalLogger;
+        private readonly ILog logger;
     }
 }
