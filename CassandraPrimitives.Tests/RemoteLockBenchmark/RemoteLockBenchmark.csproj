@@ -73,6 +73,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\json.net\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -82,11 +86,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CassandraClusterSettings.cs" />
+    <Compile Include="CassandraClusterSettingsGetter.cs" />
     <Compile Include="CassandraInitializer.cs" />
+    <Compile Include="CassandraServerStarter.cs" />
     <Compile Include="IRemoteLockGetter.cs" />
     <Compile Include="ITest.cs" />
     <Compile Include="ITestResult.cs" />
     <Compile Include="ITestRunner.cs" />
+    <Compile Include="ImprovedJsonSerializer.cs" />
     <Compile Include="Logging\Log4netConfiguration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
