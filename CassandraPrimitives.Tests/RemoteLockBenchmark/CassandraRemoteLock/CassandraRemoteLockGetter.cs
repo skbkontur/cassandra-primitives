@@ -9,30 +9,26 @@ using log4net;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock.RemoteLocker;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Settings;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock
 {
     public class CassandraRemoteLockGetter : IRemoteLockGetter, IDisposable
     {
-        public CassandraRemoteLockGetter(ICassandraClusterSettings cassandraClusterSettings, Action<string> externalLogger)
+        public CassandraRemoteLockGetter(ICassandraClusterSettings cassandraClusterSettings, IExternalLogger externalLogger)
         {
             remoteLockersToDispose = new List<RemoteLocker>();
             logger = LogManager.GetLogger(GetType());
             this.externalLogger = externalLogger;
 
             cassandraCluster = new CassandraCluster(cassandraClusterSettings);
-
-            lockTtl = TimeSpan.FromSeconds(10);
-            keepLockAliveInterval = TimeSpan.FromSeconds(2);
-            changeLockRowThreshold = 10;
         }
 
         public IRemoteLockCreator[] Get(int amount)
         {
             var serializer = new Serializer(new AllPropertiesExtractor(), null, GroBufOptions.MergeOnRead);
-            var timestampProvider = new DefaultTimestampProvider();
-            var implementationSettings = new CassandraRemoteLockImplementationSettings(timestampProvider, ColumnFamilies.remoteLock, lockTtl, keepLockAliveInterval, changeLockRowThreshold);
+            var implementationSettings = CassandraRemoteLockImplementationSettings.Default(ColumnFamilies.remoteLock);
 
             var remoteLockerMetrics = new RemoteLockerMetrics("dummyKeyspace");
 
@@ -59,7 +55,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Cass
                 catch (Exception e)
                 {
                     logger.Error("Exception occured while disposing remoteLocker:", e);
-                    externalLogger(String.Format("Exception occured while disposing remoteLocker:\n{0}", e));
+                    externalLogger.Log("Exception occured while disposing remoteLocker:\n{0}", e);
                 }
             }
             cassandraCluster.Dispose();
@@ -67,11 +63,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Cass
 
         private readonly List<RemoteLocker> remoteLockersToDispose;
         private readonly ILog logger;
-        private readonly Action<string> externalLogger;
-
-        private readonly TimeSpan lockTtl;
-        private readonly TimeSpan keepLockAliveInterval;
-        private readonly int changeLockRowThreshold;
+        private readonly IExternalLogger externalLogger;
         private readonly ICassandraCluster cassandraCluster;
     }
 }

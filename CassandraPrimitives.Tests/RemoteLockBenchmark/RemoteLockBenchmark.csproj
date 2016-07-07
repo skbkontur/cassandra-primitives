@@ -89,6 +89,8 @@
     <Compile Include="CassandraRemoteLock\CassandraClusterSettings.cs" />
     <Compile Include="CassandraRemoteLock\CassandraInitializer.cs" />
     <Compile Include="CassandraRemoteLock\CassandraServerStarter.cs" />
+    <Compile Include="Logging\FakeExternalLogger.cs" />
+    <Compile Include="Logging\IExternalLogger.cs" />
     <Compile Include="IRemoteLockGetter.cs" />
     <Compile Include="ITest.cs" />
     <Compile Include="ITestResult.cs" />
