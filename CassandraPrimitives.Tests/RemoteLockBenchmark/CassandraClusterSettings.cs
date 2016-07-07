@@ -8,32 +8,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
     public class CassandraClusterSettings : ICassandraClusterSettings
     {
-        public string ClusterName { get; set; }
-        public ConsistencyLevel ReadConsistencyLevel { get; set; }
-        public ConsistencyLevel WriteConsistencyLevel { get; set; }
-        public IPEndPoint[] Endpoints { get; set; }
-        public IPEndPoint EndpointForFierceCommands { get; set; }
-        public bool AllowNullTimestamp { get; set; }
-        public int Attempts { get; set; }
-        public int Timeout { get; set; }
-        public int FierceTimeout { get; set; }
-        public TimeSpan? ConnectionIdleTimeout { get; set; }
-
-        public static CassandraClusterSettings FromICassandraClusterSettings(ICassandraClusterSettings clusterSettings)
-        {
-            return new CassandraClusterSettings
-                {
-                    ClusterName = clusterSettings.ClusterName,
-                    ReadConsistencyLevel = clusterSettings.ReadConsistencyLevel,
-                    WriteConsistencyLevel = clusterSettings.WriteConsistencyLevel,
-                    Endpoints = clusterSettings.Endpoints,
-                    EndpointForFierceCommands = clusterSettings.EndpointForFierceCommands,
-                    AllowNullTimestamp = clusterSettings.AllowNullTimestamp,
-                    Attempts = clusterSettings.Attempts,
-                    Timeout = clusterSettings.Timeout,
-                    FierceTimeout = clusterSettings.FierceTimeout,
-                    ConnectionIdleTimeout = clusterSettings.ConnectionIdleTimeout,
-                };
-        }
+        public string ClusterName { get { return "test_cluster"; } }
+        public ConsistencyLevel ReadConsistencyLevel { get { return ConsistencyLevel.QUORUM; } }
+        public ConsistencyLevel WriteConsistencyLevel { get { return ConsistencyLevel.QUORUM; } }
+        public IPEndPoint[] Endpoints { get { return new[] { new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9360) };} }
+        public IPEndPoint EndpointForFierceCommands { get { return new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9360); } }
+        public bool AllowNullTimestamp { get { return false; } }
+        public int Attempts { get { return 5; } }
+        public int Timeout { get { return 6000; } }
+        public int FierceTimeout { get { return 10000; } }
+        public TimeSpan? ConnectionIdleTimeout { get { return TimeSpan.FromMinutes(1); } }
     }
 }

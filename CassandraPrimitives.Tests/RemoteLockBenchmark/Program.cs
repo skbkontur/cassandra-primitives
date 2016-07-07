@@ -2,9 +2,11 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 
 using Newtonsoft.Json;
 
+using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logging;
 using SKBKontur.Catalogue.TeamCity;
 
@@ -18,6 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             for (int i = 0; i < configuration.amountOfProcesses; i++)
             {
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Starting process {0}...", i);
+                    
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = Assembly.GetExecutingAssembly().Location,
@@ -52,7 +55,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     var testResults = processes.Select((process, index) =>
                         {
                             var data = process.StandardOutput.ReadToEnd();
-                            var testResult = ImprovedJsonSerializer.Deserialize<SimpleTestResult>(data);
+                            var testResult = JsonConvert.DeserializeObject<SimpleTestResult>(data);
                             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished with result: {1}", index, testResult.GetShortMessage());
                             return testResult;
                         });
@@ -74,7 +77,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         static void RunSingleTest(int processInd, TestConfiguration configuration)
         {
             SimpleTestResult testResult;
-            var settings = CassandraClusterSettingsGetter.GetSettings();
+            var settings = new CassandraClusterSettings();
             using (var remoteLockGetter = new CassandraRemoteLockGetter(settings, _ => { }))
             {
                 var test = new SimpleTest(configuration, processInd, remoteLockGetter);
