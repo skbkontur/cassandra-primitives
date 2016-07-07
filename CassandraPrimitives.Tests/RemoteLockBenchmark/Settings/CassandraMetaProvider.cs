@@ -7,7 +7,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Sett
     {
         public ColumnFamilyFullName[] GetColumnFamilies()
         {
-            return new[] { ColumnFamilies.remoteLock };
+            return new[] {ColumnFamilies.remoteLock};
         }
     }
 }

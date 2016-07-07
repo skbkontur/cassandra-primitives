@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
@@ -7,13 +6,10 @@ using SKBKontur.Cassandra.ClusterDeployment;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock
 {
     public class CassandraServerStarter : IDisposable
     {
-        private readonly CassandraNode node;
-        public ICassandraClusterSettings ClusterSettings { get; private set; }
-
         public CassandraServerStarter()
         {
             node = CassandraInitializer.CreateCassandraNode();
@@ -21,16 +17,20 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             ClusterSettings = node.CreateSettings(IPAddress.Loopback);
 
             var initializerSettings = new CassandraInitializerSettings();
-            using(var cassandraCluster = new CassandraCluster(ClusterSettings))
+            using (var cassandraCluster = new CassandraCluster(ClusterSettings))
             {
                 var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, new CassandraMetaProvider(), initializerSettings);
                 cassandraSchemeActualizer.AddNewColumnFamilies();
             }
         }
 
+        public ICassandraClusterSettings ClusterSettings { get; private set; }
+
         public void Dispose()
         {
             node.Stop();
         }
+
+        private readonly CassandraNode node;
     }
 }

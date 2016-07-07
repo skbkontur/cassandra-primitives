@@ -2,11 +2,10 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Remoting.Messaging;
 
 using Newtonsoft.Json;
 
-using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logging;
 using SKBKontur.Catalogue.TeamCity;
 
@@ -14,26 +13,26 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
     public class Program
     {
-        static Process[] StartProcesses(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
+        private static Process[] StartProcesses(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
         {
             var processes = new Process[configuration.amountOfProcesses];
             for (int i = 0; i < configuration.amountOfProcesses; i++)
             {
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Starting process {0}...", i);
-                    
+
                 var startInfo = new ProcessStartInfo
-                {
-                    FileName = Assembly.GetExecutingAssembly().Location,
-                    Arguments = String.Format("{0}", i),
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                };
+                    {
+                        FileName = Assembly.GetExecutingAssembly().Location,
+                        Arguments = String.Format("{0}", i),
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                    };
                 processes[i] = Process.Start(startInfo);
             }
             return processes;
         }
-        
-        static void RunMainDriver(TestConfiguration configuration)
+
+        private static void RunMainDriver(TestConfiguration configuration)
         {
             Log4NetConfiguration.InitializeOnce();
 
@@ -74,7 +73,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             }
         }
 
-        static void RunSingleTest(int processInd, TestConfiguration configuration)
+        private static void RunSingleTest(int processInd, TestConfiguration configuration)
         {
             SimpleTestResult testResult;
             var settings = new CassandraClusterSettings();
@@ -82,27 +81,23 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             {
                 var test = new SimpleTest(configuration, processInd, remoteLockGetter);
                 using (var testRunner = new TestRunner(configuration, _ => { }))
-                {
                     testResult = testRunner.RunTest(test);
-                }
             }
             Console.Write(JsonConvert.SerializeObject(testResult));
         }
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var configuration = new TestConfiguration
-            {
-                amountOfThreads = 5,
-                amountOfProcesses = 3,
-                amountOfLocksPerThread = 40,
-                maxWaitTimeMilliseconds = 100,
-            };
+                {
+                    amountOfThreads = 5,
+                    amountOfProcesses = 3,
+                    amountOfLocksPerThread = 40,
+                    maxWaitTimeMilliseconds = 100,
+                };
 
             if (args.Length == 0)
-            {
                 RunMainDriver(configuration);
-            }
             else
             {
                 int threadInd;

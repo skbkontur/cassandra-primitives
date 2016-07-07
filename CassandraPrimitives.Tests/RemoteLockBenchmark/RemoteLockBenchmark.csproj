@@ -86,17 +86,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CassandraClusterSettings.cs" />
-    <Compile Include="CassandraInitializer.cs" />
-    <Compile Include="CassandraServerStarter.cs" />
+    <Compile Include="CassandraRemoteLock\CassandraClusterSettings.cs" />
+    <Compile Include="CassandraRemoteLock\CassandraInitializer.cs" />
+    <Compile Include="CassandraRemoteLock\CassandraServerStarter.cs" />
     <Compile Include="IRemoteLockGetter.cs" />
     <Compile Include="ITest.cs" />
     <Compile Include="ITestResult.cs" />
-    <Compile Include="ITestRunner.cs" />
     <Compile Include="Logging\Log4netConfiguration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CassandraRemoteLockGetter.cs" />
+    <Compile Include="CassandraRemoteLock\CassandraRemoteLockGetter.cs" />
     <Compile Include="Settings\CassandraInitializerSettings.cs" />
     <Compile Include="Settings\CassandraMetaProvider.cs" />
     <Compile Include="Settings\ColumnFamilies.cs" />
