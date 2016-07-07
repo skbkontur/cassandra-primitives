@@ -3,6 +3,7 @@ using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.ClusterDeployment;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 

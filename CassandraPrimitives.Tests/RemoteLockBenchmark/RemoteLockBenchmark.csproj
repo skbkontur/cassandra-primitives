@@ -86,8 +86,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CassandraRemoteLock\CassandraClusterSettings.cs" />
-    <Compile Include="CassandraRemoteLock\CassandraInitializer.cs" />
     <Compile Include="CassandraRemoteLock\CassandraServerStarter.cs" />
     <Compile Include="Logging\FakeExternalLogger.cs" />
     <Compile Include="Logging\IExternalLogger.cs" />
@@ -110,6 +108,10 @@
     <EmbeddedResource Include="Logging\log4net.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BenchmarkCommons\BenchmarkCommons.csproj">
+      <Project>{E0706790-58A4-4820-9C61-D143991BA9AB}</Project>
+      <Name>BenchmarkCommons</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FunctionalTests\FunctionalTests.csproj">
       <Project>{141AC881-3536-4978-AD10-9D29B88A2988}</Project>
       <Name>FunctionalTests</Name>
