@@ -40,7 +40,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             teamCityLogger.BeginMessageBlock("Results");
 
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Starting cassandra...");
-            using (var cassandraServerStarter = new CassandraServerStarter())
+            using (new CassandraServerStarter())
             {
                 try
                 {
@@ -77,10 +77,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         {
             SimpleTestResult testResult;
             var settings = new CassandraClusterSettings();
-            using (var remoteLockGetter = new CassandraRemoteLockGetter(settings, _ => { }))
+            using (var remoteLockGetter = new CassandraRemoteLockGetter(settings, new FakeExternalLogger()))
             {
                 var test = new SimpleTest(configuration, processInd, remoteLockGetter);
-                using (var testRunner = new TestRunner(configuration, _ => { }))
+                using (var testRunner = new TestRunner(configuration, new FakeExternalLogger()))
                     testResult = testRunner.RunTest(test);
             }
             Console.Write(JsonConvert.SerializeObject(testResult));

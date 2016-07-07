@@ -3,11 +3,13 @@ using System.Threading;
 
 using log4net;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logging;
+
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
     public class TestRunner : IDisposable
     {
-        public TestRunner(TestConfiguration configuration, Action<string> externalLogger)
+        public TestRunner(TestConfiguration configuration, IExternalLogger externalLogger)
         {
             this.configuration = configuration;
             this.externalLogger = externalLogger;
@@ -55,7 +57,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private void LogException(string description, Exception exception)
         {
             logger.Error(String.Format("{0}:", description), exception);
-            externalLogger(String.Format("{0}:\n{1}", description, exception));
+            externalLogger.Log("{0}:\n{1}", description, exception);
         }
 
         public void Dispose()
@@ -63,7 +65,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         }
 
         private readonly TestConfiguration configuration;
-        private readonly Action<string> externalLogger;
+        private readonly IExternalLogger externalLogger;
         private readonly ILog logger;
     }
 }
