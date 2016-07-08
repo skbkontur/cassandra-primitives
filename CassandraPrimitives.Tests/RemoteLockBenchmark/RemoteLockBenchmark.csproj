@@ -87,6 +87,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CassandraRemoteLock\CassandraServerStarter.cs" />
+    <Compile Include="Processes\IProcessLauncher.cs" />
+    <Compile Include="Processes\LocalProcessLauncher.cs" />
     <Compile Include="Logging\FakeExternalLogger.cs" />
     <Compile Include="Logging\IExternalLogger.cs" />
     <Compile Include="IRemoteLockGetter.cs" />

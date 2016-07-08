@@ -1,38 +1,17 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
 
 using Newtonsoft.Json;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Processes;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
     public class Program
     {
-        private static Process[] StartProcesses(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
-        {
-            var processes = new Process[configuration.amountOfProcesses];
-            for (int i = 0; i < configuration.amountOfProcesses; i++)
-            {
-                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Starting process {0}...", i);
-
-                var startInfo = new ProcessStartInfo
-                    {
-                        FileName = Assembly.GetExecutingAssembly().Location,
-                        Arguments = String.Format("{0}", i),
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                    };
-                processes[i] = Process.Start(startInfo);
-            }
-            return processes;
-        }
-
         private static void RunMainDriver(TestConfiguration configuration)
         {
             Log4NetConfiguration.InitializeOnce();
@@ -45,25 +24,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             {
                 try
                 {
-                    var processes = StartProcesses(configuration, teamCityLogger);
+                    using (var processLauncher = new LocalProcessLauncher(teamCityLogger))
+                    {
+                        processLauncher.StartProcesses(configuration);
 
-                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Waiting for processes to finish...");
-                    foreach (var process in processes)
-                        process.WaitForExit();
+                        var testResult = processLauncher.WaitForResults();
 
-                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Processing results...");
-                    var testResults = processes.Select((process, index) =>
-                        {
-                            var data = process.StandardOutput.ReadToEnd();
-                            var testResult = JsonConvert.DeserializeObject<SimpleTestResult>(data);
-                            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished with result: {1}", index, testResult.GetShortMessage());
-                            return testResult;
-                        });
-                    var mergedTestResult = SimpleTestResult.Merge(testResults);
+                        teamCityLogger.EndMessageBlock();
 
-                    teamCityLogger.EndMessageBlock();
-
-                    teamCityLogger.SetBuildStatus(TeamCityBuildStatus.Success, mergedTestResult.GetShortMessage());
+                        teamCityLogger.SetBuildStatus(TeamCityBuildStatus.Success, testResult.GetShortMessage());
+                    }
                 }
                 catch (Exception e)
                 {
@@ -94,7 +64,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     amountOfThreads = 5,
                     amountOfProcesses = 3,
                     amountOfLocksPerThread = 40,
-                    maxWaitTimeMilliseconds = 100,
+                    maxWaitTimeMilliseconds = 100
                 };
 
             if (args.Length == 0)
