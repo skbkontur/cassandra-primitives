@@ -86,7 +86,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CassandraRemoteLock\CassandraServerStarter.cs" />
+    <Compile Include="CassandraRemoteLock\CassandraClusterStarter.cs" />
     <Compile Include="ChildProcessDriver.cs" />
     <Compile Include="ExternalLogging\IExternalLogProcessor.cs" />
     <Compile Include="MainDriver.cs" />

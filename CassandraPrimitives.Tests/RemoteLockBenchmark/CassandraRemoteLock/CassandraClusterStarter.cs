@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.ClusterDeployment;
@@ -9,13 +8,13 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock
 {
-    public class CassandraServerStarter : IDisposable
+    public class CassandraClusterStarter : IDisposable
     {
-        public CassandraServerStarter()
+        public CassandraClusterStarter()
         {
-            node = CassandraInitializer.CreateCassandraNode();
+            ClusterSettings = new CassandraClusterSettings();
+            node = CassandraInitializer.CreateCassandraNode(ClusterSettings.ClusterName, "127.0.0.1", new[] {"127.0.0.1"});
             node.Restart();
-            ClusterSettings = node.CreateSettings(IPAddress.Loopback);
 
             var initializerSettings = new CassandraInitializerSettings();
             using (var cassandraCluster = new CassandraCluster(ClusterSettings))
