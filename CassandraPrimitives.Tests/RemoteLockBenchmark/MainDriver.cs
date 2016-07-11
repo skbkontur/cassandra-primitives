@@ -18,7 +18,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             teamCityLogger.BeginMessageBlock("Results");
 
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Starting cassandra...");
-            using (new CassandraServerStarter())
+            using (new CassandraClusterStarter())
             {
                 try
                 {

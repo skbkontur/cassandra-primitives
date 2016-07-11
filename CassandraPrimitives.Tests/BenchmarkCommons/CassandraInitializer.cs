@@ -9,7 +9,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons
     {
         private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
 
-        public static CassandraNode CreateCassandraNode()
+        public static CassandraNode CreateCassandraNode(string clusterName, string listenAddress, string[] seedAddresses)
         {
             return new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"1.2"))
                 {
@@ -20,11 +20,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons
                     CqlPort = 9343,
                     DataBaseDirectory = @"../data/",
                     DeployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\Cassandra1.2"),
-                    ListenAddress = "127.0.0.1",
+                    ListenAddress = listenAddress,
                     RpsAddress = "0.0.0.0",
-                    SeedAddresses = new[] {"127.0.0.1"},
+                    SeedAddresses = seedAddresses,
                     InitialToken = "",
-                    ClusterName = "test_cluster"
+                    ClusterName = clusterName
                 };
         }
 
