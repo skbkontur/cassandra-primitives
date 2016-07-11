@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading;
 
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestResults;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestConfigurations
 {
     public class SimpleTest : ITest<SimpleTestResult>
     {

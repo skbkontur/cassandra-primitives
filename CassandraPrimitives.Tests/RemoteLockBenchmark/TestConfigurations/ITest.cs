@@ -1,6 +1,4 @@
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestResults;
-
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestConfigurations
 {
     public interface ITest<out T>
         where T : ITestResult
