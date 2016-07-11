@@ -3,25 +3,26 @@ using System.Threading;
 
 using log4net;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestResults;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
-    public class TestRunner : IDisposable
+    public class TestRunner<TTestResult> : IDisposable where TTestResult : ITestResult
     {
-        public TestRunner(TestConfiguration configuration, IExternalLogger externalLogger)
+        public TestRunner(TestConfiguration configuration, IExternalProgressLogger<TTestResult> externalLogger)
         {
             this.configuration = configuration;
             this.externalLogger = externalLogger;
             logger = LogManager.GetLogger(GetType());
         }
 
-        public T RunTest<T>(ITest<T> test) where T : ITestResult
+        public void RunTestAndPublishResults(ITest<TTestResult> test)
         {
             test.SetUp();
 
             var threads = new Thread[configuration.amountOfThreads];
-            for (int i = 0; i < configuration.amountOfThreads; i++)
+            for (var i = 0; i < configuration.amountOfThreads; i++)
             {
                 var threadInd = i;
                 threads[i] = new Thread(() =>
@@ -51,12 +52,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
             test.TearDown();
 
-            return test.GetTestResult();
+            var testResult = test.GetTestResult();
+            externalLogger.PublishResult(testResult);
         }
 
         private void LogException(string description, Exception exception)
         {
-            logger.Error(String.Format("{0}:", description), exception);
+            logger.Error(string.Format("{0}:", description), exception);
             externalLogger.Log("{0}:\n{1}", description, exception);
         }
 
@@ -65,7 +67,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         }
 
         private readonly TestConfiguration configuration;
-        private readonly IExternalLogger externalLogger;
+        private readonly IExternalProgressLogger<TTestResult> externalLogger;
         private readonly ILog logger;
     }
 }

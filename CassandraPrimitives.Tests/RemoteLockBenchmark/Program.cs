@@ -1,18 +1,18 @@
 ﻿using System;
 
-using Newtonsoft.Json;
-
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Processes;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestResults;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
-    public class Program
+    public class MainDriver
     {
-        private static void RunMainDriver(TestConfiguration configuration)
+        public static void RunMainDriver(TestConfiguration configuration)
         {
             Log4NetConfiguration.InitializeOnce();
 
@@ -43,20 +43,25 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 }
             }
         }
+    }
 
-        private static void RunSingleTest(int processInd, TestConfiguration configuration)
+    public class ChildProcessDriver
+    {
+        public static void RunSingleTest(int processInd, TestConfiguration configuration)
         {
-            SimpleTestResult testResult;
+            var externalLogger = new SimpleExternalLogger(Console.Out);
             var settings = new CassandraClusterSettings();
-            using (var remoteLockGetter = new CassandraRemoteLockGetter(settings, new FakeExternalLogger()))
+            using (var remoteLockGetter = new CassandraRemoteLockGetter(settings, externalLogger))
             {
                 var test = new SimpleTest(configuration, processInd, remoteLockGetter);
-                using (var testRunner = new TestRunner(configuration, new FakeExternalLogger()))
-                    testResult = testRunner.RunTest(test);
+                using (var testRunner = new TestRunner<SimpleTestResult>(configuration, externalLogger))
+                    testRunner.RunTestAndPublishResults(test);
             }
-            Console.Write(JsonConvert.SerializeObject(testResult));
         }
+    }
 
+    public class Program
+    {
         private static void Main(string[] args)
         {
             var configuration = new TestConfiguration
@@ -68,13 +73,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 };
 
             if (args.Length == 0)
-                RunMainDriver(configuration);
+                MainDriver.RunMainDriver(configuration);
             else
             {
                 int threadInd;
                 if (!int.TryParse(args[0], out threadInd))
                     Console.WriteLine("Invalid argument");
-                RunSingleTest(threadInd, configuration);
+                ChildProcessDriver.RunSingleTest(threadInd, configuration);
             }
         }
     }
