@@ -9,7 +9,7 @@ using log4net;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock.RemoteLocker;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Settings;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock
@@ -33,7 +33,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Cass
             var remoteLockerMetrics = new RemoteLockerMetrics("dummyKeyspace");
 
             var remoteLockers = new IRemoteLockCreator[amount];
-            for (int i = 0; i < amount; i++)
+            for (var i = 0; i < amount; i++)
             {
                 var cassandraRemoteLockImplementation = new CassandraRemoteLockImplementation(cassandraCluster, serializer, implementationSettings);
                 var remoteLocker = new RemoteLocker(cassandraRemoteLockImplementation, remoteLockerMetrics);

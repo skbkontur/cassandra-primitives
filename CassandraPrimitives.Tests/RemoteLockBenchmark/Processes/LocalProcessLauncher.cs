@@ -2,8 +2,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
-using Newtonsoft.Json;
-
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestResults;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Processes
@@ -42,8 +42,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Processing results...");
             var testResults = processes.Select((process, index) =>
                 {
-                    var data = process.StandardOutput.ReadToEnd();
-                    var testResult = JsonConvert.DeserializeObject<SimpleTestResult>(data);
+                    var logProcessor = new SimpleExternalLogProcessor(process.StandardOutput);
+                    logProcessor.StartProcessingLog();
+                    var testResult = logProcessor.GetTestResult();
                     teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished with result: {1}", index, testResult.GetShortMessage());
                     return testResult;
                 });

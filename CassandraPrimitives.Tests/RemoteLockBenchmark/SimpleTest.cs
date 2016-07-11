@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestResults;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
@@ -25,7 +26,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         public void DoWorkInSingleThread(int threadInd)
         {
-            for (int i = 0; i < configuration.amountOfLocksPerThread; i++)
+            for (var i = 0; i < configuration.amountOfLocksPerThread; i++)
             {
                 using (locker.Lock(lockId))
                 {

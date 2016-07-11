@@ -1,4 +1,4 @@
-﻿namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logging
+﻿namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging
 {
     public interface IExternalLogger
     {

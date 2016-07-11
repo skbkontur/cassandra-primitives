@@ -1,5 +1,7 @@
 using System;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestResults;
+
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Processes
 {
     public interface IProcessLauncher<out TTestResult> : IDisposable
