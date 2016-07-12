@@ -92,6 +92,7 @@
   <ItemGroup>
     <Compile Include="CassandraRemoteLock\CassandraClusterStarter.cs" />
     <Compile Include="ChildProcessDriver.cs" />
+    <Compile Include="ExternalLogging\FileLoggingTools.cs" />
     <Compile Include="ExternalLogging\IExternalLogProcessor.cs" />
     <Compile Include="MainDriver.cs" />
     <Compile Include="Processes\IProcessLauncher.cs" />
