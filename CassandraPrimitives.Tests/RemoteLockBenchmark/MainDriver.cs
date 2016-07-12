@@ -22,7 +22,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             {
                 try
                 {
-                    using (var processLauncher = new LocalProcessLauncher(teamCityLogger))
+                    using (var processLauncher = new LocalProcessLauncher(teamCityLogger, AppDomain.CurrentDomain.BaseDirectory))
                     {
                         processLauncher.StartProcesses(configuration);
 

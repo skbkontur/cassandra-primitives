@@ -23,7 +23,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 int threadInd;
                 if (!int.TryParse(args[0], out threadInd))
                     Console.WriteLine("Invalid argument");
-                ChildProcessDriver.RunSingleTest(threadInd, configuration);
+                ChildProcessDriver.RunSingleTest(threadInd, configuration, AppDomain.CurrentDomain.BaseDirectory);
             }
         }
     }

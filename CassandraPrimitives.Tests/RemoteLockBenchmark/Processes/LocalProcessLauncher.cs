@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -10,9 +12,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
 {
     public class LocalProcessLauncher : IProcessLauncher<SimpleTestResult.Merged>
     {
-        public LocalProcessLauncher(ITeamCityLogger teamCityLogger)
+        public LocalProcessLauncher(ITeamCityLogger teamCityLogger, string workingDirectory)
         {
             this.teamCityLogger = teamCityLogger;
+            this.workingDirectory = workingDirectory;
         }
 
         public void StartProcesses(TestConfiguration configuration)
@@ -26,8 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
                     {
                         FileName = Assembly.GetExecutingAssembly().Location,
                         Arguments = string.Format("{0}", i),
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true
+                        UseShellExecute = false
                     };
                 processes[i] = Process.Start(startInfo);
             }
@@ -42,11 +44,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Processing results...");
             var testResults = processes.Select((process, index) =>
                 {
-                    var logProcessor = new SimpleExternalLogProcessor(process.StandardOutput);
-                    logProcessor.StartProcessingLog();
-                    var testResult = logProcessor.GetTestResult();
-                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished with result: {1}", index, testResult.GetShortMessage());
-                    return testResult;
+                    var filename = FileLoggingTools.CreateLogFileAndGetPath(workingDirectory, index);
+
+                    using (var stream = File.OpenRead(filename))
+                    using (var streamReader = new StreamReader(stream))
+                    {
+                        var logProcessor = new SimpleExternalLogProcessor(streamReader);
+                        logProcessor.StartProcessingLog();
+                        var testResult = logProcessor.GetTestResult();
+                        teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished with result: {1}", index, testResult.GetShortMessage());
+                        return testResult;
+                    }
                 });
 
             var mergedTestResult = SimpleTestResult.Merge(testResults);
@@ -61,5 +69,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
 
         private Process[] processes;
         private readonly ITeamCityLogger teamCityLogger;
+        private readonly string workingDirectory;
     }
 }
