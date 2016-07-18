@@ -1,6 +1,7 @@
 ﻿using System;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestConfigurations;
+using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
@@ -17,7 +18,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 };
 
             if (args.Length == 0)
-                MainDriver.RunMainDriver(configuration);
+            {
+                var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration);
+                driver.Run();
+            }
             else
             {
                 int threadInd;

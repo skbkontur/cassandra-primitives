@@ -19,7 +19,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Test
         public void RunTestAndPublishResults(ITest<TTestResult> test)
         {
             test.SetUp();
-
             var threads = new Thread[configuration.amountOfThreads];
             for (var i = 0; i < configuration.amountOfThreads; i++)
             {
@@ -50,7 +49,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Test
             }
 
             test.TearDown();
-
             var testResult = test.GetTestResult();
             externalLogger.PublishResult(testResult);
         }

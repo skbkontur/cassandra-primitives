@@ -10,8 +10,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
         public static void DeployCassandra(CassandraNodeSettings settings)
         {
             var node = CreateNodeBySettings(settings);
-            node.Restart();
-            node.Stop();
+            node.Deploy();
         }
 
         internal static CassandraNode CreateNodeBySettings(CassandraNodeSettings settings)

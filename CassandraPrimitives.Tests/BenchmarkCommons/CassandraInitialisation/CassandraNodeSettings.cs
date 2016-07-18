@@ -5,19 +5,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
 {
     public class CassandraNodeSettings
     {
-        public string Name { get; set; }
-        public int JmxPort { get; set; }
-        public int GossipPort { get; set; }
-        public int RpcPort { get; set; }
-        public int CqlPort { get; set; }
-        public string DataBaseDirectory { get; set; }
-        public string DeployDirectory { get; set; }
-        public string ListenAddress { get; set; }
-        public string RpsAddress { get; set; }
-        public string[] SeedAddresses { get; set; }
-        public string InitialToken { get; set; }
-        public string ClusterName { get; set; }
-
         public CassandraNodeSettings(
             string name = null,
             int jmxPort = 7399,
@@ -45,5 +32,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
             InitialToken = initialToken ?? "";
             ClusterName = clusterName ?? "TestCluster";
         }
+
+        public string Name { get; set; }
+        public int JmxPort { get; set; }
+        public int GossipPort { get; set; }
+        public int RpcPort { get; set; }
+        public int CqlPort { get; set; }
+        public string DataBaseDirectory { get; set; }
+        public string DeployDirectory { get; set; }
+        public string ListenAddress { get; set; }
+        public string RpsAddress { get; set; }
+        public string[] SeedAddresses { get; set; }
+        public string InitialToken { get; set; }
+        public string ClusterName { get; set; }
     }
 }

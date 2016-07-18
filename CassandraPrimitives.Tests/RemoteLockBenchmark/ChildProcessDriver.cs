@@ -1,8 +1,6 @@
-﻿using System.IO;
-
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
+﻿using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging.HttpLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestConfigurations;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
@@ -11,19 +9,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
     {
         public static void RunSingleTest(int processInd, TestConfiguration configuration, string workingDirectory)
         {
-            var filename = FileLoggingTools.GetLogFilePath(workingDirectory, processInd);
-
-            using (var stream = File.Open(filename, FileMode.Create))
-            using (var streamWriter = new StreamWriter(stream))
+            ICassandraClusterSettings cassandraClusterSettings;
+            using (var httpExternalDataProvider = new HttpExternalDataProvider())
+                cassandraClusterSettings = httpExternalDataProvider.GetCassandraSettings().Result;
+            using (var externalLogger = new HttpExternalLogger(processInd))
+            using (var remoteLockGetter = new CassandraRemoteLockGetter(cassandraClusterSettings, externalLogger))
             {
-                var externalLogger = new SimpleExternalLogger(streamWriter);
-                var settings = new CassandraClusterSettings();
-                using (var remoteLockGetter = new CassandraRemoteLockGetter(settings, externalLogger))
-                {
-                    var test = new SimpleTest(configuration, processInd, remoteLockGetter);
-                    using (var testRunner = new TestRunner<SimpleTestResult>(configuration, externalLogger))
-                        testRunner.RunTestAndPublishResults(test);
-                }
+                var test = new SimpleTest(configuration, processInd, remoteLockGetter);
+                using (var testRunner = new TestRunner<SimpleTestResult>(configuration, externalLogger))
+                    testRunner.RunTestAndPublishResults(test);
             }
         }
     }

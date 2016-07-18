@@ -7,6 +7,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestConf
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging
 {
+    [Obsolete]
     public class SimpleExternalLogProcessor : IExternalLogProcessor<SimpleTestResult>
     {
         public SimpleExternalLogProcessor(TextReader logReader)
@@ -14,7 +15,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             this.logReader = logReader;
         }
 
-        public SimpleTestResult GetTestResult()
+        public SimpleTestResult GetTestResult(int processInd)
         {
             var data = logReader.ReadToEnd();
             return JsonConvert.DeserializeObject<SimpleTestResult>(data);

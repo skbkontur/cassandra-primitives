@@ -83,6 +83,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -90,15 +92,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agents\AgentProviderWithSingleAgent.cs" />
     <Compile Include="CassandraRemoteLock\CassandraClusterStarter.cs" />
+    <Compile Include="CassandraRemoteLock\CassandraRemoteNodeStartInfo.cs" />
     <Compile Include="ChildProcessDriver.cs" />
     <Compile Include="ExternalLogging\FileLoggingTools.cs" />
+    <Compile Include="ExternalLogging\HttpLogging\HttpExternalLogger.cs" />
+    <Compile Include="ExternalLogging\HttpLogging\HttpExternalLogProcessor.cs" />
+    <Compile Include="ExternalLogging\HttpLogging\HttpServer.cs" />
     <Compile Include="ExternalLogging\IExternalLogProcessor.cs" />
+    <Compile Include="HttpExternalDataProvider.cs" />
     <Compile Include="MainDriver.cs" />
+    <Compile Include="DirectoryExtensions.cs" />
+    <Compile Include="Agents\IAgentProvider.cs" />
     <Compile Include="Processes\IProcessLauncher.cs" />
     <Compile Include="Processes\LocalProcessLauncher.cs" />
     <Compile Include="ExternalLogging\IExternalLogger.cs" />
     <Compile Include="IRemoteLockGetter.cs" />
+    <Compile Include="RemoteAgent.cs" />
+    <Compile Include="Processes\RemoteProcessLauncher.cs" />
+    <Compile Include="RemoteAgentInfo.cs" />
     <Compile Include="TestConfigurations\ITest.cs" />
     <Compile Include="TestConfigurations\ITestResult.cs" />
     <Compile Include="Logging\Log4netConfiguration.cs" />
