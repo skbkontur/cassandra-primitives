@@ -8,6 +8,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
         where TTestResult : ITestResult
     {
         void StartProcesses(TestConfiguration configuration);
-        TTestResult WaitForResults();
+        void WaitForProcessesToFinish();
     }
 }

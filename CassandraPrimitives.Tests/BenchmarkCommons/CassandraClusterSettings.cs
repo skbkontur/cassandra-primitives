@@ -8,15 +8,29 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons
 {
     public class CassandraClusterSettings : ICassandraClusterSettings
     {
-        public string ClusterName { get { return "test_cluster"; } }
-        public ConsistencyLevel ReadConsistencyLevel { get { return ConsistencyLevel.QUORUM; } }
-        public ConsistencyLevel WriteConsistencyLevel { get { return ConsistencyLevel.QUORUM; } }
-        public IPEndPoint[] Endpoints { get { return new[] {new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9360)}; } }
-        public IPEndPoint EndpointForFierceCommands { get { return new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9360); } }
-        public bool AllowNullTimestamp { get { return false; } }
-        public int Attempts { get { return 5; } }
-        public int Timeout { get { return 6000; } }
-        public int FierceTimeout { get { return 10000; } }
-        public TimeSpan? ConnectionIdleTimeout { get { return TimeSpan.FromMinutes(1); } }
+        public CassandraClusterSettings(string clusterName, IPEndPoint[] endpoints, IPEndPoint endpointForFierceCommands)
+        {
+            ClusterName = clusterName;
+            ReadConsistencyLevel = ConsistencyLevel.QUORUM;
+            WriteConsistencyLevel = ConsistencyLevel.QUORUM;
+            Endpoints = endpoints;
+            EndpointForFierceCommands = endpointForFierceCommands;
+            AllowNullTimestamp = false;
+            Attempts = 5;
+            Timeout = 6000;
+            FierceTimeout = 10000;
+            ConnectionIdleTimeout = TimeSpan.FromMinutes(1);
+        }
+
+        public string ClusterName { get; set; }
+        public ConsistencyLevel ReadConsistencyLevel { get; private set; }
+        public ConsistencyLevel WriteConsistencyLevel { get; private set; }
+        public IPEndPoint[] Endpoints { get; set; }
+        public IPEndPoint EndpointForFierceCommands { get; set; }
+        public bool AllowNullTimestamp { get; set; }
+        public int Attempts { get; set; }
+        public int Timeout { get; set; }
+        public int FierceTimeout { get; set; }
+        public TimeSpan? ConnectionIdleTimeout { get; set; }
     }
 }

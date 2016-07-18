@@ -5,6 +5,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
     public interface IExternalLogProcessor<out TTestResult> where TTestResult : ITestResult
     {
         void StartProcessingLog();
-        TTestResult GetTestResult();
+        TTestResult GetTestResult(int processInd);
     }
 }

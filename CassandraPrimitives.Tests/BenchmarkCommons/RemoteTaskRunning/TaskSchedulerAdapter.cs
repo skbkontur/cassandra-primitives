@@ -13,11 +13,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 {
     public class TaskSchedulerAdapter : IDisposable
     {
-        public TaskSchedulerAdapter(RemoteTaskSchedulerCredentials credentials)
+        public TaskSchedulerAdapter(RemoteMachineCredentials credentials, string wrapperPath)
         {
             taskService = credentials == null ? new TaskService() : new TaskService(credentials.MachineName, credentials.UserName, credentials.AccountDomain, credentials.Password);
             this.credentials = credentials;
             logger = LogManager.GetLogger(GetType());
+            this.wrapperPath = wrapperPath;
         }
 
         public Task RunTask(string taskName, string path, string[] arguments = null, string directory = null)
@@ -42,10 +43,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
                 task.Run();
                 if (!IsTaskRunning(task, taskStartTimeoutMilliseconds))
                 {
-                    logger.ErrorFormat("The task with name {0} on machine {1} didn't start", taskName, credentials.MachineName);
-                    throw new Exception("Fail staring task");
+                    if (task.State == TaskState.Ready)
+                        logger.ErrorFormat("The task with name {0} on machine {1} started, but immediately finished", taskName, credentials.MachineName);
+                    else
+                    {
+                        logger.ErrorFormat("The task with name {0} on machine {1} didn't start for some unknown reasons", taskName, credentials.MachineName);
+                        throw new Exception("Task didn't start for some unknown reasons");
+                    }
                 }
-                logger.InfoFormat("The task with name {0} on machine {1} successfully started", taskName, credentials.MachineName);
+                else
+                    logger.InfoFormat("The task with name {0} on machine {1} successfully started", taskName, credentials.MachineName);
                 return task;
             }
             catch (COMException e)
@@ -113,11 +120,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
         }
 
         private const int taskStartTimeoutMilliseconds = 3000;
-        //TODO: replace absolute path with relative one
-        private const string wrapperPath = @"C:\workspace\tmp\MoreJobObjects\MoreJobObjects\bin\Release\MoreJobObjects.exe";
 
+        private readonly string wrapperPath;
         private readonly TaskService taskService;
         private readonly ILog logger;
-        private readonly RemoteTaskSchedulerCredentials credentials;
+        private readonly RemoteMachineCredentials credentials;
     }
 }

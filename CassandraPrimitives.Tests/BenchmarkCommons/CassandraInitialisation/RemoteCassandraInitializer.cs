@@ -9,7 +9,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
 {
     public class RemoteCassandraInitializer : ICassandraInitialiser
     {
-        public RemoteCassandraInitializer(RemoteTaskSchedulerCredentials credentials, string remoteWorkDir)
+        public RemoteCassandraInitializer(RemoteMachineCredentials credentials, RemoteDirectory remoteWorkDir)
         {
             remoteTasks = new List<Task>();
             this.credentials = credentials;
@@ -18,12 +18,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
 
         public void CreateNode(CassandraNodeSettings settings)
         {
-            using (var taskSchedulerAdapter = new TaskSchedulerAdapter(credentials))
+            var wrapperPath = Path.Combine(remoteWorkDir.AsLocal, @"JobObjects\MoreJobObjects.exe");
+            using (var taskSchedulerAdapter = new TaskSchedulerAdapter(credentials, wrapperPath))
             {
-                var deployDirectory = Path.Combine(remoteWorkDir, "..", "Cassandra1.2");
+                var deployDirectory = Path.Combine(remoteWorkDir.AsRemote, "..", "Cassandra1.2");
                 settings.DeployDirectory = deployDirectory;
-                CassandraDeployer.DeployCassandra(settings);
-                var task = taskSchedulerAdapter.RunTaskInWrapper("CassandraNode", Path.Combine(deployDirectory, "bin", "cassandra.bat"));
+                using (new ImpersonateUser(credentials))
+                    CassandraDeployer.DeployCassandra(settings);
+                var task = taskSchedulerAdapter.RunTaskInWrapper("CassandraNode", Path.Combine(remoteWorkDir.AsLocal, "..", "Cassandra1.2", "bin", "cassandra.bat"), directory : Path.Combine(remoteWorkDir.AsLocal, "..", "Cassandra1.2", "bin"));
                 remoteTasks.Add(task);
             }
         }
@@ -31,7 +33,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
         public void StopAllNodes()
         {
             foreach (var remoteTask in remoteTasks)
+            {
                 remoteTask.Stop();
+                remoteTask.Dispose();
+            }
         }
 
         public void Dispose()
@@ -40,7 +45,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
         }
 
         private readonly List<Task> remoteTasks;
-        private readonly RemoteTaskSchedulerCredentials credentials;
-        private readonly string remoteWorkDir;
+        private readonly RemoteMachineCredentials credentials;
+        private readonly RemoteDirectory remoteWorkDir;
     }
 }

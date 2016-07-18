@@ -1,10 +1,7 @@
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestConfigurations;
 using SKBKontur.Catalogue.TeamCity;
 
@@ -12,14 +9,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
 {
     public class LocalProcessLauncher : IProcessLauncher<SimpleTestResult.Merged>
     {
-        public LocalProcessLauncher(ITeamCityLogger teamCityLogger, string workingDirectory)
+        public LocalProcessLauncher(ITeamCityLogger teamCityLogger)
         {
             this.teamCityLogger = teamCityLogger;
-            this.workingDirectory = workingDirectory;
+            workingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            processes = new Process[0];
         }
 
         public void StartProcesses(TestConfiguration configuration)
         {
+            StopProcesses();
             processes = new Process[configuration.amountOfProcesses];
             for (var i = 0; i < configuration.amountOfProcesses; i++)
             {
@@ -35,7 +34,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
             }
         }
 
-        public SimpleTestResult.Merged WaitForResults()
+        public void WaitForProcessesToFinish()
+        {
+            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Waiting for processes to finish...");
+            foreach (var process in processes)
+                process.WaitForExit();
+        }
+
+        /*public SimpleTestResult.Merged WaitForResults()
         {
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Waiting for processes to finish...");
             foreach (var process in processes)
@@ -50,6 +56,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
                     using (var streamReader = new StreamReader(stream))
                     {
                         var logProcessor = new SimpleExternalLogProcessor(streamReader);
+                        
                         logProcessor.StartProcessingLog();
                         var testResult = logProcessor.GetTestResult();
                         teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished with result: {1}", index, testResult.GetShortMessage());
@@ -59,12 +66,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
 
             var mergedTestResult = SimpleTestResult.Merge(testResults);
             return mergedTestResult;
+        }*/
+
+        public void StopProcesses()
+        {
+            foreach (var process in processes)
+                process.Dispose();
         }
 
         public void Dispose()
         {
-            foreach (var process in processes)
-                process.Dispose();
+            StopProcesses();
         }
 
         private Process[] processes;

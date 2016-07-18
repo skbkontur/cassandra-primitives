@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 
@@ -11,41 +11,47 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Cass
 {
     public class CassandraClusterStarter : IDisposable
     {
-        public CassandraClusterStarter()
+        public CassandraClusterStarter(CassandraClusterSettings clusterSettings, List<CassandraRemoteNodeStartInfo> remoteNodeStartInfos)
         {
-            ClusterSettings = new CassandraClusterSettings();
-            var credentials = new RemoteTaskSchedulerCredentials("K1606012");
-            var workDir = AppDomain.CurrentDomain.BaseDirectory;
-            cassandraInitializer = new RemoteCassandraInitializer(credentials, workDir);
+            cassandraInitialisers = new List<ICassandraInitialiser>();
+            ClusterSettings = clusterSettings;
             try
             {
-                cassandraInitializer.CreateNode(new CassandraNodeSettings
-                    {
-                        ClusterName = ClusterSettings.ClusterName,
-                        ListenAddress = "127.0.0.1",
-                        SeedAddresses = new[] {"127.0.0.1"}
-                    });
-                var initializerSettings = new CassandraInitializerSettings();
+                foreach (var remoteNodeStartInfo in remoteNodeStartInfos)
+                {
+                    var cassandraInitializer = new RemoteCassandraInitializer(remoteNodeStartInfo.Credentials, remoteNodeStartInfo.RemoteWorkDir);
+                    cassandraInitialisers.Add(cassandraInitializer);
+                    cassandraInitializer.CreateNode(remoteNodeStartInfo.Settings);
+                }
                 using (var cassandraCluster = new CassandraCluster(ClusterSettings))
                 {
+                    var initializerSettings = new CassandraInitializerSettings();
                     var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, new CassandraMetaProvider(), initializerSettings);
                     cassandraSchemeActualizer.AddNewColumnFamilies();
                 }
             }
             catch (Exception)
             {
-                cassandraInitializer.Dispose();
+                DisposeCassandraInitialisers();
                 throw;
             }
         }
 
         public ICassandraClusterSettings ClusterSettings { get; private set; }
 
-        public void Dispose()
+        public void DisposeCassandraInitialisers()
         {
-            cassandraInitializer.Dispose();
+            if (cassandraInitialisers == null)
+                return;
+            foreach (var cassandraInitializer in cassandraInitialisers)
+                cassandraInitializer.Dispose();
         }
 
-        private readonly ICassandraInitialiser cassandraInitializer;
+        public void Dispose()
+        {
+            DisposeCassandraInitialisers();
+        }
+
+        private readonly List<ICassandraInitialiser> cassandraInitialisers;
     }
 }
