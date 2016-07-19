@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestConfigurations;
 using SKBKontur.Catalogue.TeamCity;
@@ -15,7 +16,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     amountOfProcesses = 3,
                     amountOfLocksPerThread = 40,
                     maxWaitTimeMilliseconds = 100,
-                    remoteHostName = Environment.MachineName + "." + Environment.UserDomainName
+                    remoteHostName = IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName,
                 };
 
             var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration);
