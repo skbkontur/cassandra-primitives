@@ -28,7 +28,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         public void PrepareAgents()
         {
-            var agentProvider = new AgentProviderWithSingleAgent();
+            var agentProvider = new AgentProviderAllAgents();
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Choosing agents...");
             cassandraAgents = agentProvider.GetAgents(1);
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Cassandra agents: {0}", String.Join(", ", cassandraAgents.Select(agent => agent.Name)));
