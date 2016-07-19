@@ -93,6 +93,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agents\AgentProviderAllAgents.cs" />
     <Compile Include="Agents\AgentProviderWithSingleAgent.cs" />
     <Compile Include="CassandraRemoteLock\CassandraClusterStarter.cs" />
     <Compile Include="CassandraRemoteLock\CassandraRemoteNodeStartInfo.cs" />
