@@ -53,7 +53,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         private static void DeployWrapper(RemoteDirectory workDir)
         {
-            var source = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TaskWrapper"));
+            var source = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "Assemblies", "TaskWrapper"));
             var remoteDir = Path.Combine(workDir.AsRemote, "TaskWrapper");
             source.CopyTo(new DirectoryInfo(remoteDir), true);
         }
