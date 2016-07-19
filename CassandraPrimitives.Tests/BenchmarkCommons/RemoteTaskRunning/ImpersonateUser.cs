@@ -5,6 +5,7 @@ using System.Security.Principal;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning
 {
+    [Obsolete]
     public class ImpersonateUser : IDisposable
     {
         public ImpersonateUser(string username, string domainOrComputerName, string password)

@@ -6,5 +6,6 @@
         public int amountOfProcesses;
         public int amountOfLocksPerThread;
         public int maxWaitTimeMilliseconds;
+        public string remoteHostName;
     }
 }

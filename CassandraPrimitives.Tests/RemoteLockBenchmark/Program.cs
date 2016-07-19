@@ -14,21 +14,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     amountOfThreads = 5,
                     amountOfProcesses = 3,
                     amountOfLocksPerThread = 40,
-                    maxWaitTimeMilliseconds = 100
+                    maxWaitTimeMilliseconds = 100,
+                    remoteHostName = Environment.MachineName + "." + Environment.UserDomainName
                 };
 
-            if (args.Length == 0)
-            {
-                var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration);
-                driver.Run();
-            }
-            else
-            {
-                int threadInd;
-                if (!int.TryParse(args[0], out threadInd))
-                    Console.WriteLine("Invalid argument");
-                ChildProcessDriver.RunSingleTest(threadInd, configuration, AppDomain.CurrentDomain.BaseDirectory);
-            }
+            var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration);
+            driver.Run();
         }
     }
 }

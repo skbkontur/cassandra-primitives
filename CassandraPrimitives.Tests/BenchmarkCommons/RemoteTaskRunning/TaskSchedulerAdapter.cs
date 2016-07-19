@@ -83,8 +83,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 
             var taskDefinition = taskService.NewTask();
 
-            var joinedArgs = String.Join(" ", (arguments ?? new string[0]).Select(EscapeCmdArgument));
-
+            var joinedArgs = String.Join(" ", (arguments ?? new string[0]).Select(EscapeArgumentForTaskScheduler));
             var action = new ExecAction(path, joinedArgs, directory);
 
             taskDefinition.Actions.Add(action);
@@ -103,10 +102,19 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 
         public Task RunTaskInWrapper(string taskName, string path, string[] arguments = null, string directory = null)
         {
-            return RunTask(taskName, wrapperPath, new[] {"Normal", path}.Concat(arguments ?? new string[0]).ToArray(), directory);
+            var realArguments = new[] {"--priority", "Normal", "--path", path, "--arguments", String.Join(" ", (arguments ?? new string[0]).Select(EscapeArgumentForCmd))};
+            return RunTask(taskName, wrapperPath, realArguments, directory);
         }
 
-        private string EscapeCmdArgument(string argument)
+        private string EscapeArgumentForCmd(string argument)
+        {
+            var r = new Regex(@"\\(?=""|$)");
+            var semiEscaped = r.Replace(argument, @"\\");
+            var result = String.Format("\"{0}\"", semiEscaped.Replace(@"""", @""""""));
+            return result;
+        }
+
+        private string EscapeArgumentForTaskScheduler(string argument)
         {
             var r = new Regex(@"\\(?=""|$)");
             var semiEscaped = r.Replace(argument, @"\\\\");
