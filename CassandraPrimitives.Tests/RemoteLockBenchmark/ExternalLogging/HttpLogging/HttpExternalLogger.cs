@@ -10,10 +10,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
 {
     public class HttpExternalLogger : IExternalProgressLogger<SimpleTestResult>, IDisposable
     {
-        public HttpExternalLogger(int processInd)
+        public HttpExternalLogger(int processInd, string remoteHostName)
         {
             httpClient = new HttpClient();
             this.processInd = processInd;
+            this.remoteHostName = remoteHostName;
         }
 
         public async void PublishResult(SimpleTestResult testResult)
@@ -24,7 +25,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
                 {
                     Scheme = Uri.UriSchemeHttp,
                     Port = 12345,
-                    Host = "K1606012.kontur",
+                    Host = remoteHostName,
                     Path = "publish_result"
                 };
 
@@ -38,7 +39,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
 
         public async void Log(string message)
         {
-            await httpClient.PostAsync("http://K1606012.kontur:12345/log", new StringContent(message));
+            await httpClient.PostAsync(String.Format("http://{0}:12345/log", remoteHostName), new StringContent(message));
         }
 
         public void Log(string format, params object[] items)
@@ -53,5 +54,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
 
         private readonly HttpClient httpClient;
         private readonly int processInd;
+        private readonly string remoteHostName;
     }
 }

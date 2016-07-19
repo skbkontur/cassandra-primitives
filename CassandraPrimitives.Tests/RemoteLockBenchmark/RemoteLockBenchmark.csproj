@@ -74,8 +74,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Win32.TaskScheduler">
-      <HintPath>..\..\..\edi\Assemblies\WindowsTaskScheduler\Microsoft.Win32.TaskScheduler.dll</HintPath>
+    <Reference Include="Microsoft.Win32.TaskScheduler, Version=1.9.0.23355, Culture=neutral, PublicKeyToken=0d013ddd5178a2ae, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\WindowsTaskScheduler\Microsoft.Win32.TaskScheduler.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -95,13 +96,12 @@
     <Compile Include="Agents\AgentProviderWithSingleAgent.cs" />
     <Compile Include="CassandraRemoteLock\CassandraClusterStarter.cs" />
     <Compile Include="CassandraRemoteLock\CassandraRemoteNodeStartInfo.cs" />
-    <Compile Include="ChildProcessDriver.cs" />
     <Compile Include="ExternalLogging\FileLoggingTools.cs" />
     <Compile Include="ExternalLogging\HttpLogging\HttpExternalLogger.cs" />
     <Compile Include="ExternalLogging\HttpLogging\HttpExternalLogProcessor.cs" />
     <Compile Include="ExternalLogging\HttpLogging\HttpServer.cs" />
     <Compile Include="ExternalLogging\IExternalLogProcessor.cs" />
-    <Compile Include="HttpExternalDataProvider.cs" />
+    <Compile Include="HttpTestDataProvider.cs" />
     <Compile Include="MainDriver.cs" />
     <Compile Include="DirectoryExtensions.cs" />
     <Compile Include="Agents\IAgentProvider.cs" />

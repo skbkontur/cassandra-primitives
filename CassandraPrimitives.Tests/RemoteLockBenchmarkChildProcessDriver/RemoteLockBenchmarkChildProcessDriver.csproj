@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E0706790-58A4-4820-9C61-D143991BA9AB}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{7F911B02-6321-45D4-B1E5-8CCE6BE86B5C}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons</RootNamespace>
-    <AssemblyName>Catalogue.CassandraPrimitives.Tests.BenchmarkCommons</AssemblyName>
+    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver</RootNamespace>
+    <AssemblyName>Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,26 +23,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cassandra.CassandraClient">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
-    </Reference>
-    <Reference Include="Cassandra.ClusterDeployment">
-      <HintPath>..\..\Assemblies\Cassandra\Cassandra.ClusterDeployment.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\..\Assemblies\Temp\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Win32.TaskScheduler, Version=1.9.0.23355, Culture=neutral, PublicKeyToken=0d013ddd5178a2ae, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\WindowsTaskScheduler\Microsoft.Win32.TaskScheduler.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -49,6 +42,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,19 +50,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CassandraClusterSettings.cs" />
-    <Compile Include="CassandraInitialisation\CassandraDeployer.cs" />
-    <Compile Include="CassandraInitialisation\CassandraNodeSettings.cs" />
-    <Compile Include="CassandraInitialisation\ICassandraInitialiser.cs" />
-    <Compile Include="CassandraInitialisation\LocalCassandraInitializer.cs" />
-    <Compile Include="IpAddressConverter.cs" />
-    <Compile Include="IpEndPointConverter.cs" />
+    <Compile Include="ChildProcessDriver.cs" />
+    <Compile Include="HttpExternalDataGetter.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CassandraInitialisation\RemoteCassandraInitializer.cs" />
-    <Compile Include="RemoteTaskRunning\ImpersonateUser.cs" />
-    <Compile Include="RemoteTaskRunning\RemoteDirectory.cs" />
-    <Compile Include="RemoteTaskRunning\RemoteMachineCredentials.cs" />
-    <Compile Include="RemoteTaskRunning\TaskSchedulerAdapter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BenchmarkCommons\BenchmarkCommons.csproj">
+      <Project>{e0706790-58a4-4820-9c61-d143991ba9ab}</Project>
+      <Name>BenchmarkCommons</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemoteLockBenchmark\RemoteLockBenchmark.csproj">
+      <Project>{B5A06976-66ED-420C-8D89-BDCC8647DCAB}</Project>
+      <Name>RemoteLockBenchmark</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

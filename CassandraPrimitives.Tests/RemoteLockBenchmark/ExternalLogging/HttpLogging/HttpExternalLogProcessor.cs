@@ -29,6 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
                             return;
 
                         var rawData = await new StreamReader(context.Request.InputStream).ReadToEndAsync();
+                        Console.WriteLine(rawData);
                         var testResult = JsonConvert.DeserializeObject<SimpleTestResult>(rawData);
 
                         var processInd = int.Parse(context.Request.QueryString["process_ind"]);
