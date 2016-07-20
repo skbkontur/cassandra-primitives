@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -8,6 +10,7 @@ using Metrics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
 using SKBKontur.Catalogue.TeamCity;
 
@@ -15,8 +18,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
 {
     public class HttpExternalLogProcessor : IExternalLogProcessor<SimpleTestResult>, IDisposable
     {
-        public HttpExternalLogProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
+        public HttpExternalLogProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents)
         {
+            this.configuration = configuration;
+            this.agents = agents;
             results = new SimpleTestResult[configuration.amountOfProcesses];
             this.teamCityLogger = teamCityLogger;
             sourcesForWaitingProcesses = new TaskCompletionSource<SimpleTestResult>[configuration.amountOfProcesses];
@@ -39,7 +44,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             try
             {
                 int processInd;
-                if (!int.TryParse(context.Request.QueryString["process_ind"], out processInd))
+                if (!int.TryParse(context.Request.QueryString["process_ind"], out processInd) || processInd < 0 || processInd >= configuration.amountOfProcesses)
+                    return;
+                if (!agents.Any(x => x.Token.Equals(context.Request.QueryString["process_token"])))
                     return;
                 await contextHandler(context, processInd);
             }
@@ -101,5 +108,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
         private readonly MetricsConfig metric;
         private readonly Meter meter;
         private readonly Histogram histogram;
+        private readonly TestConfiguration configuration;
+        private readonly List<RemoteAgentInfo> agents;
     }
 }

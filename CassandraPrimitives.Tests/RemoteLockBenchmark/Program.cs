@@ -18,7 +18,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     maxWaitTimeMilliseconds = 200,
                     remoteHostName = IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName,
                 };
-            var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration, true);
+            var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration, false);
             driver.Run();
         }
     }

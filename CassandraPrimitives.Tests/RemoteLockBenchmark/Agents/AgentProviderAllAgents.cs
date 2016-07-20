@@ -22,10 +22,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
                 .Select(name => new RemoteAgentInfo(
                                     name,
                                     @"Benchmarks\workdir",
-                                    new RemoteMachineCredentials(name)))
+                                    new RemoteMachineCredentials(name),
+                                    Guid.NewGuid().ToString()))
                 .ToList();
             if (amount > agents.Count - used)
-                throw new ArgumentException(String.Format("Can't provide {0} agents, because there're only {1} agents available", amount, agents.Count));
+                throw new ArgumentException(String.Format("Can't provide {0} agents, because there're only {1} agents available", amount, agents.Count - used));
             var result = agents.Skip(used).Take(amount).ToList();
             used += amount;
             return result;
