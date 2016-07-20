@@ -1,6 +1,6 @@
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Settings
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.CassandraSettings
 {
     public static class ColumnFamilies
     {

@@ -1,7 +1,7 @@
 ﻿using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging.HttpLogging;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.TestConfigurations;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.ExternalLogging.Http;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.RemoteLocks;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver
 {
@@ -16,7 +16,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             using (var remoteLockGetter = new CassandraRemoteLockGetter(cassandraClusterSettings, externalLogger))
             {
                 var test = new SimpleTest(configuration, processInd, remoteLockGetter);
-                using (var testRunner = new TestRunner<SimpleTestResult>(configuration, externalLogger))
+                using (var testRunner = new TestRunning.TestRunner<SimpleTestResult>(configuration, externalLogger))
                     testRunner.RunTestAndPublishResults(test);
             }
         }

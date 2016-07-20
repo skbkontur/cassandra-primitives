@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E0706790-58A4-4820-9C61-D143991BA9AB}</ProjectGuid>
+    <ProjectGuid>{15B039F3-E13F-4836-817B-1E16BA9E52D1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons</RootNamespace>
-    <AssemblyName>Catalogue.CassandraPrimitives.Tests.BenchmarkCommons</AssemblyName>
+    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons</RootNamespace>
+    <AssemblyName>Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,22 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cassandra.CassandraClient">
-      <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
+    <Reference Include="Catalogue.CassandraPrimitives.RemoteLock">
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.RemoteLock.dll</HintPath>
     </Reference>
-    <Reference Include="Cassandra.ClusterDeployment">
-      <HintPath>..\..\Assemblies\Cassandra\Cassandra.ClusterDeployment.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\..\Assemblies\Temp\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Win32.TaskScheduler, Version=1.9.0.23355, Culture=neutral, PublicKeyToken=0d013ddd5178a2ae, processorArchitecture=MSIL">
+    <Reference Include="Catalogue.CassandraPrimitives.Storages, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\WindowsTaskScheduler\Microsoft.Win32.TaskScheduler.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\json.net\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.Storages.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -56,24 +46,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CassandraClusterSettings.cs" />
-    <Compile Include="CassandraInitialisation\CassandraDeployer.cs" />
-    <Compile Include="CassandraInitialisation\CassandraNodeSettings.cs" />
-    <Compile Include="CassandraInitialisation\ICassandraInitialiser.cs" />
-    <Compile Include="CassandraInitialisation\LocalCassandraInitializer.cs" />
-    <Compile Include="DirectoryExtensions.cs" />
-    <Compile Include="IpAddressConverter.cs" />
-    <Compile Include="IpEndPointConverter.cs" />
-    <Compile Include="Logging\Log4netConfiguration.cs" />
+    <Compile Include="IRemoteLockGetter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CassandraInitialisation\RemoteCassandraInitializer.cs" />
-    <Compile Include="RemoteTaskRunning\ImpersonateUser.cs" />
-    <Compile Include="RemoteTaskRunning\RemoteDirectory.cs" />
-    <Compile Include="RemoteTaskRunning\RemoteMachineCredentials.cs" />
-    <Compile Include="RemoteTaskRunning\TaskSchedulerAdapter.cs" />
+    <Compile Include="CassandraSettings\CassandraInitializerSettings.cs" />
+    <Compile Include="CassandraSettings\CassandraMetaProvider.cs" />
+    <Compile Include="CassandraSettings\ColumnFamilies.cs" />
+    <Compile Include="TestConfigurations\ITest.cs" />
+    <Compile Include="TestConfigurations\ITestResult.cs" />
+    <Compile Include="TestConfigurations\SimpleTest.cs" />
+    <Compile Include="TestConfigurations\SimpleTestResult.cs" />
+    <Compile Include="TestConfigurations\TestConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Logging\log4net.config" />
+    <ProjectReference Include="..\SchemeActualizer\SchemeActualizer.csproj">
+      <Project>{8832339B-D3B3-4921-B911-40938C93DFE6}</Project>
+      <Name>SchemeActualizer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
