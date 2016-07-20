@@ -19,11 +19,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
     public class MainDriver
     {
-        public MainDriver(ITeamCityLogger teamCityLogger, TestConfiguration configuration)
+        public MainDriver(ITeamCityLogger teamCityLogger, TestConfiguration configuration, bool noDeploy=false)
         {
             Log4NetConfiguration.InitializeOnce();
             this.teamCityLogger = teamCityLogger;
             this.configuration = configuration;
+            this.noDeploy = noDeploy;
         }
 
         public void PrepareAgents()
@@ -51,8 +52,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             cassandraClusterSettings = new CassandraClusterSettings(clusterName, endpoints, endpoints.First());
         }
 
-        private static void DeployWrapper(RemoteDirectory workDir)
+        private void DeployWrapper(RemoteDirectory workDir)
         {
+            if (noDeploy)
+                return;
             var source = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "Assemblies", "TaskWrapper"));
             var remoteDir = Path.Combine(workDir.AsRemote, "TaskWrapper");
             source.CopyTo(new DirectoryInfo(remoteDir), true);
@@ -83,13 +86,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             PrepareAgents();
             PrepareCassandraSettings();
 
-            using (new CassandraClusterStarter(cassandraClusterSettings, remoteCassandraNodeStartInfos))
+            using (new CassandraClusterStarter(cassandraClusterSettings, remoteCassandraNodeStartInfos, noDeploy))
             {
                 try
                 {
                     using (new HttpTestDataProvider(cassandraClusterSettings, configuration))
                     using (new HttpExternalLogProcessor(configuration, teamCityLogger))
-                    using (var processLauncher = new RemoteProcessLauncher(teamCityLogger, testAgents))
+                    using (var processLauncher = new RemoteProcessLauncher(teamCityLogger, testAgents, noDeploy))
                     {
                         processLauncher.StartProcesses(configuration);
 
@@ -114,5 +117,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private readonly TestConfiguration configuration;
         private CassandraClusterSettings cassandraClusterSettings;
         private List<CassandraRemoteNodeStartInfo> remoteCassandraNodeStartInfos;
+        private readonly bool noDeploy;
     }
 }

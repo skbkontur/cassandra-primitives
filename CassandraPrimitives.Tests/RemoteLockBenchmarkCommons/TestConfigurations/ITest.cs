@@ -1,9 +1,9 @@
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ExternalLogging;
+
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations
 {
-    public interface ITest<out T>
-        where T : ITestResult
+    public interface ITest
     {
-        T GetTestResult();
         void SetUp();
         void DoWorkInSingleThread(int threadInd);
         void TearDown();

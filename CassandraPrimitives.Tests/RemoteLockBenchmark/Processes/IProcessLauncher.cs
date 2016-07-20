@@ -4,8 +4,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.T
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Processes
 {
-    public interface IProcessLauncher<out TTestResult> : IDisposable
-        where TTestResult : ITestResult
+    public interface IProcessLauncher : IDisposable
     {
         void StartProcesses(TestConfiguration configuration);
         void WaitForProcessesToFinish();

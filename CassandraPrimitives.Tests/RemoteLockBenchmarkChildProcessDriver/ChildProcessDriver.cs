@@ -15,8 +15,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             using (var externalLogger = new HttpExternalLogger(processInd, configuration.remoteHostName))
             using (var remoteLockGetter = new CassandraRemoteLockGetter(cassandraClusterSettings, externalLogger))
             {
-                var test = new SimpleTest(configuration, processInd, remoteLockGetter);
-                using (var testRunner = new TestRunning.TestRunner<SimpleTestResult>(configuration, externalLogger))
+                var test = new SimpleTest(configuration, remoteLockGetter, externalLogger);
+                using (var testRunner = new TestRunning.TestRunner<SimpleProgressMessage>(configuration, externalLogger))
                     testRunner.RunTestAndPublishResults(test);
             }
         }

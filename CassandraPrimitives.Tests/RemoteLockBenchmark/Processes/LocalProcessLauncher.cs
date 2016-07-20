@@ -7,7 +7,7 @@ using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Processes
 {
-    public class LocalProcessLauncher : IProcessLauncher<SimpleTestResult.Merged>
+    public class LocalProcessLauncher : IProcessLauncher
     {
         public LocalProcessLauncher(ITeamCityLogger teamCityLogger)
         {

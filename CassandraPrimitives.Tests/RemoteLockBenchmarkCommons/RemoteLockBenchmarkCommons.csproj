@@ -46,13 +46,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExternalLogging\IExternalLogger.cs" />
+    <Compile Include="ExternalLogging\IExternalProgressLogger.cs" />
     <Compile Include="IRemoteLockGetter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CassandraSettings\CassandraInitializerSettings.cs" />
     <Compile Include="CassandraSettings\CassandraMetaProvider.cs" />
     <Compile Include="CassandraSettings\ColumnFamilies.cs" />
+    <Compile Include="TestConfigurations\IProgressMessage.cs" />
     <Compile Include="TestConfigurations\ITest.cs" />
-    <Compile Include="TestConfigurations\ITestResult.cs" />
+    <Compile Include="TestConfigurations\SimpleProgressMessage.cs" />
     <Compile Include="TestConfigurations\SimpleTest.cs" />
     <Compile Include="TestConfigurations\SimpleTestResult.cs" />
     <Compile Include="TestConfigurations\TestConfiguration.cs" />

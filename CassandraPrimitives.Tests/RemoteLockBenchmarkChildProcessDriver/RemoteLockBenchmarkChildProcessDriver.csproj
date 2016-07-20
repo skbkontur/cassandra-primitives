@@ -68,8 +68,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExternalLogging\Http\HttpExternalLogger.cs" />
-    <Compile Include="ExternalLogging\IExternalLogger.cs" />
-    <Compile Include="ExternalLogging\IExternalProgressLogger.cs" />
     <Compile Include="ExternalLogging\SimpleExternalLogger.cs" />
     <Compile Include="RemoteLocks\CassandraRemoteLockGetter.cs" />
     <Compile Include="ChildProcessDriver.cs" />
