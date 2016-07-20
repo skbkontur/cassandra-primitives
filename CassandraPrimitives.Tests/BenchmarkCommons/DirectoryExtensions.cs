@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons
 {
     public static class DirectoryExtensions
     {

@@ -95,43 +95,23 @@
   <ItemGroup>
     <Compile Include="Agents\AgentProviderAllAgents.cs" />
     <Compile Include="Agents\AgentProviderWithSingleAgent.cs" />
-    <Compile Include="CassandraRemoteLock\CassandraClusterStarter.cs" />
-    <Compile Include="CassandraRemoteLock\CassandraRemoteNodeStartInfo.cs" />
+    <Compile Include="Cassandra\CassandraClusterStarter.cs" />
+    <Compile Include="Cassandra\CassandraRemoteNodeStartInfo.cs" />
     <Compile Include="ExternalLogging\FileLoggingTools.cs" />
-    <Compile Include="ExternalLogging\HttpLogging\HttpExternalLogger.cs" />
     <Compile Include="ExternalLogging\HttpLogging\HttpExternalLogProcessor.cs" />
     <Compile Include="ExternalLogging\HttpLogging\HttpServer.cs" />
     <Compile Include="ExternalLogging\IExternalLogProcessor.cs" />
     <Compile Include="HttpTestDataProvider.cs" />
     <Compile Include="MainDriver.cs" />
-    <Compile Include="DirectoryExtensions.cs" />
     <Compile Include="Agents\IAgentProvider.cs" />
     <Compile Include="Processes\IProcessLauncher.cs" />
     <Compile Include="Processes\LocalProcessLauncher.cs" />
-    <Compile Include="ExternalLogging\IExternalLogger.cs" />
-    <Compile Include="IRemoteLockGetter.cs" />
-    <Compile Include="RemoteAgent.cs" />
+    <Compile Include="Agents\RemoteAgent.cs" />
     <Compile Include="Processes\RemoteProcessLauncher.cs" />
-    <Compile Include="RemoteAgentInfo.cs" />
-    <Compile Include="TestConfigurations\ITest.cs" />
-    <Compile Include="TestConfigurations\ITestResult.cs" />
-    <Compile Include="Logging\Log4netConfiguration.cs" />
-    <Compile Include="ExternalLogging\IExternalProgressLogger.cs" />
-    <Compile Include="ExternalLogging\SimpleExternalLogger.cs" />
+    <Compile Include="Agents\RemoteAgentInfo.cs" />
     <Compile Include="ExternalLogging\SimpleExternalLogProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CassandraRemoteLock\CassandraRemoteLockGetter.cs" />
-    <Compile Include="Settings\CassandraInitializerSettings.cs" />
-    <Compile Include="Settings\CassandraMetaProvider.cs" />
-    <Compile Include="Settings\ColumnFamilies.cs" />
-    <Compile Include="TestConfigurations\SimpleTest.cs" />
-    <Compile Include="TestConfigurations\SimpleTestResult.cs" />
-    <Compile Include="TestConfigurations\TestConfiguration.cs" />
-    <Compile Include="TestConfigurations\TestRunner.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Logging\log4net.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BenchmarkCommons\BenchmarkCommons.csproj">
@@ -141,6 +121,10 @@
     <ProjectReference Include="..\FunctionalTests\FunctionalTests.csproj">
       <Project>{141AC881-3536-4978-AD10-9D29B88A2988}</Project>
       <Name>FunctionalTests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemoteLockBenchmarkCommons\RemoteLockBenchmarkCommons.csproj">
+      <Project>{15B039F3-E13F-4836-817B-1E16BA9E52D1}</Project>
+      <Name>RemoteLockBenchmarkCommons</Name>
     </ProjectReference>
     <ProjectReference Include="..\SchemeActualizer\SchemeActualizer.csproj">
       <Project>{8832339B-D3B3-4921-B911-40938C93DFE6}</Project>

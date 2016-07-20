@@ -1,6 +1,6 @@
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Settings
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.CassandraSettings
 {
     public class CassandraInitializerSettings : ICassandraInitializerSettings
     {

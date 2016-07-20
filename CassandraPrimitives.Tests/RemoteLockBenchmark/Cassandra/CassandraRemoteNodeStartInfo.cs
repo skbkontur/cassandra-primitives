@@ -1,7 +1,7 @@
 ﻿using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.CassandraRemoteLock
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Cassandra
 {
     public class CassandraRemoteNodeStartInfo
     {

@@ -2,7 +2,7 @@
 
 using log4net.Config;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Logging
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging
 {
     public static class Log4NetConfiguration
     {
