@@ -3,21 +3,22 @@ using System.Threading;
 
 using log4net;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.ExternalLogging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ExternalLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.TestRunning
 {
-    public class TestRunner<TTestResult> : IDisposable where TTestResult : ITestResult
+    public class TestRunner<TProgressMessage> : IDisposable
+        where TProgressMessage : IProgressMessage
     {
-        public TestRunner(TestConfiguration configuration, IExternalProgressLogger<TTestResult> externalLogger)
+        public TestRunner(TestConfiguration configuration, IExternalProgressLogger<TProgressMessage> externalLogger)
         {
             this.configuration = configuration;
             this.externalLogger = externalLogger;
             logger = LogManager.GetLogger(GetType());
         }
 
-        public void RunTestAndPublishResults(ITest<TTestResult> test)
+        public void RunTestAndPublishResults(ITest test)
         {
             test.SetUp();
             var threads = new Thread[configuration.amountOfThreads];
@@ -28,6 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
                     {
                         try
                         {
+                            externalLogger.Log("Start working in thread {0}", threadInd);
                             test.DoWorkInSingleThread(threadInd);
                         }
                         catch (Exception e)
@@ -50,8 +52,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             }
 
             test.TearDown();
-            var testResult = test.GetTestResult();
-            externalLogger.PublishResult(testResult);
         }
 
         private void LogException(string description, Exception exception)
@@ -65,7 +65,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         }
 
         private readonly TestConfiguration configuration;
-        private readonly IExternalProgressLogger<TTestResult> externalLogger;
+        private readonly IExternalProgressLogger<TProgressMessage> externalLogger;
         private readonly ILog logger;
     }
 }

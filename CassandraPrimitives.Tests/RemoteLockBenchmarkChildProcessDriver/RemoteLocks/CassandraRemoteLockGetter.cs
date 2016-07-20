@@ -12,6 +12,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock.RemoteLocker;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.ExternalLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.CassandraSettings;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ExternalLogging;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.RemoteLocks
 {

@@ -14,13 +14,14 @@ using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Processes
 {
-    public class RemoteProcessLauncher : IProcessLauncher<SimpleTestResult.Merged>
+    public class RemoteProcessLauncher : IProcessLauncher
     {
-        public RemoteProcessLauncher(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agentInfos)
+        public RemoteProcessLauncher(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agentInfos, bool noDeploy=false)
         {
             this.teamCityLogger = teamCityLogger;
             tasks = new List<Task>();
             this.agentInfos = agentInfos;
+            this.noDeploy = noDeploy;
         }
 
         private void DeployTask(string targetDirectory)
@@ -37,6 +38,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
 
         public void DeployTasks(IEnumerable<RemoteAgent> agents)
         {
+            if (noDeploy)
+                return;
             foreach (var agent in agents)
             {
                 var remoteDir = agent.ProcessDirectory.AsRemote;
@@ -102,5 +105,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
         private readonly ITeamCityLogger teamCityLogger;
         private readonly List<Task> tasks;
         private readonly List<RemoteAgentInfo> agentInfos;
+        private readonly bool noDeploy;
     }
 }

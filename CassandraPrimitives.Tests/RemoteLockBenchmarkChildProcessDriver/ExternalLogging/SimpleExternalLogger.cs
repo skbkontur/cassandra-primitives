@@ -2,11 +2,12 @@ using System.IO;
 
 using Newtonsoft.Json;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ExternalLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.ExternalLogging
 {
-    public class SimpleExternalLogger : IExternalProgressLogger<SimpleTestResult>
+    public class SimpleExternalLogger : IExternalProgressLogger<SimpleProgressMessage>
     {
         public SimpleExternalLogger(TextWriter logStream)
         {
@@ -20,10 +21,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         public void Log(string format, params object[] items)
         {
         }
-
-        public void PublishResult(SimpleTestResult testResult)
+        
+        public void PublishProgress(SimpleProgressMessage progressMessage)
         {
-            logStream.Write(JsonConvert.SerializeObject(testResult));
+            logStream.WriteLine(JsonConvert.SerializeObject(progressMessage));
         }
 
         private readonly TextWriter logStream;

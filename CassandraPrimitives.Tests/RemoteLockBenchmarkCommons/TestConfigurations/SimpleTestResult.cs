@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations
 {
-    public class SimpleTestResult : ITestResult
+    public class SimpleTestResult
     {
         public int LocksCount { get; set; }
         public long TotalWaitTime { get; set; }
@@ -24,7 +25,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
             return string.Format("{0} ms spent ({1:.00} times slower than unreachable ideal - {2} ms)", TotalTimeSpent, (double)TotalTimeSpent / TotalWaitTime, TotalWaitTime);
         }
 
-        public class Merged : ITestResult
+        public class Merged
         {
             public int LocksCount { get; set; }
             public long TotalWaitTime { get; set; }

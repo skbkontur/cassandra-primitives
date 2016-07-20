@@ -4,54 +4,72 @@ using System.Linq;
 using System.Threading;
 
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ExternalLogging;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations
 {
-    public class SimpleTest : ITest<SimpleTestResult>
+    public class SimpleTest : ITest
     {
-        public SimpleTest(TestConfiguration configuration, int processInd, IRemoteLockGetter remoteLockGetter)
+        public SimpleTest(TestConfiguration configuration, IRemoteLockGetter remoteLockGetter, IExternalProgressLogger<SimpleProgressMessage> externalLogger)
         {
             this.configuration = configuration;
             locker = remoteLockGetter.Get(1).Single();
             lockId = Guid.NewGuid().ToString();
             rand = new Random(Guid.NewGuid().GetHashCode());
-            testResult = new SimpleTestResult();
+            this.externalLogger = externalLogger;
         }
 
         public void SetUp()
         {
-            stopwatch = Stopwatch.StartNew();
+            globalStopwatch = Stopwatch.StartNew();
         }
 
         public void DoWorkInSingleThread(int threadInd)
         {
+            var locksAcquired = 0;
+            var totalSleepTime = 0;
+            var stopwatch = new Stopwatch();
+            var logInterval = configuration.amountOfLocksPerThread / 10;
             for (var i = 0; i < configuration.amountOfLocksPerThread; i++)
             {
+                stopwatch.Start();
                 using (locker.Lock(lockId))
                 {
-                    testResult.LocksCount++;
+                    stopwatch.Stop();
+                    locksAcquired++;
                     var waitTime = (int)(rand.NextDouble() * configuration.maxWaitTimeMilliseconds);
-                    testResult.TotalWaitTime += waitTime;
+                    totalSleepTime += waitTime;
                     Thread.Sleep(waitTime);
                 }
+                if (i % logInterval == 0)
+                {
+                    externalLogger.PublishProgress(new SimpleProgressMessage
+                        {
+                            LocksAcquired = locksAcquired,
+                            AverageLockWaitingTime = stopwatch.ElapsedMilliseconds / locksAcquired,
+                            TotalSleepTime = totalSleepTime,
+                            TotalTime = globalStopwatch.ElapsedMilliseconds,
+                            Final = false
+                        });
+                    locksAcquired = 0;
+                    totalSleepTime = 0;
+                    stopwatch.Reset();
+                }
             }
+            externalLogger.PublishProgress(new SimpleProgressMessage { LocksAcquired = locksAcquired, AverageLockWaitingTime = stopwatch.ElapsedMilliseconds / locksAcquired, Final = false });
         }
 
         public void TearDown()
         {
-            testResult.TotalTimeSpent = stopwatch.ElapsedMilliseconds;
+            var totalTimeSpent = globalStopwatch.ElapsedMilliseconds;
+            externalLogger.PublishProgress(new SimpleProgressMessage {Final = true, TotalTime = totalTimeSpent});
         }
-
-        public SimpleTestResult GetTestResult()
-        {
-            return testResult;
-        }
-
+        
         private readonly TestConfiguration configuration;
         private readonly IRemoteLockCreator locker;
         private readonly string lockId;
         private readonly Random rand;
-        private readonly SimpleTestResult testResult;
-        private Stopwatch stopwatch;
+        private Stopwatch globalStopwatch;
+        private readonly IExternalProgressLogger<SimpleProgressMessage> externalLogger;
     }
 }

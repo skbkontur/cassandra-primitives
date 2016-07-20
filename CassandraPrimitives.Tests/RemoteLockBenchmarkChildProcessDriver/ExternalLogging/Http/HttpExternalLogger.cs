@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 
 using Newtonsoft.Json;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ExternalLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.ExternalLogging.Http
 {
-    public class HttpExternalLogger : IExternalProgressLogger<SimpleTestResult>, IDisposable
+    public class HttpExternalLogger : IExternalProgressLogger<SimpleProgressMessage>, IDisposable
     {
         public HttpExternalLogger(int processInd, string remoteHostName)
         {
@@ -17,29 +19,35 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             this.remoteHostName = remoteHostName;
         }
 
-        public async void PublishResult(SimpleTestResult testResult)
+        public async void PublishProgress(SimpleProgressMessage progressMessage)
         {
-            var data = JsonConvert.SerializeObject(testResult);
-
-            var builder = new UriBuilder
-                {
-                    Scheme = Uri.UriSchemeHttp,
-                    Port = 12345,
-                    Host = remoteHostName,
-                    Path = "publish_result"
-                };
-
-            var query = HttpUtility.ParseQueryString(builder.Query);
-            query["process_ind"] = processInd.ToString();
-            builder.Query = query.ToString();
-            var stringUri = builder.ToString();
-
-            await httpClient.PostAsync(stringUri, new StringContent(data));
+            var data = JsonConvert.SerializeObject(progressMessage);
+            await SendWithProcessInd("publish_progress", data);
         }
 
         public async void Log(string message)
         {
-            await httpClient.PostAsync(String.Format("http://{0}:12345/log", remoteHostName), new StringContent(message));
+            var objectToSend = new { message = message };
+            var data = JsonConvert.SerializeObject(objectToSend);
+            await SendWithProcessInd("log", data);
+        }
+
+        private async Task SendWithProcessInd(string method, string data)
+        {
+            var builder = new UriBuilder
+            {
+                Scheme = Uri.UriSchemeHttp,
+                Port = 12345,
+                Host = remoteHostName,
+                Path = method
+            };
+
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query["process_ind"] = processInd.ToString();//TODO: put processInd inside progressMessage
+            builder.Query = query.ToString();
+            var stringUri = builder.ToString();
+
+            await httpClient.PostAsync(stringUri, new StringContent(data));
         }
 
         public void Log(string format, params object[] items)

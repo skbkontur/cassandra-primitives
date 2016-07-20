@@ -40,6 +40,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             logger.Error(e.ExceptionObject.ToString());
+            Console.WriteLine(e.ExceptionObject.ToString());
+            Environment.Exit(1);
         }
     }
 }
