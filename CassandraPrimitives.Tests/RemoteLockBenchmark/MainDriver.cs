@@ -91,7 +91,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 try
                 {
                     using (new HttpTestDataProvider(cassandraClusterSettings, configuration))
-                    using (new HttpExternalLogProcessor(configuration, teamCityLogger))
+                    using (new HttpExternalLogProcessor(configuration, teamCityLogger, testAgents))
                     using (var processLauncher = new RemoteProcessLauncher(teamCityLogger, testAgents, noDeploy))
                     {
                         processLauncher.StartProcesses(configuration);

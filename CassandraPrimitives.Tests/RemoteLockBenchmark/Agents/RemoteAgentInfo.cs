@@ -6,18 +6,20 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
 {
     public class RemoteAgentInfo
     {
-        public RemoteAgentInfo(string name, string workDirPathFromDiscC, RemoteMachineCredentials credentials)
+        public RemoteAgentInfo(string name, string workDirPathFromDiscC, RemoteMachineCredentials credentials, string token)
         {
             Name = name;
             WorkDirectory = new RemoteDirectory(String.Format(@"\\{0}\c$\", name), @"C:\", workDirPathFromDiscC);
             Credentials = credentials;
+            Token = token;
         }
 
-        internal RemoteAgentInfo(string name, RemoteDirectory workDirectory, RemoteMachineCredentials credentials)
+        internal RemoteAgentInfo(string name, RemoteDirectory workDirectory, RemoteMachineCredentials credentials, string token)
         {
             Name = name;
             WorkDirectory = workDirectory;
             Credentials = credentials;
+            Token = token;
         }
 
         public string Name { get; private set; }
@@ -25,5 +27,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
         public RemoteDirectory WorkDirectory { get; set; }
 
         public RemoteMachineCredentials Credentials { get; private set; }
+
+        public string Token { get; set; }
     }
 }

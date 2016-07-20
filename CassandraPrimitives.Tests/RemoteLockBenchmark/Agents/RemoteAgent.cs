@@ -6,14 +6,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
 {
     public class RemoteAgent : RemoteAgentInfo
     {
-        public RemoteAgent(string name, string workDirPathFromDiscC, int processInd, RemoteMachineCredentials credentials)
-            : base(name, workDirPathFromDiscC, credentials)
+        public RemoteAgent(string name, string workDirPathFromDiscC, int processInd, RemoteMachineCredentials credentials, string token)
+            : base(name, workDirPathFromDiscC, credentials, token)
         {
             ProcessInd = processInd;
         }
 
         public RemoteAgent(RemoteAgentInfo agent, int processInd)
-            : base(agent.Name, agent.WorkDirectory, agent.Credentials)
+            : base(agent.Name, agent.WorkDirectory, agent.Credentials, agent.Token)
         {
             ProcessInd = processInd;
         }

@@ -18,23 +18,26 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             logger = LogManager.GetLogger(typeof(Program));
 
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
+            if (args.Length < 3)
+                throw new Exception("Not enough arguments");
+
             int processInd;
             if (!int.TryParse(args[0], out processInd))
-            {
-                Console.WriteLine("Invalid argument");
-                logger.ErrorFormat("Invalid process id {0}", args[0]);
-            }
+                throw new Exception(String.Format("Invalid process id {0}", args[0]));
 
             logger.InfoFormat("Process id is {0}", processInd);
             logger.InfoFormat("Remote http address is {0}", args[1]);
+
+            var processToken = args[2];
 
             TestConfiguration configuration;
             using (var httpExternalDataProvider = new HttpExternalDataGetter(args[1]))
                 configuration = httpExternalDataProvider.GetTestConfiguration().Result;
 
             logger.InfoFormat("Configuration was received");
-            
-            ChildProcessDriver.RunSingleTest(processInd, configuration, AppDomain.CurrentDomain.BaseDirectory);
+
+            ChildProcessDriver.RunSingleTest(processInd, configuration, AppDomain.CurrentDomain.BaseDirectory, processToken);
         }
 
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)

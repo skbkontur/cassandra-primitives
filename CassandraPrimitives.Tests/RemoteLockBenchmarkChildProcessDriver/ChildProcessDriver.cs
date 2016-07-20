@@ -7,12 +7,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 {
     public class ChildProcessDriver
     {
-        public static void RunSingleTest(int processInd, TestConfiguration configuration, string workingDirectory)
+        public static void RunSingleTest(int processInd, TestConfiguration configuration, string workingDirectory, string processToken)
         {
             ICassandraClusterSettings cassandraClusterSettings;
             using (var httpExternalDataProvider = new HttpExternalDataGetter(configuration.remoteHostName))
                 cassandraClusterSettings = httpExternalDataProvider.GetCassandraSettings().Result;
-            using (var externalLogger = new HttpExternalLogger(processInd, configuration.remoteHostName))
+            using (var externalLogger = new HttpExternalLogger(processInd, configuration.remoteHostName, processToken))
             using (var remoteLockGetter = new CassandraRemoteLockGetter(cassandraClusterSettings, externalLogger))
             {
                 var test = new SimpleTest(configuration, remoteLockGetter, externalLogger);

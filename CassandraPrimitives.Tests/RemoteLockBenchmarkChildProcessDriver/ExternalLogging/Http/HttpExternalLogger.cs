@@ -12,27 +12,28 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 {
     public class HttpExternalLogger : IExternalProgressLogger<SimpleProgressMessage>, IDisposable
     {
-        public HttpExternalLogger(int processInd, string remoteHostName)
+        public HttpExternalLogger(int processInd, string remoteHostName, string processToken)
         {
             httpClient = new HttpClient();
             this.processInd = processInd;
             this.remoteHostName = remoteHostName;
+            this.processToken = processToken;
         }
 
         public async void PublishProgress(SimpleProgressMessage progressMessage)
         {
             var data = JsonConvert.SerializeObject(progressMessage);
-            await SendWithProcessInd("publish_progress", data);
+            await SendWithProcessIndAndToken("publish_progress", data);
         }
 
         public async void Log(string message)
         {
             var objectToSend = new { message = message };
             var data = JsonConvert.SerializeObject(objectToSend);
-            await SendWithProcessInd("log", data);
+            await SendWithProcessIndAndToken("log", data);
         }
 
-        private async Task SendWithProcessInd(string method, string data)
+        private async Task SendWithProcessIndAndToken(string method, string data)
         {
             var builder = new UriBuilder
             {
@@ -44,6 +45,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 
             var query = HttpUtility.ParseQueryString(builder.Query);
             query["process_ind"] = processInd.ToString();//TODO: put processInd inside progressMessage
+            query["process_token"] = processToken;
             builder.Query = query.ToString();
             var stringUri = builder.ToString();
 
@@ -63,5 +65,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         private readonly HttpClient httpClient;
         private readonly int processInd;
         private readonly string remoteHostName;
+        private readonly string processToken;
     }
 }
