@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
 using SKBKontur.Catalogue.TeamCity;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging.TestProcessors
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging.TestProgressProcessors
 {
     public class TimelineTestProgressProcessor : ITestProgressProcessor, IDisposable
     {
@@ -97,7 +97,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
 
         private void ProcessLockEvents(List<TimelineProgressMessage.LockEvent> lockEvents)
         {
-            if (lockEvents.Count == 0)
+            if (lockEvents == null || lockEvents.Count == 0)
                 return;
             allLockEvents.AddRange(lockEvents);
             startTime = Math.Min(startTime, allLockEvents.Min(e => e.AcquiredAt));

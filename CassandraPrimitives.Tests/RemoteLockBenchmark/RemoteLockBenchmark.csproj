@@ -104,9 +104,9 @@
     <Compile Include="ExternalLogging\FileLoggingTools.cs" />
     <Compile Include="ExternalLogging\HttpLogging\HttpExternalLogProcessor.cs" />
     <Compile Include="ExternalLogging\HttpLogging\HttpServer.cs" />
-    <Compile Include="ExternalLogging\TestProcessors\SimpleTestProgressProcessor.cs" />
-    <Compile Include="ExternalLogging\TestProcessors\TimelineTestProgressProcessor.cs" />
-    <Compile Include="ExternalLogging\TestProcessors\ITestProgressProcessor.cs" />
+    <Compile Include="ExternalLogging\TestProgressProcessors\SimpleTestProgressProcessor.cs" />
+    <Compile Include="ExternalLogging\TestProgressProcessors\TimelineTestProgressProcessor.cs" />
+    <Compile Include="ExternalLogging\TestProgressProcessors\ITestProgressProcessor.cs" />
     <Compile Include="ExternalLogging\IExternalLogProcessor.cs" />
     <Compile Include="HttpTestDataProvider.cs" />
     <Compile Include="MainDriver.cs" />
