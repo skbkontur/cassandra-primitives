@@ -21,7 +21,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         public void Log(string format, params object[] items)
         {
         }
-        
+
         public void PublishProgress(SimpleProgressMessage progressMessage)
         {
             logStream.WriteLine(JsonConvert.SerializeObject(progressMessage));

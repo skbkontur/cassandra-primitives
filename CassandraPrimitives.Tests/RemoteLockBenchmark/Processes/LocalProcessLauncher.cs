@@ -41,33 +41,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
                 process.WaitForExit();
         }
 
-        /*public SimpleTestResult.Merged WaitForResults()
-        {
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Waiting for processes to finish...");
-            foreach (var process in processes)
-                process.WaitForExit();
-
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Processing results...");
-            var testResults = processes.Select((process, index) =>
-                {
-                    var filename = FileLoggingTools.CreateLogFileAndGetPath(workingDirectory, index);
-
-                    using (var stream = File.OpenRead(filename))
-                    using (var streamReader = new StreamReader(stream))
-                    {
-                        var logProcessor = new SimpleExternalLogProcessor(streamReader);
-                        
-                        logProcessor.StartProcessingLog();
-                        var testResult = logProcessor.GetTestResult();
-                        teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished with result: {1}", index, testResult.GetShortMessage());
-                        return testResult;
-                    }
-                });
-
-            var mergedTestResult = SimpleTestResult.Merge(testResults);
-            return mergedTestResult;
-        }*/
-
         public void StopProcesses()
         {
             foreach (var process in processes)

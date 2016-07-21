@@ -4,12 +4,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
 {
     public class TimelineProgressMessage : IProgressMessage
     {
+        public List<LockEvent> LockEvents { get; set; }
+        public bool Final { get; set; }
+
         public class LockEvent
         {
             public long AcquiredAt { get; set; }
             public long ReleasedAt { get; set; }
         }
-        public List<LockEvent> LockEvents { get; set; }
-        public bool Final { get; set; }
     }
 }

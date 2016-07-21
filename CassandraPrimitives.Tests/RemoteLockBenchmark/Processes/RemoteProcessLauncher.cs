@@ -16,7 +16,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
 {
     public class RemoteProcessLauncher : IProcessLauncher
     {
-        public RemoteProcessLauncher(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agentInfos, bool noDeploy=false)
+        public RemoteProcessLauncher(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agentInfos, bool noDeploy = false)
         {
             this.teamCityLogger = teamCityLogger;
             tasks = new List<Task>();

@@ -9,7 +9,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
 {
     public class RemoteCassandraInitializer : ICassandraInitialiser
     {
-        public RemoteCassandraInitializer(RemoteMachineCredentials credentials, RemoteDirectory remoteWorkDir, bool noDeploy=false)
+        public RemoteCassandraInitializer(RemoteMachineCredentials credentials, RemoteDirectory remoteWorkDir, bool noDeploy = false)
         {
             remoteTasks = new List<Task>();
             this.credentials = credentials;

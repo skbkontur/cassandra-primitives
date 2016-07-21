@@ -25,11 +25,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
         {
         }
 
-        private long GetCurrentTimeStamp(int processInd, int threadInd)
+        private long GetCurrentTimeStamp()
         {
             return (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds + timeCorrectionDelta;
-            //var time = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds + timeCorrectionDelta;
-            //return (time / 1000) * 1000 + processInd * 100 + threadInd;//TODO be careful
         }
 
         public void DoWorkInSingleThread(int threadInd)
@@ -41,7 +39,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
                 var lockEvent = new TimelineProgressMessage.LockEvent();
                 using (locker.Lock(lockId))
                 {
-                    lockEvent.AcquiredAt = GetCurrentTimeStamp(processInd, threadInd);
+                    lockEvent.AcquiredAt = GetCurrentTimeStamp();
                     var waitTime = rand.Next(configuration.minWaitTimeMilliseconds, configuration.maxWaitTimeMilliseconds);
                     Thread.Sleep(waitTime);
                     if (i % logInterval == 0)
@@ -53,7 +51,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
                             });
                         lockEvents.Clear();
                     }
-                    lockEvent.ReleasedAt = GetCurrentTimeStamp(processInd, threadInd);
+                    lockEvent.ReleasedAt = GetCurrentTimeStamp();
                 }
                 lockEvents.Add(lockEvent);
             }
@@ -66,7 +64,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
 
         public void TearDown()
         {
-            externalLogger.PublishProgress(new TimelineProgressMessage { Final = true });
+            externalLogger.PublishProgress(new TimelineProgressMessage {Final = true});
         }
 
         private readonly TestConfiguration configuration;

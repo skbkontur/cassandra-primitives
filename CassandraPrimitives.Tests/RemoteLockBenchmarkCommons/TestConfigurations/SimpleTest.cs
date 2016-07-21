@@ -41,7 +41,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
                     var waitTime = (int)(rand.NextDouble() * configuration.maxWaitTimeMilliseconds);
                     totalSleepTime += waitTime;
                     Thread.Sleep(waitTime);
-                    if (i % logInterval == 0)
+                    if (i % logInterval == 0 || i + 1 == configuration.amountOfLocksPerThread)
                     {
                         externalLogger.PublishProgress(new SimpleProgressMessage
                             {
@@ -60,15 +60,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
                     }
                 }
             }
-            externalLogger.PublishProgress(new SimpleProgressMessage
-                {
-                    LocksAcquired = locksAcquired,
-                    AverageLockWaitingTime = stopwatch.ElapsedMilliseconds / locksAcquired,
-                    SleepTime = totalSleepTime,
-                    TotalTime = totalStopwatch.ElapsedMilliseconds,
-                    TimeWaitingForLock = stopwatch.ElapsedMilliseconds,
-                    Final = false,
-                });
         }
 
         public void TearDown()
@@ -76,7 +67,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
             var totalTimeSpent = globalStopwatch.ElapsedMilliseconds;
             externalLogger.PublishProgress(new SimpleProgressMessage {Final = true, GlobalTime = totalTimeSpent});
         }
-        
+
         private readonly TestConfiguration configuration;
         private readonly IRemoteLockCreator locker;
         private readonly string lockId;

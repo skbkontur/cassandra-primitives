@@ -12,18 +12,18 @@ using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging.HttpLogging
 {
-    public class HttpExternalLogProcessor : IExternalLogProcessor<SimpleTestResult>, IDisposable
+    public class HttpExternalLogProcessor : IExternalLogProcessor, IDisposable
     {
-        public HttpExternalLogProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents, ITestProcessor testProcessor)
+        public HttpExternalLogProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents, ITestProgressProcessor testProgressProcessor)
         {
             this.configuration = configuration;
             this.agents = agents;
             this.teamCityLogger = teamCityLogger;
-            this.testProcessor = testProcessor;
+            this.testProgressProcessor = testProgressProcessor;
 
             httpServer = new HttpServer();
-            httpServer.AddMethod("publish_progress", c => HandleRequestWithProcessInd(c, testProcessor.HandlePublishProgress));
-            httpServer.AddMethod("log", c => HandleRequestWithProcessInd(c, testProcessor.HandleLog));
+            httpServer.AddMethod("publish_progress", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandlePublishProgress));
+            httpServer.AddMethod("log", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandleLog));
         }
 
         private async void HandleRequestWithProcessInd(HttpListenerContext context, Func<string, int, string> contextHandler)
@@ -53,11 +53,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
         {
         }
 
-        /*public SimpleTestResult GetTestResult(int processInd)
-        {
-            return testProcessor.GetTestResult(processInd);
-        }*/
-
         public void Dispose()
         {
             httpServer.Dispose();
@@ -67,6 +62,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
         private readonly ITeamCityLogger teamCityLogger;
         private readonly TestConfiguration configuration;
         private readonly List<RemoteAgentInfo> agents;
-        private readonly ITestProcessor testProcessor;
+        private readonly ITestProgressProcessor testProgressProcessor;
     }
 }
