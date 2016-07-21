@@ -11,6 +11,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskR
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Cassandra;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging.HttpLogging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging.TestProcessors;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Processes;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
 using SKBKontur.Catalogue.TeamCity;
@@ -91,7 +92,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 try
                 {
                     using (new HttpTestDataProvider(cassandraClusterSettings, configuration))
-                    using (new HttpExternalLogProcessor(configuration, teamCityLogger, testAgents))
+                    using (var testProcessor = new TimelineTestProcessor(configuration, teamCityLogger))//TODO
+                    using (new HttpExternalLogProcessor(configuration, teamCityLogger, testAgents, testProcessor))
                     using (var processLauncher = new RemoteProcessLauncher(teamCityLogger, testAgents, noDeploy))
                     {
                         processLauncher.StartProcesses(configuration);

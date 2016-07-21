@@ -3,6 +3,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
     public interface IExternalLogProcessor<out TTestResult>
     {
         void StartProcessingLog();
-        TTestResult GetTestResult(int processInd);
+        //TTestResult GetTestResult(int processInd);//TODO
     }
 }

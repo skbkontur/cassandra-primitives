@@ -29,6 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
             var locksAcquired = 0;
             var totalSleepTime = 0;
             var stopwatch = new Stopwatch();
+            var totalStopwatch = Stopwatch.StartNew();
             var logInterval = configuration.amountOfLocksPerThread / 10;
             for (var i = 0; i < configuration.amountOfLocksPerThread; i++)
             {
@@ -40,29 +41,40 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
                     var waitTime = (int)(rand.NextDouble() * configuration.maxWaitTimeMilliseconds);
                     totalSleepTime += waitTime;
                     Thread.Sleep(waitTime);
-                }
-                if (i % logInterval == 0)
-                {
-                    externalLogger.PublishProgress(new SimpleProgressMessage
-                        {
-                            LocksAcquired = locksAcquired,
-                            AverageLockWaitingTime = stopwatch.ElapsedMilliseconds / locksAcquired,
-                            TotalSleepTime = totalSleepTime,
-                            TotalTime = globalStopwatch.ElapsedMilliseconds,
-                            Final = false
-                        });
-                    locksAcquired = 0;
-                    totalSleepTime = 0;
-                    stopwatch.Reset();
+                    if (i % logInterval == 0)
+                    {
+                        externalLogger.PublishProgress(new SimpleProgressMessage
+                            {
+                                LocksAcquired = locksAcquired,
+                                AverageLockWaitingTime = stopwatch.ElapsedMilliseconds / locksAcquired,
+                                SleepTime = totalSleepTime,
+                                TotalTime = totalStopwatch.ElapsedMilliseconds,
+                                TimeWaitingForLock = stopwatch.ElapsedMilliseconds,
+                                Final = false,
+                            });
+                        locksAcquired = 0;
+                        totalSleepTime = 0;
+                        stopwatch.Reset();
+                        totalStopwatch.Reset();
+                        totalStopwatch.Start();
+                    }
                 }
             }
-            externalLogger.PublishProgress(new SimpleProgressMessage { LocksAcquired = locksAcquired, AverageLockWaitingTime = stopwatch.ElapsedMilliseconds / locksAcquired, Final = false });
+            externalLogger.PublishProgress(new SimpleProgressMessage
+                {
+                    LocksAcquired = locksAcquired,
+                    AverageLockWaitingTime = stopwatch.ElapsedMilliseconds / locksAcquired,
+                    SleepTime = totalSleepTime,
+                    TotalTime = totalStopwatch.ElapsedMilliseconds,
+                    TimeWaitingForLock = stopwatch.ElapsedMilliseconds,
+                    Final = false,
+                });
         }
 
         public void TearDown()
         {
             var totalTimeSpent = globalStopwatch.ElapsedMilliseconds;
-            externalLogger.PublishProgress(new SimpleProgressMessage {Final = true, TotalTime = totalTimeSpent});
+            externalLogger.PublishProgress(new SimpleProgressMessage {Final = true, GlobalTime = totalTimeSpent});
         }
         
         private readonly TestConfiguration configuration;

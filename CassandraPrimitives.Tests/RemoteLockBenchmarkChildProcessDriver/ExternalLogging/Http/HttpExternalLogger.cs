@@ -10,7 +10,8 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.T
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.ExternalLogging.Http
 {
-    public class HttpExternalLogger : IExternalProgressLogger<SimpleProgressMessage>, IDisposable
+    public class HttpExternalLogger<TProgressMessage> : IExternalProgressLogger<TProgressMessage>, IDisposable
+        where TProgressMessage : IProgressMessage
     {
         public HttpExternalLogger(int processInd, string remoteHostName, string processToken)
         {
@@ -20,7 +21,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             this.processToken = processToken;
         }
 
-        public async void PublishProgress(SimpleProgressMessage progressMessage)
+        public async void PublishProgress(TProgressMessage progressMessage)
         {
             var data = JsonConvert.SerializeObject(progressMessage);
             await SendWithProcessIndAndToken("publish_progress", data);
