@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
@@ -33,6 +34,24 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             var response = await httpClient.GetAsync(String.Format("http://{0}:12345/get_test_configuration", remoteHostName));
             var data = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TestConfiguration>(data);
+        }
+
+        public async Task<long> GetTime()
+        {
+            var response = await httpClient.GetAsync(String.Format("http://{0}:12345/get_time", remoteHostName));
+            var data = await response.Content.ReadAsStringAsync();
+            var responseObject = JObject.Parse(data);
+            var time = long.Parse(responseObject["UtcMilliseconds"].ToString());
+            return time;
+        }
+
+        public async Task<string> GetLockId()
+        {
+            var response = await httpClient.GetAsync(String.Format("http://{0}:12345/get_lock_id", remoteHostName));
+            var data = await response.Content.ReadAsStringAsync();
+            var responseObject = JObject.Parse(data);
+            var lockId = responseObject["Value"].ToString();
+            return lockId;
         }
 
         public void Dispose()

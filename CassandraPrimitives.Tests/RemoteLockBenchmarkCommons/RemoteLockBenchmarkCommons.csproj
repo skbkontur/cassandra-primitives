@@ -59,6 +59,8 @@
     <Compile Include="TestConfigurations\SimpleTest.cs" />
     <Compile Include="TestConfigurations\SimpleTestResult.cs" />
     <Compile Include="TestConfigurations\TestConfiguration.cs" />
+    <Compile Include="TestConfigurations\TimelineProgressMessage.cs" />
+    <Compile Include="TestConfigurations\TimeLineTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SchemeActualizer\SchemeActualizer.csproj">

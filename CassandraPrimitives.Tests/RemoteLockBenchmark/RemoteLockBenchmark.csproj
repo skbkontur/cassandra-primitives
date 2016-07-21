@@ -104,6 +104,9 @@
     <Compile Include="ExternalLogging\FileLoggingTools.cs" />
     <Compile Include="ExternalLogging\HttpLogging\HttpExternalLogProcessor.cs" />
     <Compile Include="ExternalLogging\HttpLogging\HttpServer.cs" />
+    <Compile Include="ExternalLogging\TestProcessors\SimpleTestProcessor.cs" />
+    <Compile Include="ExternalLogging\TestProcessors\TimelineTestProcessor.cs" />
+    <Compile Include="ExternalLogging\TestProcessors\ITestProcessor.cs" />
     <Compile Include="ExternalLogging\IExternalLogProcessor.cs" />
     <Compile Include="HttpTestDataProvider.cs" />
     <Compile Include="MainDriver.cs" />
