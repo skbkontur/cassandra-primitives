@@ -11,10 +11,9 @@ using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging.TestProcessors
 {
-    public class SimpleTestProcessor : ITestProcessor, IDisposable
+    public class SimpleTestProgressProcessor : ITestProgressProcessor, IDisposable
     {
-        //TODO remove code used for getting test results
-        public SimpleTestProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
+        public SimpleTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
         {
             this.teamCityLogger = teamCityLogger;
 
@@ -29,8 +28,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             metric = Metric.Config.WithHttpEndpoint("http://*:1234/").WithAllCounters();
             meter = Metric.Meter("Total locks made", new Unit("Locks"));
             histogram = Metric.Histogram("Lock waiting time", new Unit("Milliseconds"));
-            //Metric.Gauge("Time waiting for lock", () => totalTimeWaitingForLock * 100.0 / totalTime, Unit.Percent);
-            //Metric.Gauge("Time sleeping", () => totalSleepTime * 100.0 / totalTime, Unit.Percent);
         }
 
         public string HandlePublishProgress(string request, int processInd)
@@ -41,9 +38,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             histogram.Update(progressMessage.AverageLockWaitingTime);
             results[processInd].LocksCount += progressMessage.LocksAcquired;
             results[processInd].TotalSleepTime += progressMessage.SleepTime;
-            totalTimeWaitingForLock += progressMessage.TimeWaitingForLock;
-            totalSleepTime += progressMessage.SleepTime;
-            totalTime += progressMessage.TotalTime;
             if (progressMessage.Final)
             {
                 results[processInd].TotalTimeSpent = progressMessage.GlobalTime;
@@ -69,17 +63,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             return sourcesForWaitingProcesses[processInd].Task.Result;
         }
 
+        public void Dispose()
+        {
+            metric.Dispose();
+        }
+
         private readonly MetricsConfig metric;
         private readonly Meter meter;
         private readonly Histogram histogram;
         private readonly ITeamCityLogger teamCityLogger;
         private readonly SimpleTestResult[] results;
         private readonly TaskCompletionSource<SimpleTestResult>[] sourcesForWaitingProcesses;
-        private long totalTimeWaitingForLock, totalTime, totalSleepTime;
-
-        public void Dispose()
-        {
-            metric.Dispose(); //TODO: Do we need it
-        }
     }
 }

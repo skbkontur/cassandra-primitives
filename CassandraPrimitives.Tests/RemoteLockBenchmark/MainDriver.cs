@@ -20,7 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
     public class MainDriver
     {
-        public MainDriver(ITeamCityLogger teamCityLogger, TestConfiguration configuration, bool noDeploy=false)
+        public MainDriver(ITeamCityLogger teamCityLogger, TestConfiguration configuration, bool noDeploy = false)
         {
             Log4NetConfiguration.InitializeOnce();
             this.teamCityLogger = teamCityLogger;
@@ -92,7 +92,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 try
                 {
                     using (new HttpTestDataProvider(cassandraClusterSettings, configuration))
-                    using (var testProcessor = new TimelineTestProcessor(configuration, teamCityLogger))//TODO
+                    using (var testProcessor = new TimelineTestProgressProcessor(configuration, teamCityLogger))
                     using (new HttpExternalLogProcessor(configuration, teamCityLogger, testAgents, testProcessor))
                     using (var processLauncher = new RemoteProcessLauncher(teamCityLogger, testAgents, noDeploy))
                     {

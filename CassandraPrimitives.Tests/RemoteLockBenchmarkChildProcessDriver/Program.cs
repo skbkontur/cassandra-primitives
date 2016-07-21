@@ -10,8 +10,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 {
     internal class Program
     {
-        private static ILog logger;
-
         private static void Main(string[] args)
         {
             Log4NetConfiguration.InitializeOnce();
@@ -46,5 +44,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             Console.WriteLine(e.ExceptionObject.ToString());
             Environment.Exit(1);
         }
+
+        private static ILog logger;
     }
 }

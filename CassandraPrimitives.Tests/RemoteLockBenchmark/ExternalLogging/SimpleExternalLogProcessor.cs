@@ -8,7 +8,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.T
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging
 {
     [Obsolete]
-    public class SimpleExternalLogProcessor : IExternalLogProcessor<SimpleTestResult>
+    public class SimpleExternalLogProcessor : IExternalLogProcessor
     {
         public SimpleExternalLogProcessor(TextReader logReader)
         {

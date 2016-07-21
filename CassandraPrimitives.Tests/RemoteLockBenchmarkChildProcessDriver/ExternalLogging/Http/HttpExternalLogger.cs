@@ -29,7 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 
         public async void Log(string message)
         {
-            var objectToSend = new { message = message };
+            var objectToSend = new {message = message};
             var data = JsonConvert.SerializeObject(objectToSend);
             await SendWithProcessIndAndToken("log", data);
         }
@@ -37,15 +37,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         private async Task SendWithProcessIndAndToken(string method, string data)
         {
             var builder = new UriBuilder
-            {
-                Scheme = Uri.UriSchemeHttp,
-                Port = 12345,
-                Host = remoteHostName,
-                Path = method
-            };
+                {
+                    Scheme = Uri.UriSchemeHttp,
+                    Port = 12345,
+                    Host = remoteHostName,
+                    Path = method
+                };
 
             var query = HttpUtility.ParseQueryString(builder.Query);
-            query["process_ind"] = processInd.ToString();//TODO: put processInd inside progressMessage
+            query["process_ind"] = processInd.ToString();
             query["process_token"] = processToken;
             builder.Query = query.ToString();
             var stringUri = builder.ToString();

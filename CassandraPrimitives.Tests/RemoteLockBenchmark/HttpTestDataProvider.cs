@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net;
 
 using Newtonsoft.Json;
 
@@ -14,66 +15,36 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         public HttpTestDataProvider(CassandraClusterSettings cassandraClusterSettings, TestConfiguration testConfiguration)
         {
             server = new HttpServer();
-            server.AddMethod("get_cassandra_options", async context =>
+            server.AddMethod("get_cassandra_options", c => ProcessRequest(c, () =>
                 {
-                    try
-                    {
-                        using (var stream = new StreamWriter(context.Response.OutputStream))
-                        {
-                            JsonSerializerSettings settings = new JsonSerializerSettings();
-                            settings.Converters.Add(new IpAddressConverter());
-                            settings.Converters.Add(new IpEndPointConverter());
-                            settings.Formatting = Formatting.Indented;
-                            await stream.WriteAsync(JsonConvert.SerializeObject(cassandraClusterSettings, settings));
-                        }
-                        context.Response.OutputStream.Close();
-                    }
-                    finally
-                    {
-                        context.Response.Close();
-                    }
-                });
-            server.AddMethod("get_test_configuration", async context =>
+                    JsonSerializerSettings settings = new JsonSerializerSettings();
+                    settings.Converters.Add(new IpAddressConverter());
+                    settings.Converters.Add(new IpEndPointConverter());
+                    settings.Formatting = Formatting.Indented;
+                    return JsonConvert.SerializeObject(cassandraClusterSettings, settings);
+                }));
+            server.AddMethod("get_test_configuration", c => ProcessRequest(c, () => JsonConvert.SerializeObject(testConfiguration)));
+            server.AddMethod("get_time", c => ProcessRequest(c, () =>
                 {
-                    try
-                    {
-                        using (var stream = new StreamWriter(context.Response.OutputStream))
-                            await stream.WriteAsync(JsonConvert.SerializeObject(testConfiguration));
-                        context.Response.OutputStream.Close();
-                    }
-                    finally
-                    {
-                        context.Response.Close();
-                    }
-                });
-            server.AddMethod("get_time", async context =>
-                {
-                    try
-                    {
-                        var time = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
-                        using (var stream = new StreamWriter(context.Response.OutputStream))
-                            await stream.WriteAsync(JsonConvert.SerializeObject(new { UtcMilliseconds = time }));
-                        context.Response.OutputStream.Close();
-                    }
-                    finally
-                    {
-                        context.Response.Close();
-                    }
-                });
+                    var time = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
+                    return JsonConvert.SerializeObject(new {UtcMilliseconds = time});
+                }));
             var lockId = Guid.NewGuid().ToString();
-            server.AddMethod("get_lock_id", async context =>
+            server.AddMethod("get_lock_id", c => ProcessRequest(c, () => JsonConvert.SerializeObject(new {Value = lockId})));
+        }
+
+        private async void ProcessRequest(HttpListenerContext context, Func<string> getResponse)
+        {
+            try
             {
-                try
-                {
-                    using (var stream = new StreamWriter(context.Response.OutputStream))
-                        await stream.WriteAsync(JsonConvert.SerializeObject(new { Value = lockId }));
-                    context.Response.OutputStream.Close();
-                }
-                finally
-                {
-                    context.Response.Close();
-                }
-            });
+                using (var stream = new StreamWriter(context.Response.OutputStream))
+                    await stream.WriteAsync(getResponse());
+                context.Response.OutputStream.Close();
+            }
+            finally
+            {
+                context.Response.Close();
+            }
         }
 
         public void Dispose()

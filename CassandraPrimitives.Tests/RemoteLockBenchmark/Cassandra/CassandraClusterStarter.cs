@@ -11,7 +11,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Cass
 {
     public class CassandraClusterStarter : IDisposable
     {
-        public CassandraClusterStarter(CassandraClusterSettings clusterSettings, List<CassandraRemoteNodeStartInfo> remoteNodeStartInfos, bool noDeploy=false)
+        public CassandraClusterStarter(CassandraClusterSettings clusterSettings, List<CassandraRemoteNodeStartInfo> remoteNodeStartInfos, bool noDeploy = false)
         {
             cassandraInitialisers = new List<ICassandraInitialiser>();
             ClusterSettings = clusterSettings;

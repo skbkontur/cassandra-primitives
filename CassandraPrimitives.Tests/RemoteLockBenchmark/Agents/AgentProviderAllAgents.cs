@@ -8,12 +8,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
 {
     public class AgentProviderAllAgents : IAgentProvider
     {
-        private int used;
-
         public AgentProviderAllAgents()
         {
             used = 0;
         }
+
         public List<RemoteAgentInfo> GetAgents(int amount)
         {
             var agents = Enumerable
@@ -22,7 +21,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
                 .Select(name => new RemoteAgentInfo(
                                     name,
                                     @"Benchmarks\workdir",
-                                    new RemoteMachineCredentials(name, "tc", name, "tc_123456"),
+                                    new RemoteMachineCredentials(name),
                                     Guid.NewGuid().ToString()))
                 .ToList();
             if (amount > agents.Count - used)
@@ -31,5 +30,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
             used += amount;
             return result;
         }
+
+        private int used;
     }
 }
