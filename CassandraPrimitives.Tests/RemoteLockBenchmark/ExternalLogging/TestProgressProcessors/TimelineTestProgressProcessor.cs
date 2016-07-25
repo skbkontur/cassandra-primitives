@@ -7,6 +7,7 @@ using Metrics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ProgressMessages;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
 using SKBKontur.Catalogue.TeamCity;
 

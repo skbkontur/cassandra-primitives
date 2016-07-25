@@ -7,9 +7,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons
     {
         public static void CopyTo(this DirectoryInfo source, DirectoryInfo destination, bool overwrite = false)
         {
+            if (!source.Exists)
+                throw new ArgumentException(String.Format("Source directory ({0}) doesn't exist", source));
             if (destination.IsSubdorectoryOf(source))
                 throw new ArgumentException(String.Format("Can't copy directory ({0}) to its subdirectory ({1})", source, destination));
-            destination.Create();
+            if (!destination.Exists)
+                destination.Create();
             foreach (var file in source.EnumerateFiles())
                 file.CopyTo(Path.Combine(destination.FullName, file.Name), overwrite);
             foreach (var directory in source.EnumerateDirectories())

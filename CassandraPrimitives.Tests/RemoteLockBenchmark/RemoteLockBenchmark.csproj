@@ -101,6 +101,8 @@
     <Compile Include="Agents\AgentProviderWithSingleAgent.cs" />
     <Compile Include="Cassandra\CassandraClusterStarter.cs" />
     <Compile Include="Cassandra\CassandraRemoteNodeStartInfo.cs" />
+    <Compile Include="ZooKeeper\RemoteZooKeeperInitializer.cs" />
+    <Compile Include="ZooKeeper\ZookeeperClusterStarter.cs" />
     <Compile Include="ExternalLogging\FileLoggingTools.cs" />
     <Compile Include="ExternalLogging\HttpLogging\HttpExternalLogProcessor.cs" />
     <Compile Include="ExternalLogging\HttpLogging\HttpServer.cs" />
@@ -119,6 +121,9 @@
     <Compile Include="ExternalLogging\SimpleExternalLogProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ZooKeeper\ZookeeperDeployer.cs" />
+    <Compile Include="ZooKeeper\ZookeeperNodeSettings.cs" />
+    <Compile Include="ZooKeeper\ZookeeperRemoteNodeStartInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BenchmarkCommons\BenchmarkCommons.csproj">
@@ -155,6 +160,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

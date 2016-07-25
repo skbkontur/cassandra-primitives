@@ -2,20 +2,37 @@
 using System.Collections.Generic;
 using System.Net;
 
+using log4net;
+
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging.HttpLogging
 {
     public class HttpServer : IDisposable
     {
-        public HttpServer()
+        public HttpServer(int port)
         {
             listeners = new List<HttpListener>();
             running = true;
+            logger = LogManager.GetLogger(GetType());
+            this.port = port;
         }
 
         private async void ProcessRequests(HttpListener listener, Action<HttpListenerContext> method)
         {
-            while (running)
-                await listener.GetContextAsync().ContinueWith(async t => method(await t)); //TODO exceptions are hiding here
+            if (!running || !listener.IsListening)
+                return;
+            try
+            {
+                var context = await await listener.GetContextAsync().ContinueWith(async t =>
+                    {
+                        ProcessRequests(listener, method);
+                        return await t;
+                    });
+                method(context);
+            }
+            catch (Exception e)
+            {
+                logger.WarnFormat("Exception while processing http request:\n{0}", e);
+            }
         }
 
         public void AddMethod(string name, Action<HttpListenerContext> method)
@@ -31,12 +48,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
         {
             running = false;
             foreach (var listener in listeners)
+            {
                 listener.Stop();
+                listener.Close();
+            }
         }
-
-        private const int port = 12345;
 
         private readonly List<HttpListener> listeners;
         private bool running;
+        private readonly ILog logger;
+        private readonly int port;
     }
 }

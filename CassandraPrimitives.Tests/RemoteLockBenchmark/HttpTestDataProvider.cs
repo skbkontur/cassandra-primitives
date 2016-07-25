@@ -6,23 +6,23 @@ using Newtonsoft.Json;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging.HttpLogging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ZooKeeper;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ZookeeperSettings;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
     public class HttpTestDataProvider : IDisposable
     {
-        public HttpTestDataProvider(CassandraClusterSettings cassandraClusterSettings, TestConfiguration testConfiguration)
+        public HttpTestDataProvider(CassandraClusterSettings cassandraClusterSettings, ZookeeperClusterSettings zookeeperClusterSettings, TestConfiguration testConfiguration)
         {
-            server = new HttpServer();
-            server.AddMethod("get_cassandra_options", c => ProcessRequest(c, () =>
-                {
-                    JsonSerializerSettings settings = new JsonSerializerSettings();
-                    settings.Converters.Add(new IpAddressConverter());
-                    settings.Converters.Add(new IpEndPointConverter());
-                    settings.Formatting = Formatting.Indented;
-                    return JsonConvert.SerializeObject(cassandraClusterSettings, settings);
-                }));
+            server = new HttpServer(testConfiguration.httpPort);
+            JsonSerializerSettings settingsForObjectsWithAddresses = new JsonSerializerSettings();
+            settingsForObjectsWithAddresses.Converters.Add(new IpAddressConverter());
+            settingsForObjectsWithAddresses.Converters.Add(new IpEndPointConverter());
+            settingsForObjectsWithAddresses.Formatting = Formatting.Indented;
+            server.AddMethod("get_cassandra_options", c => ProcessRequest(c, () => JsonConvert.SerializeObject(cassandraClusterSettings, settingsForObjectsWithAddresses)));
+            server.AddMethod("get_zookeeper_options", c => ProcessRequest(c, () => JsonConvert.SerializeObject(zookeeperClusterSettings, settingsForObjectsWithAddresses)));
             server.AddMethod("get_test_configuration", c => ProcessRequest(c, () => JsonConvert.SerializeObject(testConfiguration)));
             server.AddMethod("get_time", c => ProcessRequest(c, () =>
                 {
