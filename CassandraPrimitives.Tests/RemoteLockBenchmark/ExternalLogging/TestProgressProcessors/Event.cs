@@ -4,14 +4,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
 {
     public class Event : IComparable<Event>
     {
-        public long Time { get; private set; }
-        public int Type { get; private set; }
-
         public Event(long time, int type)
         {
             Time = time;
             Type = type;
         }
+
+        public long Time { get; private set; }
+        public int Type { get; private set; }
 
         public int CompareTo(Event other)
         {

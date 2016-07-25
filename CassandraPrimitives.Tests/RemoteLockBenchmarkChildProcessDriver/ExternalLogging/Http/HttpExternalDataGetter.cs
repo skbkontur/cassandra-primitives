@@ -31,7 +31,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             return data;
         }
 
-        private async Task<TResponse> GetAndDecodeResponse<TResponse>(string method, JsonSerializerSettings settings=null)
+        private async Task<TResponse> GetAndDecodeResponse<TResponse>(string method, JsonSerializerSettings settings = null)
         {
             var data = await GetResponse(method);
             if (settings == null)

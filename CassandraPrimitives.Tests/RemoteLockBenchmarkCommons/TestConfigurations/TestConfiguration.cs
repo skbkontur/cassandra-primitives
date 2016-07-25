@@ -7,6 +7,7 @@
             Cassandra,
             Zookeeper
         }
+
         public int amountOfThreads;
         public int amountOfProcesses;
         public int amountOfLocksPerThread;

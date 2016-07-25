@@ -39,8 +39,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
                     request = await stream.ReadToEndAsync();
                 var response = contextHandler(request, processInd);
                 if (!String.IsNullOrEmpty(response))
+                {
                     using (var stream = new StreamWriter(context.Response.OutputStream))
                         await stream.WriteAsync(response);
+                }
                 else
                     context.Response.OutputStream.Close();
             }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.ExternalLogging.Http;
@@ -30,7 +28,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             }
 
             using (var externalLogger = new HttpExternalLogger<TimelineProgressMessage>(processInd, configuration.remoteHostName, processToken))
-            //using (var remoteLockGetter = new CassandraRemoteLockGetter(cassandraClusterSettings, externalLogger))
+                //using (var remoteLockGetter = new CassandraRemoteLockGetter(cassandraClusterSettings, externalLogger))
             using (var remoteLockGetter = new ZookeeperRemoteLockGetter(new ZookeeperLockSettings(zookeeperClusterSettings.ConnectionString, "/RemoteLockBenchmark", TimeSpan.FromSeconds(100))))
             {
                 var test = new TimelineTest(configuration, remoteLockGetter, externalLogger, timeCorrectionDelta, lockId, processInd);

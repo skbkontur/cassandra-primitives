@@ -6,15 +6,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 {
     public class CassandraRemoteLock : IRemoteLock
     {
-        private readonly RemoteLocker remoteLocker;
-        private readonly string lockId;
-        private RemoteLock.IRemoteLock lastCassandraRemoteLock;
-
         public CassandraRemoteLock(RemoteLocker remoteLocker, string lockId)
         {
             this.remoteLocker = remoteLocker;
             this.lockId = lockId;
         }
+
         public IDisposable Acquire()
         {
             lastCassandraRemoteLock = remoteLocker.Lock(lockId);
@@ -32,5 +29,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         {
             remoteLocker.Lock(lockId).Dispose();
         }
+
+        private readonly RemoteLocker remoteLocker;
+        private readonly string lockId;
+        private RemoteLock.IRemoteLock lastCassandraRemoteLock;
     }
 }

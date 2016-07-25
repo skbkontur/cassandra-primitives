@@ -4,15 +4,13 @@ using System.Collections.Generic;
 using GroBuf;
 using GroBuf.DataMembersExtracters;
 
+using log4net;
+
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock.RemoteLocker;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.CassandraSettings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ExternalLogging;
-
-using ILog = log4net.ILog;
-using LogManager = log4net.LogManager;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.RemoteLocks
 {
@@ -36,7 +34,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 
             var cassandraRemoteLockImplementation = new CassandraRemoteLockImplementation(cassandraCluster, serializer, implementationSettings);
             var remoteLocker = new RemoteLocker(cassandraRemoteLockImplementation, remoteLockerMetrics);
-            
+
             remoteLockersToDispose.Add(remoteLocker);
 
             return new CassandraRemoteLock(remoteLocker, lockId);

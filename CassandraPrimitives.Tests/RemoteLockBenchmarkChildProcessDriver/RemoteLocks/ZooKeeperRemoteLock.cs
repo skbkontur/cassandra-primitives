@@ -6,21 +6,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 {
     public class ZookeeperRemoteLock : IRemoteLock
     {
-        internal class AcquiredLock : IDisposable
-        {
-            private readonly DistributedLock distributedLock;
-
-            public AcquiredLock(DistributedLock distributedLock)
-            {
-                this.distributedLock = distributedLock;
-            }
-            public void Dispose()
-            {
-                distributedLock.Release();
-            }
-        }
-        private readonly DistributedLock distributedLock;
-
         public ZookeeperRemoteLock(DistributedLock distributedLock)
         {
             this.distributedLock = distributedLock;
@@ -46,6 +31,23 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         public void Release()
         {
             distributedLock.Release();
+        }
+
+        private readonly DistributedLock distributedLock;
+
+        internal class AcquiredLock : IDisposable
+        {
+            public AcquiredLock(DistributedLock distributedLock)
+            {
+                this.distributedLock = distributedLock;
+            }
+
+            public void Dispose()
+            {
+                distributedLock.Release();
+            }
+
+            private readonly DistributedLock distributedLock;
         }
     }
 }

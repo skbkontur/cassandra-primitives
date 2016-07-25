@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -42,7 +41,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
         {
             if (allLockEvents.Count == 0)
                 return 0;
-            
+
             long totalTrueTime = 0;
 
             var balance = 0;
@@ -77,10 +76,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
 
             var sortedEvents = allLockEvents
                 .SelectMany(e => new[]
-                                {
-                                    new Event(e.AcquiredAt, 1),
-                                    new Event(e.ReleasedAt, -1), 
-                                })
+                    {
+                        new Event(e.AcquiredAt, 1),
+                        new Event(e.ReleasedAt, -1),
+                    })
                 .OrderBy(e => e)
                 .ToList();
 
@@ -139,14 +138,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished work", processInd);
                 finishedProcesses++;
                 if (finishedProcesses == configuration.amountOfProcesses)
-                {
                     AnalyseAllLockEvents();
-                }
             }
             else
-            {
                 ProcessLockEvents(progressMessage.LockEvents);
-            }
             return null;
         }
 

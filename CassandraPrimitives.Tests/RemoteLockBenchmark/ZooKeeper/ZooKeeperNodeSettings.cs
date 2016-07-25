@@ -2,7 +2,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ZooK
 {
     public class ZookeeperNodeSettings
     {
-        public ZookeeperNodeSettings(int? tickTime=2000, int? initLimit=10, int? syncLimit=5, string dataDir=null, int? clientPort=2181, int? maxClientCnxns=null, int? autopurgeSnapRetainCount=null, int? autopurgePurgeInterval=null)
+        public ZookeeperNodeSettings(int? tickTime = 2000, int? initLimit = 10, int? syncLimit = 5, string dataDir = null, int? clientPort = 2181, int? maxClientCnxns = null, int? autopurgeSnapRetainCount = null, int? autopurgePurgeInterval = null)
         {
             TickTime = tickTime;
             InitLimit = initLimit;

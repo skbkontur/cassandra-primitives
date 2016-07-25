@@ -8,12 +8,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 {
     public class ZookeeperRemoteLockGetter : IRemoteLockGetter, IDisposable
     {
-        private readonly ZookeeperLockSettings zookeeperLockSettings;
-
         public ZookeeperRemoteLockGetter(ZookeeperLockSettings zookeeperLockSettings)
         {
             this.zookeeperLockSettings = zookeeperLockSettings;
         }
+
         public IRemoteLock Get(string lockId)
         {
             var distributedLock = new DistributedLock(zookeeperLockSettings.ConnectionString, zookeeperLockSettings.Namespace, "/locks/" + lockId, zookeeperLockSettings.LockTtl, new FakeLog());
@@ -22,7 +21,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 
         public void Dispose()
         {
-            
         }
+
+        private readonly ZookeeperLockSettings zookeeperLockSettings;
     }
 }
