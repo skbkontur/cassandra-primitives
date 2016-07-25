@@ -2,7 +2,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ZooK
 {
     public class ZookeeperNodeSettings
     {
-        public ZookeeperNodeSettings(int? tickTime = 2000, int? initLimit = 10, int? syncLimit = 5, string dataDir = null, int? clientPort = 2181, int? maxClientCnxns = null, int? autopurgeSnapRetainCount = null, int? autopurgePurgeInterval = null)
+        public ZookeeperNodeSettings(int? tickTime = 2000, int? initLimit = 10, int? syncLimit = 5, string dataDir = null, int? clientPort = 2181, int? maxClientCnxns = null, int? autopurgeSnapRetainCount = null, int? autopurgePurgeInterval = null, string[] serverAddresses = null, int? id = null)
         {
             TickTime = tickTime;
             InitLimit = initLimit;
@@ -12,6 +12,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ZooK
             MaxClientCnxns = maxClientCnxns;
             AutopurgeSnapRetainCount = autopurgeSnapRetainCount;
             AutopurgePurgeInterval = autopurgePurgeInterval;
+            ServerAddresses = serverAddresses;
+            Id = id;
         }
 
         public int? TickTime { get; private set; }
@@ -22,5 +24,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ZooK
         public int? MaxClientCnxns { get; private set; }
         public int? AutopurgeSnapRetainCount { get; private set; }
         public int? AutopurgePurgeInterval { get; private set; }
+        public string[] ServerAddresses { get; private set; }
+        public int? Id { get; private set; }
     }
 }

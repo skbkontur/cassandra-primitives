@@ -16,7 +16,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             var configuration = new TestConfiguration
                 {
                     amountOfThreads = 10,
-                    amountOfProcesses = 5,
+                    amountOfProcesses = 3,
                     amountOfLocksPerThread = 200,
                     minWaitTimeMilliseconds = 100,
                     maxWaitTimeMilliseconds = 200,
@@ -24,7 +24,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     httpPort = 12345,
                     remoteLockImplementation = TestConfiguration.RemoteLockImplementation.Zookeeper
                 };
-            var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration, true);
+            var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration, false);
             driver.Run();
         }
 
