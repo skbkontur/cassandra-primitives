@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
@@ -116,7 +115,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 .Select(agent =>
                         new ZookeeperRemoteNodeStartInfo(
                             agent.Credentials,
-                            new ZookeeperNodeSettings(), 
+                            new ZookeeperNodeSettings(),
                             agent.WorkDirectory))
                 .ToList();
         }

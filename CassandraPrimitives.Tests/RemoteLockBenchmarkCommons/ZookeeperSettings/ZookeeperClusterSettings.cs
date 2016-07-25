@@ -2,11 +2,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
 {
     public class ZookeeperClusterSettings
     {
-        public string ConnectionString { get; set; }
-
         public ZookeeperClusterSettings(string connectionString)
         {
             ConnectionString = connectionString;
         }
+
+        public string ConnectionString { get; set; }
     }
 }

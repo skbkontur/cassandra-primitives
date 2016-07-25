@@ -1,5 +1,4 @@
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -8,8 +7,6 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProc
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ExternalLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ProgressMessages;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
-
-using IRemoteLock = SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.RemoteLocks.IRemoteLock;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.Tests
 {
@@ -72,12 +69,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             externalLogger.PublishProgress(new TimelineProgressMessage {Final = true});
         }
 
+        private const long publishIntervalMs = 5000;
+
         private readonly TestConfiguration configuration;
         private readonly IRemoteLock locker;
         private readonly Random rand;
         private readonly IExternalProgressLogger<TimelineProgressMessage> externalLogger;
         private readonly long timeCorrectionDelta;
         private readonly int processInd;
-        private const long publishIntervalMs = 5000;
     }
 }

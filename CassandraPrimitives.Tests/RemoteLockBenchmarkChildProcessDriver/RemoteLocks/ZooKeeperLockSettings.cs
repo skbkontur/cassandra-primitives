@@ -4,15 +4,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 {
     public class ZookeeperLockSettings
     {
-        public string ConnectionString { get; set; }
-        public string Namespace { get; set; }
-        public TimeSpan LockTtl { get; set; }
-
         public ZookeeperLockSettings(string connectionString, string @namespace, TimeSpan lockTtl)
         {
             ConnectionString = connectionString;
             Namespace = @namespace;
             LockTtl = lockTtl;
         }
+
+        public string ConnectionString { get; set; }
+        public string Namespace { get; set; }
+        public TimeSpan LockTtl { get; set; }
     }
 }

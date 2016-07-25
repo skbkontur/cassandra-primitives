@@ -47,7 +47,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
                 logger.WarnFormat("Exception while logging message by http:\n{0}", e);
             }
         }
-        
+
         public async Task PublishProgressAsync(TProgressMessage progressMessage)
         {
             var data = JsonConvert.SerializeObject(progressMessage);
