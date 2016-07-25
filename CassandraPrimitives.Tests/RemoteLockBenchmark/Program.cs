@@ -24,7 +24,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     httpPort = 12345,
                     remoteLockImplementation = TestConfiguration.RemoteLockImplementation.Zookeeper
                 };
-            var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration, false);
+            var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration, true);
             driver.Run();
         }
 

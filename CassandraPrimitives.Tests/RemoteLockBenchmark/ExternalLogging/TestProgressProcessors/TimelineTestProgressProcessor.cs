@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -19,8 +20,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
         public TimelineTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
         {
             this.teamCityLogger = teamCityLogger;
+            this.configuration = configuration;
 
             allLockEvents = new List<TimelineProgressMessage.LockEvent>();
+            recentLockEvents = new SortedSet<TimelineProgressMessage.LockEvent>(new TimelineProgressMessage.LockEventComparer());
 
             startTime = long.MaxValue;
             endTime = 0;
@@ -35,30 +38,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             Metric.Gauge("Progress", () => allLockEvents.Count * 100.0 / (configuration.amountOfProcesses * configuration.amountOfThreads * configuration.amountOfLocksPerThread), Unit.Percent);
         }
 
-        private Tuple<long, long> GetAmountOfTimeWhenPredicateIsTrue(Func<int, bool> predicate)
+        private long GetAmountOfTimeWhenPredicateIsTrue(List<Event> sortedEvents, Func<int, bool> predicate)
         {
             if (allLockEvents.Count == 0)
-                return Tuple.Create((long)0, (long)0);
-
-            var events = allLockEvents
-                .Where(e => e.ReleasedAt != e.AcquiredAt)
-                .SelectMany(e => new[]
-                    {
-                        new {Time = e.AcquiredAt, Type = 1},
-                        new {Time = e.ReleasedAt, Type = -1}
-                    })
-                .OrderBy(e => e.Time * 3 + e.Type)
-                .ToList();
-
-            var min = events.First().Time;
-            var max = events.Last().Time;
-
+                return 0;
+            
             long totalTrueTime = 0;
 
             var balance = 0;
             bool lastPredicateValue = false;
             long lastTrue = 0;
-            foreach (var @event in events)
+            foreach (var @event in sortedEvents)
             {
                 balance += @event.Type;
                 if (balance < 0)
@@ -73,42 +63,71 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
                 lastPredicateValue = predicateValue;
             }
             if (lastPredicateValue)
-                totalTrueTime += max - lastTrue;
-            return Tuple.Create(totalTrueTime, (max - min));
+                totalTrueTime += sortedEvents.Last().Time - lastTrue;
+            return totalTrueTime;
         }
 
         private void AnalyseAllLockEvents()
         {
             if (allLockEvents.Count == 0)
             {
-                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Warning, "Lock events log is empty, although one of processes already finished work");
+                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Warning, "Lock events log is empty, although final analysing of the timeline already started");
                 return;
             }
 
-            if (allLockEvents.Any(e => (e.ReleasedAt - e.AcquiredAt) == 0))
-                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Warning, "Event of zero duration found");
+            var sortedEvents = allLockEvents
+                .SelectMany(e => new[]
+                                {
+                                    new Event(e.AcquiredAt, 1),
+                                    new Event(e.ReleasedAt, -1), 
+                                })
+                .OrderBy(e => e)
+                .ToList();
 
-            var overlapRate = GetAmountOfTimeWhenPredicateIsTrue(x => x > 1);
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Overlap rate: {0}% (total - {1} ms)", overlapRate.Item1 * 100.0 / overlapRate.Item2, overlapRate.Item1);
+            var minTime = sortedEvents.First().Time;
+            var maxTime = sortedEvents.Last().Time;
+            var timeDelta = maxTime - minTime;
 
-            var owningRate = GetAmountOfTimeWhenPredicateIsTrue(x => x == 1);
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Owning rate: {0}% (total - {1} ms)", owningRate.Item1 * 100.0 / owningRate.Item2, owningRate.Item1);
+            var overlapRate = GetAmountOfTimeWhenPredicateIsTrue(sortedEvents, x => x > 1);
+            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Overlap rate: {0}% (total - {1} ms)", overlapRate * 100.0 / timeDelta, overlapRate);
 
-            var fightingRate = GetAmountOfTimeWhenPredicateIsTrue(x => x == 0);
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Fighting rate: {0}% (total - {1} ms)", fightingRate.Item1 * 100.0 / fightingRate.Item2, fightingRate.Item1);
+            var owningRate = GetAmountOfTimeWhenPredicateIsTrue(sortedEvents, x => x == 1);
+            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Owning rate: {0}% (total - {1} ms)", owningRate * 100.0 / timeDelta, owningRate);
 
-            var brokenRate = GetAmountOfTimeWhenPredicateIsTrue(x => x < 0);
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Broken rate: {0}% (total - {1} ms)", brokenRate.Item1 * 100.0 / brokenRate.Item2, brokenRate.Item1);
+            var fightingRate = GetAmountOfTimeWhenPredicateIsTrue(sortedEvents, x => x == 0);
+            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Fighting rate: {0}% (total - {1} ms)", fightingRate * 100.0 / timeDelta, fightingRate);
+
+            var brokenRate = GetAmountOfTimeWhenPredicateIsTrue(sortedEvents, x => x < 0);
+            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Broken rate: {0}% (total - {1} ms)", brokenRate * 100.0 / timeDelta, brokenRate);
         }
 
         private void ProcessLockEvents(List<TimelineProgressMessage.LockEvent> lockEvents)
         {
             if (lockEvents == null || lockEvents.Count == 0)
                 return;
+            if (lockEvents.Any(e => (e.ReleasedAt - e.AcquiredAt) == 0))
+                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Warning, "Event of zero duration found");
+            lockEvents = lockEvents.Where(e => (e.ReleasedAt - e.AcquiredAt) != 0).ToList();
+
             allLockEvents.AddRange(lockEvents);
-            startTime = Math.Min(startTime, allLockEvents.Min(e => e.AcquiredAt));
-            endTime = Math.Max(endTime, allLockEvents.Max(e => e.ReleasedAt));
-            owningTime = allLockEvents.Aggregate((long)0, (prev, e) => prev + e.ReleasedAt - e.AcquiredAt);
+            recentLockEvents.UnionWith(lockEvents);
+            //owningTime = lockEvents.Aggregate(owningTime, (prev, e) => prev + e.ReleasedAt - e.AcquiredAt);
+
+            var time = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
+            while (recentLockEvents.Count != 0 && recentLockEvents.Min.ReleasedAt < time - 1000 * 60 * 3)
+            {
+                var itemToRemove = recentLockEvents.Min;
+                recentLockEvents.Remove(itemToRemove);
+                //owningTime -= itemToRemove.ReleasedAt - itemToRemove.AcquiredAt;
+            }
+
+            // It's slow, because it's LINQ's min and max, not SortedSet's one. And Aggregate also takes O(recentLockEvents.Count) time.
+            // But on the other hand, it helps to recover timeline quite fast if there were some bad events (equal ones, for example)
+            // If we will have problems with perfomance, we can rewrite it to dynamic update of owning time (see commented lines above)
+            // (But then we will need to have another sorted set with events sorted by AcquiredAt)
+            startTime = Math.Min(long.MaxValue, recentLockEvents.Min(e => e.AcquiredAt));
+            endTime = Math.Max(0, recentLockEvents.Max(e => e.ReleasedAt));
+            owningTime = recentLockEvents.Aggregate((long)0, (prev, e) => prev + e.ReleasedAt - e.AcquiredAt);
         }
 
         public string HandlePublishProgress(string request, int processInd)
@@ -118,12 +137,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             if (progressMessage.Final)
             {
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished work", processInd);
-                AnalyseAllLockEvents();
+                finishedProcesses++;
+                if (finishedProcesses == configuration.amountOfProcesses)
+                {
+                    AnalyseAllLockEvents();
+                }
             }
             else
             {
                 ProcessLockEvents(progressMessage.LockEvents);
-                //teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} published intermediate result: {1} lock events", processInd, progressMessage.LockEvents.Count);
             }
             return null;
         }
@@ -143,8 +165,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
         }
 
         private readonly List<TimelineProgressMessage.LockEvent> allLockEvents;
+        private readonly SortedSet<TimelineProgressMessage.LockEvent> recentLockEvents;
         private readonly ITeamCityLogger teamCityLogger;
         private readonly MetricsConfig metric;
         private long startTime, endTime, owningTime;
+        private int finishedProcesses;
+        private readonly TestConfiguration configuration;
     }
 }

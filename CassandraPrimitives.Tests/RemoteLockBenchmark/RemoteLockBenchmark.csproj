@@ -101,6 +101,7 @@
     <Compile Include="Agents\AgentProviderWithSingleAgent.cs" />
     <Compile Include="Cassandra\CassandraClusterStarter.cs" />
     <Compile Include="Cassandra\CassandraRemoteNodeStartInfo.cs" />
+    <Compile Include="ExternalLogging\TestProgressProcessors\Event.cs" />
     <Compile Include="ZooKeeper\RemoteZooKeeperInitializer.cs" />
     <Compile Include="ZooKeeper\ZookeeperClusterStarter.cs" />
     <Compile Include="ExternalLogging\FileLoggingTools.cs" />

@@ -12,5 +12,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommo
             public long AcquiredAt { get; set; }
             public long ReleasedAt { get; set; }
         }
+
+        public class LockEventComparer : IComparer<LockEvent>
+        {
+            public int Compare(LockEvent x, LockEvent y)
+            {
+                return (x.ReleasedAt != y.ReleasedAt) ? x.ReleasedAt.CompareTo(y.ReleasedAt) : x.AcquiredAt.CompareTo(y.AcquiredAt);
+            }
+        }
     }
 }
