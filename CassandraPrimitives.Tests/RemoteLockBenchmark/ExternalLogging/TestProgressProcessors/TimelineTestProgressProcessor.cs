@@ -127,6 +127,19 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             startTime = Math.Min(long.MaxValue, recentLockEvents.Min(e => e.AcquiredAt));
             endTime = Math.Max(0, recentLockEvents.Max(e => e.ReleasedAt));
             owningTime = recentLockEvents.Aggregate((long)0, (prev, e) => prev + e.ReleasedAt - e.AcquiredAt);
+
+            ReportProgressToTeamCity();
+        }
+
+        private void ReportProgressToTeamCity()
+        {
+            var totalAmountOfLocks = configuration.amountOfProcesses * configuration.amountOfThreads * configuration.amountOfLocksPerThread;
+            var progressPercents = allLockEvents.Count * 100 / totalAmountOfLocks;
+            if (lastReportedToTeamCityProgressPercent != progressPercents)
+            {
+                teamCityLogger.ReportActivity(string.Format("{0}%", progressPercents));
+                lastReportedToTeamCityProgressPercent = progressPercents;
+            }
         }
 
         public string HandlePublishProgress(string request, int processInd)
@@ -165,6 +178,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
         private readonly MetricsConfig metric;
         private long startTime, endTime, owningTime;
         private int finishedProcesses;
+        private int lastReportedToTeamCityProgressPercent;
         private readonly TestConfiguration configuration;
     }
 }
