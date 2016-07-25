@@ -1,5 +1,7 @@
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.RemoteLocks;
@@ -35,7 +37,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         public void DoWorkInSingleThread(int threadInd)
         {
             var lockEvents = new List<TimelineProgressMessage.LockEvent>();
-            var logInterval = configuration.amountOfLocksPerThread / 10;
+            var globalTimer = Stopwatch.StartNew();
             for (var i = 0; i < configuration.amountOfLocksPerThread; i++)
             {
                 var lockEvent = new TimelineProgressMessage.LockEvent();
@@ -44,7 +46,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
                     lockEvent.AcquiredAt = GetCurrentTimeStamp();
                     var waitTime = rand.Next(configuration.minWaitTimeMilliseconds, configuration.maxWaitTimeMilliseconds);
                     Thread.Sleep(waitTime);
-                    if (i % logInterval == 0)
+                    if (globalTimer.ElapsedMilliseconds > publishIntervalMs)
                     {
                         externalLogger.PublishProgress(new TimelineProgressMessage
                             {
@@ -52,6 +54,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
                                 Final = false,
                             });
                         lockEvents.Clear();
+                        globalTimer.Restart();
                     }
                     lockEvent.ReleasedAt = GetCurrentTimeStamp();
                 }
@@ -75,5 +78,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         private readonly IExternalProgressLogger<TimelineProgressMessage> externalLogger;
         private readonly long timeCorrectionDelta;
         private readonly int processInd;
+        private const long publishIntervalMs = 5000;
     }
 }
