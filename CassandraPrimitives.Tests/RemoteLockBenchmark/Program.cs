@@ -15,11 +15,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
             var configuration = new TestConfiguration
                 {
-                    amountOfThreads = 4,
-                    amountOfProcesses = 3,
-                    amountOfLocksPerThread = 10,
-                    minWaitTimeMilliseconds = 10,
-                    maxWaitTimeMilliseconds = 20,
+                    amountOfThreads = 10,
+                    amountOfProcesses = 5,
+                    amountOfLocksPerThread = 200,
+                    minWaitTimeMilliseconds = 100,
+                    maxWaitTimeMilliseconds = 200,
                     remoteHostName = IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName,
                     httpPort = 12345,
                     remoteLockImplementation = TestConfiguration.RemoteLockImplementation.Zookeeper

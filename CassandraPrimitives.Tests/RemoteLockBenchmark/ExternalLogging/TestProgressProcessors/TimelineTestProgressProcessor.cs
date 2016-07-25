@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using Metrics;
@@ -25,7 +26,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             endTime = 0;
             owningTime = 0;
 
+            Metric.SetGlobalContextName(string.Format("EDI.Benchmarks.{0}.{1}", Process.GetCurrentProcess().ProcessName.Replace('.', '_'), Environment.MachineName.Replace('.', '_')));
             metric = Metric.Config.WithHttpEndpoint("http://*:1234/").WithAllCounters();
+            var graphiteUri = new Uri(string.Format("net.{0}://{1}:{2}", "tcp", "graphite-relay.skbkontur.ru", "2003"));
+            Metric.Config.WithReporting(x => x.WithGraphite(graphiteUri, TimeSpan.FromSeconds(5)));
+
             Metric.Gauge("Time owning lock", () => (double)owningTime * 100 / (endTime - startTime), Unit.Percent);
             Metric.Gauge("Progress", () => allLockEvents.Count * 100.0 / (configuration.amountOfProcesses * configuration.amountOfThreads * configuration.amountOfLocksPerThread), Unit.Percent);
         }
