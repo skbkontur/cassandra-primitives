@@ -3,10 +3,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 
+using log4net;
+
 using Newtonsoft.Json;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ExternalLogging;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ProgressMessages;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.ExternalLogging.Http
 {
@@ -19,15 +21,40 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             this.processInd = processInd;
             this.remoteHostName = remoteHostName;
             this.processToken = processToken;
+            logger = LogManager.GetLogger(GetType());
         }
 
-        public async void PublishProgress(TProgressMessage progressMessage)
+        public void PublishProgress(TProgressMessage progressMessage)
+        {
+            try
+            {
+                PublishProgressAsync(progressMessage).Wait();
+            }
+            catch (Exception e)
+            {
+                logger.WarnFormat("Exception while publishing progress by http:\n{0}", e);
+            }
+        }
+
+        public void Log(string message)
+        {
+            try
+            {
+                LogAsync(message).Wait();
+            }
+            catch (Exception e)
+            {
+                logger.WarnFormat("Exception while logging message by http:\n{0}", e);
+            }
+        }
+        
+        public async Task PublishProgressAsync(TProgressMessage progressMessage)
         {
             var data = JsonConvert.SerializeObject(progressMessage);
             await SendWithProcessIndAndToken("publish_progress", data);
         }
 
-        public async void Log(string message)
+        public async Task LogAsync(string message)
         {
             var objectToSend = new {message = message};
             var data = JsonConvert.SerializeObject(objectToSend);
@@ -67,5 +94,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         private readonly int processInd;
         private readonly string remoteHostName;
         private readonly string processToken;
+        private readonly ILog logger;
     }
 }

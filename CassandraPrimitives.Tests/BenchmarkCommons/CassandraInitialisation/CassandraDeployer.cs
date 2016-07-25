@@ -7,13 +7,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
 {
     public class CassandraDeployer
     {
-        public static void DeployCassandra(CassandraNodeSettings settings)
+        public static void DeployCassandra(CassandraNodeSettings settings, string deployDirectory)
         {
-            var node = CreateNodeBySettings(settings);
+            var node = CreateNodeBySettings(settings, deployDirectory);
             node.Deploy();
         }
 
-        internal static CassandraNode CreateNodeBySettings(CassandraNodeSettings settings)
+        internal static CassandraNode CreateNodeBySettings(CassandraNodeSettings settings, string deployDirectory)
         {
             var node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"1.2"))
                 {
@@ -23,7 +23,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
                     RpcPort = settings.RpcPort,
                     CqlPort = settings.CqlPort,
                     DataBaseDirectory = settings.DataBaseDirectory,
-                    DeployDirectory = settings.DeployDirectory,
+                    DeployDirectory = deployDirectory,
                     ListenAddress = settings.ListenAddress,
                     RpsAddress = settings.RpsAddress,
                     SeedAddresses = settings.SeedAddresses,

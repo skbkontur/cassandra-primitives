@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations
 {
+    [Obsolete]
     public class SimpleTestResult
     {
         public int LocksCount { get; set; }

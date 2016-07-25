@@ -21,7 +21,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
                 .Select(name => new RemoteAgentInfo(
                                     name,
                                     @"Benchmarks\workdir",
-                                    new RemoteMachineCredentials(name),
+                                    new RemoteMachineCredentials(name, "tc", name, "tc_123456"),
                                     Guid.NewGuid().ToString()))
                 .ToList();
             if (amount > agents.Count - used)

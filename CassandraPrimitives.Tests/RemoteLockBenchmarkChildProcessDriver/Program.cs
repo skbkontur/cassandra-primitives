@@ -30,7 +30,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             var processToken = args[2];
 
             TestConfiguration configuration;
-            using (var httpExternalDataProvider = new HttpExternalDataGetter(args[1]))
+            using (var httpExternalDataProvider = new HttpExternalDataGetter(args[1], 12345))
                 configuration = httpExternalDataProvider.GetTestConfiguration().Result;
 
             logger.InfoFormat("Configuration was received");

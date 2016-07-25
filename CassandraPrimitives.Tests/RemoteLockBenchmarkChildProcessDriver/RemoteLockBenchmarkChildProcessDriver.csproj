@@ -48,6 +48,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\GroBuf.dll</HintPath>
     </Reference>
+    <Reference Include="Kontur.Logging">
+      <HintPath>..\..\Assemblies\ZooKeeper\Kontur.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\log4net.dll</HintPath>
@@ -65,16 +68,27 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="ZooKeeper.Recipes">
+      <HintPath>..\..\Assemblies\ZooKeeper\ZooKeeper.Recipes.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExternalLogging\Http\HttpExternalLogger.cs" />
     <Compile Include="ExternalLogging\SimpleExternalLogger.cs" />
+    <Compile Include="RemoteLocks\CassandraRemoteLock.cs" />
     <Compile Include="RemoteLocks\CassandraRemoteLockGetter.cs" />
     <Compile Include="ChildProcessDriver.cs" />
     <Compile Include="ExternalLogging\Http\HttpExternalDataGetter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteLocks\IRemoteLock.cs" />
+    <Compile Include="RemoteLocks\IRemoteLockGetter.cs" />
+    <Compile Include="RemoteLocks\ZookeeperLockSettings.cs" />
+    <Compile Include="RemoteLocks\ZookeeperRemoteLock.cs" />
+    <Compile Include="RemoteLocks\ZookeeperRemoteLockGetter.cs" />
     <Compile Include="TestRunning\TestRunner.cs" />
+    <Compile Include="Tests\SimpleTest.cs" />
+    <Compile Include="Tests\TimeLineTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BenchmarkCommons\BenchmarkCommons.csproj">

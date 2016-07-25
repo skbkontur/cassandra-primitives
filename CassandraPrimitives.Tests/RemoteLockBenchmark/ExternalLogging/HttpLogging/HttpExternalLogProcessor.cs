@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ExternalLogging.TestProgressProcessors;
@@ -21,7 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             this.teamCityLogger = teamCityLogger;
             this.testProgressProcessor = testProgressProcessor;
 
-            httpServer = new HttpServer();
+            httpServer = new HttpServer(configuration.httpPort);
             httpServer.AddMethod("publish_progress", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandlePublishProgress));
             httpServer.AddMethod("log", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandleLog));
         }
@@ -35,17 +34,23 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
                     return;
                 if (!agents.Any(x => x.Token.Equals(context.Request.QueryString["process_token"])))
                     return;
-                var request = await new StreamReader(context.Request.InputStream).ReadToEndAsync();
+                string request;
+                using (var stream = new StreamReader(context.Request.InputStream))
+                    request = await stream.ReadToEndAsync();
                 var response = contextHandler(request, processInd);
                 if (!String.IsNullOrEmpty(response))
-                {
-                    var encodedResponse = Encoding.UTF8.GetBytes(response);
-                    await context.Response.OutputStream.WriteAsync(encodedResponse, 0, encodedResponse.Length);
-                }
+                    using (var stream = new StreamWriter(context.Response.OutputStream))
+                        await stream.WriteAsync(response);
+                else
+                    context.Response.OutputStream.Close();
             }
-            finally
+            catch (HttpListenerException e)
             {
-                context.Response.Close();
+                Console.WriteLine("Network error while processing request:\n{0}", e);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unexpected error while processing request:\n{0}", e);
             }
         }
 

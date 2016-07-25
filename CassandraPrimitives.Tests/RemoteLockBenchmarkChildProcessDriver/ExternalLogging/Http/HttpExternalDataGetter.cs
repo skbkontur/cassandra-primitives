@@ -7,49 +7,69 @@ using Newtonsoft.Json.Linq;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.ZookeeperSettings;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChildProcessDriver.ExternalLogging.Http
 {
     public class HttpExternalDataGetter : IDisposable
     {
-        public HttpExternalDataGetter(string remoteHostName)
+        public HttpExternalDataGetter(string remoteHostName, int port)
         {
+            settingsForObjectsWithIpAddresses = new JsonSerializerSettings();
+            settingsForObjectsWithIpAddresses.Converters.Add(new IpAddressConverter());
+            settingsForObjectsWithIpAddresses.Converters.Add(new IpEndPointConverter());
+            settingsForObjectsWithIpAddresses.Formatting = Formatting.Indented;
             this.remoteHostName = remoteHostName;
             httpClient = new HttpClient();
+            this.port = port;
+        }
+
+        private async Task<string> GetResponse(string method)
+        {
+            var response = await httpClient.GetAsync(String.Format("http://{0}:{1}/{2}", remoteHostName, port, method));
+            var data = await response.Content.ReadAsStringAsync();
+            return data;
+        }
+
+        private async Task<TResponse> GetAndDecodeResponse<TResponse>(string method, JsonSerializerSettings settings=null)
+        {
+            var data = await GetResponse(method);
+            if (settings == null)
+                return JsonConvert.DeserializeObject<TResponse>(data);
+            return JsonConvert.DeserializeObject<TResponse>(data, settings);
+        }
+
+        private async Task<JObject> GetAndDecodeResponseToJObject(string method)
+        {
+            var data = await GetResponse(method);
+            return JObject.Parse(data);
         }
 
         public async Task<CassandraClusterSettings> GetCassandraSettings()
         {
-            var response = await httpClient.GetAsync(String.Format("http://{0}:12345/get_cassandra_options", remoteHostName));
-            var data = await response.Content.ReadAsStringAsync();
-            JsonSerializerSettings settings = new JsonSerializerSettings();
-            settings.Converters.Add(new IpAddressConverter());
-            settings.Converters.Add(new IpEndPointConverter());
-            settings.Formatting = Formatting.Indented;
-            return JsonConvert.DeserializeObject<CassandraClusterSettings>(data, settings);
+            return await GetAndDecodeResponse<CassandraClusterSettings>("get_cassandra_options", settingsForObjectsWithIpAddresses);
+        }
+
+        public async Task<ZookeeperClusterSettings> GetZookeeperSettings()
+        {
+            return await GetAndDecodeResponse<ZookeeperClusterSettings>("get_zookeeper_options", settingsForObjectsWithIpAddresses);
         }
 
         public async Task<TestConfiguration> GetTestConfiguration()
         {
-            var response = await httpClient.GetAsync(String.Format("http://{0}:12345/get_test_configuration", remoteHostName));
-            var data = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TestConfiguration>(data);
+            return await GetAndDecodeResponse<TestConfiguration>("get_test_configuration");
         }
 
         public async Task<long> GetTime()
         {
-            var response = await httpClient.GetAsync(String.Format("http://{0}:12345/get_time", remoteHostName));
-            var data = await response.Content.ReadAsStringAsync();
-            var responseObject = JObject.Parse(data);
+            var responseObject = await GetAndDecodeResponseToJObject("get_time");
             var time = long.Parse(responseObject["UtcMilliseconds"].ToString());
             return time;
         }
 
         public async Task<string> GetLockId()
         {
-            var response = await httpClient.GetAsync(String.Format("http://{0}:12345/get_lock_id", remoteHostName));
-            var data = await response.Content.ReadAsStringAsync();
-            var responseObject = JObject.Parse(data);
+            var responseObject = await GetAndDecodeResponseToJObject("get_lock_id");
             var lockId = responseObject["Value"].ToString();
             return lockId;
         }
@@ -61,5 +81,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 
         private readonly HttpClient httpClient;
         private readonly string remoteHostName;
+        private readonly int port;
+        private readonly JsonSerializerSettings settingsForObjectsWithIpAddresses;
     }
 }
