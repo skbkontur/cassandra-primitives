@@ -41,12 +41,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ZooK
 
         private static void PatchSettings(string deployDirectory, ZookeeperNodeSettings settings)
         {
-            var filesToPatch = new[]
-                {
-                    @"conf\zoo.cfg",
-                };
-            foreach (var file in filesToPatch)
-                PatchSettingsInFile(Path.Combine(deployDirectory, file), settings);
+            PatchSettingsInFile(Path.Combine(deployDirectory, @"conf\zoo.cfg"), settings);
+            PatchMyid(Path.Combine(deployDirectory, @"data\myid"), settings.Id);
+            PatchServerAddressesInFile(Path.Combine(deployDirectory, @"conf\zoo.cfg"), settings);
         }
 
         private static string SafeToString(object obj)
@@ -75,8 +72,22 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ZooK
                 filePath,
                 values.Aggregate(
                     File.ReadAllText(filePath),
-                    (current, value) => current.Replace("{{" + value.Key + "}}", value.Value != null ? string.Format("{0} = {1}", value.Key, value.Value) : string.Format("#{0}", value.Key)))
+                    (current, value) => current.Replace("{{" + value.Key + "}}", value.Value != null ? string.Format("{0}={1}", value.Key, value.Value) : string.Format("#{0}", value.Key)))
                 );
+        }
+
+        private static void PatchServerAddressesInFile(string filePath, ZookeeperNodeSettings settings)
+        {
+            var servers = "#servers";
+            if (settings.ServerAddresses != null)
+                servers = String.Join("\n", settings.ServerAddresses.Select((addr, i) => String.Format("server.{0}={1}:2888:3888", i + 1, addr)));
+            File.WriteAllText(filePath, File.ReadAllText(filePath).Replace("{{servers}}", servers));
+        }
+
+        private static void PatchMyid(string filePath, int? id)
+        {
+            if (id != null)
+                File.WriteAllText(filePath, id.ToString());
         }
     }
 }

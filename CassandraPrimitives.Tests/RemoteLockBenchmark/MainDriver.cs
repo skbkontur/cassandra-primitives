@@ -43,7 +43,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             }
             if (configuration.remoteLockImplementation == TestConfiguration.RemoteLockImplementation.Zookeeper)
             {
-                zookeeperAgents = agentProvider.GetAgents(1);
+                zookeeperAgents = agentProvider.GetAgents(3);
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Zookeeper agents: {0}", String.Join(", ", zookeeperAgents.Select(agent => agent.Name)));
                 foreach (var agent in zookeeperAgents)
                     DeployWrapper(agent.WorkDirectory);
@@ -73,9 +73,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Initialising zookeeper...");
 
             var remoteZookeeperNodeStartInfos = GetZookeeperNodeInfos(zookeeperAgents);
-            var address = Dns.GetHostAddresses(zookeeperAgents.Single().Name).First().ToString();
-            var port = remoteZookeeperNodeStartInfos.Single().Settings.ClientPort;
-            var connectionString = String.Format("{0}:{1}", address, port);
+
+            var nodeAddresses = zookeeperAgents
+                .Select(agent => Dns.GetHostAddresses(agent.Name).First())
+                .Zip(remoteZookeeperNodeStartInfos, (ip, info) => String.Format("{0}:{1}", ip, info.Settings.ClientPort));
+            var connectionString = String.Join(",", nodeAddresses);
+
             zookeeperClusterSettings = new ZookeeperClusterSettings(connectionString);
 
             return new ZookeeperClusterStarter(zookeeperClusterSettings, remoteZookeeperNodeStartInfos, teamCityLogger, noDeploy);
@@ -111,11 +114,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         public static List<ZookeeperRemoteNodeStartInfo> GetZookeeperNodeInfos(List<RemoteAgentInfo> agents)
         {
+            var addresses = agents.Select(agent => Dns.GetHostAddresses(agent.Name).First().ToString()).ToArray();
             return agents
-                .Select(agent =>
+                .Select((agent, i) =>
                         new ZookeeperRemoteNodeStartInfo(
                             agent.Credentials,
-                            new ZookeeperNodeSettings(),
+                            new ZookeeperNodeSettings(serverAddresses : addresses, id : i + 1),
                             agent.WorkDirectory))
                 .ToList();
         }
