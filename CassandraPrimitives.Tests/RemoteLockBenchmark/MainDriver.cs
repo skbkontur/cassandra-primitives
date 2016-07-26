@@ -22,36 +22,32 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
     public class MainDriver
     {
-        public MainDriver(ITeamCityLogger teamCityLogger, TestConfiguration configuration, bool noDeploy = false)
+        public MainDriver(ITeamCityLogger teamCityLogger, TestConfiguration configuration, IAgentProvider agentProvider, bool noDeploy = false)
         {
             Log4NetConfiguration.InitializeOnce();
             this.teamCityLogger = teamCityLogger;
             this.configuration = configuration;
             this.noDeploy = noDeploy;
+            this.agentProvider = agentProvider;
+        }
+
+        public List<RemoteAgentInfo> PrepareAgentsFor(string target, int amount)
+        {
+            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Choosing agents for {0}", target);
+            var agents = agentProvider.AcquireAgents(amount);
+            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Agents for {0}: {1}", target, string.Join(", ", agents.Select(agent => agent.Name)));
+            foreach (var agent in agents)
+                DeployWrapper(agent.WorkDirectory);
+            return agents;
         }
 
         public void PrepareAgents()
         {
-            var agentProvider = new AgentProviderAllAgents();
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Choosing agents...");
             if (configuration.RemoteLockImplementation == RemoteLockImplementations.Cassandra)
-            {
-                cassandraAgents = agentProvider.GetAgents(3);
-                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Cassandra agents: {0}", string.Join(", ", cassandraAgents.Select(agent => agent.Name)));
-                foreach (var agent in cassandraAgents)
-                    DeployWrapper(agent.WorkDirectory);
-            }
+                cassandraAgents = PrepareAgentsFor("Cassandra", 3);
             if (configuration.RemoteLockImplementation == RemoteLockImplementations.Zookeeper)
-            {
-                zookeeperAgents = agentProvider.GetAgents(3);
-                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Zookeeper agents: {0}", string.Join(", ", zookeeperAgents.Select(agent => agent.Name)));
-                foreach (var agent in zookeeperAgents)
-                    DeployWrapper(agent.WorkDirectory);
-            }
-            testAgents = agentProvider.GetAgents(configuration.AmountOfProcesses);
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Test agents: {0}", string.Join(", ", testAgents.Select(agent => agent.Name)));
-            foreach (var agent in testAgents)
-                DeployWrapper(agent.WorkDirectory);
+                zookeeperAgents = PrepareAgentsFor("Zookeeper", 3);
+            testAgents = PrepareAgentsFor("Tests", configuration.AmountOfProcesses);
         }
 
         public CassandraClusterStarter CreateCassandraClusterStarter()
@@ -96,7 +92,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         public static List<CassandraRemoteNodeStartInfo> GetCassandraNodeInfos(List<RemoteAgentInfo> agents, string clusterName)
         {
-            var seedAddresses = agents.Select(agent => Dns.GetHostAddresses(agent.Name).First().ToString()).ToArray();
+            var seedAddresses = agents.Select(agent => agent.IpAddress.ToString()).ToArray();
             return agents
                 .Select(agent =>
                         new CassandraRemoteNodeStartInfo(
@@ -114,7 +110,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         public static List<ZookeeperRemoteNodeStartInfo> GetZookeeperNodeInfos(List<RemoteAgentInfo> agents)
         {
-            var addresses = agents.Select(agent => Dns.GetHostAddresses(agent.Name).First().ToString()).ToArray();
+            var addresses = agents.Select(agent => agent.IpAddress.ToString()).ToArray();
             return agents
                 .Select((agent, i) =>
                         new ZookeeperRemoteNodeStartInfo(
@@ -164,5 +160,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private readonly bool noDeploy;
         private CassandraClusterSettings cassandraClusterSettings;
         private ZookeeperClusterSettings zookeeperClusterSettings;
+        private readonly IAgentProvider agentProvider;
     }
 }

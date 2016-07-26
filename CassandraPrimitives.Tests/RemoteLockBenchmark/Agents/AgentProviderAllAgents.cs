@@ -11,11 +11,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
         public AgentProviderAllAgents()
         {
             used = 0;
-        }
-
-        public List<RemoteAgentInfo> GetAgents(int amount)
-        {
-            var agents = Enumerable
+            agents = Enumerable
                 .Range(1, 6)
                 .Select(i => string.Format("load{0:00}cat.dev.kontur.ru", i))
                 .Select(name => new RemoteAgentInfo(
@@ -24,6 +20,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
                                     new RemoteMachineCredentials(name, "tc", name, "tc_123456"),
                                     Guid.NewGuid().ToString()))
                 .ToList();
+        }
+
+        public List<RemoteAgentInfo> AcquireAgents(int amount)
+        {
             if (amount > agents.Count - used)
                 throw new ArgumentException(string.Format("Can't provide {0} agents, because there're only {1} agents available", amount, agents.Count - used));
             var result = agents.Skip(used).Take(amount).ToList();
@@ -32,5 +32,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
         }
 
         private int used;
+        private readonly List<RemoteAgentInfo> agents;
     }
 }

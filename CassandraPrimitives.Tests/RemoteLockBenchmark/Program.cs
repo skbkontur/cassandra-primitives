@@ -2,6 +2,7 @@
 using System.Net.NetworkInformation;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkCommons.TestConfigurations;
 using SKBKontur.Catalogue.TeamCity;
 
@@ -22,7 +23,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 remoteHostName : IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName,
                 httpPort : 12345,
                 remoteLockImplementation : RemoteLockImplementations.Zookeeper);
-            var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration, false);
+            var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration, new AgentProviderAllAgents(), false);
             driver.Run();
         }
 

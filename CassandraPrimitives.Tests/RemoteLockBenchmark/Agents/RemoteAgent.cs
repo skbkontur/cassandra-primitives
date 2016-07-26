@@ -1,5 +1,3 @@
-using System;
-
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agents
@@ -12,8 +10,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
             ProcessInd = processInd;
         }
 
-        public RemoteAgent(RemoteAgentInfo agent, int processInd)
-            : base(agent.Name, agent.WorkDirectory, agent.Credentials, agent.Token)
+        public RemoteAgent(RemoteAgentInfo agent, int processInd) : base(agent)
         {
             ProcessInd = processInd;
         }
