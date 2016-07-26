@@ -19,8 +19,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
         public void StartProcesses(TestConfiguration configuration)
         {
             StopProcesses();
-            processes = new Process[configuration.amountOfProcesses];
-            for (var i = 0; i < configuration.amountOfProcesses; i++)
+            processes = new Process[configuration.AmountOfProcesses];
+            for (var i = 0; i < configuration.AmountOfProcesses; i++)
             {
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Starting process {0}...", i);
 

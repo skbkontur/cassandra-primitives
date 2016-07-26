@@ -35,13 +35,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         {
             var lockEvents = new List<TimelineProgressMessage.LockEvent>();
             var globalTimer = Stopwatch.StartNew();
-            for (var i = 0; i < configuration.amountOfLocksPerThread; i++)
+            for (var i = 0; i < configuration.AmountOfLocksPerThread; i++)
             {
                 var lockEvent = new TimelineProgressMessage.LockEvent();
                 using (locker.Acquire())
                 {
                     lockEvent.AcquiredAt = GetCurrentTimeStamp();
-                    var waitTime = rand.Next(configuration.minWaitTimeMilliseconds, configuration.maxWaitTimeMilliseconds);
+                    var waitTime = rand.Next(configuration.MinWaitTimeMilliseconds, configuration.MaxWaitTimeMilliseconds);
                     Thread.Sleep(waitTime);
                     if (globalTimer.ElapsedMilliseconds > publishIntervalMs)
                     {

@@ -18,9 +18,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
         {
             this.teamCityLogger = teamCityLogger;
 
-            results = new SimpleTestResult[configuration.amountOfProcesses];
-            sourcesForWaitingProcesses = new TaskCompletionSource<SimpleTestResult>[configuration.amountOfProcesses];
-            for (int i = 0; i < configuration.amountOfProcesses; i++)
+            results = new SimpleTestResult[configuration.AmountOfProcesses];
+            sourcesForWaitingProcesses = new TaskCompletionSource<SimpleTestResult>[configuration.AmountOfProcesses];
+            for (int i = 0; i < configuration.AmountOfProcesses; i++)
             {
                 sourcesForWaitingProcesses[i] = new TaskCompletionSource<SimpleTestResult>();
                 results[i] = new SimpleTestResult();

@@ -55,10 +55,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
         {
             StopTasks();
             tasks.Clear();
-            if (agentInfos.Count < configuration.amountOfProcesses)
-                throw new Exception(String.Format("Not enoung agents to run {0} processes", configuration.amountOfProcesses));
+            if (agentInfos.Count < configuration.AmountOfProcesses)
+                throw new Exception(string.Format("Not enoung agents to run {0} processes", configuration.AmountOfProcesses));
             var agents = agentInfos
-                .Take(configuration.amountOfProcesses)
+                .Take(configuration.AmountOfProcesses)
                 .Select((agent, i) => new RemoteAgent(agent, i))
                 .ToList();
             DeployTasks(agents);
@@ -70,7 +70,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Proc
                 var wrapperPath = Path.Combine(agent.WorkDirectory.AsRemote, @"TaskWrapper\Catalogue.DeployTasks.TaskWrapper.exe");
                 using (var taskScheduler = new TaskSchedulerAdapter(agent.Credentials, wrapperPath))
                 {
-                    var task = taskScheduler.RunTaskInWrapper(String.Format("BenchmarkProcess_{0}", agent.ProcessInd), testRunnerPath, new[] {agent.ProcessInd.ToString(), configuration.remoteHostName, agent.Token}, agent.ProcessDirectory.AsLocal);
+                    var task = taskScheduler.RunTaskInWrapper(string.Format("BenchmarkProcess_{0}", agent.ProcessInd), testRunnerPath, new[] {agent.ProcessInd.ToString(), configuration.RemoteHostName, agent.Token}, agent.ProcessDirectory.AsLocal);
                     tasks.Add(task);
                 }
             }

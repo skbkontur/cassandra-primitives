@@ -22,8 +22,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
         public void RunTestAndPublishResults(ITest test)
         {
             test.SetUp();
-            var threads = new Thread[configuration.amountOfThreads];
-            for (var i = 0; i < configuration.amountOfThreads; i++)
+            var threads = new Thread[configuration.AmountOfThreads];
+            for (var i = 0; i < configuration.AmountOfThreads; i++)
             {
                 var threadInd = i;
                 threads[i] = new Thread(() =>

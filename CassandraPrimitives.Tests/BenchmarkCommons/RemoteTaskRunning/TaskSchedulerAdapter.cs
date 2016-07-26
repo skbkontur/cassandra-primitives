@@ -23,7 +23,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 
         public Task RunTask(string taskName, string path, string[] arguments = null, string directory = null)
         {
-            var argsRepresentation = string.Format("[{0}]", String.Join(", ", arguments ?? new string[0]));
+            var argsRepresentation = string.Format("[{0}]", string.Join(", ", arguments ?? new string[0]));
             logger.InfoFormat("Scheduling task. Path = {0}, name = {1}, arguments = {2}, machine = {3}", path, taskName, argsRepresentation, credentials.MachineName);
 
             var existingTask = taskService.FindTask(taskName);
@@ -59,9 +59,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
             {
                 logger.ErrorFormat("ErrorCode: {0}", e.ErrorCode);
                 if (e.ErrorCode == -2147023108)
-                    throw new Exception(String.Format("Unknown user {0}", credentials.UserName));
+                    throw new Exception(string.Format("Unknown user {0}", credentials.UserName));
                 if (e.ErrorCode == -2147023570)
-                    throw new Exception(String.Format("Invalid user or password (username - {0})", credentials.UserName));
+                    throw new Exception(string.Format("Invalid user or password (username - {0})", credentials.UserName));
                 throw;
             }
         }
@@ -79,11 +79,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 
         private Task CreateTask(string taskName, string path, string[] arguments = null, string directory = null)
         {
-            path = String.Format("\"{0}\"", path);
+            path = string.Format("\"{0}\"", path);
 
             var taskDefinition = taskService.NewTask();
 
-            var joinedArgs = String.Join(" ", (arguments ?? new string[0]).Select(EscapeArgumentForTaskScheduler));
+            var joinedArgs = string.Join(" ", (arguments ?? new string[0]).Select(EscapeArgumentForTaskScheduler));
             var action = new ExecAction(path, joinedArgs, directory);
 
             taskDefinition.Actions.Add(action);
@@ -102,7 +102,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 
         public Task RunTaskInWrapper(string taskName, string path, string[] arguments = null, string directory = null)
         {
-            var realArguments = new[] {"--priority", "Normal", "--path", path, "--arguments", String.Join(" ", (arguments ?? new string[0]).Select(EscapeArgumentForCmd))};
+            var realArguments = new[] {"--priority", "Normal", "--path", path, "--arguments", string.Join(" ", (arguments ?? new string[0]).Select(EscapeArgumentForCmd))};
             return RunTask(taskName, wrapperPath, realArguments, directory);
         }
 
@@ -110,7 +110,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
         {
             var r = new Regex(@"\\(?=""|$)");
             var semiEscaped = r.Replace(argument, @"\\");
-            var result = String.Format("\"{0}\"", semiEscaped.Replace(@"""", @""""""));
+            var result = string.Format("\"{0}\"", semiEscaped.Replace(@"""", @""""""));
             return result;
         }
 
@@ -118,7 +118,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
         {
             var r = new Regex(@"\\(?=""|$)");
             var semiEscaped = r.Replace(argument, @"\\\\");
-            var result = String.Format("\"{0}\"", semiEscaped.Replace(@"""", @""""""""""));
+            var result = string.Format("\"{0}\"", semiEscaped.Replace(@"""", @""""""""""));
             return result;
         }
 

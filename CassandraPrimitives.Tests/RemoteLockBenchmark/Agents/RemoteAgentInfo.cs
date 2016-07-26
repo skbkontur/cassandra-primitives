@@ -9,7 +9,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
         public RemoteAgentInfo(string name, string workDirPathFromDiscC, RemoteMachineCredentials credentials, string token)
         {
             Name = name;
-            WorkDirectory = new RemoteDirectory(String.Format(@"\\{0}\c$\", name), @"C:\", workDirPathFromDiscC);
+            WorkDirectory = new RemoteDirectory(string.Format(@"\\{0}\c$\", name), @"C:\", workDirPathFromDiscC);
             Credentials = credentials;
             Token = token;
         }

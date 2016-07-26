@@ -10,7 +10,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             var logDir = Path.Combine(workingDirectory, "ExternalLogging");
             if (!Directory.Exists(logDir))
                 Directory.CreateDirectory(logDir);
-            var filename = String.Format("log_proc_{0}.txt", processInd);
+            var filename = string.Format("log_proc_{0}.txt", processInd);
             return Path.Combine(logDir, filename);
         }
 
@@ -18,8 +18,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
         {
             var logDir = Path.Combine(workingDirectory, "ExternalLogging");
             if (!Directory.Exists(logDir))
-                throw new Exception(String.Format("External logs directory ({0}) doesn't exist", logDir));
-            var filename = String.Format("log_proc_{0}.txt", processInd);
+                throw new Exception(string.Format("External logs directory ({0}) doesn't exist", logDir));
+            var filename = string.Format("log_proc_{0}.txt", processInd);
             return Path.Combine(logDir, filename);
         }
     }

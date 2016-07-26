@@ -26,7 +26,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 
         private async Task<string> GetResponse(string method)
         {
-            var response = await httpClient.GetAsync(String.Format("http://{0}:{1}/{2}", remoteHostName, port, method));
+            var response = await httpClient.GetAsync(string.Format("http://{0}:{1}/{2}", remoteHostName, port, method));
             var data = await response.Content.ReadAsStringAsync();
             return data;
         }

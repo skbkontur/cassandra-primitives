@@ -80,7 +80,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.ZooK
         {
             var servers = "#servers";
             if (settings.ServerAddresses != null)
-                servers = String.Join("\n", settings.ServerAddresses.Select((addr, i) => String.Format("server.{0}={1}:2888:3888", i + 1, addr)));
+                servers = string.Join("\n", settings.ServerAddresses.Select((addr, i) => string.Format("server.{0}={1}:2888:3888", i + 1, addr)));
             File.WriteAllText(filePath, File.ReadAllText(filePath).Replace("{{servers}}", servers));
         }
 

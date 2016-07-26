@@ -19,7 +19,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             ZookeeperClusterSettings zookeeperClusterSettings;
             long timeCorrectionDelta;
             string lockId;
-            using (var httpExternalDataGetter = new HttpExternalDataGetter(configuration.remoteHostName, configuration.httpPort))
+            using (var httpExternalDataGetter = new HttpExternalDataGetter(configuration.RemoteHostName, configuration.HttpPort))
             {
                 cassandraClusterSettings = httpExternalDataGetter.GetCassandraSettings().Result;
                 zookeeperClusterSettings = httpExternalDataGetter.GetZookeeperSettings().Result;
@@ -27,8 +27,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
                 lockId = httpExternalDataGetter.GetLockId().Result;
             }
 
-            using (var externalLogger = new HttpExternalLogger<TimelineProgressMessage>(processInd, configuration.remoteHostName, processToken))
-                //using (var remoteLockGetter = new CassandraRemoteLockGetter(cassandraClusterSettings, externalLogger))
+            using (var externalLogger = new HttpExternalLogger<TimelineProgressMessage>(processInd, configuration.RemoteHostName, processToken))
+            //using (var remoteLockGetter = new CassandraRemoteLockGetter(cassandraClusterSettings, externalLogger))
             using (var remoteLockGetter = new ZookeeperRemoteLockGetter(new ZookeeperLockSettings(zookeeperClusterSettings.ConnectionString, "/RemoteLockBenchmark", TimeSpan.FromSeconds(100))))
             {
                 var test = new TimelineTest(configuration, remoteLockGetter, externalLogger, timeCorrectionDelta, lockId, processInd);

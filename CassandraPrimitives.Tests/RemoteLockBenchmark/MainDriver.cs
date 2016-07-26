@@ -34,22 +34,22 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         {
             var agentProvider = new AgentProviderAllAgents();
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Choosing agents...");
-            if (configuration.remoteLockImplementation == TestConfiguration.RemoteLockImplementation.Cassandra)
+            if (configuration.RemoteLockImplementation == RemoteLockImplementations.Cassandra)
             {
-                cassandraAgents = agentProvider.GetAgents(1);
-                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Cassandra agents: {0}", String.Join(", ", cassandraAgents.Select(agent => agent.Name)));
+                cassandraAgents = agentProvider.GetAgents(3);
+                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Cassandra agents: {0}", string.Join(", ", cassandraAgents.Select(agent => agent.Name)));
                 foreach (var agent in cassandraAgents)
                     DeployWrapper(agent.WorkDirectory);
             }
-            if (configuration.remoteLockImplementation == TestConfiguration.RemoteLockImplementation.Zookeeper)
+            if (configuration.RemoteLockImplementation == RemoteLockImplementations.Zookeeper)
             {
                 zookeeperAgents = agentProvider.GetAgents(3);
-                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Zookeeper agents: {0}", String.Join(", ", zookeeperAgents.Select(agent => agent.Name)));
+                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Zookeeper agents: {0}", string.Join(", ", zookeeperAgents.Select(agent => agent.Name)));
                 foreach (var agent in zookeeperAgents)
                     DeployWrapper(agent.WorkDirectory);
             }
-            testAgents = agentProvider.GetAgents(configuration.amountOfProcesses);
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Test agents: {0}", String.Join(", ", testAgents.Select(agent => agent.Name)));
+            testAgents = agentProvider.GetAgents(configuration.AmountOfProcesses);
+            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Test agents: {0}", string.Join(", ", testAgents.Select(agent => agent.Name)));
             foreach (var agent in testAgents)
                 DeployWrapper(agent.WorkDirectory);
         }
@@ -76,8 +76,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
             var nodeAddresses = zookeeperAgents
                 .Select(agent => Dns.GetHostAddresses(agent.Name).First())
-                .Zip(remoteZookeeperNodeStartInfos, (ip, info) => String.Format("{0}:{1}", ip, info.Settings.ClientPort));
-            var connectionString = String.Join(",", nodeAddresses);
+                .Zip(remoteZookeeperNodeStartInfos, (ip, info) => string.Format("{0}:{1}", ip, info.Settings.ClientPort));
+            var connectionString = string.Join(",", nodeAddresses);
 
             zookeeperClusterSettings = new ZookeeperClusterSettings(connectionString);
 

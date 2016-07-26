@@ -31,18 +31,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             var totalSleepTime = 0;
             var stopwatch = new Stopwatch();
             var totalStopwatch = Stopwatch.StartNew();
-            var logInterval = configuration.amountOfLocksPerThread / 10;
-            for (var i = 0; i < configuration.amountOfLocksPerThread; i++)
+            var logInterval = configuration.AmountOfLocksPerThread / 10;
+            for (var i = 0; i < configuration.AmountOfLocksPerThread; i++)
             {
                 stopwatch.Start();
                 using (locker.Acquire())
                 {
                     stopwatch.Stop();
                     locksAcquired++;
-                    var waitTime = (int)(rand.NextDouble() * configuration.maxWaitTimeMilliseconds);
+                    var waitTime = (int)(rand.NextDouble() * configuration.MaxWaitTimeMilliseconds);
                     totalSleepTime += waitTime;
                     Thread.Sleep(waitTime);
-                    if (i % logInterval == 0 || i + 1 == configuration.amountOfLocksPerThread)
+                    if (i % logInterval == 0 || i + 1 == configuration.AmountOfLocksPerThread)
                     {
                         externalLogger.PublishProgress(new SimpleProgressMessage
                             {
