@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Specialized;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -24,54 +26,65 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             this.port = port;
         }
 
-        private async Task<string> GetResponse(string method)
+        private async Task<string> GetResponse(string method, NameValueCollection parameters)
         {
-            var response = await httpClient.GetAsync(string.Format("http://{0}:{1}/{2}", remoteHostName, port, method));
+            var builder = new UriBuilder
+                {
+                    Scheme = Uri.UriSchemeHttp,
+                    Port = port,
+                    Host = remoteHostName,
+                    Path = method
+                };
+
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query.Add(parameters);
+            builder.Query = query.ToString();
+            var stringUri = builder.ToString();
+
+            var response = await httpClient.GetAsync(stringUri);
             var data = await response.Content.ReadAsStringAsync();
             return data;
         }
 
-        private async Task<TResponse> GetAndDecodeResponse<TResponse>(string method, JsonSerializerSettings settings = null)
+        private async Task<TResponse> GetAndDecodeResponse<TResponse>(string method, NameValueCollection parameters, JsonSerializerSettings settings = null)
         {
-            var data = await GetResponse(method);
+            var data = await GetResponse(method, parameters);
             if (settings == null)
                 return JsonConvert.DeserializeObject<TResponse>(data);
             return JsonConvert.DeserializeObject<TResponse>(data, settings);
         }
 
-        private async Task<JObject> GetAndDecodeResponseToJObject(string method)
+        private async Task<JObject> GetAndDecodeResponseToJObject(string method, NameValueCollection parameters)
         {
-            var data = await GetResponse(method);
+            var data = await GetResponse(method, parameters);
             return JObject.Parse(data);
         }
 
         public async Task<CassandraClusterSettings> GetCassandraSettings()
         {
-            return await GetAndDecodeResponse<CassandraClusterSettings>("get_cassandra_options", settingsForObjectsWithIpAddresses);
+            return await GetAndDecodeResponse<CassandraClusterSettings>("get_options", new NameValueCollection {{"option_name", "CassandraClusterSettings"}}, settingsForObjectsWithIpAddresses);
         }
 
         public async Task<ZookeeperClusterSettings> GetZookeeperSettings()
         {
-            return await GetAndDecodeResponse<ZookeeperClusterSettings>("get_zookeeper_options", settingsForObjectsWithIpAddresses);
+            return await GetAndDecodeResponse<ZookeeperClusterSettings>("get_options", new NameValueCollection {{"option_name", "ZookeeperClusterSettings"}}, settingsForObjectsWithIpAddresses);
         }
 
         public async Task<TestConfiguration> GetTestConfiguration()
         {
-            return await GetAndDecodeResponse<TestConfiguration>("get_test_configuration");
-        }
-
-        public async Task<long> GetTime()
-        {
-            var responseObject = await GetAndDecodeResponseToJObject("get_time");
-            var time = long.Parse(responseObject["UtcMilliseconds"].ToString());
-            return time;
+            return await GetAndDecodeResponse<TestConfiguration>("get_options", new NameValueCollection {{"option_name", "TestConfiguration"}}, settingsForObjectsWithIpAddresses);
         }
 
         public async Task<string> GetLockId()
         {
-            var responseObject = await GetAndDecodeResponseToJObject("get_lock_id");
-            var lockId = responseObject["Value"].ToString();
-            return lockId;
+            return await GetAndDecodeResponse<string>("get_options", new NameValueCollection {{"option_name", "LockId"}}, settingsForObjectsWithIpAddresses);
+        }
+
+        public async Task<long> GetTime()
+        {
+            var responseObject = await GetAndDecodeResponseToJObject("get_time", new NameValueCollection());
+            var time = long.Parse(responseObject["UtcMilliseconds"].ToString());
+            return time;
         }
 
         public void Dispose()

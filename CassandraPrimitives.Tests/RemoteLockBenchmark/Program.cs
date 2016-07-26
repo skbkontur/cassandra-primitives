@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.NetworkInformation;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging;
@@ -22,9 +23,29 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 maxWaitTimeMilliseconds : 200,
                 remoteHostName : IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName,
                 httpPort : 12345,
-                remoteLockImplementation : RemoteLockImplementations.Zookeeper);
-            var driver = new MainDriver(new TeamCityLogger(Console.Out), configuration, new AgentProviderAllAgents(), false);
-            driver.Run();
+                remoteLockImplementation : RemoteLockImplementations.Cassandra);
+
+            var noDeploy = false;
+            var teamCityLogger = new TeamCityLogger(Console.Out);
+            var agentsProvider = new AgentProviderAllAgents();
+
+            teamCityLogger.BeginMessageBlock("Cassandra deploy");
+            var cassandraAgents = agentsProvider.AcquireAgents(3);
+            new WrapperDeployer(teamCityLogger, noDeploy).DeployWrapperToAgents(cassandraAgents);
+            var cassandraDriver = new CassandraMainDriver(teamCityLogger, cassandraAgents, noDeploy);
+
+            using (cassandraDriver.StartCassandraCluster())
+            {
+                teamCityLogger.EndMessageBlock();
+                var optionsSet = new Dictionary<string, object>
+                    {
+                        {"CassandraClusterSettings", cassandraDriver.ClusterSettings},
+                        {"TestConfiguration", configuration},
+                        {"LockId", Guid.NewGuid().ToString()}
+                    };
+                var driver = new MainDriver(teamCityLogger, configuration, agentsProvider, noDeploy);
+                driver.Run(optionsSet);
+            }
         }
 
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)

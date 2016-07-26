@@ -99,9 +99,12 @@
   <ItemGroup>
     <Compile Include="Agents\AgentProviderAllAgents.cs" />
     <Compile Include="Agents\AgentProviderWithSingleAgent.cs" />
+    <Compile Include="CassandraMainDriver.cs" />
     <Compile Include="Cassandra\CassandraClusterStarter.cs" />
     <Compile Include="Cassandra\CassandraRemoteNodeStartInfo.cs" />
     <Compile Include="ExternalLogging\TestProgressProcessors\Event.cs" />
+    <Compile Include="WrapperDeployer.cs" />
+    <Compile Include="ZookeeperMainDriver.cs" />
     <Compile Include="ZooKeeper\RemoteZooKeeperInitializer.cs" />
     <Compile Include="ZooKeeper\ZookeeperClusterStarter.cs" />
     <Compile Include="ExternalLogging\FileLoggingTools.cs" />

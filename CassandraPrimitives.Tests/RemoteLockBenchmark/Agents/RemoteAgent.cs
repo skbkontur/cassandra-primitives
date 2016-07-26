@@ -10,7 +10,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
             ProcessInd = processInd;
         }
 
-        public RemoteAgent(RemoteAgentInfo agent, int processInd) : base(agent)
+        public RemoteAgent(RemoteAgentInfo agent, int processInd)
+            : base(agent)
         {
             ProcessInd = processInd;
         }
