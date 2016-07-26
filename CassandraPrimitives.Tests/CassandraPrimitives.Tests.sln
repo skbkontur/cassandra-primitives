@@ -19,10 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchmarkCommons", "Benchma
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{DADD7B3F-A7D2-4DB7-B923-ACDF5DC878F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteLockBenchmarkChildProcessDriver", "RemoteLockBenchmarkChildProcessDriver\RemoteLockBenchmarkChildProcessDriver.csproj", "{7F911B02-6321-45D4-B1E5-8CCE6BE86B5C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteLockBenchmarkCommons", "RemoteLockBenchmarkCommons\RemoteLockBenchmarkCommons.csproj", "{15B039F3-E13F-4836-817B-1E16BA9E52D1}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,14 +53,6 @@ Global
 		{E0706790-58A4-4820-9C61-D143991BA9AB}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{E0706790-58A4-4820-9C61-D143991BA9AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0706790-58A4-4820-9C61-D143991BA9AB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7F911B02-6321-45D4-B1E5-8CCE6BE86B5C}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{7F911B02-6321-45D4-B1E5-8CCE6BE86B5C}.Debug|Any CPU.Build.0 = Release|Any CPU
-		{7F911B02-6321-45D4-B1E5-8CCE6BE86B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F911B02-6321-45D4-B1E5-8CCE6BE86B5C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15B039F3-E13F-4836-817B-1E16BA9E52D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15B039F3-E13F-4836-817B-1E16BA9E52D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15B039F3-E13F-4836-817B-1E16BA9E52D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15B039F3-E13F-4836-817B-1E16BA9E52D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,7 +61,5 @@ Global
 		{EE70D693-7465-41F2-8B14-1B570C4F374B} = {DADD7B3F-A7D2-4DB7-B923-ACDF5DC878F2}
 		{B5A06976-66ED-420C-8D89-BDCC8647DCAB} = {DADD7B3F-A7D2-4DB7-B923-ACDF5DC878F2}
 		{E0706790-58A4-4820-9C61-D143991BA9AB} = {DADD7B3F-A7D2-4DB7-B923-ACDF5DC878F2}
-		{7F911B02-6321-45D4-B1E5-8CCE6BE86B5C} = {DADD7B3F-A7D2-4DB7-B923-ACDF5DC878F2}
-		{15B039F3-E13F-4836-817B-1E16BA9E52D1} = {DADD7B3F-A7D2-4DB7-B923-ACDF5DC878F2}
 	EndGlobalSection
 EndGlobal

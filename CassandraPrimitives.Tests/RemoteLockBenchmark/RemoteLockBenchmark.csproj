@@ -70,6 +70,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\GroBuf.dll</HintPath>
     </Reference>
+    <Reference Include="Kontur.Logging">
+      <HintPath>..\..\Assemblies\ZooKeeper\Kontur.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\log4net.dll</HintPath>
@@ -95,39 +98,79 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="ZooKeeper.LocalEnsemble">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\tmp\ZookeeperWithCement\zookeeper\ZooKeeper.LocalEnsemble\bin\Release\ZooKeeper.LocalEnsemble.dll</HintPath>
+    </Reference>
+    <Reference Include="ZooKeeper.Recipes">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\tmp\ZookeeperWithCement\zookeeper\ZooKeeper.Recipes\bin\Release\ZooKeeper.Recipes.dll</HintPath>
+    </Reference>
+    <Reference Include="ZooKeeper.Client">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\tmp\ZookeeperWithCement\zookeeper\ZooKeeper.Client\bin\Release\ZooKeeper.Client.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Agents\AgentProviderAllAgents.cs" />
-    <Compile Include="Agents\AgentProviderWithSingleAgent.cs" />
-    <Compile Include="CassandraMainDriver.cs" />
-    <Compile Include="Cassandra\CassandraClusterStarter.cs" />
-    <Compile Include="Cassandra\CassandraRemoteNodeStartInfo.cs" />
-    <Compile Include="ExternalLogging\TestProgressProcessors\Event.cs" />
-    <Compile Include="WrapperDeployer.cs" />
-    <Compile Include="ZookeeperMainDriver.cs" />
-    <Compile Include="ZooKeeper\RemoteZooKeeperInitializer.cs" />
-    <Compile Include="ZooKeeper\ZookeeperClusterStarter.cs" />
-    <Compile Include="ExternalLogging\FileLoggingTools.cs" />
-    <Compile Include="ExternalLogging\HttpLogging\HttpExternalLogProcessor.cs" />
-    <Compile Include="ExternalLogging\HttpLogging\HttpServer.cs" />
-    <Compile Include="ExternalLogging\TestProgressProcessors\SimpleTestProgressProcessor.cs" />
-    <Compile Include="ExternalLogging\TestProgressProcessors\TimelineTestProgressProcessor.cs" />
-    <Compile Include="ExternalLogging\TestProgressProcessors\ITestProgressProcessor.cs" />
-    <Compile Include="ExternalLogging\IExternalLogProcessor.cs" />
-    <Compile Include="HttpTestDataProvider.cs" />
-    <Compile Include="MainDriver.cs" />
-    <Compile Include="Agents\IAgentProvider.cs" />
-    <Compile Include="Processes\IProcessLauncher.cs" />
-    <Compile Include="Processes\LocalProcessLauncher.cs" />
-    <Compile Include="Agents\RemoteAgent.cs" />
-    <Compile Include="Processes\RemoteProcessLauncher.cs" />
-    <Compile Include="Agents\RemoteAgentInfo.cs" />
-    <Compile Include="ExternalLogging\SimpleExternalLogProcessor.cs" />
+    <Compile Include="Implementations\CassandraSettings\CassandraInitializerSettings.cs" />
+    <Compile Include="Implementations\CassandraSettings\CassandraMetaProvider.cs" />
+    <Compile Include="Implementations\CassandraSettings\ColumnFamilies.cs" />
+    <Compile Include="Implementations\ZookeeperSettings\ZookeeperClusterSettings.cs" />
+    <Compile Include="Infrastructure\ChildProcessDriver\ChildProcessDriver.cs" />
+    <Compile Include="Infrastructure\Agents\AgentProviderAllAgents.cs" />
+    <Compile Include="Infrastructure\Agents\AgentProviderWithSingleAgent.cs" />
+    <Compile Include="Infrastructure\ChildProcessDriver\RemoteLockGetterProvider.cs" />
+    <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpExternalDataGetter.cs" />
+    <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpExternalLogger.cs" />
+    <Compile Include="Infrastructure\ExternalLogging\IExternalLogger.cs" />
+    <Compile Include="Infrastructure\ExternalLogging\IExternalProgressLogger.cs" />
+    <Compile Include="Infrastructure\ExternalLogging\SimpleExternalLogger.cs" />
+    <Compile Include="Infrastructure\MainDriver\CassandraMainDriver.cs" />
+    <Compile Include="Implementations\Cassandra\CassandraClusterStarter.cs" />
+    <Compile Include="Implementations\Cassandra\CassandraRemoteNodeStartInfo.cs" />
+    <Compile Include="Infrastructure\TestConfigurations\RemoteLockImplementations.cs" />
+    <Compile Include="Infrastructure\TestConfigurations\SimpleTestResult.cs" />
+    <Compile Include="Infrastructure\TestConfigurations\TestConfiguration.cs" />
+    <Compile Include="Scenarios\TestProgressProcessors\Event.cs" />
+    <Compile Include="Implementations\RemoteLocks\Cassandra\CassandraRemoteLock.cs" />
+    <Compile Include="Implementations\RemoteLocks\Cassandra\CassandraRemoteLockGetter.cs" />
+    <Compile Include="Implementations\RemoteLocks\IRemoteLock.cs" />
+    <Compile Include="Implementations\RemoteLocks\IRemoteLockGetter.cs" />
+    <Compile Include="Implementations\RemoteLocks\Zookeeper\ZookeeperLockSettings.cs" />
+    <Compile Include="Implementations\RemoteLocks\Zookeeper\ZookeeperRemoteLock.cs" />
+    <Compile Include="Implementations\RemoteLocks\Zookeeper\ZookeeperRemoteLockGetter.cs" />
+    <Compile Include="Scenarios\ProgressMessages\IProgressMessage.cs" />
+    <Compile Include="Scenarios\ProgressMessages\SimpleProgressMessage.cs" />
+    <Compile Include="Scenarios\ProgressMessages\TimelineProgressMessage.cs" />
+    <Compile Include="Infrastructure\TestRunning\TestRunner.cs" />
+    <Compile Include="Scenarios\Tests\ITest.cs" />
+    <Compile Include="Scenarios\Tests\SimpleTest.cs" />
+    <Compile Include="Scenarios\Tests\TimeLineTest.cs" />
+    <Compile Include="Infrastructure\MainDriver\WrapperDeployer.cs" />
+    <Compile Include="Infrastructure\MainDriver\ZookeeperMainDriver.cs" />
+    <Compile Include="Implementations\ZooKeeper\RemoteZooKeeperInitializer.cs" />
+    <Compile Include="Implementations\ZooKeeper\ZookeeperClusterStarter.cs" />
+    <Compile Include="Infrastructure\ExternalLogging\FileLoggingTools.cs" />
+    <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpExternalLogProcessor.cs" />
+    <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpServer.cs" />
+    <Compile Include="Scenarios\TestProgressProcessors\SimpleTestProgressProcessor.cs" />
+    <Compile Include="Scenarios\TestProgressProcessors\TimelineTestProgressProcessor.cs" />
+    <Compile Include="Scenarios\TestProgressProcessors\ITestProgressProcessor.cs" />
+    <Compile Include="Infrastructure\ExternalLogging\IExternalLogProcessor.cs" />
+    <Compile Include="Infrastructure\MainDriver\HttpTestDataProvider.cs" />
+    <Compile Include="Infrastructure\MainDriver\MainDriver.cs" />
+    <Compile Include="Infrastructure\Agents\IAgentProvider.cs" />
+    <Compile Include="Infrastructure\Processes\IProcessLauncher.cs" />
+    <Compile Include="Infrastructure\Processes\LocalProcessLauncher.cs" />
+    <Compile Include="Infrastructure\Agents\RemoteAgent.cs" />
+    <Compile Include="Infrastructure\Processes\RemoteProcessLauncher.cs" />
+    <Compile Include="Infrastructure\Agents\RemoteAgentInfo.cs" />
+    <Compile Include="Infrastructure\ExternalLogging\SimpleExternalLogProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ZooKeeper\ZookeeperDeployer.cs" />
-    <Compile Include="ZooKeeper\ZookeeperNodeSettings.cs" />
-    <Compile Include="ZooKeeper\ZookeeperRemoteNodeStartInfo.cs" />
+    <Compile Include="Implementations\ZooKeeper\ZookeeperDeployer.cs" />
+    <Compile Include="Implementations\ZooKeeper\ZookeeperNodeSettings.cs" />
+    <Compile Include="Implementations\ZooKeeper\ZookeeperRemoteNodeStartInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BenchmarkCommons\BenchmarkCommons.csproj">
@@ -137,10 +180,6 @@
     <ProjectReference Include="..\FunctionalTests\FunctionalTests.csproj">
       <Project>{141AC881-3536-4978-AD10-9D29B88A2988}</Project>
       <Name>FunctionalTests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RemoteLockBenchmarkCommons\RemoteLockBenchmarkCommons.csproj">
-      <Project>{15B039F3-E13F-4836-817B-1E16BA9E52D1}</Project>
-      <Name>RemoteLockBenchmarkCommons</Name>
     </ProjectReference>
     <ProjectReference Include="..\SchemeActualizer\SchemeActualizer.csproj">
       <Project>{8832339B-D3B3-4921-B911-40938C93DFE6}</Project>
