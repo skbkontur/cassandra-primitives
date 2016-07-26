@@ -82,7 +82,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 
         public void Log(string format, params object[] items)
         {
-            Log(String.Format(format, items));
+            Log(string.Format(format, items));
         }
 
         public void Dispose()

@@ -20,7 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             this.teamCityLogger = teamCityLogger;
             this.testProgressProcessor = testProgressProcessor;
 
-            httpServer = new HttpServer(configuration.httpPort);
+            httpServer = new HttpServer(configuration.HttpPort);
             httpServer.AddMethod("publish_progress", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandlePublishProgress));
             httpServer.AddMethod("log", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandleLog));
         }
@@ -30,7 +30,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             try
             {
                 int processInd;
-                if (!int.TryParse(context.Request.QueryString["process_ind"], out processInd) || processInd < 0 || processInd >= configuration.amountOfProcesses)
+                if (!int.TryParse(context.Request.QueryString["process_ind"], out processInd) || processInd < 0 || processInd >= configuration.AmountOfProcesses)
                     return;
                 if (!agents.Any(x => x.Token.Equals(context.Request.QueryString["process_token"])))
                     return;
@@ -38,7 +38,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
                 using (var stream = new StreamReader(context.Request.InputStream))
                     request = await stream.ReadToEndAsync();
                 var response = contextHandler(request, processInd);
-                if (!String.IsNullOrEmpty(response))
+                if (!string.IsNullOrEmpty(response))
                 {
                     using (var stream = new StreamWriter(context.Response.OutputStream))
                         await stream.WriteAsync(response);

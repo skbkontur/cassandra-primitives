@@ -18,7 +18,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
             ProcessInd = processInd;
         }
 
-        public RemoteDirectory ProcessDirectory { get { return WorkDirectory.Combine("..", String.Format("Process_{0}", ProcessInd)); } }
+        public RemoteDirectory ProcessDirectory { get { return WorkDirectory.Combine("..", string.Format("Process_{0}", ProcessInd)); } }
 
         public int ProcessInd { get; private set; }
     }

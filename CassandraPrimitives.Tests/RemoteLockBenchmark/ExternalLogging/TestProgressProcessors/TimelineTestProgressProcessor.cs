@@ -34,7 +34,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             Metric.Config.WithReporting(x => x.WithGraphite(graphiteUri, TimeSpan.FromSeconds(5)));
 
             Metric.Gauge("Time owning lock", () => (double)owningTime * 100 / (endTime - startTime), Unit.Percent);
-            Metric.Gauge("Progress", () => allLockEvents.Count * 100.0 / (configuration.amountOfProcesses * configuration.amountOfThreads * configuration.amountOfLocksPerThread), Unit.Percent);
+            Metric.Gauge("Progress", () => allLockEvents.Count * 100.0 / (configuration.AmountOfProcesses * configuration.AmountOfThreads * configuration.AmountOfLocksPerThread), Unit.Percent);
         }
 
         private long GetAmountOfTimeWhenPredicateIsTrue(List<Event> sortedEvents, Func<int, bool> predicate)
@@ -133,7 +133,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
 
         private void ReportProgressToTeamCity()
         {
-            var totalAmountOfLocks = configuration.amountOfProcesses * configuration.amountOfThreads * configuration.amountOfLocksPerThread;
+            var totalAmountOfLocks = configuration.AmountOfProcesses * configuration.AmountOfThreads * configuration.AmountOfLocksPerThread;
             var progressPercents = allLockEvents.Count * 100 / totalAmountOfLocks;
             if (lastReportedToTeamCityProgressPercent != progressPercents)
             {
@@ -150,7 +150,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
             {
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished work", processInd);
                 finishedProcesses++;
-                if (finishedProcesses == configuration.amountOfProcesses)
+                if (finishedProcesses == configuration.AmountOfProcesses)
                     AnalyseAllLockEvents();
             }
             else

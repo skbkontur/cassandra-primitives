@@ -22,7 +22,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
 
             int processInd;
             if (!int.TryParse(args[0], out processInd))
-                throw new Exception(String.Format("Invalid process id {0}", args[0]));
+                throw new Exception(string.Format("Invalid process id {0}", args[0]));
 
             logger.InfoFormat("Process id is {0}", processInd);
             logger.InfoFormat("Remote http address is {0}", args[1]);

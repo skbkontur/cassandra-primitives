@@ -15,7 +15,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
     {
         public HttpTestDataProvider(CassandraClusterSettings cassandraClusterSettings, ZookeeperClusterSettings zookeeperClusterSettings, TestConfiguration testConfiguration)
         {
-            server = new HttpServer(testConfiguration.httpPort);
+            server = new HttpServer(testConfiguration.HttpPort);
             JsonSerializerSettings settingsForObjectsWithAddresses = new JsonSerializerSettings();
             settingsForObjectsWithAddresses.Converters.Add(new IpAddressConverter());
             settingsForObjectsWithAddresses.Converters.Add(new IpEndPointConverter());

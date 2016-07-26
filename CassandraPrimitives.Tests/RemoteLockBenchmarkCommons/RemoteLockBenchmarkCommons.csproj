@@ -55,6 +55,7 @@
     <Compile Include="ProgressMessages\IProgressMessage.cs" />
     <Compile Include="TestConfigurations\ITest.cs" />
     <Compile Include="ProgressMessages\SimpleProgressMessage.cs" />
+    <Compile Include="TestConfigurations\RemoteLockImplementations.cs" />
     <Compile Include="TestConfigurations\SimpleTestResult.cs" />
     <Compile Include="TestConfigurations\TestConfiguration.cs" />
     <Compile Include="ProgressMessages\TimelineProgressMessage.cs" />

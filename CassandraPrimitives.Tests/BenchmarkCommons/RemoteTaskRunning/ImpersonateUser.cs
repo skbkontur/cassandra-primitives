@@ -49,7 +49,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
         public static extern bool DuplicateToken(IntPtr token, int impersonationLevel, ref IntPtr duplication);
 
         [DllImport("kernel32.dll")]
-        public static extern Boolean CloseHandle(IntPtr hObject);
+        public static extern bool CloseHandle(IntPtr hObject);
 
         internal enum LogonProvider
         {

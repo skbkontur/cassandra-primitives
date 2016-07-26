@@ -38,7 +38,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Exte
         public void AddMethod(string name, Action<HttpListenerContext> method)
         {
             var listener = new HttpListener();
-            listener.Prefixes.Add(String.Format("http://*:{0}/{1}/", port, name));
+            listener.Prefixes.Add(string.Format("http://*:{0}/{1}/", port, name));
             listener.Start();
             listeners.Add(listener);
             ProcessRequests(listener, method);
