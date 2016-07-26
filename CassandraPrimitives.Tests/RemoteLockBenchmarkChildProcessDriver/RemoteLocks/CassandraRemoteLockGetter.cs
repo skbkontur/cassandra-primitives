@@ -21,7 +21,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmarkChild
             remoteLockersToDispose = new List<RemoteLocker>();
             logger = LogManager.GetLogger(GetType());
             this.externalLogger = externalLogger;
-
             cassandraCluster = new CassandraCluster(cassandraClusterSettings);
         }
 
