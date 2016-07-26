@@ -4,6 +4,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Agen
 {
     public interface IAgentProvider
     {
-        List<RemoteAgentInfo> GetAgents(int amount);
+        List<RemoteAgentInfo> AcquireAgents(int amount);
     }
 }
