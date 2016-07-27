@@ -90,8 +90,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         {
             try
             {
-                var args = Environment.GetCommandLineArgs().Skip(1).ToArray();
-                if (args.Length == 0)
+                var args = Environment.GetCommandLineArgs();
+                if (args.Length < 2 || args[1] != ConstantBenchmarkToken)
                 {
                     deploySteps.Add(new DeployStep("MainProcess", MainProcess, 2));
                     foreach (var deployStep in deploySteps.OrderBy(s => s.Priority))
@@ -149,6 +149,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private bool noDeploy;
         private TestConfiguration testConfiguration;
         private Type testType;
+        public const string ConstantBenchmarkToken = "constant-benchmark-token-f6718f48-0cc5-4f20-aec6-102d9fa09635";
 
         internal class DeployStep
         {
