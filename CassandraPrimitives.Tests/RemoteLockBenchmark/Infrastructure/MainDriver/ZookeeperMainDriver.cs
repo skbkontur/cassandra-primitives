@@ -27,10 +27,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                 .Zip(remoteZookeeperNodeStartInfos, (agent, info) => string.Format("{0}:{1}", agent.IpAddress, info.Settings.ClientPort));
             var connectionString = string.Join(",", nodeAddresses);
 
-            var zookeeperClusterSettings = new ZookeeperClusterSettings(connectionString);
+            ClusterSettings = new ZookeeperClusterSettings(connectionString);
 
-            return new ZookeeperClusterStarter(zookeeperClusterSettings, remoteZookeeperNodeStartInfos, teamCityLogger, noDeploy);
+            return new ZookeeperClusterStarter(ClusterSettings, remoteZookeeperNodeStartInfos, teamCityLogger, noDeploy);
         }
+
+        public ZookeeperClusterSettings ClusterSettings { get; private set; }
 
         private static List<ZookeeperRemoteNodeStartInfo> GetZookeeperNodeInfos(List<RemoteAgentInfo> agents)
         {
