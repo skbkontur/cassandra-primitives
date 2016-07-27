@@ -41,7 +41,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         private static int GetIntVariableFromEnvironment(string name)
         {
             int result;
-            if (!int.TryParse(Environment.GetEnvironmentVariable("benchmark.AmountOfThreads"), out result))
+            if (!int.TryParse(Environment.GetEnvironmentVariable(name), out result))
                 throw new Exception(string.Format("Invalid value was given for parameter {0}", name));
             return result;
         }
