@@ -19,7 +19,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
             {
                 foreach (var remoteNodeStartInfo in remoteNodeStartInfos)
                 {
-                    var cassandraInitializer = new RemoteCassandraInitializer(remoteNodeStartInfo.Credentials, remoteNodeStartInfo.RemoteWorkDir, noDeploy);
+                    var cassandraInitializer = new RemoteCassandraInitializer(remoteNodeStartInfo.Credentials, remoteNodeStartInfo.RemoteWorkDir, remoteNodeStartInfo.TaskWrapperRelativePath, noDeploy);
                     cassandraInitialisers.Add(cassandraInitializer);
                     cassandraInitializer.CreateNode(remoteNodeStartInfo.Settings);
                 }

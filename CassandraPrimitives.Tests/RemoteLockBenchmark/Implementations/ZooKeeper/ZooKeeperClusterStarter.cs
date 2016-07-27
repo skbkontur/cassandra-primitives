@@ -18,7 +18,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
                 foreach (var remoteNodeStartInfo in remoteNodeStartInfos)
                 {
                     teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Initialising zookeeper on {0}...", remoteNodeStartInfo.Credentials.MachineName);
-                    var zookeeperInitializer = new RemoteZookeeperInitializer(remoteNodeStartInfo.Credentials, remoteNodeStartInfo.RemoteWorkDir, noDeploy);
+                    var zookeeperInitializer = new RemoteZookeeperInitializer(remoteNodeStartInfo.Credentials, remoteNodeStartInfo.RemoteWorkDir, remoteNodeStartInfo.TaskWrapperPath, noDeploy);
                     zookeeperInitialisers.Add(zookeeperInitializer);
                     zookeeperInitializer.CreateNode(remoteNodeStartInfo.Settings);
                 }

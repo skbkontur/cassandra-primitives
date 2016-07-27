@@ -12,10 +12,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 {
     public class CassandraMainDriver
     {
-        public CassandraMainDriver(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents, bool noDeploy)
+        public CassandraMainDriver(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents, string taskWrapperRelativePath, bool noDeploy)
         {
             this.teamCityLogger = teamCityLogger;
             this.noDeploy = noDeploy;
+            this.taskWrapperRelativePath = taskWrapperRelativePath;
             this.agents = agents;
         }
 
@@ -35,7 +36,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             return new CassandraClusterStarter(ClusterSettings, remoteCassandraNodeStartInfos, noDeploy);
         }
 
-        private static List<CassandraRemoteNodeStartInfo> GetCassandraNodeInfos(List<RemoteAgentInfo> agents, string clusterName)
+        private List<CassandraRemoteNodeStartInfo> GetCassandraNodeInfos(List<RemoteAgentInfo> agents, string clusterName)
         {
             var seedAddresses = agents.Select(agent => agent.IpAddress.ToString()).ToArray();
             return agents
@@ -49,12 +50,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                                     SeedAddresses = seedAddresses,
                                     RpcPort = 59360
                                 },
-                            agent.WorkDirectory))
+                            agent.WorkDirectory,
+                            taskWrapperRelativePath))
                 .ToList();
         }
 
         private readonly ITeamCityLogger teamCityLogger;
         private readonly bool noDeploy;
         private readonly List<RemoteAgentInfo> agents;
+        private readonly string taskWrapperRelativePath;
     }
 }

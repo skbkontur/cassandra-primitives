@@ -9,17 +9,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 {
     public class RemoteZookeeperInitializer
     {
-        public RemoteZookeeperInitializer(RemoteMachineCredentials credentials, RemoteDirectory remoteWorkDir, bool noDeploy = false)
+        public RemoteZookeeperInitializer(RemoteMachineCredentials credentials, RemoteDirectory remoteWorkDir, RemoteDirectory taskWrapperPath, bool noDeploy = false)
         {
             remoteTasks = new List<Task>();
             this.credentials = credentials;
             this.remoteWorkDir = remoteWorkDir;
+            this.taskWrapperPath = taskWrapperPath;
             this.noDeploy = noDeploy;
         }
 
         public void CreateNode(ZookeeperNodeSettings settings)
         {
-            var wrapperPath = Path.Combine(remoteWorkDir.AsLocal, @"TaskWrapper\Catalogue.DeployTasks.TaskWrapper.exe");
+            var wrapperPath = taskWrapperPath.AsLocal;
 
             var deployDirectory = Path.Combine(remoteWorkDir.AsRemote, "..", "ZooKeeper");
             if (!noDeploy)
@@ -49,5 +50,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
         private readonly RemoteMachineCredentials credentials;
         private readonly RemoteDirectory remoteWorkDir;
         private readonly bool noDeploy;
+        private readonly RemoteDirectory taskWrapperPath;
     }
 }

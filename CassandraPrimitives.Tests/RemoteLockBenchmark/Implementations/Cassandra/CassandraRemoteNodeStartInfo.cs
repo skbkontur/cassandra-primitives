@@ -5,15 +5,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 {
     public class CassandraRemoteNodeStartInfo
     {
-        public CassandraRemoteNodeStartInfo(RemoteMachineCredentials credentials, CassandraNodeSettings settings, RemoteDirectory remoteWorkDir)
+        public CassandraRemoteNodeStartInfo(RemoteMachineCredentials credentials, CassandraNodeSettings settings, RemoteDirectory remoteWorkDir, string taskWrapperRelativePath)
         {
             Credentials = credentials;
             Settings = settings;
             RemoteWorkDir = remoteWorkDir;
+            TaskWrapperRelativePath = taskWrapperRelativePath;
         }
 
         public RemoteMachineCredentials Credentials { get; private set; }
         public CassandraNodeSettings Settings { get; private set; }
         public RemoteDirectory RemoteWorkDir { get; private set; }
+        public string TaskWrapperRelativePath { get; private set; }
     }
 }

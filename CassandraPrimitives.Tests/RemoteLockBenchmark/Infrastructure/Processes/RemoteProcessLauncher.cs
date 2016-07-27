@@ -16,11 +16,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 {
     public class RemoteProcessLauncher : IProcessLauncher
     {
-        public RemoteProcessLauncher(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agentInfos, bool noDeploy = false)
+        public RemoteProcessLauncher(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agentInfos, string wrapperRelativePath, bool noDeploy = false)
         {
             this.teamCityLogger = teamCityLogger;
             tasks = new List<Task>();
             this.agentInfos = agentInfos;
+            this.wrapperRelativePath = wrapperRelativePath;
             this.noDeploy = noDeploy;
         }
 
@@ -67,7 +68,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Starting process {0} on agent {1}...", agent.ProcessInd, agent.Name);
 
                 var testRunnerPath = Path.Combine(agent.ProcessDirectory.AsLocal, "Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.exe");
-                var wrapperPath = Path.Combine(agent.WorkDirectory.AsRemote, @"TaskWrapper\Catalogue.DeployTasks.TaskWrapper.exe");
+                var wrapperPath = Path.Combine(agent.WorkDirectory.AsRemote, wrapperRelativePath);
                 using (var taskScheduler = new TaskSchedulerAdapter(agent.Credentials, wrapperPath))
                 {
                     var task = taskScheduler.RunTaskInWrapper(string.Format("BenchmarkProcess_{0}", agent.ProcessInd), testRunnerPath, new[] {agent.ProcessInd.ToString(), configuration.RemoteHostName, agent.Token}, agent.ProcessDirectory.AsLocal);
@@ -106,5 +107,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         private readonly List<Task> tasks;
         private readonly List<RemoteAgentInfo> agentInfos;
         private readonly bool noDeploy;
+        private readonly string wrapperRelativePath;
     }
 }

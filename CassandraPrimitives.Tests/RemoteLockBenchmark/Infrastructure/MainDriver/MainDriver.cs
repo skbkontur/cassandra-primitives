@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.UI.WebControls;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Agents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ExternalLogging.HttpLogging;
@@ -27,14 +28,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 
             var testAgents = agentProvider.AcquireAgents(configuration.AmountOfProcesses);
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Agents for tests: {0}", string.Join(", ", testAgents.Select(agent => agent.Name)));
-            new WrapperDeployer(teamCityLogger, noDeploy).DeployWrapperToAgents(testAgents);
+            var wrapperDeployer = new WrapperDeployer(teamCityLogger, noDeploy);
+            wrapperDeployer.DeployWrapperToAgents(testAgents);
+            var wrapperRelativePath = wrapperDeployer.GetWrapperRelativePath();
 
             try
             {
                 using (new HttpTestDataProvider(configuration, optionsSet))
                 using (var testProcessor = new TimelineTestProgressProcessor(configuration, teamCityLogger))
                 using (new HttpExternalLogProcessor(configuration, teamCityLogger, testAgents, testProcessor))
-                using (var processLauncher = new RemoteProcessLauncher(teamCityLogger, testAgents, noDeploy))
+                using (var processLauncher = new RemoteProcessLauncher(teamCityLogger, testAgents, wrapperRelativePath, noDeploy))
                 {
                     processLauncher.StartProcesses(configuration);
 
