@@ -2,6 +2,7 @@
 {
     public enum TestScenarios
     {
-        Timeline
+        Timeline,
+        WaitForLock
     }
 }
