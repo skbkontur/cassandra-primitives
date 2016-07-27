@@ -18,7 +18,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                     RunTimelineTest(configuration, processInd, processToken);
                 break;
                 default:
-                    throw new Exception(string.Format("Unknown ITest implementation {0}", configuration.TestScenario));
+                    throw new Exception(string.Format("Unknown TestScenario {0}", configuration.TestScenario));
             }
         }
 

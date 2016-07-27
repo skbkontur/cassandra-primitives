@@ -9,6 +9,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastr
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ExternalLogging.HttpLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.MainDriver;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestConfigurations;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.TestProgressProcessors;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
@@ -127,10 +128,24 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             }
         }
 
+        private ITestProgressProcessor GetTestProgressProcessor()
+        {
+            switch (testConfiguration.TestScenario)
+            {
+                case TestScenarios.Timeline:
+                    var progressProcessor = new TimelineTestProgressProcessor(testConfiguration, teamCityLogger);
+                    toDispose.Add(progressProcessor);
+                    return progressProcessor;
+                default:
+                throw new Exception(string.Format("Unknown TestScenario {0}", testConfiguration.TestScenario));
+            }
+        }
+
         private void MainProcess()
         {
             optionsSet["LockId"] = Guid.NewGuid().ToString();
-            var driver = new MainDriver(teamCityLogger, testConfiguration, agentProvider, noDeploy);
+            var testProgressProcessor = GetTestProgressProcessor();
+            var driver = new MainDriver(teamCityLogger, testConfiguration, testProgressProcessor, agentProvider, noDeploy);
             driver.Run(optionsSet);
         }
 
