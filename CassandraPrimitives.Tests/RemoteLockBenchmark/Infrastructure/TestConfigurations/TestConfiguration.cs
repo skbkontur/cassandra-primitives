@@ -138,9 +138,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             var match = Regex.Match(rawValue, @"^range\((\d+),(\d+),(\d+)\)$");
             if (match.Success)
             {
-                var start = int.Parse(match.Groups[0].Value);
-                var end = int.Parse(match.Groups[1].Value);
-                var step = int.Parse(match.Groups[2].Value);
+                var start = int.Parse(match.Groups[1].Value);
+                var end = int.Parse(match.Groups[2].Value);
+                var step = int.Parse(match.Groups[3].Value);
                 if (start > end)
                     throw new Exception("Invalid range: start is greater than end");
                 if (step <= 0)
