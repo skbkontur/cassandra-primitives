@@ -135,6 +135,8 @@
     <Compile Include="Infrastructure\TestConfigurations\SimpleTestResult.cs" />
     <Compile Include="Infrastructure\TestConfigurations\TestConfiguration.cs" />
     <Compile Include="Infrastructure\TestConfigurations\TestScenarios.cs" />
+    <Compile Include="Scenarios\ProgressMessages\WaitForLockProgressMessage.cs" />
+    <Compile Include="Scenarios\TestProgressProcessors\AbstractTestProgressProcessor.cs" />
     <Compile Include="Scenarios\TestProgressProcessors\Event.cs" />
     <Compile Include="Implementations\RemoteLocks\Cassandra\CassandraRemoteLock.cs" />
     <Compile Include="Implementations\RemoteLocks\Cassandra\CassandraRemoteLockGetter.cs" />
@@ -147,6 +149,7 @@
     <Compile Include="Scenarios\ProgressMessages\SimpleProgressMessage.cs" />
     <Compile Include="Scenarios\ProgressMessages\TimelineProgressMessage.cs" />
     <Compile Include="Infrastructure\TestRunning\TestRunner.cs" />
+    <Compile Include="Scenarios\TestProgressProcessors\WaitForLockTestProgressProcessor.cs" />
     <Compile Include="Scenarios\Tests\ITest.cs" />
     <Compile Include="Scenarios\Tests\SimpleTest.cs" />
     <Compile Include="Scenarios\Tests\TimeLineTest.cs" />
@@ -175,6 +178,7 @@
     <Compile Include="Implementations\ZooKeeper\ZookeeperDeployer.cs" />
     <Compile Include="Implementations\ZooKeeper\ZookeeperNodeSettings.cs" />
     <Compile Include="Implementations\ZooKeeper\ZookeeperRemoteNodeStartInfo.cs" />
+    <Compile Include="Scenarios\Tests\WaitForLockTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BenchmarkCommons\BenchmarkCommons.csproj">

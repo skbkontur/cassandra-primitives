@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 using Metrics;
@@ -14,13 +13,11 @@ using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.TestProgressProcessors
 {
-    public class TimelineTestProgressProcessor : ITestProgressProcessor, IDisposable
+    public class TimelineTestProgressProcessor : AbstractTestProgressProcessor
     {
         public TimelineTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
+            : base(configuration, teamCityLogger)
         {
-            this.teamCityLogger = teamCityLogger;
-            this.configuration = configuration;
-
             allLockEvents = new List<TimelineProgressMessage.LockEvent>();
             recentLockEvents = new SortedSet<TimelineProgressMessage.LockEvent>(new TimelineProgressMessage.LockEventComparer());
 
@@ -28,13 +25,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
             endTime = 0;
             owningTime = 0;
 
-            Metric.SetGlobalContextName(string.Format("EDI.Benchmarks.{0}.{1}", Process.GetCurrentProcess().ProcessName.Replace('.', '_'), Environment.MachineName.Replace('.', '_')));
-            metric = Metric.Config.WithHttpEndpoint("http://*:1234/").WithAllCounters();
-            var graphiteUri = new Uri(string.Format("net.{0}://{1}:{2}", "tcp", "graphite-relay.skbkontur.ru", "2003"));
-            Metric.Config.WithReporting(x => x.WithGraphite(graphiteUri, TimeSpan.FromSeconds(5)));
-
             Metric.Gauge("Time owning lock", () => (double)owningTime * 100 / (endTime - startTime), Unit.Percent);
-            Metric.Gauge("Progress", () => allLockEvents.Count * 100.0 / (configuration.AmountOfProcesses * configuration.AmountOfThreads * configuration.AmountOfLocksPerThread), Unit.Percent);
         }
 
         private long GetAmountOfTimeWhenPredicateIsTrue(List<Event> sortedEvents, Func<int, bool> predicate)
@@ -131,18 +122,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
             ReportProgressToTeamCity();
         }
 
-        private void ReportProgressToTeamCity()
+        protected override string GetTestName()
         {
-            var totalAmountOfLocks = configuration.AmountOfProcesses * configuration.AmountOfThreads * configuration.AmountOfLocksPerThread;
-            var progressPercents = allLockEvents.Count * 100 / totalAmountOfLocks;
-            if (lastReportedToTeamCityProgressPercent != progressPercents)
-            {
-                teamCityLogger.ReportActivity(string.Format("{0}%", progressPercents));
-                lastReportedToTeamCityProgressPercent = progressPercents;
-            }
+            return "TimelineTest";
         }
 
-        public string HandlePublishProgress(string request, int processInd)
+        public override string HandlePublishProgress(string request, int processInd)
         {
             var progressMessage = JsonConvert.DeserializeObject<TimelineProgressMessage>(request);
 
@@ -158,7 +143,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
             return null;
         }
 
-        public string HandleLog(string request, int processInd)
+        public override string HandleLog(string request, int processInd)
         {
             var log = JObject.Parse(request);
             var message = log["message"].ToString();
@@ -167,18 +152,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
             return null;
         }
 
-        public void Dispose()
+        protected override double GetProgressInPercents()
         {
-            metric.Dispose();
+            return allLockEvents.Count * 100.0 / (configuration.AmountOfProcesses * configuration.AmountOfThreads * configuration.AmountOfLocksPerThread);
         }
 
         private readonly List<TimelineProgressMessage.LockEvent> allLockEvents;
         private readonly SortedSet<TimelineProgressMessage.LockEvent> recentLockEvents;
-        private readonly ITeamCityLogger teamCityLogger;
-        private readonly MetricsConfig metric;
         private long startTime, endTime, owningTime;
         private int finishedProcesses;
-        private int lastReportedToTeamCityProgressPercent;
-        private readonly TestConfiguration configuration;
     }
 }

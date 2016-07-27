@@ -14,11 +14,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         {
             switch (configuration.TestScenario)
             {
-                case TestScenarios.Timeline:
-                    RunTimelineTest(configuration, processInd, processToken);
+            case TestScenarios.Timeline:
+                RunTimelineTest(configuration, processInd, processToken);
                 break;
-                default:
-                    throw new Exception(string.Format("Unknown TestScenario {0}", configuration.TestScenario));
+            case TestScenarios.WaitForLock:
+                RunWaitForLockTest(configuration, processInd, processToken);
+                break;
+            default:
+                throw new Exception(string.Format("Unknown TestScenario {0}", configuration.TestScenario));
             }
         }
 
@@ -30,6 +33,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                 var remoteLockGetterProvider = new RemoteLockGetterProvider(httpExternalDataGetter, configuration, externalLogger);
                 var test = new TimelineTest(configuration, remoteLockGetterProvider.RemoteLockGetter, externalLogger, httpExternalDataGetter, processInd);
                 using (var testRunner = new TestRunner<TimelineProgressMessage>(configuration, externalLogger))
+                    testRunner.RunTestAndPublishResults(test);
+            }
+        }
+
+        private static void RunWaitForLockTest(TestConfiguration configuration, int processInd, string processToken)
+        {
+            using (var externalLogger = new HttpExternalLogger<WaitForLockProgressMessage>(processInd, configuration.RemoteHostName, processToken))
+            using (var httpExternalDataGetter = new HttpExternalDataGetter(configuration.RemoteHostName, configuration.HttpPort))
+            {
+                var remoteLockGetterProvider = new RemoteLockGetterProvider(httpExternalDataGetter, configuration, externalLogger);
+                var test = new WaitForLockTest(configuration, remoteLockGetterProvider.RemoteLockGetter, externalLogger, httpExternalDataGetter);
+                using (var testRunner = new TestRunner<WaitForLockProgressMessage>(configuration, externalLogger))
                     testRunner.RunTestAndPublishResults(test);
             }
         }

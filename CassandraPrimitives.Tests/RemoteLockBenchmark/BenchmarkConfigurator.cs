@@ -132,11 +132,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         {
             switch (testConfiguration.TestScenario)
             {
-                case TestScenarios.Timeline:
-                    var progressProcessor = new TimelineTestProgressProcessor(testConfiguration, teamCityLogger);
-                    toDispose.Add(progressProcessor);
-                    return progressProcessor;
-                default:
+            case TestScenarios.Timeline:
+                var timelineTestProgressProcessor = new TimelineTestProgressProcessor(testConfiguration, teamCityLogger);
+                toDispose.Add(timelineTestProgressProcessor);
+                return timelineTestProgressProcessor;
+            case TestScenarios.WaitForLock:
+                var waitForLockTestProgressProcessor = new WaitForLockTestProgressProcessor(testConfiguration, teamCityLogger);
+                toDispose.Add(waitForLockTestProgressProcessor);
+                return waitForLockTestProgressProcessor;
+            default:
                 throw new Exception(string.Format("Unknown TestScenario {0}", testConfiguration.TestScenario));
             }
         }
