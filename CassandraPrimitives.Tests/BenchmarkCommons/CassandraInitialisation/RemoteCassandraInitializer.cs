@@ -9,17 +9,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
 {
     public class RemoteCassandraInitializer : ICassandraInitialiser
     {
-        public RemoteCassandraInitializer(RemoteMachineCredentials credentials, RemoteDirectory remoteWorkDir, bool noDeploy = false)
+        public RemoteCassandraInitializer(RemoteMachineCredentials credentials, RemoteDirectory remoteWorkDir, string taskWrapperRelativePath, bool noDeploy = false)
         {
             remoteTasks = new List<Task>();
             this.credentials = credentials;
             this.remoteWorkDir = remoteWorkDir;
+            this.taskWrapperRelativePath = taskWrapperRelativePath;
             this.noDeploy = noDeploy;
         }
 
         public void CreateNode(CassandraNodeSettings settings)
         {
-            var wrapperPath = Path.Combine(remoteWorkDir.AsLocal, @"TaskWrapper\Catalogue.DeployTasks.TaskWrapper.exe");
+            var wrapperPath = Path.Combine(remoteWorkDir.AsLocal, taskWrapperRelativePath);
             using (var taskSchedulerAdapter = new TaskSchedulerAdapter(credentials, wrapperPath))
             {
                 var deployDirectory = Path.Combine(remoteWorkDir.AsRemote, "..", "Cassandra1.2");
@@ -48,5 +49,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
         private readonly RemoteMachineCredentials credentials;
         private readonly RemoteDirectory remoteWorkDir;
         private readonly bool noDeploy;
+        private readonly string taskWrapperRelativePath;
     }
 }

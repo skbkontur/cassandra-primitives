@@ -57,8 +57,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             deploySteps.Add(new DeployStep("Cassandra deploy", () =>
                 {
                     var cassandraAgents = agentProvider.AcquireAgents(amountOfNodes);
-                    new WrapperDeployer(teamCityLogger, noDeploy).DeployWrapperToAgents(cassandraAgents);
-                    var cassandraDriver = new CassandraMainDriver(teamCityLogger, cassandraAgents, noDeploy);
+                    var wrapperDeployer = new WrapperDeployer(teamCityLogger, noDeploy);
+                    wrapperDeployer.DeployWrapperToAgents(cassandraAgents);
+                    var cassandraDriver = new CassandraMainDriver(teamCityLogger, cassandraAgents, wrapperDeployer.GetWrapperRelativePath(), noDeploy);
                     toDispose.Add(cassandraDriver.StartCassandraCluster());
                     optionsSet["CassandraClusterSettings"] = cassandraDriver.ClusterSettings;
                 }, 1));
@@ -70,8 +71,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             deploySteps.Add(new DeployStep("Zookeeper deploy", () =>
                 {
                     var zookeeperAgents = agentProvider.AcquireAgents(amountOfNodes);
-                    new WrapperDeployer(teamCityLogger, noDeploy).DeployWrapperToAgents(zookeeperAgents);
-                    var zookeeperDriver = new ZookeeperMainDriver(teamCityLogger, zookeeperAgents, noDeploy);
+                    var wrapperDeployer = new WrapperDeployer(teamCityLogger, noDeploy);
+                    wrapperDeployer.DeployWrapperToAgents(zookeeperAgents);
+                    var zookeeperDriver = new ZookeeperMainDriver(teamCityLogger, zookeeperAgents, wrapperDeployer.GetWrapperRelativePath(), noDeploy);
                     toDispose.Add(zookeeperDriver.StartZookeeperCluster());
                     optionsSet["ZookeeperClusterSettings"] = zookeeperDriver.ClusterSettings;
                 }, 1));
@@ -100,7 +102,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     }
                 }
                 else
-                    ChildProcess(args);
+                    ChildProcess(args.Skip(2).ToArray());
             }
             finally
             {

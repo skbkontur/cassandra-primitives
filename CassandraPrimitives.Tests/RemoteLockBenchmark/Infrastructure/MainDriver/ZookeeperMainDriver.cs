@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Implementations.ZookeeperSettings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Implementations.ZooKeeper;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Agents;
@@ -10,10 +11,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 {
     public class ZookeeperMainDriver
     {
-        public ZookeeperMainDriver(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents, bool noDeploy)
+        public ZookeeperMainDriver(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents, string taskWrapperRelativePath, bool noDeploy)
         {
             this.teamCityLogger = teamCityLogger;
             this.agents = agents;
+            this.taskWrapperRelativePath = taskWrapperRelativePath;
             this.noDeploy = noDeploy;
         }
 
@@ -34,7 +36,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 
         public ZookeeperClusterSettings ClusterSettings { get; private set; }
 
-        private static List<ZookeeperRemoteNodeStartInfo> GetZookeeperNodeInfos(List<RemoteAgentInfo> agents)
+        private List<ZookeeperRemoteNodeStartInfo> GetZookeeperNodeInfos(List<RemoteAgentInfo> agents)
         {
             var addresses = agents.Select(agent => agent.IpAddress.ToString()).ToArray();
             return agents
@@ -42,12 +44,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                         new ZookeeperRemoteNodeStartInfo(
                             agent.Credentials,
                             new ZookeeperNodeSettings(serverAddresses : addresses, id : i + 1),
-                            agent.WorkDirectory))
+                            agent.WorkDirectory,
+                            taskWrapperRelativePath))
                 .ToList();
         }
 
         private readonly ITeamCityLogger teamCityLogger;
         private readonly List<RemoteAgentInfo> agents;
         private readonly bool noDeploy;
+        private readonly string taskWrapperRelativePath;
     }
 }
