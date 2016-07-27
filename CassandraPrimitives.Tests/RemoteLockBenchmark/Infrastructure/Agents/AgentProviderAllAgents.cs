@@ -17,7 +17,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                 .Select(name => new RemoteAgentInfo(
                                     name,
                                     @"Benchmarks\workdir",
-                                    new RemoteMachineCredentials(name, "tc", name, "tc_123456"),
+                                    new RemoteMachineCredentials(name),
                                     Guid.NewGuid().ToString()))
                 .ToList();
         }
