@@ -1,8 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using log4net;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ChildProcessDriver;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ExternalLogging.HttpLogging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestConfigurations;
+using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
@@ -14,16 +20,51 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             logger = LogManager.GetLogger(typeof(Program));
 
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+            
+            if (args.Length < 1 || args[0] != BenchmarkConfigurator.ConstantBenchmarkToken)
+            {
+                var testConfigurations = TestConfiguration.GetFromEnvironmentWithRanges();
+                var teamCityLogger = new TeamCityLogger(Console.Out);
+                teamCityLogger.FormatMessage("Going to run {0} test configuration(s)", testConfigurations.Count);
 
-            var noDeploy = false;
+                foreach (var indexedTestConfiguration in testConfigurations.Select((c, i) => new {Ind = i, Conf = c}))
+                {
+                    teamCityLogger.BeginMessageBlock(string.Format("Test configuration {0}", indexedTestConfiguration.Ind));
+                    BenchmarkConfigurator
+                        .Configure()
+                        .WithAgentProviderFromTeamCity()
+                        .WithCassandraCluster()
+                        .WithTeamCityLogger(teamCityLogger)
+                        .WithConfiguration(indexedTestConfiguration.Conf)
+                        .Start();
+                    teamCityLogger.EndMessageBlock();
+                }
+            }
+            else
+                ChildProcess(args.Skip(1).ToArray());
+        }
 
-            BenchmarkConfigurator
-                .Configure()
-                .WithAgentProviderFromTeamCity()
-                .WithCassandraCluster()
-                .WithTeamCityLogger()
-                .WithConfigurationFromTeamCity()
-                .Start();
+
+        private static void ChildProcess(string[] args)
+        {
+            if (args.Length < 3)
+                throw new Exception("Not enough arguments");
+
+            int processInd;
+            if (!int.TryParse(args[0], out processInd))
+                throw new Exception(string.Format("Invalid process id {0}", args[0]));
+
+            logger.InfoFormat("Process id is {0}", processInd);
+            logger.InfoFormat("Remote http address is {0}", args[1]);
+
+            var processToken = args[2];
+
+            TestConfiguration configuration;
+            using (var httpExternalDataGetter = new HttpExternalDataGetter(args[1], 12345))
+                configuration = httpExternalDataGetter.GetTestConfiguration().Result;
+            logger.InfoFormat("Configuration was received");
+
+            ChildProcessDriver.RunSingleTest(configuration, processInd, processToken);
         }
 
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
