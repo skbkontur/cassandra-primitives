@@ -71,7 +71,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                 var wrapperPath = Path.Combine(agent.WorkDirectory.AsRemote, wrapperRelativePath);
                 using (var taskScheduler = new TaskSchedulerAdapter(agent.Credentials, wrapperPath))
                 {
-                    var task = taskScheduler.RunTaskInWrapper(string.Format("BenchmarkProcess_{0}", agent.ProcessInd), testRunnerPath, new[] {agent.ProcessInd.ToString(), configuration.RemoteHostName, agent.Token}, agent.ProcessDirectory.AsLocal);
+                    var task = taskScheduler.RunTaskInWrapper(string.Format("BenchmarkProcess_{0}", agent.ProcessInd), testRunnerPath, new[] {BenchmarkConfigurator.ConstantBenchmarkToken, agent.ProcessInd.ToString(), configuration.RemoteHostName, agent.Token}, agent.ProcessDirectory.AsLocal);
                     tasks.Add(task);
                 }
             }
