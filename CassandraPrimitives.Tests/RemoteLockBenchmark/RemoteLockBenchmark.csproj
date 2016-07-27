@@ -134,6 +134,7 @@
     <Compile Include="Infrastructure\TestConfigurations\RemoteLockImplementations.cs" />
     <Compile Include="Infrastructure\TestConfigurations\SimpleTestResult.cs" />
     <Compile Include="Infrastructure\TestConfigurations\TestConfiguration.cs" />
+    <Compile Include="Infrastructure\TestConfigurations\TestScenarios.cs" />
     <Compile Include="Scenarios\TestProgressProcessors\Event.cs" />
     <Compile Include="Implementations\RemoteLocks\Cassandra\CassandraRemoteLock.cs" />
     <Compile Include="Implementations\RemoteLocks\Cassandra\CassandraRemoteLockGetter.cs" />

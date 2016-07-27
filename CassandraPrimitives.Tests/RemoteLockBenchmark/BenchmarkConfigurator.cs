@@ -102,12 +102,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             return this;
         }
 
-        public BenchmarkConfigurator WithTest<TTest>()
-        {
-            testType = typeof(TTest);
-            return this;
-        }
-
         public void Start()
         {
             try
@@ -160,7 +154,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 configuration = httpExternalDataGetter.GetTestConfiguration().Result;
             logger.InfoFormat("Configuration was received");
 
-            ChildProcessDriver.RunSingleTest(configuration, processInd, processToken, testType);
+            ChildProcessDriver.RunSingleTest(configuration, processInd, processToken);
         }
 
         public const string ConstantBenchmarkToken = "constant-benchmark-token-f6718f48-0cc5-4f20-aec6-102d9fa09635";
@@ -179,7 +173,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private readonly List<IDisposable> toDispose;
         private bool noDeploy;
         private TestConfiguration testConfiguration;
-        private Type testType;
 
         internal class DeployStep
         {

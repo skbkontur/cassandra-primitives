@@ -24,7 +24,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 .WithCassandraCluster()
                 .WithTeamCityLogger()
                 .WithConfigurationFromTeamCity()
-                .WithTest<TimelineTest>()
                 .Start();
         }
 
