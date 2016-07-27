@@ -44,14 +44,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 
                     teamCityLogger.EndMessageBlock();
 
-                    teamCityLogger.SetBuildStatus(TeamCityBuildStatus.Success, "Done");
+                    //teamCityLogger.SetBuildStatus(TeamCityBuildStatus.Success, "Done");
                 }
             }
             catch (Exception e)
             {
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Failure, "Exception occured while working with child processes:\n{0}", e);
                 teamCityLogger.EndMessageBlock();
-                teamCityLogger.SetBuildStatus("Fail", "Fail because of unexpected exceptions");
+                //teamCityLogger.SetBuildStatus("Fail", "Fail because of unexpected exceptions");
             }
         }
 
