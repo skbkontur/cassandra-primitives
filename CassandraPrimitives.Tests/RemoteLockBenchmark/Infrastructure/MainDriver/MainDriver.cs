@@ -13,12 +13,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 {
     public class MainDriver
     {
-        public MainDriver(ITeamCityLogger teamCityLogger, TestConfiguration configuration, IAgentProvider agentProvider, bool noDeploy)
+        public MainDriver(ITeamCityLogger teamCityLogger, TestConfiguration configuration, ITestProgressProcessor testProgressProcessor, IAgentProvider agentProvider, bool noDeploy)
         {
             this.teamCityLogger = teamCityLogger;
             this.noDeploy = noDeploy;
             this.agentProvider = agentProvider;
             this.configuration = configuration;
+            this.testProgressProcessor = testProgressProcessor;
         }
 
         public void Run(Dictionary<string, object> optionsSet)
@@ -34,8 +35,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             try
             {
                 using (new HttpTestDataProvider(configuration, optionsSet))
-                using (var testProcessor = new TimelineTestProgressProcessor(configuration, teamCityLogger))
-                using (new HttpExternalLogProcessor(configuration, teamCityLogger, testAgents, testProcessor))
+                using (new HttpExternalLogProcessor(configuration, teamCityLogger, testAgents, testProgressProcessor))
                 using (var processLauncher = new RemoteProcessLauncher(teamCityLogger, testAgents, wrapperRelativePath, noDeploy))
                 {
                     processLauncher.StartProcesses(configuration);
@@ -59,5 +59,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         private readonly bool noDeploy;
         private readonly IAgentProvider agentProvider;
         private readonly TestConfiguration configuration;
+        private readonly ITestProgressProcessor testProgressProcessor;
     }
 }
