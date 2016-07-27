@@ -21,9 +21,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
             var configuration = new TestConfiguration(
-                amountOfThreads : 4,
-                amountOfProcesses : 1,
-                amountOfLocksPerThread : 20,
+                amountOfThreads : 15,
+                amountOfProcesses : 3,
+                amountOfLocksPerThread : 400,
                 minWaitTimeMilliseconds : 100,
                 maxWaitTimeMilliseconds : 200,
                 remoteHostName : IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName,
@@ -37,7 +37,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             BenchmarkConfigurator
                 .Configure()
                 .WithAgentProvider(agentProvider)
-                .WithCassandraCluster(1)
+                .WithCassandraCluster(3)
                 .WithTeamCityLogger(teamCityLogger)
                 .WithConfiguration(configuration)
                 .WithTest<TimelineTest>()
