@@ -100,15 +100,15 @@
     <Reference Include="System.Xml" />
     <Reference Include="ZooKeeper.LocalEnsemble">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\tmp\ZookeeperWithCement\zookeeper\ZooKeeper.LocalEnsemble\bin\Release\ZooKeeper.LocalEnsemble.dll</HintPath>
+      <HintPath>..\..\Assemblies\ZooKeeper\ZooKeeper.LocalEnsemble.dll</HintPath>
     </Reference>
     <Reference Include="ZooKeeper.Recipes">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\tmp\ZookeeperWithCement\zookeeper\ZooKeeper.Recipes\bin\Release\ZooKeeper.Recipes.dll</HintPath>
+      <HintPath>..\..\Assemblies\ZooKeeper\ZooKeeper.Recipes.dll</HintPath>
     </Reference>
     <Reference Include="ZooKeeper.Client">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\tmp\ZookeeperWithCement\zookeeper\ZooKeeper.Client\bin\Release\ZooKeeper.Client.dll</HintPath>
+      <HintPath>..\..\Assemblies\ZooKeeper\ZooKeeper.Client.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
