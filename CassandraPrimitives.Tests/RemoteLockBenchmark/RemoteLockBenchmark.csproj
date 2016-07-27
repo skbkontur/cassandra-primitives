@@ -112,6 +112,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BenchmarkConfigurator.cs" />
     <Compile Include="Implementations\CassandraSettings\CassandraInitializerSettings.cs" />
     <Compile Include="Implementations\CassandraSettings\CassandraMetaProvider.cs" />
     <Compile Include="Implementations\CassandraSettings\ColumnFamilies.cs" />
