@@ -26,16 +26,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
             var argsRepresentation = string.Format("[{0}]", string.Join(", ", arguments ?? new string[0]));
             logger.InfoFormat("Scheduling task. Path = {0}, name = {1}, arguments = {2}, machine = {3}", path, taskName, argsRepresentation, credentials.MachineName);
 
-            var existingTask = taskService.FindTask(taskName);
-            if (existingTask != null)
-            {
-                logger.InfoFormat("Found existing task with name {0}", taskName);
-                existingTask.Stop();
-                taskService.RootFolder.DeleteTask(taskName);
-                logger.InfoFormat("Existing task with name {0} successfully stopped and deleted", taskName);
-            }
-            else
-                logger.InfoFormat("Existing task with name {0} not found", taskName);
+            StopAndDeleteTask(taskName);
 
             try
             {
@@ -64,6 +55,20 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
                     throw new Exception(string.Format("Invalid user or password (username - {0})", credentials.UserName));
                 throw;
             }
+        }
+
+        public void StopAndDeleteTask(string taskName)
+        {
+            var existingTask = taskService.FindTask(taskName);
+            if (existingTask != null)
+            {
+                logger.InfoFormat("Found existing task with name {0}", taskName);
+                existingTask.Stop();
+                taskService.RootFolder.DeleteTask(taskName);
+                logger.InfoFormat("Existing task with name {0} successfully stopped and deleted", taskName);
+            }
+            else
+                logger.InfoFormat("Existing task with name {0} not found", taskName);
         }
 
         private bool IsTaskRunning(Task task, int timeoutMilliseconds)
