@@ -141,6 +141,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             ChildProcessDriver.RunSingleTest(configuration, processInd, processToken, testType);
         }
 
+        public const string ConstantBenchmarkToken = "constant-benchmark-token-f6718f48-0cc5-4f20-aec6-102d9fa09635";
+
         private readonly Dictionary<string, object> optionsSet;
         private readonly List<DeployStep> deploySteps;
         private ITeamCityLogger teamCityLogger;
@@ -149,7 +151,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private bool noDeploy;
         private TestConfiguration testConfiguration;
         private Type testType;
-        public const string ConstantBenchmarkToken = "constant-benchmark-token-f6718f48-0cc5-4f20-aec6-102d9fa09635";
 
         internal class DeployStep
         {

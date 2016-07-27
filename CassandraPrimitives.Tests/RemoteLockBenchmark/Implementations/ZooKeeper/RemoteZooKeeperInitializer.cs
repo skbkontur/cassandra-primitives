@@ -23,10 +23,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
             var wrapperPath = taskWrapperPath.AsLocal;
 
             var deployDirectory = Path.Combine(remoteWorkDir.AsRemote, "..", "ZooKeeper");
-            if (!noDeploy)
-                ZookeeperDeployer.Deploy(settings, deployDirectory);
             using (var taskSchedulerAdapter = new TaskSchedulerAdapter(credentials, wrapperPath))
             {
+                taskSchedulerAdapter.StopAndDeleteTask("ZookeeperNode");
+                if (!noDeploy)
+                    ZookeeperDeployer.Deploy(settings, deployDirectory);
                 var task = taskSchedulerAdapter.RunTaskInWrapper("ZookeeperNode", Path.Combine(remoteWorkDir.AsLocal, "..", "ZooKeeper", "bin", "zkServer.cmd"), directory : Path.Combine(remoteWorkDir.AsLocal, "..", "ZooKeeper", "bin"));
                 remoteTasks.Add(task);
             }

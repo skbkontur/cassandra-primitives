@@ -25,31 +25,23 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             this.noDeploy = noDeploy;
         }
 
-        private void DeployTask(string targetDirectory)
+        private void DeployTask(RemoteAgent agent)
         {
+            if (noDeploy)
+                return;
+            var remoteDir = agent.ProcessDirectory.AsRemote;
+            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Cleaning directory {1} for process {0}...", agent.ProcessInd, remoteDir);
+            if (Directory.Exists(remoteDir))
+                CleanDirectory(remoteDir);
+            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Deploying task {0} to '{1}'...", agent.ProcessInd, remoteDir);
             var templateDir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-            var targetDir = new DirectoryInfo(targetDirectory);
+            var targetDir = new DirectoryInfo(remoteDir);
             templateDir.CopyTo(targetDir, true);
         }
 
         private void CleanDirectory(string directory)
         {
             Directory.Delete(directory, true);
-        }
-
-        public void DeployTasks(IEnumerable<RemoteAgent> agents)
-        {
-            if (noDeploy)
-                return;
-            foreach (var agent in agents)
-            {
-                var remoteDir = agent.ProcessDirectory.AsRemote;
-                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Cleaning directory {1} for process {0}...", agent.ProcessInd, remoteDir);
-                if (Directory.Exists(remoteDir))
-                    CleanDirectory(remoteDir);
-                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Deploying task {0} to '{1}'...", agent.ProcessInd, remoteDir);
-                DeployTask(remoteDir);
-            }
         }
 
         public void StartProcesses(TestConfiguration configuration)
@@ -62,16 +54,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                 .Take(configuration.AmountOfProcesses)
                 .Select((agent, i) => new RemoteAgent(agent, i))
                 .ToList();
-            DeployTasks(agents);
             foreach (var agent in agents)
             {
-                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Starting process {0} on agent {1}...", agent.ProcessInd, agent.Name);
-
                 var testRunnerPath = Path.Combine(agent.ProcessDirectory.AsLocal, "Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.exe");
                 var wrapperPath = Path.Combine(agent.WorkDirectory.AsRemote, wrapperRelativePath);
                 using (var taskScheduler = new TaskSchedulerAdapter(agent.Credentials, wrapperPath))
                 {
-                    var task = taskScheduler.RunTaskInWrapper(string.Format("BenchmarkProcess_{0}", agent.ProcessInd), testRunnerPath, new[] {BenchmarkConfigurator.ConstantBenchmarkToken, agent.ProcessInd.ToString(), configuration.RemoteHostName, agent.Token}, agent.ProcessDirectory.AsLocal);
+                    var taskName = string.Format("BenchmarkProcess_{0}", agent.ProcessInd);
+                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Ensuring there is no existing task with same name ({0})...", taskName);
+                    taskScheduler.StopAndDeleteTask(taskName);
+                    DeployTask(agent);
+                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Starting process {0} on agent {1}...", agent.ProcessInd, agent.Name);
+                    var task = taskScheduler.RunTaskInWrapper(taskName, testRunnerPath, new[] {BenchmarkConfigurator.ConstantBenchmarkToken, agent.ProcessInd.ToString(), configuration.RemoteHostName, agent.Token}, agent.ProcessDirectory.AsLocal);
                     tasks.Add(task);
                 }
             }

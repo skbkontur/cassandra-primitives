@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 using System.Net.NetworkInformation;
 
 using log4net;
@@ -24,7 +22,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
             var configuration = new TestConfiguration(
                 amountOfThreads : 4,
-                amountOfProcesses : 3,
+                amountOfProcesses : 1,
                 amountOfLocksPerThread : 20,
                 minWaitTimeMilliseconds : 100,
                 maxWaitTimeMilliseconds : 200,
@@ -39,7 +37,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             BenchmarkConfigurator
                 .Configure()
                 .WithAgentProvider(agentProvider)
-                .WithCassandraCluster(3)
+                .WithCassandraCluster(1)
                 .WithTeamCityLogger(teamCityLogger)
                 .WithConfiguration(configuration)
                 .WithTest<TimelineTest>()
