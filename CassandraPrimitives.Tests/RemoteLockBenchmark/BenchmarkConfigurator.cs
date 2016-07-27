@@ -61,17 +61,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         public BenchmarkConfigurator WithConfiguration(TestConfiguration testConfiguration)
         {
             this.testConfiguration = testConfiguration;
-            this.optionsSet["TestConfiguration"] = testConfiguration;
-            return this;
-        }
-
-        public BenchmarkConfigurator WithConfigurationFromTeamCity()
-        {
-            deploySteps.Add(new DeployStep("Get configuration", () =>
-                {
-                    testConfiguration = TestConfiguration.GetFromEnvironment();
-                    optionsSet["TestConfiguration"] = testConfiguration;
-                }, DeployPriorities.Configuration));
+            optionsSet["TestConfiguration"] = testConfiguration;
             return this;
         }
 
@@ -107,19 +97,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         {
             try
             {
-                var args = Environment.GetCommandLineArgs();
-                if (args.Length < 2 || args[1] != ConstantBenchmarkToken)
+                deploySteps.Add(new DeployStep("MainProcess", MainProcess, DeployPriorities.Driver));
+                foreach (var deployStep in deploySteps.OrderBy(s => s.Priority))
                 {
-                    deploySteps.Add(new DeployStep("MainProcess", MainProcess, DeployPriorities.Driver));
-                    foreach (var deployStep in deploySteps.OrderBy(s => s.Priority))
-                    {
-                        teamCityLogger.BeginMessageBlock(deployStep.Name);
-                        deployStep.Action.Invoke();
-                        teamCityLogger.EndMessageBlock();
-                    }
+                    teamCityLogger.BeginMessageBlock(deployStep.Name);
+                    deployStep.Action.Invoke();
+                    teamCityLogger.EndMessageBlock();
                 }
-                else
-                    ChildProcess(args.Skip(2).ToArray());
             }
             finally
             {
@@ -141,7 +125,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 toDispose.Add(waitForLockTestProgressProcessor);
                 return waitForLockTestProgressProcessor;
             default:
-                throw new Exception(string.Format("Unknown TestScenario {0}", testConfiguration.TestScenario));
+                throw new Exception(String.Format("Unknown TestScenario {0}", testConfiguration.TestScenario));
             }
         }
 
@@ -152,31 +136,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             var driver = new MainDriver(teamCityLogger, testConfiguration, testProgressProcessor, agentProvider, noDeploy);
             driver.Run(optionsSet);
         }
-
-        private void ChildProcess(string[] args)
-        {
-            var logger = LogManager.GetLogger(GetType());
-            if (args.Length < 3)
-                throw new Exception("Not enough arguments");
-
-            int processInd;
-            if (!int.TryParse(args[0], out processInd))
-                throw new Exception(string.Format("Invalid process id {0}", args[0]));
-
-            logger.InfoFormat("Process id is {0}", processInd);
-            logger.InfoFormat("Remote http address is {0}", args[1]);
-
-            var processToken = args[2];
-
-            TestConfiguration configuration;
-            using (var httpExternalDataGetter = new HttpExternalDataGetter(args[1], 12345))
-                configuration = httpExternalDataGetter.GetTestConfiguration().Result;
-            logger.InfoFormat("Configuration was received");
-
-            ChildProcessDriver.RunSingleTest(configuration, processInd, processToken);
-        }
-
-        public const string ConstantBenchmarkToken = "constant-benchmark-token-f6718f48-0cc5-4f20-aec6-102d9fa09635";
 
         internal enum DeployPriorities
         {
@@ -192,6 +151,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private readonly List<IDisposable> toDispose;
         private bool noDeploy;
         private TestConfiguration testConfiguration;
+
+        public const string ConstantBenchmarkToken = "constant-benchmark-token-f6718f48-0cc5-4f20-aec6-102d9fa09635";
 
         internal class DeployStep
         {
