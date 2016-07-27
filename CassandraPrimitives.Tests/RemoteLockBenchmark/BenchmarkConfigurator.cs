@@ -4,7 +4,7 @@ using System.Linq;
 
 using log4net;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Agents;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Agents.Providers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ChildProcessDriver;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ExternalLogging.HttpLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.MainDriver;
@@ -39,9 +39,21 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             return this;
         }
 
+        public BenchmarkConfigurator WithTeamCityLogger()
+        {
+            teamCityLogger = new TeamCityLogger(Console.Out);
+            return this;
+        }
+
         public BenchmarkConfigurator WithAgentProvider(IAgentProvider agentProvider)
         {
             this.agentProvider = agentProvider;
+            return this;
+        }
+
+        public BenchmarkConfigurator WithAgentProviderFromTeamCity()
+        {
+            agentProvider = new AgentProviderFromTeamCity();
             return this;
         }
 
@@ -52,31 +64,41 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             return this;
         }
 
-        public BenchmarkConfigurator WithCassandraCluster(int amountOfNodes)
+        public BenchmarkConfigurator WithConfigurationFromTeamCity()
+        {
+            deploySteps.Add(new DeployStep("Get configuration", () =>
+                {
+                    testConfiguration = TestConfiguration.GetFromEnvironment();
+                    optionsSet["TestConfiguration"] = testConfiguration;
+                }, DeployPriorities.Configuration));
+            return this;
+        }
+
+        public BenchmarkConfigurator WithCassandraCluster()
         {
             deploySteps.Add(new DeployStep("Cassandra deploy", () =>
                 {
-                    var cassandraAgents = agentProvider.AcquireAgents(amountOfNodes);
+                    var cassandraAgents = agentProvider.AcquireAgents(testConfiguration.AmountOfClusterNodes);
                     var wrapperDeployer = new WrapperDeployer(teamCityLogger, noDeploy);
                     wrapperDeployer.DeployWrapperToAgents(cassandraAgents);
                     var cassandraDriver = new CassandraMainDriver(teamCityLogger, cassandraAgents, wrapperDeployer.GetWrapperRelativePath(), noDeploy);
                     toDispose.Add(cassandraDriver.StartCassandraCluster());
                     optionsSet["CassandraClusterSettings"] = cassandraDriver.ClusterSettings;
-                }, 1));
+                }, DeployPriorities.Cluster));
             return this;
         }
 
-        public BenchmarkConfigurator WithZookeeperCluster(int amountOfNodes)
+        public BenchmarkConfigurator WithZookeeperCluster()
         {
             deploySteps.Add(new DeployStep("Zookeeper deploy", () =>
                 {
-                    var zookeeperAgents = agentProvider.AcquireAgents(amountOfNodes);
+                    var zookeeperAgents = agentProvider.AcquireAgents(testConfiguration.AmountOfClusterNodes);
                     var wrapperDeployer = new WrapperDeployer(teamCityLogger, noDeploy);
                     wrapperDeployer.DeployWrapperToAgents(zookeeperAgents);
                     var zookeeperDriver = new ZookeeperMainDriver(teamCityLogger, zookeeperAgents, wrapperDeployer.GetWrapperRelativePath(), noDeploy);
                     toDispose.Add(zookeeperDriver.StartZookeeperCluster());
                     optionsSet["ZookeeperClusterSettings"] = zookeeperDriver.ClusterSettings;
-                }, 1));
+                }, DeployPriorities.Cluster));
             return this;
         }
 
@@ -93,7 +115,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 var args = Environment.GetCommandLineArgs();
                 if (args.Length < 2 || args[1] != ConstantBenchmarkToken)
                 {
-                    deploySteps.Add(new DeployStep("MainProcess", MainProcess, 2));
+                    deploySteps.Add(new DeployStep("MainProcess", MainProcess, DeployPriorities.Driver));
                     foreach (var deployStep in deploySteps.OrderBy(s => s.Priority))
                     {
                         teamCityLogger.BeginMessageBlock(deployStep.Name);
@@ -143,6 +165,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         public const string ConstantBenchmarkToken = "constant-benchmark-token-f6718f48-0cc5-4f20-aec6-102d9fa09635";
 
+        internal enum DeployPriorities
+        {
+            Configuration,
+            Cluster,
+            Driver
+        }
+
         private readonly Dictionary<string, object> optionsSet;
         private readonly List<DeployStep> deploySteps;
         private ITeamCityLogger teamCityLogger;
@@ -154,7 +183,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         internal class DeployStep
         {
-            public DeployStep(string name, Action action, int priority)
+            public DeployStep(string name, Action action, DeployPriorities priority)
             {
                 Name = name;
                 Action = action;
@@ -162,7 +191,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             }
 
             public string Name { get; private set; }
-            public int Priority { get; private set; }
+            public DeployPriorities Priority { get; private set; }
             public Action Action { get; private set; }
         }
     }

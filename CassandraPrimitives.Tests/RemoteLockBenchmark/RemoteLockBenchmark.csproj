@@ -117,9 +117,11 @@
     <Compile Include="Implementations\CassandraSettings\CassandraMetaProvider.cs" />
     <Compile Include="Implementations\CassandraSettings\ColumnFamilies.cs" />
     <Compile Include="Implementations\ZookeeperSettings\ZookeeperClusterSettings.cs" />
+    <Compile Include="Infrastructure\Agents\Providers\AbstractAgentProvider.cs" />
+    <Compile Include="Infrastructure\Agents\Providers\AgentProviderFromTeamCity.cs" />
     <Compile Include="Infrastructure\ChildProcessDriver\ChildProcessDriver.cs" />
-    <Compile Include="Infrastructure\Agents\AgentProviderAllAgents.cs" />
-    <Compile Include="Infrastructure\Agents\AgentProviderWithSingleAgent.cs" />
+    <Compile Include="Infrastructure\Agents\Providers\AgentProviderAllAgents.cs" />
+    <Compile Include="Infrastructure\Agents\Providers\AgentProviderWithSingleAgent.cs" />
     <Compile Include="Infrastructure\ChildProcessDriver\RemoteLockGetterProvider.cs" />
     <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpExternalDataGetter.cs" />
     <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpExternalLogger.cs" />
@@ -160,7 +162,7 @@
     <Compile Include="Infrastructure\ExternalLogging\IExternalLogProcessor.cs" />
     <Compile Include="Infrastructure\MainDriver\HttpTestDataProvider.cs" />
     <Compile Include="Infrastructure\MainDriver\MainDriver.cs" />
-    <Compile Include="Infrastructure\Agents\IAgentProvider.cs" />
+    <Compile Include="Infrastructure\Agents\Providers\IAgentProvider.cs" />
     <Compile Include="Infrastructure\Processes\IProcessLauncher.cs" />
     <Compile Include="Infrastructure\Processes\LocalProcessLauncher.cs" />
     <Compile Include="Infrastructure\Agents\RemoteAgent.cs" />

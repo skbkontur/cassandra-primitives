@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Net.NetworkInformation;
 
 using log4net;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Agents;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestConfigurations;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.Tests;
-using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
@@ -20,26 +16,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-            var configuration = new TestConfiguration(
-                amountOfThreads : 15,
-                amountOfProcesses : 3,
-                amountOfLocksPerThread : 400,
-                minWaitTimeMilliseconds : 100,
-                maxWaitTimeMilliseconds : 200,
-                remoteHostName : IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName,
-                httpPort : 12345,
-                remoteLockImplementation : RemoteLockImplementations.Cassandra);
-
             var noDeploy = false;
-            var teamCityLogger = new TeamCityLogger(Console.Out);
-            var agentProvider = new AgentProviderAllAgents();
 
             BenchmarkConfigurator
                 .Configure()
-                .WithAgentProvider(agentProvider)
-                .WithCassandraCluster(3)
-                .WithTeamCityLogger(teamCityLogger)
-                .WithConfiguration(configuration)
+                .WithAgentProviderFromTeamCity()
+                .WithCassandraCluster()
+                .WithTeamCityLogger()
+                .WithConfigurationFromTeamCity()
                 .WithTest<TimelineTest>()
                 .Start();
         }
