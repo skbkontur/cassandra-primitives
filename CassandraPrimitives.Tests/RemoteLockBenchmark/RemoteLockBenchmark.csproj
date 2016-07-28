@@ -131,6 +131,8 @@
     <Compile Include="Infrastructure\MainDriver\CassandraMainDriver.cs" />
     <Compile Include="Implementations\Cassandra\CassandraClusterStarter.cs" />
     <Compile Include="Implementations\Cassandra\CassandraRemoteNodeStartInfo.cs" />
+    <Compile Include="Infrastructure\TestConfigurations\IRemoteLockBenchmarkEnvironment.cs" />
+    <Compile Include="Infrastructure\TestConfigurations\RemoteLockBenchmarkEnvironment.cs" />
     <Compile Include="Infrastructure\TestConfigurations\RemoteLockImplementations.cs" />
     <Compile Include="Infrastructure\TestConfigurations\SimpleTestResult.cs" />
     <Compile Include="Infrastructure\TestConfigurations\TestConfiguration.cs" />
