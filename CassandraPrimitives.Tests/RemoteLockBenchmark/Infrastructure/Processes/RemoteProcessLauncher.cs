@@ -16,19 +16,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 {
     public class RemoteProcessLauncher : IProcessLauncher
     {
-        public RemoteProcessLauncher(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agentInfos, string wrapperRelativePath, bool noDeploy = false)
+        public RemoteProcessLauncher(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agentInfos, string wrapperRelativePath)
         {
             this.teamCityLogger = teamCityLogger;
             tasks = new List<Task>();
             this.agentInfos = agentInfos;
             this.wrapperRelativePath = wrapperRelativePath;
-            this.noDeploy = noDeploy;
         }
 
         private void DeployTask(RemoteAgent agent)
         {
-            if (noDeploy)
-                return;
             var remoteDir = agent.ProcessDirectory.AsRemote;
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Cleaning directory {1} for process {0}...", agent.ProcessInd, remoteDir);
             if (Directory.Exists(remoteDir))
@@ -100,7 +97,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         private readonly ITeamCityLogger teamCityLogger;
         private readonly List<Task> tasks;
         private readonly List<RemoteAgentInfo> agentInfos;
-        private readonly bool noDeploy;
         private readonly string wrapperRelativePath;
     }
 }

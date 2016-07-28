@@ -12,10 +12,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 {
     public class CassandraMainDriver
     {
-        public CassandraMainDriver(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents, string taskWrapperRelativePath, bool noDeploy)
+        public CassandraMainDriver(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents, string taskWrapperRelativePath)
         {
             this.teamCityLogger = teamCityLogger;
-            this.noDeploy = noDeploy;
             this.taskWrapperRelativePath = taskWrapperRelativePath;
             this.agents = agents;
         }
@@ -33,7 +32,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                 .ToArray();
             ClusterSettings = new CassandraClusterSettings(clusterName, endpoints, endpoints.First());
 
-            return new CassandraClusterStarter(ClusterSettings, remoteCassandraNodeStartInfos, noDeploy);
+            return new CassandraClusterStarter(ClusterSettings, remoteCassandraNodeStartInfos);
         }
 
         private List<CassandraRemoteNodeStartInfo> GetCassandraNodeInfos(string clusterName)
@@ -56,7 +55,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         }
 
         private readonly ITeamCityLogger teamCityLogger;
-        private readonly bool noDeploy;
         private readonly List<RemoteAgentInfo> agents;
         private readonly string taskWrapperRelativePath;
     }

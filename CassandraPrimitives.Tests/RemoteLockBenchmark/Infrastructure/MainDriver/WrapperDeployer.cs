@@ -11,10 +11,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 {
     public class WrapperDeployer
     {
-        public WrapperDeployer(ITeamCityLogger teamCityLogger, bool noDeploy)
+        public WrapperDeployer(ITeamCityLogger teamCityLogger)
         {
             this.teamCityLogger = teamCityLogger;
-            this.noDeploy = noDeploy;
             sourceDirectory = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "Assemblies", "TaskWrapper"));
             sourceHash = sourceDirectory.GetMd5Hash(false);
         }
@@ -37,8 +36,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 
         public void DeployWrapper(RemoteDirectory workDir)
         {
-            if (noDeploy)
-                return;
             teamCityLogger.BeginMessageBlock("Deploying wrapper");
             try
             {
@@ -80,7 +77,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         }
 
         private readonly ITeamCityLogger teamCityLogger;
-        private readonly bool noDeploy;
         private readonly DirectoryInfo sourceDirectory;
         private readonly string sourceHash;
     }

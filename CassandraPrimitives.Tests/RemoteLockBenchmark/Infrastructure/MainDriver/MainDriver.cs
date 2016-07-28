@@ -13,10 +13,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 {
     public class MainDriver
     {
-        public MainDriver(ITeamCityLogger teamCityLogger, TestConfiguration configuration, ITestProgressProcessor testProgressProcessor, IAgentProvider agentProvider, bool noDeploy)
+        public MainDriver(ITeamCityLogger teamCityLogger, TestConfiguration configuration, ITestProgressProcessor testProgressProcessor, IAgentProvider agentProvider)
         {
             this.teamCityLogger = teamCityLogger;
-            this.noDeploy = noDeploy;
             this.agentProvider = agentProvider;
             this.configuration = configuration;
             this.testProgressProcessor = testProgressProcessor;
@@ -28,7 +27,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 
             var testAgents = agentProvider.AcquireAgents(configuration.AmountOfProcesses);
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Agents for tests: {0}", string.Join(", ", testAgents.Select(agent => agent.Name)));
-            var wrapperDeployer = new WrapperDeployer(teamCityLogger, noDeploy);
+            var wrapperDeployer = new WrapperDeployer(teamCityLogger);
             wrapperDeployer.DeployWrapperToAgents(testAgents);
             var wrapperRelativePath = wrapperDeployer.GetWrapperRelativePath();
 
@@ -36,7 +35,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             {
                 using (new HttpTestDataProvider(configuration, optionsSet))
                 using (new HttpExternalLogProcessor(configuration, teamCityLogger, testAgents, testProgressProcessor))
-                using (var processLauncher = new RemoteProcessLauncher(teamCityLogger, testAgents, wrapperRelativePath, noDeploy))
+                using (var processLauncher = new RemoteProcessLauncher(teamCityLogger, testAgents, wrapperRelativePath))
                 {
                     processLauncher.StartProcesses(configuration);
 
@@ -56,7 +55,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         }
 
         private readonly ITeamCityLogger teamCityLogger;
-        private readonly bool noDeploy;
         private readonly IAgentProvider agentProvider;
         private readonly TestConfiguration configuration;
         private readonly ITestProgressProcessor testProgressProcessor;

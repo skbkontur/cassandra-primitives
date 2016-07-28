@@ -11,7 +11,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 {
     public class CassandraClusterStarter : IDisposable
     {
-        public CassandraClusterStarter(CassandraClusterSettings clusterSettings, List<CassandraRemoteNodeStartInfo> remoteNodeStartInfos, bool noDeploy = false)
+        public CassandraClusterStarter(CassandraClusterSettings clusterSettings, List<CassandraRemoteNodeStartInfo> remoteNodeStartInfos)
         {
             cassandraInitialisers = new List<ICassandraInitialiser>();
             ClusterSettings = clusterSettings;
@@ -19,7 +19,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
             {
                 foreach (var remoteNodeStartInfo in remoteNodeStartInfos)
                 {
-                    var cassandraInitializer = new RemoteCassandraInitializer(remoteNodeStartInfo.Credentials, remoteNodeStartInfo.RemoteWorkDir, remoteNodeStartInfo.TaskWrapperRelativePath, noDeploy);
+                    var cassandraInitializer = new RemoteCassandraInitializer(remoteNodeStartInfo.Credentials, remoteNodeStartInfo.RemoteWorkDir, remoteNodeStartInfo.TaskWrapperRelativePath);
                     cassandraInitialisers.Add(cassandraInitializer);
                     cassandraInitializer.CreateNode(remoteNodeStartInfo.Settings);
                 }
