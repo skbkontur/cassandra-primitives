@@ -8,7 +8,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Implementations.ZooKeeper
 {
     //TODO: It's almost a complete copy-paste of SKBKontur.Cassandra.ClusterDeployment.CassandraNode
-    public class ZookeeperDeployer
+    public static class ZookeeperDeployer
     {
         public static void Deploy(ZookeeperNodeSettings settings, string deployDirectory)
         {

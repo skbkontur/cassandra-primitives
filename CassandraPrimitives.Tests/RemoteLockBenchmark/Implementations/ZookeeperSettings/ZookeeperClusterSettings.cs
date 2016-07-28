@@ -7,6 +7,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
             ConnectionString = connectionString;
         }
 
-        public string ConnectionString { get; set; }
+        public string ConnectionString { get; private set; }
     }
 }

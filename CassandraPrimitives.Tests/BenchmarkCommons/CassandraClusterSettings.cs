@@ -22,15 +22,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons
             ConnectionIdleTimeout = TimeSpan.FromMinutes(1);
         }
 
-        public string ClusterName { get; set; }
+        public string ClusterName { get; private set; }
         public ConsistencyLevel ReadConsistencyLevel { get; private set; }
         public ConsistencyLevel WriteConsistencyLevel { get; private set; }
-        public IPEndPoint[] Endpoints { get; set; }
-        public IPEndPoint EndpointForFierceCommands { get; set; }
-        public bool AllowNullTimestamp { get; set; }
-        public int Attempts { get; set; }
-        public int Timeout { get; set; }
-        public int FierceTimeout { get; set; }
-        public TimeSpan? ConnectionIdleTimeout { get; set; }
+        public IPEndPoint[] Endpoints { get; private set; }
+        public IPEndPoint EndpointForFierceCommands { get; private set; }
+        public bool AllowNullTimestamp { get; private set; }
+        public int Attempts { get; private set; }
+        public int Timeout { get; private set; }
+        public int FierceTimeout { get; private set; }
+        public TimeSpan? ConnectionIdleTimeout { get; private set; }
     }
 }

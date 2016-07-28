@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestConfigurations
@@ -10,15 +9,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
     public class TestConfiguration
     {
         public TestConfiguration(
-            int amountOfThreads, 
-            int amountOfProcesses, 
-            int amountOfLocksPerThread, 
-            int minWaitTimeMilliseconds, 
-            int maxWaitTimeMilliseconds, 
-            int amountOfClusterNodes, 
-            string remoteHostName, 
-            int httpPort, 
-            RemoteLockImplementations remoteLockImplementation, 
+            int amountOfThreads,
+            int amountOfProcesses,
+            int amountOfLocksPerThread,
+            int minWaitTimeMilliseconds,
+            int maxWaitTimeMilliseconds,
+            int amountOfClusterNodes,
+            string remoteHostName,
+            int httpPort,
+            RemoteLockImplementations remoteLockImplementation,
             TestScenarios testScenario)
         {
             AmountOfThreads = amountOfThreads;
@@ -54,15 +53,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             var remoteHostName = IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName;
 
             return new TestConfiguration(
-                amountOfThreads, 
-                amountOfProcesses, 
-                amountOfLocksPerThread, 
-                minWaitTimeMilliseconds, 
-                maxWaitTimeMilliseconds, 
-                amountOfClusterNodes, 
-                remoteHostName, 
-                httpPort, 
-                remoteLockImplementation, 
+                amountOfThreads,
+                amountOfProcesses,
+                amountOfLocksPerThread,
+                minWaitTimeMilliseconds,
+                maxWaitTimeMilliseconds,
+                amountOfClusterNodes,
+                remoteHostName,
+                httpPort,
+                remoteLockImplementation,
                 testScenario);
         }
 
@@ -94,16 +93,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 
             return combinations
                 .Select(combination => new TestConfiguration(
-                    (int)combination[0], 
-                    (int)combination[1], 
-                    (int)combination[2], 
-                    (int)combination[3], 
-                    (int)combination[4], 
-                    (int)combination[5], 
-                    remoteHostName, 
-                    (int)combination[6], 
-                    (RemoteLockImplementations)combination[7],
-                    (TestScenarios)combination[8]))
+                                           (int)combination[0],
+                                           (int)combination[1],
+                                           (int)combination[2],
+                                           (int)combination[3],
+                                           (int)combination[4],
+                                           (int)combination[5],
+                                           remoteHostName,
+                                           (int)combination[6],
+                                           (RemoteLockImplementations)combination[7],
+                                           (TestScenarios)combination[8]))
                 .ToList();
         }
 
@@ -115,11 +114,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         private static List<List<object>> Product(int pos, params List<object>[] lists)
         {
             if (lists.Length == pos)
-                return new List<List<object>> { new List<object>() };
+                return new List<List<object>> {new List<object>()};
             var subResults = Product(pos + 1, lists);
             var results = new List<List<object>>();
             foreach (var value in lists[pos])
-                results.AddRange(subResults.Select(subResult => new List<object> { value }.Concat(subResult).ToList()));
+                results.AddRange(subResults.Select(subResult => new List<object> {value}.Concat(subResult).ToList()));
             return results;
         }
 
@@ -135,11 +134,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                 return resultList;
             if (TryParseTeamCityFormattedList(rawValue, out resultList))
                 return resultList;
-            return new List<string>{rawValue};
+            return new List<string> {rawValue};
         }
 
         private static List<TEnum> GetEnumValuesOfParameterFromEnvironment<TEnum>(string parameterName)
-            where TEnum : struct 
+            where TEnum : struct
         {
             var values = GetStringValuesOfParameterFromEnvironment(parameterName);
             var result = new List<TEnum>();

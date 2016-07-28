@@ -18,7 +18,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
             this.noDeploy = noDeploy;
         }
 
-        public void CreateNode(ZookeeperNodeSettings settings)
+        public void CreateAndStartNode(ZookeeperNodeSettings settings)
         {
             var wrapperPath = taskWrapperPath.AsLocal;
 

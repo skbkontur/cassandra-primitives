@@ -22,7 +22,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         {
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Initialising zookeeper...");
 
-            var remoteZookeeperNodeStartInfos = GetZookeeperNodeInfos(agents);
+            var remoteZookeeperNodeStartInfos = GetZookeeperNodeInfos();
 
             var nodeAddresses = agents
                 .Zip(remoteZookeeperNodeStartInfos, (agent, info) => string.Format("{0}:{1}", agent.IpAddress, info.Settings.ClientPort));
@@ -35,7 +35,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 
         public ZookeeperClusterSettings ClusterSettings { get; private set; }
 
-        private List<ZookeeperRemoteNodeStartInfo> GetZookeeperNodeInfos(List<RemoteAgentInfo> agents)
+        private List<ZookeeperRemoteNodeStartInfo> GetZookeeperNodeInfos()
         {
             var addresses = agents.Select(agent => agent.IpAddress.ToString()).ToArray();
             return agents

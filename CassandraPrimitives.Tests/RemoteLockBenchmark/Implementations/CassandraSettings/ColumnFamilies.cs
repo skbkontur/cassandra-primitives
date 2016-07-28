@@ -4,6 +4,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 {
     public static class ColumnFamilies
     {
-        public static ColumnFamilyFullName remoteLock = new ColumnFamilyFullName("RemoteLockBenchmark", "RemoteLock");
+        public static readonly ColumnFamilyFullName RemoteLock = new ColumnFamilyFullName("RemoteLockBenchmark", "RemoteLock");
     }
 }

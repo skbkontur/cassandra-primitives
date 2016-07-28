@@ -5,7 +5,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 {
     public class AgentProviderAllAgents : AbstractAgentProvider
     {
-        internal override List<string> GetAllAgentNames()
+        protected override List<string> GetAllAgentNames()
         {
             return Enumerable
                 .Range(1, 6)

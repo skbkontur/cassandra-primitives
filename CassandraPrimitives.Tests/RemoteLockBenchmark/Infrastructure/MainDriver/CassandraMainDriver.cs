@@ -27,7 +27,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Initialising cassandra...");
 
             var clusterName = "test_cluster";
-            var remoteCassandraNodeStartInfos = GetCassandraNodeInfos(agents, clusterName);
+            var remoteCassandraNodeStartInfos = GetCassandraNodeInfos(clusterName);
             var endpoints = remoteCassandraNodeStartInfos
                 .Select(c => new IPEndPoint(IPAddress.Parse(c.Settings.ListenAddress), c.Settings.RpcPort))
                 .ToArray();
@@ -36,7 +36,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             return new CassandraClusterStarter(ClusterSettings, remoteCassandraNodeStartInfos, noDeploy);
         }
 
-        private List<CassandraRemoteNodeStartInfo> GetCassandraNodeInfos(List<RemoteAgentInfo> agents, string clusterName)
+        private List<CassandraRemoteNodeStartInfo> GetCassandraNodeInfos(string clusterName)
         {
             var seedAddresses = agents.Select(agent => agent.IpAddress.ToString()).ToArray();
             return agents
@@ -44,12 +44,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                         new CassandraRemoteNodeStartInfo(
                             agent.Credentials,
                             new CassandraNodeSettings
-                                {
-                                    ClusterName = clusterName,
-                                    ListenAddress = Dns.GetHostAddresses(agent.Name).First().ToString(),
-                                    SeedAddresses = seedAddresses,
-                                    RpcPort = 59360
-                                },
+                                (
+                                name : clusterName,
+                                listenAddress : agent.IpAddress.ToString(),
+                                seedAddresses : seedAddresses,
+                                rpcPort : 59360
+                                ),
                             agent.WorkDirectory,
                             taskWrapperRelativePath))
                 .ToList();
