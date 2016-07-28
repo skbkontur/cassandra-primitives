@@ -17,7 +17,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
             InitMetrics();
         }
 
-        protected void InitMetrics()
+        private void InitMetrics()
         {
             Metric.SetGlobalContextName(string.Format("EDI.Benchmarks.{0}.{1}.{2}", Process.GetCurrentProcess().ProcessName.Replace('.', '_'), Environment.MachineName.Replace('.', '_'), GetTestName()));
             metric = Metric.Config.WithHttpEndpoint("http://*:1234/").WithAllCounters();

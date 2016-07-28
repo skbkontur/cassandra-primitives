@@ -28,16 +28,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
             ClusterName = clusterName ?? "TestCluster";
         }
 
-        public string Name { get; set; }
-        public int JmxPort { get; set; }
-        public int GossipPort { get; set; }
-        public int RpcPort { get; set; }
-        public int CqlPort { get; set; }
-        public string DataBaseDirectory { get; set; }
-        public string ListenAddress { get; set; }
-        public string RpsAddress { get; set; }
-        public string[] SeedAddresses { get; set; }
-        public string InitialToken { get; set; }
-        public string ClusterName { get; set; }
+        public string Name { get; private set; }
+        public int JmxPort { get; private set; }
+        public int GossipPort { get; private set; }
+        public int RpcPort { get; private set; }
+        public int CqlPort { get; private set; }
+        public string DataBaseDirectory { get; private set; }
+        public string ListenAddress { get; private set; }
+        public string RpsAddress { get; private set; }
+        public string[] SeedAddresses { get; private set; }
+        public string InitialToken { get; private set; }
+        public string ClusterName { get; private set; }
     }
 }

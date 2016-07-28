@@ -5,7 +5,7 @@ using SKBKontur.Cassandra.ClusterDeployment;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation
 {
-    public class CassandraDeployer
+    public static class CassandraDeployer
     {
         public static void DeployCassandra(CassandraNodeSettings settings, string deployDirectory)
         {
@@ -33,7 +33,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
             return node;
         }
 
-        internal static string FindCassandraTemplateDirectory(string currentDir)
+        private static string FindCassandraTemplateDirectory(string currentDir)
         {
             if (currentDir == null)
                 throw new Exception("Can't find directory with Cassandra templates");

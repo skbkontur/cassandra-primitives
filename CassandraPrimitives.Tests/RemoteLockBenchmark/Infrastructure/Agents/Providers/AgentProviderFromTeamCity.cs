@@ -6,7 +6,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 {
     public class AgentProviderFromTeamCity : AbstractAgentProvider
     {
-        internal override List<string> GetAllAgentNames()
+        protected override List<string> GetAllAgentNames()
         {
             var rawAgents = Environment.GetEnvironmentVariable("benchmark.Agents");
             if (rawAgents == null)

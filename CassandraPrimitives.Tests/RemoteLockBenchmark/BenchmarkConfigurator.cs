@@ -2,11 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using log4net;
-
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Agents.Providers;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ChildProcessDriver;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ExternalLogging.HttpLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.MainDriver;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestConfigurations;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.TestProgressProcessors;
@@ -23,7 +19,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             optionsSet = new Dictionary<string, object>();
         }
 
-        public static BenchmarkConfigurator Configure()
+        public static BenchmarkConfigurator CreateNew()
         {
             return new BenchmarkConfigurator();
         }
@@ -93,7 +89,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             return this;
         }
 
-        public void Start()
+        public void StartAndWaitForFinish()
         {
             try
             {
@@ -144,6 +140,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             Driver
         }
 
+        public const string ConstantBenchmarkToken = "constant-benchmark-token-f6718f48-0cc5-4f20-aec6-102d9fa09635";
+
         private readonly Dictionary<string, object> optionsSet;
         private readonly List<DeployStep> deploySteps;
         private ITeamCityLogger teamCityLogger;
@@ -151,8 +149,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private readonly List<IDisposable> toDispose;
         private bool noDeploy;
         private TestConfiguration testConfiguration;
-
-        public const string ConstantBenchmarkToken = "constant-benchmark-token-f6718f48-0cc5-4f20-aec6-102d9fa09635";
 
         internal class DeployStep
         {

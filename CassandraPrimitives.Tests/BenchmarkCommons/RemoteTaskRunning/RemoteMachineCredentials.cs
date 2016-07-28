@@ -10,9 +10,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
             Password = password;
         }
 
-        public string MachineName { get; set; }
-        public string UserName { get; set; }
-        public string AccountDomain { get; set; }
-        public string Password { get; set; }
+        public string MachineName { get; private set; }
+        public string UserName { get; private set; }
+        public string AccountDomain { get; private set; }
+        public string Password { get; private set; }
     }
 }

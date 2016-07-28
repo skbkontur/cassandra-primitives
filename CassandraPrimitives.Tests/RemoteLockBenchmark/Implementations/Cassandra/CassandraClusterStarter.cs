@@ -39,7 +39,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 
         public ICassandraClusterSettings ClusterSettings { get; private set; }
 
-        public void DisposeCassandraInitialisers()
+        private void DisposeCassandraInitialisers()
         {
             if (cassandraInitialisers == null)
                 return;

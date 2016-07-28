@@ -11,8 +11,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
             LockTtl = lockTtl;
         }
 
-        public string ConnectionString { get; set; }
-        public string Namespace { get; set; }
-        public TimeSpan LockTtl { get; set; }
+        public string ConnectionString { get; private set; }
+        public string Namespace { get; private set; }
+        public TimeSpan LockTtl { get; private set; }
     }
 }

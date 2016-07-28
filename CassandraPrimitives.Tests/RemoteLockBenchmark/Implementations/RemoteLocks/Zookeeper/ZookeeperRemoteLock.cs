@@ -35,7 +35,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 
         private readonly DistributedLock distributedLock;
 
-        internal class AcquiredLock : IDisposable
+        private class AcquiredLock : IDisposable
         {
             public AcquiredLock(DistributedLock distributedLock)
             {

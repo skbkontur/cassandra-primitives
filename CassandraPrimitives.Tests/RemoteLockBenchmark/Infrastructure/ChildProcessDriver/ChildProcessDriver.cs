@@ -8,7 +8,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenario
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ChildProcessDriver
 {
-    public class ChildProcessDriver
+    public static class ChildProcessDriver
     {
         public static void RunSingleTest(TestConfiguration configuration, int processInd, string processToken)
         {

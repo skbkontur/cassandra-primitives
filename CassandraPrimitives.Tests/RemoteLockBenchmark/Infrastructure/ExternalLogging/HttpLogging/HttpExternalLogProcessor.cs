@@ -18,7 +18,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             this.configuration = configuration;
             this.agents = agents;
             this.teamCityLogger = teamCityLogger;
-            this.testProgressProcessor = testProgressProcessor;
 
             httpServer = new HttpServer(configuration.HttpPort);
             httpServer.AddMethod("publish_progress", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandlePublishProgress));
@@ -69,6 +68,5 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         private readonly ITeamCityLogger teamCityLogger;
         private readonly TestConfiguration configuration;
         private readonly List<RemoteAgentInfo> agents;
-        private readonly ITestProgressProcessor testProgressProcessor;
     }
 }

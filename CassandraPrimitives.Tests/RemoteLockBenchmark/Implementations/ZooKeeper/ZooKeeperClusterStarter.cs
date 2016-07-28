@@ -20,7 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
                     teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Initialising zookeeper on {0}...", remoteNodeStartInfo.Credentials.MachineName);
                     var zookeeperInitializer = new RemoteZookeeperInitializer(remoteNodeStartInfo.Credentials, remoteNodeStartInfo.RemoteWorkDir, remoteNodeStartInfo.TaskWrapperPath, noDeploy);
                     zookeeperInitialisers.Add(zookeeperInitializer);
-                    zookeeperInitializer.CreateNode(remoteNodeStartInfo.Settings);
+                    zookeeperInitializer.CreateAndStartNode(remoteNodeStartInfo.Settings);
                 }
             }
             catch (Exception)
@@ -32,7 +32,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 
         public ZookeeperClusterSettings ClusterSettings { get; private set; }
 
-        public void DisposeZookeeperInitialisers()
+        private void DisposeZookeeperInitialisers()
         {
             if (zookeeperInitialisers == null)
                 return;

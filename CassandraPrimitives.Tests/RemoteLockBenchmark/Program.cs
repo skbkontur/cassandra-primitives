@@ -39,7 +39,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     try
                     {
                         var configurator = BenchmarkConfigurator
-                            .Configure()
+                            .CreateNew()
                             .WithAgentProviderFromTeamCity()
                             .WithTeamCityLogger(teamCityLogger)
                             .WithConfiguration(indexedTestConfiguration.Conf);
@@ -54,7 +54,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                         default:
                             throw new Exception(string.Format("Type of cluster for {0} is unknown", indexedTestConfiguration.Conf.RemoteLockImplementation));
                         }
-                        configurator.Start();
+                        configurator.StartAndWaitForFinish();
                     }
                     finally
                     {
