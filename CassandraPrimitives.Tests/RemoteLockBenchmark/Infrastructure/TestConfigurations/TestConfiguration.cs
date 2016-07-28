@@ -133,6 +133,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             List<string> resultList;
             if (TryParseList(rawValue, out resultList))
                 return resultList;
+            if (TryParseTeamCityFormattedList(rawValue, out resultList))
+                return resultList;
             return new List<string>{rawValue};
         }
 
@@ -197,7 +199,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         private static bool TryParseListOfInts(string source, out List<int> result)
         {
             List<string> parsedTokens;
-            if (!TryParseList(source, out parsedTokens))
+            if (!TryParseList(source, out parsedTokens) && !TryParseTeamCityFormattedList(source, out parsedTokens))
             {
                 result = null;
                 return false;
@@ -221,6 +223,21 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         {
             source = Regex.Replace(source, @"\s*", "");
             var match = Regex.Match(source, @"^\[([^,]+)(,[^,]+)*\]$");
+            if (match.Success)
+            {
+                var array = new string[match.Groups.Count];
+                match.Groups.CopyTo(array, 0);
+                result = array.ToList();
+                return true;
+            }
+            result = null;
+            return false;
+        }
+
+        private static bool TryParseTeamCityFormattedList(string source, out List<string> result)
+        {
+            source = Regex.Replace(source, @"\s*", "");
+            var match = Regex.Match(source, @"^([^|]+)(|[^|]+)*$");
             if (match.Success)
             {
                 var array = new string[match.Groups.Count];
