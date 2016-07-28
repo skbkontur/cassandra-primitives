@@ -157,7 +157,6 @@
     <Compile Include="Scenarios\Tests\TimeLineTest.cs" />
     <Compile Include="Infrastructure\MainDriver\WrapperDeployer.cs" />
     <Compile Include="Infrastructure\MainDriver\ZookeeperMainDriver.cs" />
-    <Compile Include="Implementations\ZooKeeper\RemoteZooKeeperInitializer.cs" />
     <Compile Include="Implementations\ZooKeeper\ZookeeperClusterStarter.cs" />
     <Compile Include="Infrastructure\ExternalLogging\FileLoggingTools.cs" />
     <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpExternalLogProcessor.cs" />
@@ -177,8 +176,6 @@
     <Compile Include="Infrastructure\ExternalLogging\SimpleExternalLogProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Implementations\ZooKeeper\ZookeeperDeployer.cs" />
-    <Compile Include="Implementations\ZooKeeper\ZookeeperNodeSettings.cs" />
     <Compile Include="Implementations\ZooKeeper\ZookeeperRemoteNodeStartInfo.cs" />
     <Compile Include="Scenarios\Tests\WaitForLockTest.cs" />
   </ItemGroup>
