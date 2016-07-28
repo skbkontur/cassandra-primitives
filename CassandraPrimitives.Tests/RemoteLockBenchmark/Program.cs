@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 using log4net;
 
@@ -33,7 +34,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     BenchmarkConfigurator
                         .Configure()
                         .WithAgentProviderFromTeamCity()
-                        .WithCassandraCluster()
+                        .WithCassandraCluster()//TODO!
                         .WithTeamCityLogger(teamCityLogger)
                         .WithConfiguration(indexedTestConfiguration.Conf)
                         .Start();
