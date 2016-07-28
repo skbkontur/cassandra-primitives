@@ -13,13 +13,20 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
     public class Program
     {
-        private static void Main(string[] args)
+        public Program()
         {
             Log4NetConfiguration.InitializeOnce();
             logger = LogManager.GetLogger(typeof(Program));
-
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+        }
 
+        private static void Main(string[] args)
+        {
+            new Program().Run(args);
+        }
+
+        private void Run(string[] args)
+        {
             if (args.Length < 1 || args[0] != BenchmarkConfigurator.ConstantBenchmarkToken)
             {
                 var testConfigurations = TestConfiguration.GetFromEnvironmentWithRanges();
@@ -59,7 +66,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 ChildProcess(args.Skip(1).ToArray());
         }
 
-        private static void ChildProcess(string[] args)
+        private void ChildProcess(string[] args)
         {
             if (args.Length < 3)
                 throw new Exception("Not enough arguments");
@@ -81,13 +88,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             ChildProcessDriver.RunSingleTest(configuration, processInd, processToken);
         }
 
-        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Console.WriteLine(e.ExceptionObject.ToString());
             logger.Error(e.ExceptionObject.ToString());
             Environment.Exit(1);
         }
 
-        private static ILog logger;
+        private readonly ILog logger;
     }
 }
