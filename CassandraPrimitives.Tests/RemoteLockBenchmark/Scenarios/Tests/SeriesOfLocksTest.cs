@@ -12,7 +12,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 {
     public class SeriesOfLocksTest : ITest<SeriesOfLocksProgressMessage>
     {
-        public SeriesOfLocksTest(TestConfiguration configuration, IRemoteLockGetterProvider remoteLockGetterProvider, IExternalProgressLogger<SeriesOfLocksProgressMessage> externalLogger, HttpExternalDataGetter httpExternalDataGetter)
+        public SeriesOfLocksTest(TestConfiguration configuration, IRemoteLockGetterProvider remoteLockGetterProvider, IExternalProgressLogger externalLogger, HttpExternalDataGetter httpExternalDataGetter)
         {
             this.configuration = configuration;
             lockIdCommonPrefix = httpExternalDataGetter.GetLockId().Result;
@@ -69,7 +69,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
         private const long publishIntervalMs = 5000;
         private readonly TestConfiguration configuration;
         private readonly Random rand;
-        private readonly IExternalProgressLogger<SeriesOfLocksProgressMessage> externalLogger;
+        private readonly IExternalProgressLogger externalLogger;
         private readonly IRemoteLockGetterProvider remoteLockGetterProvider;
         private readonly string lockIdCommonPrefix;
     }

@@ -6,7 +6,12 @@ using log4net;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ChildProcessDriver;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ExternalLogging.HttpLogging;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Registry;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestConfigurations;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestRunning;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.ProgressMessages;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.TestProgressProcessors;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.Tests;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
@@ -27,6 +32,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         private void Run(string[] args)
         {
+            var scenariosRegistry = CreateRegistry();
+
             if (args.Length < 1 || args[0] != BenchmarkConfigurator.ConstantBenchmarkToken)
             {
                 var testConfigurations = TestConfiguration.GetFromEnvironmentWithRanges(RemoteLockBenchmarkEnvironment.GetFromEnvironment());
@@ -40,6 +47,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     {
                         var configurator = BenchmarkConfigurator
                             .CreateNew()
+                            .WithScenariosRegistry(scenariosRegistry)
                             .WithAgentProviderFromTeamCity()
                             .WithTeamCityLogger(teamCityLogger)
                             .WithConfiguration(indexedTestConfiguration.Conf);
@@ -63,10 +71,44 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 }
             }
             else
-                ChildProcess(args.Skip(1).ToArray());
+                ChildProcess(args.Skip(1).ToArray(), scenariosRegistry);
         }
 
-        private void ChildProcess(string[] args)
+        private IScenariosRegistry CreateRegistry()
+        {
+            var scenariosRegistry = new ScenariosRegistry();
+
+            scenariosRegistry.Register<TimelineProgressMessage, TimelineTest, TimelineTestProgressProcessor>(
+                TestScenarios.Timeline,
+                options =>
+                {
+                    var remoteLockGetterProvider = new RemoteLockGetterProvider(options.ExternalDataGetter, options.Configuration, options.ExternalProgressLogger);
+                    return new TimelineTest(options.Configuration, remoteLockGetterProvider, options.ExternalProgressLogger, options.ExternalDataGetter, options.ProcessInd);
+                },
+                options => new TimelineTestProgressProcessor(options.Configuration, options.TeamCityLogger));
+
+            scenariosRegistry.Register<WaitForLockProgressMessage, WaitForLockTest, WaitForLockTestProgressProcessor>(
+                TestScenarios.WaitForLock,
+                options =>
+                {
+                    var remoteLockGetterProvider = new RemoteLockGetterProvider(options.ExternalDataGetter, options.Configuration, options.ExternalProgressLogger);
+                    return new WaitForLockTest(options.Configuration, remoteLockGetterProvider, options.ExternalProgressLogger, options.ExternalDataGetter);
+                },
+                options => new WaitForLockTestProgressProcessor(options.Configuration, options.TeamCityLogger));
+
+            scenariosRegistry.Register<SeriesOfLocksProgressMessage, SeriesOfLocksTest, SeriesOfLocksTestProgressProcessor>(
+                TestScenarios.SeriesOfLocks,
+                options =>
+                {
+                    var remoteLockGetterProvider = new RemoteLockGetterProvider(options.ExternalDataGetter, options.Configuration, options.ExternalProgressLogger);
+                    return new SeriesOfLocksTest(options.Configuration, remoteLockGetterProvider, options.ExternalProgressLogger, options.ExternalDataGetter);
+                },
+                options => new SeriesOfLocksTestProgressProcessor(options.Configuration, options.TeamCityLogger));
+
+            return scenariosRegistry;
+        }
+
+        private void ChildProcess(string[] args, IScenariosRegistry scenariosRegistry)
         {
             if (args.Length < 3)
                 throw new Exception("Not enough arguments");
@@ -85,7 +127,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 configuration = httpExternalDataGetter.GetTestConfiguration().Result;
             logger.InfoFormat("Configuration was received");
 
-            ChildProcessDriver.RunSingleTest(configuration, processInd, processToken);
+            ChildProcessDriver.RunSingleTest(configuration, processInd, processToken, scenariosRegistry);
         }
 
         private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)

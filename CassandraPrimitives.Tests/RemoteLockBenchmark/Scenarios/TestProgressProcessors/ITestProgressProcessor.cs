@@ -3,6 +3,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
     public interface ITestProgressProcessor
     {
         string HandlePublishProgress(string request, int processInd);
-        string HandleLog(string request, int processInd);
+        string HandleLogMessage(string request, int processInd);
     }
 }

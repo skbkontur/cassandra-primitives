@@ -2,11 +2,15 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenario
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.Tests
 {
-    public interface ITest<TProgressMessage>
-        where TProgressMessage : IProgressMessage
+    public interface ITest
     {
         void SetUp();
         void DoWorkInSingleThread(int threadInd);
         void TearDown();
+    }
+
+    public interface ITest<TProgressMessage> : ITest
+        where TProgressMessage : IProgressMessage
+    {
     }
 }

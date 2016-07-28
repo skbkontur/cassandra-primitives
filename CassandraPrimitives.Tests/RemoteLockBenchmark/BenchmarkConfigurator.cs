@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Agents.Providers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.MainDriver;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Registry;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestConfigurations;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.TestProgressProcessors;
 using SKBKontur.Catalogue.TeamCity;
@@ -22,6 +24,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         public static BenchmarkConfigurator CreateNew()
         {
             return new BenchmarkConfigurator();
+        }
+
+        public BenchmarkConfigurator WithScenariosRegistry(IScenariosRegistry scenariosRegistry)
+        {
+            this.scenariosRegistry = scenariosRegistry;
+            return this;
         }
 
         public BenchmarkConfigurator WithTeamCityLogger(ITeamCityLogger teamCityLogger)
@@ -104,23 +112,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         private ITestProgressProcessor GetTestProgressProcessor()
         {
-            switch (testConfiguration.TestScenario)
-            {
-            case TestScenarios.Timeline:
-                var timelineTestProgressProcessor = new TimelineTestProgressProcessor(testConfiguration, teamCityLogger);
-                toDispose.Add(timelineTestProgressProcessor);
-                return timelineTestProgressProcessor;
-            case TestScenarios.WaitForLock:
-                var waitForLockTestProgressProcessor = new WaitForLockTestProgressProcessor(testConfiguration, teamCityLogger);
-                toDispose.Add(waitForLockTestProgressProcessor);
-                return waitForLockTestProgressProcessor;
-            case TestScenarios.SeriesOfLocks:
-                var seriesOfLocksTestProgressProcessor = new SeriesOfLocksTestProgressProcessor(testConfiguration, teamCityLogger);
-                toDispose.Add(seriesOfLocksTestProgressProcessor);
-                return seriesOfLocksTestProgressProcessor;
-            default:
-                throw new Exception(string.Format("Unknown TestScenario {0}", testConfiguration.TestScenario));
-            }
+            return scenariosRegistry.CreateProcessor(testConfiguration.TestScenario, new ProgressMessageProcessorCreationOptions(testConfiguration, teamCityLogger));
         }
 
         private void MainProcess()
@@ -146,6 +138,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private IAgentProvider agentProvider;
         private readonly List<IDisposable> toDispose;
         private TestConfiguration testConfiguration;
+        private IScenariosRegistry scenariosRegistry;
 
         internal class DeployStep
         {

@@ -6,7 +6,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenario
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ExternalLogging
 {
-    public class SimpleExternalLogger : IExternalProgressLogger<SimpleProgressMessage>
+    public class SimpleExternalLogger : IExternalProgressLogger
     {
         public SimpleExternalLogger(TextWriter logStream)
         {
@@ -21,7 +21,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         {
         }
 
-        public void PublishProgress(SimpleProgressMessage progressMessage)
+        public void PublishProgress<TProgressMessage>(TProgressMessage progressMessage)
+            where TProgressMessage : IProgressMessage
         {
             logStream.WriteLine(JsonConvert.SerializeObject(progressMessage));
         }
