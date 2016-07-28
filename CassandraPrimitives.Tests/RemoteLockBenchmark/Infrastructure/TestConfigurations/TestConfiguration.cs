@@ -213,12 +213,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         private static bool TryParseList(string source, out List<string> result)
         {
             source = Regex.Replace(source, @"\s*", "");
-            var match = Regex.Match(source, @"^\[([^,]+)(,[^,]+)*\]$");
-            if (match.Success)
+            if (source.StartsWith("[") && source.EndsWith("]"))
             {
-                var array = new string[match.Groups.Count];
-                match.Groups.CopyTo(array, 0);
-                result = array.ToList();
+                source = source.Substring(1, source.Length - 2);
+                result = source.Split(',').ToList();
                 return true;
             }
             result = null;
@@ -228,16 +226,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
         private static bool TryParseTeamCityFormattedList(string source, out List<string> result)
         {
             source = Regex.Replace(source, @"\s*", "");
-            var match = Regex.Match(source, @"^([^|]+)(|[^|]+)*$");
-            if (match.Success)
-            {
-                var array = new string[match.Groups.Count];
-                match.Groups.CopyTo(array, 0);
-                result = array.ToList();
-                return true;
-            }
-            result = null;
-            return false;
+            result = source.Split('|').ToList();
+            return true;
         }
 
         private const int maxIterationsOfSingleParameter = 100000;
