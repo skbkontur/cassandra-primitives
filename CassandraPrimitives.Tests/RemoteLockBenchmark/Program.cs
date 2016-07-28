@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 using log4net;
 
@@ -21,7 +19,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             logger = LogManager.GetLogger(typeof(Program));
 
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-            
+
             if (args.Length < 1 || args[0] != BenchmarkConfigurator.ConstantBenchmarkToken)
             {
                 var testConfigurations = TestConfiguration.GetFromEnvironmentWithRanges();
@@ -31,20 +29,35 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 foreach (var indexedTestConfiguration in testConfigurations.Select((c, i) => new {Ind = i, Conf = c}))
                 {
                     teamCityLogger.BeginMessageBlock(string.Format("Test configuration {0}", indexedTestConfiguration.Ind));
-                    BenchmarkConfigurator
-                        .Configure()
-                        .WithAgentProviderFromTeamCity()
-                        .WithCassandraCluster()//TODO!
-                        .WithTeamCityLogger(teamCityLogger)
-                        .WithConfiguration(indexedTestConfiguration.Conf)
-                        .Start();
-                    teamCityLogger.EndMessageBlock();
+                    try
+                    {
+                        var configurator = BenchmarkConfigurator
+                            .Configure()
+                            .WithAgentProviderFromTeamCity()
+                            .WithTeamCityLogger(teamCityLogger)
+                            .WithConfiguration(indexedTestConfiguration.Conf);
+                        switch (indexedTestConfiguration.Conf.RemoteLockImplementation)
+                        {
+                        case RemoteLockImplementations.Cassandra:
+                            configurator.WithCassandraCluster();
+                            break;
+                        case RemoteLockImplementations.Zookeeper:
+                            configurator.WithZookeeperCluster();
+                            break;
+                        default:
+                            throw new Exception(string.Format("Type of cluster for {0} is unknown", indexedTestConfiguration.Conf.RemoteLockImplementation));
+                        }
+                        configurator.Start();
+                    }
+                    finally
+                    {
+                        teamCityLogger.EndMessageBlock();
+                    }
                 }
             }
             else
                 ChildProcess(args.Skip(1).ToArray());
         }
-
 
         private static void ChildProcess(string[] args)
         {
