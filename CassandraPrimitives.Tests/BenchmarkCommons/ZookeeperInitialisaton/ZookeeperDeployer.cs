@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
-
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Implementations.ZooKeeper
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.ZookeeperInitialisaton
 {
-    //TODO: It's almost a complete copy-paste of SKBKontur.Cassandra.ClusterDeployment.CassandraNode
     public static class ZookeeperDeployer
     {
         public static void Deploy(ZookeeperNodeSettings settings, string deployDirectory)

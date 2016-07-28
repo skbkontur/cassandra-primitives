@@ -71,6 +71,9 @@
     <Compile Include="RemoteTaskRunning\RemoteDirectory.cs" />
     <Compile Include="RemoteTaskRunning\RemoteMachineCredentials.cs" />
     <Compile Include="RemoteTaskRunning\TaskSchedulerAdapter.cs" />
+    <Compile Include="ZookeeperInitialisaton\RemoteZookeeperInitializer.cs" />
+    <Compile Include="ZookeeperInitialisaton\ZookeeperDeployer.cs" />
+    <Compile Include="ZookeeperInitialisaton\ZookeeperNodeSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Logging\log4net.config" />
