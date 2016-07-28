@@ -13,11 +13,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 {
     public class WaitForLockTest : ITest<WaitForLockProgressMessage>
     {
-        public WaitForLockTest(TestConfiguration configuration, IRemoteLockGetter remoteLockGetter, IExternalProgressLogger<WaitForLockProgressMessage> externalLogger, HttpExternalDataGetter httpExternalDataGetter)
+        public WaitForLockTest(TestConfiguration configuration, IRemoteLockGetterProvider remoteLockGetterProvider, IExternalProgressLogger<WaitForLockProgressMessage> externalLogger, HttpExternalDataGetter httpExternalDataGetter)
         {
             this.configuration = configuration;
-            var lockId = httpExternalDataGetter.GetLockId().Result;
-            locker = remoteLockGetter.Get(lockId);
+            lockId = httpExternalDataGetter.GetLockId().Result;
+            this.remoteLockGetterProvider = remoteLockGetterProvider;
             rand = new Random(Guid.NewGuid().GetHashCode());
             this.externalLogger = externalLogger;
         }
@@ -28,6 +28,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 
         public void DoWorkInSingleThread(int threadInd)
         {
+            var locker = remoteLockGetterProvider.GetRemoteLockGetter().Get(lockId);
             var lockWaitingDurations = new List<long>();
             var globalTimer = Stopwatch.StartNew();
             for (var i = 0; i < configuration.AmountOfLocksPerThread; i++)
@@ -65,8 +66,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
         private const long publishIntervalMs = 5000;
 
         private readonly TestConfiguration configuration;
-        private readonly IRemoteLock locker;
         private readonly Random rand;
         private readonly IExternalProgressLogger<WaitForLockProgressMessage> externalLogger;
+        private readonly IRemoteLockGetterProvider remoteLockGetterProvider;
+        private readonly string lockId;
     }
 }

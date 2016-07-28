@@ -13,11 +13,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 {
     public class TimelineTest : ITest<TimelineProgressMessage>
     {
-        public TimelineTest(TestConfiguration configuration, IRemoteLockGetter remoteLockGetter, IExternalProgressLogger<TimelineProgressMessage> externalLogger, HttpExternalDataGetter httpExternalDataGetter, int processInd)
+        public TimelineTest(TestConfiguration configuration, IRemoteLockGetterProvider remoteLockGetterProvider, IExternalProgressLogger<TimelineProgressMessage> externalLogger, HttpExternalDataGetter httpExternalDataGetter, int processInd)
         {
             this.configuration = configuration;
-            var lockId = httpExternalDataGetter.GetLockId().Result;
-            locker = remoteLockGetter.Get(lockId);
+            lockId = httpExternalDataGetter.GetLockId().Result;
+            this.remoteLockGetterProvider = remoteLockGetterProvider;
             rand = new Random(Guid.NewGuid().GetHashCode());
             this.externalLogger = externalLogger;
             timeCorrectionDelta = httpExternalDataGetter.GetTime().Result - (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
@@ -35,6 +35,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 
         public void DoWorkInSingleThread(int threadInd)
         {
+            var locker = remoteLockGetterProvider.GetRemoteLockGetter().Get(lockId);
             var lockEvents = new List<TimelineProgressMessage.LockEvent>();
             var globalTimer = Stopwatch.StartNew();
             for (var i = 0; i < configuration.AmountOfLocksPerThread; i++)
@@ -74,10 +75,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
         private const long publishIntervalMs = 5000;
 
         private readonly TestConfiguration configuration;
-        private readonly IRemoteLock locker;
         private readonly Random rand;
         private readonly IExternalProgressLogger<TimelineProgressMessage> externalLogger;
         private readonly long timeCorrectionDelta;
         private readonly int processInd;
+        private readonly IRemoteLockGetterProvider remoteLockGetterProvider;
+        private readonly string lockId;
     }
 }

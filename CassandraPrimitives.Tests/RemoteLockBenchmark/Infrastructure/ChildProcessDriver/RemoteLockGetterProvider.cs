@@ -9,7 +9,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastr
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ChildProcessDriver
 {
-    public class RemoteLockGetterProvider
+    public class RemoteLockGetterProvider : IRemoteLockGetterProvider
     {
         public RemoteLockGetterProvider(HttpExternalDataGetter httpExternalDataGetter, TestConfiguration configuration, IExternalLogger externalLogger)
         {
@@ -17,17 +17,22 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             {
             case RemoteLockImplementations.Cassandra:
                 var cassandraClusterSettings = httpExternalDataGetter.GetCassandraSettings().Result;
-                RemoteLockGetter = new CassandraRemoteLockGetter(cassandraClusterSettings, externalLogger);
+                getter = () => new CassandraRemoteLockGetter(cassandraClusterSettings);
                 break;
             case RemoteLockImplementations.Zookeeper:
                 var zookeeperClusterSettings = httpExternalDataGetter.GetZookeeperSettings().Result;
-                RemoteLockGetter = new ZookeeperRemoteLockGetter(new ZookeeperLockSettings(zookeeperClusterSettings.ConnectionString, "/RemoteLockBenchmark", TimeSpan.FromSeconds(100)));
+                getter = () => new ZookeeperRemoteLockGetter(new ZookeeperLockSettings(zookeeperClusterSettings.ConnectionString, "/RemoteLockBenchmark", TimeSpan.FromSeconds(100)));
                 break;
             default:
                 throw new Exception(string.Format("Unknown remote lock implementation {0}", configuration.RemoteLockImplementation));
             }
         }
 
-        public IRemoteLockGetter RemoteLockGetter { get; private set; }
+        public IRemoteLockGetter GetRemoteLockGetter()
+        {
+            return getter();
+        }
+
+        private readonly Func<IRemoteLockGetter> getter;
     }
 }

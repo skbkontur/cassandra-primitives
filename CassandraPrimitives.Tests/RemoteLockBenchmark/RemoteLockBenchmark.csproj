@@ -113,15 +113,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BenchmarkConfigurator.cs" />
-    <Compile Include="Implementations\CassandraSettings\CassandraInitializerSettings.cs" />
-    <Compile Include="Implementations\CassandraSettings\CassandraMetaProvider.cs" />
-    <Compile Include="Implementations\CassandraSettings\ColumnFamilies.cs" />
-    <Compile Include="Implementations\ZookeeperSettings\ZookeeperClusterSettings.cs" />
+    <Compile Include="Implementations\Cassandra\CassandraSettings\CassandraInitializerSettings.cs" />
+    <Compile Include="Implementations\Cassandra\CassandraSettings\CassandraMetaProvider.cs" />
+    <Compile Include="Implementations\Cassandra\CassandraSettings\ColumnFamilies.cs" />
+    <Compile Include="Implementations\ZooKeeper\ZookeeperSettings\ZookeeperClusterSettings.cs" />
     <Compile Include="Infrastructure\Agents\Providers\AbstractAgentProvider.cs" />
     <Compile Include="Infrastructure\Agents\Providers\AgentProviderFromTeamCity.cs" />
     <Compile Include="Infrastructure\ChildProcessDriver\ChildProcessDriver.cs" />
     <Compile Include="Infrastructure\Agents\Providers\AgentProviderAllAgents.cs" />
     <Compile Include="Infrastructure\Agents\Providers\AgentProviderWithSingleAgent.cs" />
+    <Compile Include="Implementations\RemoteLocks\IRemoteLockGetterProvider.cs" />
     <Compile Include="Infrastructure\ChildProcessDriver\RemoteLockGetterProvider.cs" />
     <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpExternalDataGetter.cs" />
     <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpExternalLogger.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Infrastructure\TestConfigurations\SimpleTestResult.cs" />
     <Compile Include="Infrastructure\TestConfigurations\TestConfiguration.cs" />
     <Compile Include="Infrastructure\TestConfigurations\TestScenarios.cs" />
+    <Compile Include="Scenarios\ProgressMessages\SeriesOfLocksProgressMessage.cs" />
     <Compile Include="Scenarios\ProgressMessages\WaitForLockProgressMessage.cs" />
     <Compile Include="Scenarios\TestProgressProcessors\AbstractTestProgressProcessor.cs" />
     <Compile Include="Scenarios\TestProgressProcessors\Event.cs" />
@@ -151,8 +153,10 @@
     <Compile Include="Scenarios\ProgressMessages\SimpleProgressMessage.cs" />
     <Compile Include="Scenarios\ProgressMessages\TimelineProgressMessage.cs" />
     <Compile Include="Infrastructure\TestRunning\TestRunner.cs" />
+    <Compile Include="Scenarios\TestProgressProcessors\SeriesOfLocksTestProgressProcessor.cs" />
     <Compile Include="Scenarios\TestProgressProcessors\WaitForLockTestProgressProcessor.cs" />
     <Compile Include="Scenarios\Tests\ITest.cs" />
+    <Compile Include="Scenarios\Tests\SeriesOfLocksTest.cs" />
     <Compile Include="Scenarios\Tests\SimpleTest.cs" />
     <Compile Include="Scenarios\Tests\TimeLineTest.cs" />
     <Compile Include="Infrastructure\MainDriver\WrapperDeployer.cs" />
