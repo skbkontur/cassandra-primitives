@@ -13,7 +13,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 {
     public class TimelineTest : ITest<TimelineProgressMessage>
     {
-        public TimelineTest(TestConfiguration configuration, IRemoteLockGetterProvider remoteLockGetterProvider, IExternalProgressLogger<TimelineProgressMessage> externalLogger, HttpExternalDataGetter httpExternalDataGetter, int processInd)
+        public TimelineTest(TestConfiguration configuration, IRemoteLockGetterProvider remoteLockGetterProvider, IExternalProgressLogger externalLogger, HttpExternalDataGetter httpExternalDataGetter, int processInd)
         {
             this.configuration = configuration;
             lockId = httpExternalDataGetter.GetLockId().Result;
@@ -76,7 +76,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 
         private readonly TestConfiguration configuration;
         private readonly Random rand;
-        private readonly IExternalProgressLogger<TimelineProgressMessage> externalLogger;
+        private readonly IExternalProgressLogger externalLogger;
         private readonly long timeCorrectionDelta;
         private readonly int processInd;
         private readonly IRemoteLockGetterProvider remoteLockGetterProvider;

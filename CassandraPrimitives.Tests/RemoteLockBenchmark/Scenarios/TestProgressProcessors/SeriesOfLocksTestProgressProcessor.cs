@@ -9,7 +9,7 @@ using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.TestProgressProcessors
 {
-    public class SeriesOfLocksTestProgressProcessor : AbstractTestProgressProcessor
+    public class SeriesOfLocksTestProgressProcessor : AbstractTestProgressProcessor<SeriesOfLocksProgressMessage>
     {
         public SeriesOfLocksTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
             : base(configuration, teamCityLogger)
@@ -22,14 +22,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
             return "SeriesOfLocks";
         }
 
-        public override string HandlePublishProgress(string request, int processInd)
+        public override string HandlePublishProgress(SeriesOfLocksProgressMessage message, int processInd)
         {
-            var progressMessage = JsonConvert.DeserializeObject<SeriesOfLocksProgressMessage>(request);
-
-            if (progressMessage.Final)
+            if (message.Final)
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished work", processInd);
             else
-                ProcessProgress(progressMessage);
+                ProcessProgress(message);
             return null;
         }
 
@@ -39,11 +37,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
             meter.Mark(message.AmountOfLocks);
         }
 
-        public override string HandleLog(string request, int processInd)
+        public override string HandleLogMessage(string message, int processInd)
         {
-            var log = JObject.Parse(request);
-            var message = log["message"].ToString();
-
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} says: {1}", processInd, message);
             return null;
         }

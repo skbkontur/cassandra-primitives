@@ -50,7 +50,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
             return null;
         }
 
-        public string HandleLog(string request, int processInd)
+        public string HandleLogMessage(string request, int processInd)
         {
             var log = JObject.Parse(request);
             var message = log["message"].ToString();

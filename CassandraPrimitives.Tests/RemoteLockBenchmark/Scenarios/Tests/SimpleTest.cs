@@ -11,7 +11,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 {
     public class SimpleTest : ITest<SimpleProgressMessage>
     {
-        public SimpleTest(TestConfiguration configuration, IRemoteLockGetter remoteLockGetter, IExternalProgressLogger<SimpleProgressMessage> externalLogger)
+        public SimpleTest(TestConfiguration configuration, IRemoteLockGetter remoteLockGetter, IExternalProgressLogger externalLogger)
         {
             this.configuration = configuration;
             lockId = Guid.NewGuid().ToString();
@@ -74,6 +74,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
         private readonly string lockId;
         private readonly Random rand;
         private Stopwatch globalStopwatch;
-        private readonly IExternalProgressLogger<SimpleProgressMessage> externalLogger;
+        private readonly IExternalProgressLogger externalLogger;
     }
 }

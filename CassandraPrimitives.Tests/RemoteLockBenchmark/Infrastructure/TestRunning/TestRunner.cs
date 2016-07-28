@@ -5,13 +5,11 @@ using log4net;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ExternalLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestConfigurations;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.ProgressMessages;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.Tests;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestRunning
 {
-    public class TestRunner<TProgressMessage> : IDisposable
-        where TProgressMessage : IProgressMessage
+    public class TestRunner : IDisposable
     {
         public TestRunner(TestConfiguration configuration, IExternalLogger externalLogger)
         {
@@ -20,7 +18,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             logger = LogManager.GetLogger(GetType());
         }
 
-        public void RunTestAndPublishResults(ITest<TProgressMessage> test)
+        public void RunTestAndPublishResults(ITest test)
         {
             test.SetUp();
             var threads = new Thread[configuration.AmountOfThreads];

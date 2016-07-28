@@ -13,7 +13,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 {
     public class WaitForLockTest : ITest<WaitForLockProgressMessage>
     {
-        public WaitForLockTest(TestConfiguration configuration, IRemoteLockGetterProvider remoteLockGetterProvider, IExternalProgressLogger<WaitForLockProgressMessage> externalLogger, HttpExternalDataGetter httpExternalDataGetter)
+        public WaitForLockTest(TestConfiguration configuration, IRemoteLockGetterProvider remoteLockGetterProvider, IExternalProgressLogger externalLogger, HttpExternalDataGetter httpExternalDataGetter)
         {
             this.configuration = configuration;
             lockId = httpExternalDataGetter.GetLockId().Result;
@@ -67,7 +67,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 
         private readonly TestConfiguration configuration;
         private readonly Random rand;
-        private readonly IExternalProgressLogger<WaitForLockProgressMessage> externalLogger;
+        private readonly IExternalProgressLogger externalLogger;
         private readonly IRemoteLockGetterProvider remoteLockGetterProvider;
         private readonly string lockId;
     }

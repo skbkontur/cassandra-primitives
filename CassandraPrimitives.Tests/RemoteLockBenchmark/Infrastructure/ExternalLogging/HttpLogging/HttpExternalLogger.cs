@@ -11,8 +11,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenario
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ExternalLogging.HttpLogging
 {
-    public class HttpExternalLogger<TProgressMessage> : IExternalProgressLogger<TProgressMessage>, IDisposable
-        where TProgressMessage : IProgressMessage
+    public class HttpExternalLogger : IExternalProgressLogger, IDisposable
     {
         public HttpExternalLogger(int processInd, string remoteHostName, string processToken)
         {
@@ -23,7 +22,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             logger = LogManager.GetLogger(GetType());
         }
 
-        public void PublishProgress(TProgressMessage progressMessage)
+        public void PublishProgress<TProgressMessage>(TProgressMessage progressMessage)
+            where TProgressMessage : IProgressMessage
         {
             try
             {
@@ -47,7 +47,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             }
         }
 
-        public async Task PublishProgressAsync(TProgressMessage progressMessage)
+        public async Task PublishProgressAsync<TProgressMessage>(TProgressMessage progressMessage)
+            where TProgressMessage : IProgressMessage
         {
             var data = JsonConvert.SerializeObject(progressMessage);
             await SendWithProcessIndAndToken("publish_progress", data);

@@ -4,16 +4,13 @@ using System.Linq;
 
 using Metrics;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestConfigurations;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.ProgressMessages;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.TestProgressProcessors
 {
-    public class TimelineTestProgressProcessor : AbstractTestProgressProcessor
+    public class TimelineTestProgressProcessor : AbstractTestProgressProcessor<TimelineProgressMessage>
     {
         public TimelineTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
             : base(configuration, teamCityLogger)
@@ -127,11 +124,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
             return "TimelineTest";
         }
 
-        public override string HandlePublishProgress(string request, int processInd)
+        public override string HandlePublishProgress(TimelineProgressMessage message, int processInd)
         {
-            var progressMessage = JsonConvert.DeserializeObject<TimelineProgressMessage>(request);
-
-            if (progressMessage.Final)
+            if (message.Final)
             {
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished work", processInd);
                 finishedProcesses++;
@@ -139,15 +134,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
                     AnalyseAllLockEvents();
             }
             else
-                ProcessLockEvents(progressMessage.LockEvents);
+                ProcessLockEvents(message.LockEvents);
             return null;
         }
 
-        public override string HandleLog(string request, int processInd)
+        public override string HandleLogMessage(string message, int processInd)
         {
-            var log = JObject.Parse(request);
-            var message = log["message"].ToString();
-
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} says: {1}", processInd, message);
             return null;
         }

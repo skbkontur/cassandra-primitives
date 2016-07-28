@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 
+using Newtonsoft.Json;
+
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Agents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestConfigurations;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.TestProgressProcessors;
@@ -11,6 +13,19 @@ using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ExternalLogging.HttpLogging
 {
+    public class Parser
+    {
+        private readonly string data;
+
+        public Parser(string data)
+        {
+            this.data = data;
+        }
+        public T Parse<T>()
+        {
+            return JsonConvert.DeserializeObject<T>(data);
+        }
+    }
     public class HttpExternalLogProcessor : IExternalLogProcessor, IDisposable
     {
         public HttpExternalLogProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents, ITestProgressProcessor testProgressProcessor)
@@ -21,7 +36,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 
             httpServer = new HttpServer(configuration.HttpPort);
             httpServer.AddMethod("publish_progress", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandlePublishProgress));
-            httpServer.AddMethod("log", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandleLog));
+            httpServer.AddMethod("log", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandleLogMessage));
         }
 
         private async void HandleRequestWithProcessInd(HttpListenerContext context, Func<string, int, string> contextHandler)

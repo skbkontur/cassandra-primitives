@@ -2,9 +2,9 @@
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ExternalLogging
 {
-    public interface IExternalProgressLogger<in TProgressMessage> : IExternalLogger
-        where TProgressMessage : IProgressMessage
+    public interface IExternalProgressLogger : IExternalLogger
     {
-        void PublishProgress(TProgressMessage progressMessage);
+        void PublishProgress<TProgressMessage>(TProgressMessage progressMessage)
+            where TProgressMessage : IProgressMessage;
     }
 }

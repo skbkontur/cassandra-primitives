@@ -132,6 +132,12 @@
     <Compile Include="Infrastructure\MainDriver\CassandraMainDriver.cs" />
     <Compile Include="Implementations\Cassandra\CassandraClusterStarter.cs" />
     <Compile Include="Implementations\Cassandra\CassandraRemoteNodeStartInfo.cs" />
+    <Compile Include="Infrastructure\Registry\IScenarioEssentials.cs" />
+    <Compile Include="Infrastructure\Registry\IScenariosRegistry.cs" />
+    <Compile Include="Infrastructure\Registry\ProgressMessageProcessorCreationOptions.cs" />
+    <Compile Include="Infrastructure\Registry\ScenarioCreationOptions.cs" />
+    <Compile Include="Infrastructure\Registry\ScenarioEssentials.cs" />
+    <Compile Include="Infrastructure\Registry\ScenariosRegistry.cs" />
     <Compile Include="Infrastructure\TestConfigurations\IRemoteLockBenchmarkEnvironment.cs" />
     <Compile Include="Infrastructure\TestConfigurations\RemoteLockBenchmarkEnvironment.cs" />
     <Compile Include="Infrastructure\TestConfigurations\RemoteLockImplementations.cs" />
