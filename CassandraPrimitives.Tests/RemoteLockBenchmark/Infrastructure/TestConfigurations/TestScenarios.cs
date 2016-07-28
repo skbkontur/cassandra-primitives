@@ -3,6 +3,7 @@
     public enum TestScenarios
     {
         Timeline,
-        WaitForLock
+        WaitForLock,
+        SeriesOfLocks
     }
 }
