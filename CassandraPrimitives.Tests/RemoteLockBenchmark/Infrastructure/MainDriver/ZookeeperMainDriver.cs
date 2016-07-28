@@ -10,12 +10,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 {
     public class ZookeeperMainDriver
     {
-        public ZookeeperMainDriver(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents, string taskWrapperRelativePath, bool noDeploy)
+        public ZookeeperMainDriver(ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents, string taskWrapperRelativePath)
         {
             this.teamCityLogger = teamCityLogger;
             this.agents = agents;
             this.taskWrapperRelativePath = taskWrapperRelativePath;
-            this.noDeploy = noDeploy;
         }
 
         public ZookeeperClusterStarter StartZookeeperCluster()
@@ -30,7 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 
             ClusterSettings = new ZookeeperClusterSettings(connectionString);
 
-            return new ZookeeperClusterStarter(ClusterSettings, remoteZookeeperNodeStartInfos, teamCityLogger, noDeploy);
+            return new ZookeeperClusterStarter(ClusterSettings, remoteZookeeperNodeStartInfos, teamCityLogger);
         }
 
         public ZookeeperClusterSettings ClusterSettings { get; private set; }
@@ -50,7 +49,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 
         private readonly ITeamCityLogger teamCityLogger;
         private readonly List<RemoteAgentInfo> agents;
-        private readonly bool noDeploy;
         private readonly string taskWrapperRelativePath;
     }
 }

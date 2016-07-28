@@ -24,12 +24,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             return new BenchmarkConfigurator();
         }
 
-        public BenchmarkConfigurator NoDeploy()
-        {
-            noDeploy = true;
-            return this;
-        }
-
         public BenchmarkConfigurator WithTeamCityLogger(ITeamCityLogger teamCityLogger)
         {
             this.teamCityLogger = teamCityLogger;
@@ -66,9 +60,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             deploySteps.Add(new DeployStep("Cassandra deploy", () =>
                 {
                     var cassandraAgents = agentProvider.AcquireAgents(testConfiguration.AmountOfClusterNodes);
-                    var wrapperDeployer = new WrapperDeployer(teamCityLogger, noDeploy);
+                    var wrapperDeployer = new WrapperDeployer(teamCityLogger);
                     wrapperDeployer.DeployWrapperToAgents(cassandraAgents);
-                    var cassandraDriver = new CassandraMainDriver(teamCityLogger, cassandraAgents, wrapperDeployer.GetWrapperRelativePath(), noDeploy);
+                    var cassandraDriver = new CassandraMainDriver(teamCityLogger, cassandraAgents, wrapperDeployer.GetWrapperRelativePath());
                     toDispose.Add(cassandraDriver.StartCassandraCluster());
                     optionsSet["CassandraClusterSettings"] = cassandraDriver.ClusterSettings;
                 }, DeployPriorities.Cluster));
@@ -80,9 +74,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             deploySteps.Add(new DeployStep("Zookeeper deploy", () =>
                 {
                     var zookeeperAgents = agentProvider.AcquireAgents(testConfiguration.AmountOfClusterNodes);
-                    var wrapperDeployer = new WrapperDeployer(teamCityLogger, noDeploy);
+                    var wrapperDeployer = new WrapperDeployer(teamCityLogger);
                     wrapperDeployer.DeployWrapperToAgents(zookeeperAgents);
-                    var zookeeperDriver = new ZookeeperMainDriver(teamCityLogger, zookeeperAgents, wrapperDeployer.GetWrapperRelativePath(), noDeploy);
+                    var zookeeperDriver = new ZookeeperMainDriver(teamCityLogger, zookeeperAgents, wrapperDeployer.GetWrapperRelativePath());
                     toDispose.Add(zookeeperDriver.StartZookeeperCluster());
                     optionsSet["ZookeeperClusterSettings"] = zookeeperDriver.ClusterSettings;
                 }, DeployPriorities.Cluster));
@@ -129,7 +123,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         {
             optionsSet["LockId"] = Guid.NewGuid().ToString();
             var testProgressProcessor = GetTestProgressProcessor();
-            var driver = new MainDriver(teamCityLogger, testConfiguration, testProgressProcessor, agentProvider, noDeploy);
+            var driver = new MainDriver(teamCityLogger, testConfiguration, testProgressProcessor, agentProvider);
             driver.Run(optionsSet);
         }
 
@@ -147,7 +141,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private ITeamCityLogger teamCityLogger;
         private IAgentProvider agentProvider;
         private readonly List<IDisposable> toDispose;
-        private bool noDeploy;
         private TestConfiguration testConfiguration;
 
         internal class DeployStep

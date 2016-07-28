@@ -8,7 +8,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 {
     public class ZookeeperClusterStarter : IDisposable
     {
-        public ZookeeperClusterStarter(ZookeeperClusterSettings clusterSettings, List<ZookeeperRemoteNodeStartInfo> remoteNodeStartInfos, ITeamCityLogger teamCityLogger, bool noDeploy)
+        public ZookeeperClusterStarter(ZookeeperClusterSettings clusterSettings, List<ZookeeperRemoteNodeStartInfo> remoteNodeStartInfos, ITeamCityLogger teamCityLogger)
         {
             zookeeperInitialisers = new List<RemoteZookeeperInitializer>();
             ClusterSettings = clusterSettings;
@@ -18,7 +18,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
                 foreach (var remoteNodeStartInfo in remoteNodeStartInfos)
                 {
                     teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Initialising zookeeper on {0}...", remoteNodeStartInfo.Credentials.MachineName);
-                    var zookeeperInitializer = new RemoteZookeeperInitializer(remoteNodeStartInfo.Credentials, remoteNodeStartInfo.RemoteWorkDir, remoteNodeStartInfo.TaskWrapperPath, noDeploy);
+                    var zookeeperInitializer = new RemoteZookeeperInitializer(remoteNodeStartInfo.Credentials, remoteNodeStartInfo.RemoteWorkDir, remoteNodeStartInfo.TaskWrapperPath);
                     zookeeperInitialisers.Add(zookeeperInitializer);
                     zookeeperInitializer.CreateAndStartNode(remoteNodeStartInfo.Settings);
                 }
