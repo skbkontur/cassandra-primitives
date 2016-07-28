@@ -32,23 +32,23 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             TestScenario = testScenario;
         }
 
-        public static TestConfiguration GetFromEnvironmentWithoutRanges()
+        public static TestConfiguration GetFromEnvironmentWithoutRanges(IRemoteLockBenchmarkEnvironment environment)
         {
-            var amountOfThreads = GetIntVariableFromEnvironment("benchmark.AmountOfThreads");
-            var amountOfProcesses = GetIntVariableFromEnvironment("benchmark.AmountOfProcesses");
-            var amountOfLocksPerThread = GetIntVariableFromEnvironment("benchmark.AmountOfLocksPerThread");
-            var minWaitTimeMilliseconds = GetIntVariableFromEnvironment("benchmark.MinWaitTimeMilliseconds");
-            var maxWaitTimeMilliseconds = GetIntVariableFromEnvironment("benchmark.MaxWaitTimeMilliseconds");
-            var amountOfClusterNodes = GetIntVariableFromEnvironment("benchmark.AmountOfClusterNodes");
-            var httpPort = GetIntVariableFromEnvironment("benchmark.HttpPort");
+            var amountOfThreads = GetIntVariableFromEnvironment("AmountOfThreads", environment.AmountOfThreads);
+            var amountOfProcesses = GetIntVariableFromEnvironment("AmountOfProcesses", environment.AmountOfProcesses);
+            var amountOfLocksPerThread = GetIntVariableFromEnvironment("AmountOfLocksPerThread", environment.AmountOfLocksPerThread);
+            var minWaitTimeMilliseconds = GetIntVariableFromEnvironment("MinWaitTimeMilliseconds", environment.MinWaitTimeMilliseconds);
+            var maxWaitTimeMilliseconds = GetIntVariableFromEnvironment("MaxWaitTimeMilliseconds", environment.MaxWaitTimeMilliseconds);
+            var amountOfClusterNodes = GetIntVariableFromEnvironment("AmountOfClusterNodes", environment.AmountOfClusterNodes);
+            var httpPort = GetIntVariableFromEnvironment("HttpPort", environment.HttpPort);
 
             RemoteLockImplementations remoteLockImplementation;
-            if (!Enum.TryParse(Environment.GetEnvironmentVariable("benchmark.RemoteLockImplementation"), out remoteLockImplementation))
-                throw new Exception(string.Format("Invalid value was given for parameter {0}", "benchmark.RemoteLockImplementation"));
+            if (!Enum.TryParse(environment.RemoteLockImplementation, out remoteLockImplementation))
+                throw new Exception(string.Format("Invalid value was given for parameter {0}", "RemoteLockImplementation"));
 
             TestScenarios testScenario;
-            if (!Enum.TryParse(Environment.GetEnvironmentVariable("benchmark.TestScenario"), out testScenario))
-                throw new Exception(string.Format("Invalid value was given for parameter {0}", "benchmark.TestScenario"));
+            if (!Enum.TryParse(environment.TestScenario, out testScenario))
+                throw new Exception(string.Format("Invalid value was given for parameter {0}", "TestScenario"));
 
             var remoteHostName = IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName;
 
@@ -65,18 +65,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                 testScenario);
         }
 
-        public static List<TestConfiguration> GetFromEnvironmentWithRanges()
+        public static List<TestConfiguration> GetFromEnvironmentWithRanges(IRemoteLockBenchmarkEnvironment environment)
         {
-            var amountOfThreads = GetIntegerValuesOfParameterFromEnvironment("benchmark.AmountOfThreads");
-            var amountOfProcesses = GetIntegerValuesOfParameterFromEnvironment("benchmark.AmountOfProcesses");
-            var amountOfLocksPerThread = GetIntegerValuesOfParameterFromEnvironment("benchmark.AmountOfLocksPerThread");
-            var minWaitTimeMilliseconds = GetIntegerValuesOfParameterFromEnvironment("benchmark.MinWaitTimeMilliseconds");
-            var maxWaitTimeMilliseconds = GetIntegerValuesOfParameterFromEnvironment("benchmark.MaxWaitTimeMilliseconds");
-            var amountOfClusterNodes = GetIntegerValuesOfParameterFromEnvironment("benchmark.AmountOfClusterNodes");
-            var httpPort = GetIntegerValuesOfParameterFromEnvironment("benchmark.HttpPort");
+            var amountOfThreads = GetIntegerValuesOfParameterFromEnvironment("AmountOfThreads", environment.AmountOfThreads);
+            var amountOfProcesses = GetIntegerValuesOfParameterFromEnvironment("AmountOfProcesses", environment.AmountOfProcesses);
+            var amountOfLocksPerThread = GetIntegerValuesOfParameterFromEnvironment("AmountOfLocksPerThread", environment.AmountOfLocksPerThread);
+            var minWaitTimeMilliseconds = GetIntegerValuesOfParameterFromEnvironment("MinWaitTimeMilliseconds", environment.MinWaitTimeMilliseconds);
+            var maxWaitTimeMilliseconds = GetIntegerValuesOfParameterFromEnvironment("MaxWaitTimeMilliseconds", environment.MaxWaitTimeMilliseconds);
+            var amountOfClusterNodes = GetIntegerValuesOfParameterFromEnvironment("AmountOfClusterNodes", environment.AmountOfClusterNodes);
+            var httpPort = GetIntegerValuesOfParameterFromEnvironment("HttpPort", environment.HttpPort);
 
-            var remoteLockImplementation = GetEnumValuesOfParameterFromEnvironment<RemoteLockImplementations>("benchmark.RemoteLockImplementation");
-            var testScenario = GetEnumValuesOfParameterFromEnvironment<TestScenarios>("benchmark.TestScenario");
+            var remoteLockImplementation = GetEnumValuesOfParameterFromEnvironment<RemoteLockImplementations>("RemoteLockImplementation", environment.RemoteLockImplementation);
+            var testScenario = GetEnumValuesOfParameterFromEnvironment<TestScenarios>("TestScenario", environment.TestScenario);
 
             var remoteHostName = IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName;
 
@@ -122,12 +122,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             return results;
         }
 
-        private static List<string> GetStringValuesOfParameterFromEnvironment(string parameterName)
+        private static List<string> GetStringValuesOfParameterFromEnvironment(string rawValue)
         {
-            var rawValue = Environment.GetEnvironmentVariable(parameterName);
-            if (rawValue == null)
-                throw new Exception(string.Format("Parameter {0} was not set", parameterName));
-
             rawValue = Regex.Replace(rawValue, @"\s*", "");
             List<string> resultList;
             if (TryParseList(rawValue, out resultList))
@@ -137,10 +133,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             return new List<string> {rawValue};
         }
 
-        private static List<TEnum> GetEnumValuesOfParameterFromEnvironment<TEnum>(string parameterName)
+        private static List<TEnum> GetEnumValuesOfParameterFromEnvironment<TEnum>(string parameterName, string rawValue)
             where TEnum : struct
         {
-            var values = GetStringValuesOfParameterFromEnvironment(parameterName);
+            var values = GetStringValuesOfParameterFromEnvironment(rawValue);
             var result = new List<TEnum>();
             foreach (var value in values)
             {
@@ -152,12 +148,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             return result;
         }
 
-        private static List<int> GetIntegerValuesOfParameterFromEnvironment(string parameterName)
+        private static List<int> GetIntegerValuesOfParameterFromEnvironment(string parameterName, string rawValue)
         {
-            var rawValue = Environment.GetEnvironmentVariable(parameterName);
-            if (rawValue == null)
-                throw new Exception(string.Format("Parameter {0} was not set", parameterName));
-
             rawValue = Regex.Replace(rawValue, @"\s*", "");
 
             int result;
@@ -250,11 +242,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
 
         private const int maxIterationsOfSingleParameter = 100000;
 
-        private static int GetIntVariableFromEnvironment(string name)
+        private static int GetIntVariableFromEnvironment(string parameterName, string rawValue)
         {
             int result;
-            if (!int.TryParse(Environment.GetEnvironmentVariable(name), out result))
-                throw new Exception(string.Format("Invalid value was given for parameter {0}", name));
+            if (!int.TryParse(rawValue, out result))
+                throw new Exception(string.Format("Invalid value was given for parameter {0}", parameterName));
             return result;
         }
 

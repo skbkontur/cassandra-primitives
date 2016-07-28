@@ -29,7 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         {
             if (args.Length < 1 || args[0] != BenchmarkConfigurator.ConstantBenchmarkToken)
             {
-                var testConfigurations = TestConfiguration.GetFromEnvironmentWithRanges();
+                var testConfigurations = TestConfiguration.GetFromEnvironmentWithRanges(RemoteLockBenchmarkEnvironment.GetFromEnvironment());
                 var teamCityLogger = new TeamCityLogger(Console.Out);
                 teamCityLogger.FormatMessage("Going to run {0} test configuration(s)", testConfigurations.Count);
 
