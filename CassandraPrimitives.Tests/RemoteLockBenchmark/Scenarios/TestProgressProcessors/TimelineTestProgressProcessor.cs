@@ -12,8 +12,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 {
     public class TimelineTestProgressProcessor : AbstractTestProgressProcessor<TimelineProgressMessage>
     {
-        public TimelineTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
-            : base(configuration, teamCityLogger)
+        public TimelineTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger, MetricsContext metricsContext)
+            : base(configuration, teamCityLogger, metricsContext)
         {
             allLockEvents = new List<TimelineProgressMessage.LockEvent>();
             recentLockEvents = new SortedSet<TimelineProgressMessage.LockEvent>(new TimelineProgressMessage.LockEventComparer());
@@ -22,7 +22,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
             endTime = 0;
             owningTime = 0;
 
-            Metric.Gauge("Time owning lock", () => (double)owningTime * 100 / (endTime - startTime), Unit.Percent);
+            metricsContext.Gauge("Time owning lock", () => (double)owningTime * 100 / (endTime - startTime), Unit.Percent);
         }
 
         private long GetAmountOfTimeWhenPredicateIsTrue(List<Event> sortedEvents, Func<int, bool> predicate)

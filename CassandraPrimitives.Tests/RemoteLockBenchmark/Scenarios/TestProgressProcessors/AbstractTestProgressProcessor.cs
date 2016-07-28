@@ -1,6 +1,3 @@
-using System;
-using System.Diagnostics;
-
 using Metrics;
 
 using Newtonsoft.Json;
@@ -15,22 +12,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
     public abstract class AbstractTestProgressProcessor<TProgressMessage> : ITestProgressProcessor
         where TProgressMessage : IProgressMessage
     {
-        protected AbstractTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
+        protected AbstractTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger, MetricsContext metricsContext)
         {
             this.teamCityLogger = teamCityLogger;
             this.configuration = configuration;
-            InitMetrics();
+            InitMetrics(metricsContext);
         }
 
-        private void InitMetrics()
+        private void InitMetrics(MetricsContext metricsContext)
         {
-            //TODO move to main
-            Metric.SetGlobalContextName(string.Format("EDI.Benchmarks.{0}.{1}.{2}", Process.GetCurrentProcess().ProcessName.Replace('.', '_'), Environment.MachineName.Replace('.', '_'), GetTestName()));
-            var metric = Metric.Config.WithHttpEndpoint("http://*:1234/").WithAllCounters();
-            var graphiteUri = new Uri(string.Format("net.{0}://{1}:{2}", "tcp", "graphite-relay.skbkontur.ru", "2003"));
-            Metric.Config.WithReporting(x => x.WithGraphite(graphiteUri, TimeSpan.FromSeconds(5)));
-
-            Metric.Gauge("Progress", GetProgressInPercents, Unit.Percent);
+            metricsContext.Gauge("Progress", GetProgressInPercents, Unit.Percent);
         }
 
         protected abstract string GetTestName();

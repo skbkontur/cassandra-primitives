@@ -11,10 +11,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 {
     public class SeriesOfLocksTestProgressProcessor : AbstractTestProgressProcessor<SeriesOfLocksProgressMessage>
     {
-        public SeriesOfLocksTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger)
-            : base(configuration, teamCityLogger)
+        public SeriesOfLocksTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger, MetricsContext metricsContext)
+            : base(configuration, teamCityLogger, metricsContext)
         {
-            meter = Metric.Meter("Locks processes", new Unit("Locks"));
+            meter = metricsContext.Meter("Locks processes", new Unit("Locks"));
         }
 
         protected override string GetTestName()

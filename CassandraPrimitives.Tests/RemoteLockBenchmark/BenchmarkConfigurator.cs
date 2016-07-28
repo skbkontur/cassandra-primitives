@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure;
+using Metrics;
+
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Agents.Providers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.MainDriver;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Registry;
@@ -112,7 +113,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         private ITestProgressProcessor GetTestProgressProcessor()
         {
-            return scenariosRegistry.CreateProcessor(testConfiguration.TestScenario, new ProgressMessageProcessorCreationOptions(testConfiguration, teamCityLogger));
+            var options = new ProgressMessageProcessorCreationOptions(testConfiguration, teamCityLogger, metricsContext);
+            return scenariosRegistry.CreateProcessor(testConfiguration.TestScenario, options);
         }
 
         private void MainProcess()
@@ -139,6 +141,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private readonly List<IDisposable> toDispose;
         private TestConfiguration testConfiguration;
         private IScenariosRegistry scenariosRegistry;
+        private MetricsContext metricsContext;
 
         internal class DeployStep
         {
@@ -152,6 +155,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             public string Name { get; private set; }
             public DeployPriorities Priority { get; private set; }
             public Action Action { get; private set; }
+        }
+
+        public BenchmarkConfigurator WithMetricsContext(MetricsContext context)
+        {
+            metricsContext = context;
+            return this;
         }
     }
 }
