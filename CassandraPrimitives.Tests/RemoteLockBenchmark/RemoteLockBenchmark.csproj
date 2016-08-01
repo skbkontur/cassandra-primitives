@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B5A06976-66ED-420C-8D89-BDCC8647DCAB}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark</RootNamespace>
     <AssemblyName>Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark</AssemblyName>
@@ -47,6 +47,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cassandra.CassandraClient">
@@ -119,6 +122,7 @@
     <Compile Include="Implementations\ZooKeeper\ZookeeperSettings\ZookeeperClusterSettings.cs" />
     <Compile Include="Infrastructure\Agents\Providers\AbstractAgentProvider.cs" />
     <Compile Include="Infrastructure\Agents\Providers\AgentProviderFromTeamCity.cs" />
+    <Compile Include="Infrastructure\ChildProcessDriver\ChildExecutableGenerator.cs" />
     <Compile Include="Infrastructure\ChildProcessDriver\ChildProcessDriver.cs" />
     <Compile Include="Infrastructure\Agents\Providers\AgentProviderAllAgents.cs" />
     <Compile Include="Infrastructure\Agents\Providers\AgentProviderWithSingleAgent.cs" />
