@@ -15,7 +15,37 @@ using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 {
-    public class BenchmarkConfigurator
+    public interface IWaitingForRegistryCreatorBenchmarkConfigurator
+    {
+        IWaitingForAgentProviderBenchmarkConfigurator WithRegistryCreator(Func<IScenariosRegistry> registryCreator);
+    }
+
+    public interface IWaitingForAgentProviderBenchmarkConfigurator
+    {
+        IWaitingForTestConfigurationBenchmarkConfigurator WithAgentProvider(IAgentProvider agentProvider);
+        IWaitingForTestConfigurationBenchmarkConfigurator WithAgentProviderFromTeamCity();
+    }
+
+    public interface IWaitingForTestConfigurationBenchmarkConfigurator
+    {
+        IReadyToStartBenchmarkConfigurator WithConfiguration(TestConfiguration testConfiguration);
+    }
+
+    public interface IReadyToStartBenchmarkConfigurator
+    {
+        IReadyToStartBenchmarkConfigurator WithCassandraCluster();
+        IReadyToStartBenchmarkConfigurator WithZookeeperCluster();
+        IReadyToStartBenchmarkConfigurator WithMetricsContext(MetricsContext context);
+        IReadyToStartBenchmarkConfigurator WithDefaultTeamCityLogger();
+        IReadyToStartBenchmarkConfigurator WithTeamCityLogger(ITeamCityLogger teamCityLogger);
+        void StartAndWaitForFinish();
+    }
+
+    public class BenchmarkConfigurator : 
+        IWaitingForRegistryCreatorBenchmarkConfigurator,
+        IWaitingForAgentProviderBenchmarkConfigurator,
+        IWaitingForTestConfigurationBenchmarkConfigurator,
+        IReadyToStartBenchmarkConfigurator
     {
         private BenchmarkConfigurator()
         {
@@ -24,12 +54,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             optionsSet = new Dictionary<string, object>();
         }
 
-        public static BenchmarkConfigurator CreateNew()
+        public static IWaitingForRegistryCreatorBenchmarkConfigurator CreateNew()
         {
             return new BenchmarkConfigurator();
         }
 
-        public BenchmarkConfigurator WithRegistryCreator(Func<IScenariosRegistry> registryCreator)
+        public IWaitingForAgentProviderBenchmarkConfigurator WithRegistryCreator(Func<IScenariosRegistry> registryCreator)
         {
             if (!registryCreator.Method.IsStatic)
                 throw new Exception("registryCreator should be a static method");
@@ -37,9 +67,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return this;
         }
 
-        public BenchmarkConfigurator WithTeamCityLogger(ITeamCityLogger teamCityLogger)
+        public IReadyToStartBenchmarkConfigurator WithTeamCityLogger(ITeamCityLogger teamCityLogger)
         {
             this.teamCityLogger = teamCityLogger;
+            return this;
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithDefaultTeamCityLogger()
+        {
+            teamCityLogger = new TeamCityLogger(Console.Out);
             return this;
         }
 
@@ -49,26 +85,26 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return this;
         }
 
-        public BenchmarkConfigurator WithAgentProvider(IAgentProvider agentProvider)
+        public IWaitingForTestConfigurationBenchmarkConfigurator WithAgentProvider(IAgentProvider agentProvider)
         {
             this.agentProvider = agentProvider;
             return this;
         }
 
-        public BenchmarkConfigurator WithAgentProviderFromTeamCity()
+        public IWaitingForTestConfigurationBenchmarkConfigurator WithAgentProviderFromTeamCity()
         {
             agentProvider = new AgentProviderFromTeamCity();
             return this;
         }
 
-        public BenchmarkConfigurator WithConfiguration(TestConfiguration testConfiguration)
+        public IReadyToStartBenchmarkConfigurator WithConfiguration(TestConfiguration testConfiguration)
         {
             this.testConfiguration = testConfiguration;
             optionsSet["TestConfiguration"] = testConfiguration;
             return this;
         }
 
-        public BenchmarkConfigurator WithCassandraCluster()
+        public IReadyToStartBenchmarkConfigurator WithCassandraCluster()
         {
             deploySteps.Add(new DeployStep("Cassandra deploy", () =>
                 {
@@ -82,7 +118,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return this;
         }
 
-        public BenchmarkConfigurator WithZookeeperCluster()
+        public IReadyToStartBenchmarkConfigurator WithZookeeperCluster()
         {
             deploySteps.Add(new DeployStep("Zookeeper deploy", () =>
                 {
@@ -93,6 +129,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     toDispose.Add(zookeeperDriver.StartZookeeperCluster());
                     optionsSet["ZookeeperClusterSettings"] = zookeeperDriver.ClusterSettings;
                 }, DeployPriorities.Cluster));
+            return this;
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithMetricsContext(MetricsContext context)
+        {
+            metricsContext = context;
             return this;
         }
 
@@ -160,12 +202,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             public string Name { get; private set; }
             public DeployPriorities Priority { get; private set; }
             public Action Action { get; private set; }
-        }
-
-        public BenchmarkConfigurator WithMetricsContext(MetricsContext context)
-        {
-            metricsContext = context;
-            return this;
         }
     }
 }

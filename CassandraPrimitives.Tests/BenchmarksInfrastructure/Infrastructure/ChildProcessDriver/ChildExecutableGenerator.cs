@@ -23,7 +23,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             Directory.CreateDirectory(outputDir);
             var compilerParameters = new CompilerParameters();
             foreach (var file in new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).GetFiles())
-                File.Copy(file.FullName, Path.Combine(outputDir, file.Name));
+                File.Copy(file.FullName, Path.Combine(outputDir, file.Name), true);
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
@@ -45,7 +45,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             var compileUnit = new CodeCompileUnit();
             var codeNamespace = new CodeNamespace(typeof(ChildExecutableGenerator).Namespace + "." + "ChildExecutable");
             codeNamespace.Imports.Add(new CodeNamespaceImport("System"));
-            codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(Program).Namespace));
+            codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(ChildExecutableGenerator).Namespace));
+            codeNamespace.Imports.Add(new CodeNamespaceImport(registryCreator.Method.DeclaringType.Namespace));
             codeNamespace.Imports.Add(new CodeNamespaceImport(typeof(IScenariosRegistry).Namespace));
             compileUnit.Namespaces.Add(codeNamespace);
             var program = new CodeTypeDeclaration("Program");

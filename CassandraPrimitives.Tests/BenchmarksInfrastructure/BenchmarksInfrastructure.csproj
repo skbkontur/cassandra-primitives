@@ -170,7 +170,6 @@
     <Compile Include="Infrastructure\Agents\RemoteAgent.cs" />
     <Compile Include="Infrastructure\Processes\RemoteProcessLauncher.cs" />
     <Compile Include="Infrastructure\Agents\RemoteAgentInfo.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Implementations\ZooKeeper\ZookeeperRemoteNodeStartInfo.cs" />
   </ItemGroup>
