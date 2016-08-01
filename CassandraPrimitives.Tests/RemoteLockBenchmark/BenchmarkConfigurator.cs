@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using Metrics;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Agents.Providers;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ChildProcessDriver;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.MainDriver;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Registry;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestConfigurations;
@@ -27,9 +29,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             return new BenchmarkConfigurator();
         }
 
-        public BenchmarkConfigurator WithScenariosRegistry(IScenariosRegistry scenariosRegistry)
+        public BenchmarkConfigurator WithRegistryCreator(Func<IScenariosRegistry> registryCreator)
         {
-            this.scenariosRegistry = scenariosRegistry;
+            if (!registryCreator.Method.IsStatic)
+                throw new Exception("registryCreator should be a static method");
+            this.registryCreator = registryCreator;
             return this;
         }
 
@@ -114,12 +118,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private ITestProgressProcessor GetTestProgressProcessor()
         {
             var options = new ProgressMessageProcessorCreationOptions(testConfiguration, teamCityLogger, metricsContext);
-            return scenariosRegistry.CreateProcessor(testConfiguration.TestScenario, options);
+            return registryCreator().CreateProcessor(testConfiguration.TestScenario, options);
         }
 
         private void MainProcess()
         {
             optionsSet["LockId"] = Guid.NewGuid().ToString();
+            teamCityLogger.BeginActivity("Generating child assembly");
+            ChildExecutableGenerator.Generate(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ChildExecutable"), registryCreator);
+            teamCityLogger.EndActivity();
             var testProgressProcessor = GetTestProgressProcessor();
             var driver = new MainDriver(teamCityLogger, testConfiguration, testProgressProcessor, agentProvider);
             driver.Run(optionsSet);
@@ -131,17 +138,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             Cluster,
             Driver
         }
-
-        public const string ConstantBenchmarkToken = "constant-benchmark-token-f6718f48-0cc5-4f20-aec6-102d9fa09635";
-
+        
         private readonly Dictionary<string, object> optionsSet;
         private readonly List<DeployStep> deploySteps;
         private ITeamCityLogger teamCityLogger;
         private IAgentProvider agentProvider;
         private readonly List<IDisposable> toDispose;
         private TestConfiguration testConfiguration;
-        private IScenariosRegistry scenariosRegistry;
         private MetricsContext metricsContext;
+        private Func<IScenariosRegistry> registryCreator;
 
         internal class DeployStep
         {

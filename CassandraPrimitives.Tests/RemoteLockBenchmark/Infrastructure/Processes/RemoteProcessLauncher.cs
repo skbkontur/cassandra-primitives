@@ -9,6 +9,7 @@ using Microsoft.Win32.TaskScheduler;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.Agents;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.ChildProcessDriver;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infrastructure.TestConfigurations;
 using SKBKontur.Catalogue.TeamCity;
 
@@ -31,7 +32,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
             if (Directory.Exists(remoteDir))
                 CleanDirectory(remoteDir);
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Deploying task {0} to '{1}'...", agent.ProcessInd, remoteDir);
-            var templateDir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            var templateDir = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ChildExecutable"));
             var targetDir = new DirectoryInfo(remoteDir);
             templateDir.CopyTo(targetDir, true);
         }
@@ -53,7 +54,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                 .ToList();
             foreach (var agent in agents)
             {
-                var testRunnerPath = Path.Combine(agent.ProcessDirectory.AsLocal, "Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.exe");
+                var testRunnerPath = Path.Combine(agent.ProcessDirectory.AsLocal, "ChildRunner.exe");
                 var wrapperPath = Path.Combine(agent.WorkDirectory.AsRemote, wrapperRelativePath);
                 using (var taskScheduler = new TaskSchedulerAdapter(agent.Credentials, wrapperPath))
                 {
@@ -62,7 +63,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Infr
                     taskScheduler.StopAndDeleteTask(taskName);
                     DeployTask(agent);
                     teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Starting process {0} on agent {1}...", agent.ProcessInd, agent.Name);
-                    var task = taskScheduler.RunTaskInWrapper(taskName, testRunnerPath, new[] {BenchmarkConfigurator.ConstantBenchmarkToken, agent.ProcessInd.ToString(), configuration.RemoteHostName, agent.Token}, agent.ProcessDirectory.AsLocal);
+                    var task = taskScheduler.RunTaskInWrapper(taskName, testRunnerPath, new[] {agent.ProcessInd.ToString(), configuration.RemoteHostName, agent.Token}, agent.ProcessDirectory.AsLocal);
                     tasks.Add(task);
                 }
             }
