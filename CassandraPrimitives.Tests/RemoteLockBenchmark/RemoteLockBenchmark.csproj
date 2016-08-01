@@ -35,6 +35,10 @@
     <Reference Include="Catalogue.TeamCity">
       <HintPath>..\..\Assemblies\Catalogue.TeamCtiy\Catalogue.TeamCity.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Temp\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Metrics">
       <HintPath>..\..\Assemblies\Temp\Metrics.dll</HintPath>
     </Reference>
@@ -61,6 +65,10 @@
     <Compile Include="WaitForLock\WaitForLockTestProgressProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BenchmarkCommons\BenchmarkCommons.csproj">
+      <Project>{E0706790-58A4-4820-9C61-D143991BA9AB}</Project>
+      <Name>BenchmarkCommons</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BenchmarksInfrastructure\BenchmarksInfrastructure.csproj">
       <Project>{B5A06976-66ED-420C-8D89-BDCC8647DCAB}</Project>
       <Name>BenchmarksInfrastructure</Name>
