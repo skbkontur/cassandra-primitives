@@ -13,19 +13,6 @@ using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ExternalLogging.HttpLogging
 {
-    public class Parser
-    {
-        private readonly string data;
-
-        public Parser(string data)
-        {
-            this.data = data;
-        }
-        public T Parse<T>()
-        {
-            return JsonConvert.DeserializeObject<T>(data);
-        }
-    }
     public class HttpExternalLogProcessor : IExternalLogProcessor, IDisposable
     {
         public HttpExternalLogProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger, List<RemoteAgentInfo> agents, ITestProgressProcessor testProgressProcessor)

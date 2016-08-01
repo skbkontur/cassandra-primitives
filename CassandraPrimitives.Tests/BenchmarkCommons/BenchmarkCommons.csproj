@@ -67,7 +67,6 @@
     <Compile Include="Logging\Log4netConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CassandraInitialisation\RemoteCassandraInitializer.cs" />
-    <Compile Include="RemoteTaskRunning\ImpersonateUser.cs" />
     <Compile Include="RemoteTaskRunning\RemoteDirectory.cs" />
     <Compile Include="RemoteTaskRunning\RemoteMachineCredentials.cs" />
     <Compile Include="RemoteTaskRunning\TaskSchedulerAdapter.cs" />
