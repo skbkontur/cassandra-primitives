@@ -7,7 +7,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.WaitForL
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
-    class Program
+    public class Program
     {
         public static IScenariosRegistry CreateRegistry()
         {

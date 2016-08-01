@@ -58,7 +58,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 finally
                 {
                     teamCityLogger.EndMessageBlock();
-                    teamCityLogger.PublishArtifact(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs"));
+                    var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs");
+                    if (Directory.Exists(logsDir))
+                        teamCityLogger.PublishArtifact(logsDir);
                 }
             }
         }
