@@ -22,6 +22,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             var provider = new CSharpCodeProvider();
             Directory.CreateDirectory(outputDir);
             var compilerParameters = new CompilerParameters();
+            foreach (var file in new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).GetFiles())
+                File.Copy(file.FullName, Path.Combine(outputDir, file.Name));
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
