@@ -4,28 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B5A06976-66ED-420C-8D89-BDCC8647DCAB}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{90816043-80D1-4EBB-AC78-CA3C1DB01D8C}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark</RootNamespace>
     <AssemblyName>Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,185 +30,41 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cassandra.CassandraClient">
-      <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
-    </Reference>
-    <Reference Include="Cassandra.ClusterDeployment">
-      <HintPath>..\..\Assemblies\Cassandra\Cassandra.ClusterDeployment.dll</HintPath>
-    </Reference>
-    <Reference Include="Catalogue.CassandraPrimitives.RemoteLock, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.RemoteLock.dll</HintPath>
-    </Reference>
-    <Reference Include="Catalogue.CassandraPrimitives.Storages, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.Storages.dll</HintPath>
-    </Reference>
     <Reference Include="Catalogue.TeamCity">
       <HintPath>..\..\Assemblies\Catalogue.TeamCtiy\Catalogue.TeamCity.dll</HintPath>
     </Reference>
-    <Reference Include="GroBuf, Version=1.1.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Temp\GroBuf.dll</HintPath>
-    </Reference>
-    <Reference Include="Kontur.Logging">
-      <HintPath>..\..\Assemblies\ZooKeeper\Kontur.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Metrics, Version=0.2.16.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Metrics.Net\Metrics.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Win32.TaskScheduler, Version=1.9.0.23355, Culture=neutral, PublicKeyToken=0d013ddd5178a2ae, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\WindowsTaskScheduler\Microsoft.Win32.TaskScheduler.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\json.net\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Metrics">
+      <HintPath>..\..\Assemblies\Temp\Metrics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="ZooKeeper.LocalEnsemble">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\ZooKeeper\ZooKeeper.LocalEnsemble.dll</HintPath>
-    </Reference>
-    <Reference Include="ZooKeeper.Recipes">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\ZooKeeper\ZooKeeper.Recipes.dll</HintPath>
-    </Reference>
-    <Reference Include="ZooKeeper.Client">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\ZooKeeper\ZooKeeper.Client.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BenchmarkConfigurator.cs" />
-    <Compile Include="Implementations\Cassandra\CassandraSettings\CassandraInitializerSettings.cs" />
-    <Compile Include="Implementations\Cassandra\CassandraSettings\CassandraMetaProvider.cs" />
-    <Compile Include="Implementations\Cassandra\CassandraSettings\ColumnFamilies.cs" />
-    <Compile Include="Implementations\ZooKeeper\ZookeeperSettings\ZookeeperClusterSettings.cs" />
-    <Compile Include="Infrastructure\Agents\Providers\AbstractAgentProvider.cs" />
-    <Compile Include="Infrastructure\Agents\Providers\AgentProviderFromTeamCity.cs" />
-    <Compile Include="Infrastructure\ChildProcessDriver\ChildExecutableGenerator.cs" />
-    <Compile Include="Infrastructure\ChildProcessDriver\ChildProcessDriver.cs" />
-    <Compile Include="Infrastructure\Agents\Providers\AgentProviderAllAgents.cs" />
-    <Compile Include="Infrastructure\Agents\Providers\AgentProviderWithSingleAgent.cs" />
-    <Compile Include="Implementations\RemoteLocks\IRemoteLockGetterProvider.cs" />
-    <Compile Include="Infrastructure\ChildProcessDriver\RemoteLockGetterProvider.cs" />
-    <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpExternalDataGetter.cs" />
-    <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpExternalLogger.cs" />
-    <Compile Include="Infrastructure\ExternalLogging\IExternalLogger.cs" />
-    <Compile Include="Infrastructure\ExternalLogging\IExternalProgressLogger.cs" />
-    <Compile Include="Infrastructure\ExternalLogging\SimpleExternalLogger.cs" />
-    <Compile Include="Infrastructure\MainDriver\CassandraMainDriver.cs" />
-    <Compile Include="Implementations\Cassandra\CassandraClusterStarter.cs" />
-    <Compile Include="Implementations\Cassandra\CassandraRemoteNodeStartInfo.cs" />
-    <Compile Include="Infrastructure\Registry\IScenarioEssentials.cs" />
-    <Compile Include="Infrastructure\Registry\IScenariosRegistry.cs" />
-    <Compile Include="Infrastructure\Registry\ProgressMessageProcessorCreationOptions.cs" />
-    <Compile Include="Infrastructure\Registry\ScenarioCreationOptions.cs" />
-    <Compile Include="Infrastructure\Registry\ScenarioEssentials.cs" />
-    <Compile Include="Infrastructure\Registry\ScenariosRegistry.cs" />
-    <Compile Include="Infrastructure\TestConfigurations\IRemoteLockBenchmarkEnvironment.cs" />
-    <Compile Include="Infrastructure\TestConfigurations\RemoteLockBenchmarkEnvironment.cs" />
-    <Compile Include="Infrastructure\TestConfigurations\RemoteLockImplementations.cs" />
-    <Compile Include="Infrastructure\TestConfigurations\SimpleTestResult.cs" />
-    <Compile Include="Infrastructure\TestConfigurations\TestConfiguration.cs" />
-    <Compile Include="Infrastructure\TestConfigurations\TestScenarios.cs" />
-    <Compile Include="Scenarios\ProgressMessages\SeriesOfLocksProgressMessage.cs" />
-    <Compile Include="Scenarios\ProgressMessages\WaitForLockProgressMessage.cs" />
-    <Compile Include="Scenarios\TestProgressProcessors\AbstractTestProgressProcessor.cs" />
-    <Compile Include="Scenarios\TestProgressProcessors\Event.cs" />
-    <Compile Include="Implementations\RemoteLocks\Cassandra\CassandraRemoteLock.cs" />
-    <Compile Include="Implementations\RemoteLocks\Cassandra\CassandraRemoteLockGetter.cs" />
-    <Compile Include="Implementations\RemoteLocks\IRemoteLock.cs" />
-    <Compile Include="Implementations\RemoteLocks\IRemoteLockGetter.cs" />
-    <Compile Include="Implementations\RemoteLocks\Zookeeper\ZookeeperLockSettings.cs" />
-    <Compile Include="Implementations\RemoteLocks\Zookeeper\ZookeeperRemoteLock.cs" />
-    <Compile Include="Implementations\RemoteLocks\Zookeeper\ZookeeperRemoteLockGetter.cs" />
-    <Compile Include="Scenarios\ProgressMessages\IProgressMessage.cs" />
-    <Compile Include="Scenarios\ProgressMessages\SimpleProgressMessage.cs" />
-    <Compile Include="Scenarios\ProgressMessages\TimelineProgressMessage.cs" />
-    <Compile Include="Infrastructure\TestRunning\TestRunner.cs" />
-    <Compile Include="Scenarios\TestProgressProcessors\SeriesOfLocksTestProgressProcessor.cs" />
-    <Compile Include="Scenarios\TestProgressProcessors\WaitForLockTestProgressProcessor.cs" />
-    <Compile Include="Scenarios\Tests\ITest.cs" />
-    <Compile Include="Scenarios\Tests\SeriesOfLocksTest.cs" />
-    <Compile Include="Scenarios\Tests\SimpleTest.cs" />
-    <Compile Include="Scenarios\Tests\TimeLineTest.cs" />
-    <Compile Include="Infrastructure\MainDriver\WrapperDeployer.cs" />
-    <Compile Include="Infrastructure\MainDriver\ZookeeperMainDriver.cs" />
-    <Compile Include="Implementations\ZooKeeper\ZookeeperClusterStarter.cs" />
-    <Compile Include="Infrastructure\ExternalLogging\FileLoggingTools.cs" />
-    <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpExternalLogProcessor.cs" />
-    <Compile Include="Infrastructure\ExternalLogging\HttpLogging\HttpServer.cs" />
-    <Compile Include="Scenarios\TestProgressProcessors\SimpleTestProgressProcessor.cs" />
-    <Compile Include="Scenarios\TestProgressProcessors\TimelineTestProgressProcessor.cs" />
-    <Compile Include="Scenarios\TestProgressProcessors\ITestProgressProcessor.cs" />
-    <Compile Include="Infrastructure\ExternalLogging\IExternalLogProcessor.cs" />
-    <Compile Include="Infrastructure\MainDriver\HttpTestDataProvider.cs" />
-    <Compile Include="Infrastructure\MainDriver\MainDriver.cs" />
-    <Compile Include="Infrastructure\Agents\Providers\IAgentProvider.cs" />
-    <Compile Include="Infrastructure\Processes\IProcessLauncher.cs" />
-    <Compile Include="Infrastructure\Processes\LocalProcessLauncher.cs" />
-    <Compile Include="Infrastructure\Agents\RemoteAgent.cs" />
-    <Compile Include="Infrastructure\Processes\RemoteProcessLauncher.cs" />
-    <Compile Include="Infrastructure\Agents\RemoteAgentInfo.cs" />
-    <Compile Include="Infrastructure\ExternalLogging\SimpleExternalLogProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Implementations\ZooKeeper\ZookeeperRemoteNodeStartInfo.cs" />
-    <Compile Include="Scenarios\Tests\WaitForLockTest.cs" />
+    <Compile Include="SeriesOfLocks\SeriesOfLocksProgressMessage.cs" />
+    <Compile Include="SeriesOfLocks\SeriesOfLocksTest.cs" />
+    <Compile Include="SeriesOfLocks\SeriesOfLocksTestProgressProcessor.cs" />
+    <Compile Include="Timeline\TimelineProgressMessage.cs" />
+    <Compile Include="Timeline\TimeLineTest.cs" />
+    <Compile Include="Timeline\TimelineTestProgressProcessor.cs" />
+    <Compile Include="WaitForLock\WaitForLockProgressMessage.cs" />
+    <Compile Include="WaitForLock\WaitForLockTest.cs" />
+    <Compile Include="WaitForLock\WaitForLockTestProgressProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BenchmarkCommons\BenchmarkCommons.csproj">
-      <Project>{E0706790-58A4-4820-9C61-D143991BA9AB}</Project>
-      <Name>BenchmarkCommons</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FunctionalTests\FunctionalTests.csproj">
-      <Project>{141AC881-3536-4978-AD10-9D29B88A2988}</Project>
-      <Name>FunctionalTests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SchemeActualizer\SchemeActualizer.csproj">
-      <Project>{8832339B-D3B3-4921-B911-40938C93DFE6}</Project>
-      <Name>SchemeActualizer</Name>
+    <ProjectReference Include="..\BenchmarksInfrastructure\BenchmarksInfrastructure.csproj">
+      <Project>{B5A06976-66ED-420C-8D89-BDCC8647DCAB}</Project>
+      <Name>BenchmarksInfrastructure</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
