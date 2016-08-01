@@ -1,6 +1,6 @@
 using System;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestProgressProcessors
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Timeline
 {
     public class Event : IComparable<Event>
     {
