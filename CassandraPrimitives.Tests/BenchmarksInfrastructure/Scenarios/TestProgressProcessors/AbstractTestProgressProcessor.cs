@@ -36,14 +36,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             }
         }
 
-        public string HandlePublishProgress(string request, int processInd)
+        public string HandleRawProgressMessage(string request, int processInd)
         {
             var progressMessage = JsonConvert.DeserializeObject<TProgressMessage>(request);
 
-            return HandlePublishProgress(progressMessage, processInd);
+            return HandleProgressMessage(progressMessage, processInd);
         }
 
-        public string HandleLog(string request, int processInd)
+        public string HandleRawLogMessage(string request, int processInd)
         {
             var log = JObject.Parse(request);
             var message = log["message"].ToString();
@@ -51,9 +51,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return HandleLogMessage(message, processInd);
         }
 
-
-
-        public abstract string HandlePublishProgress(TProgressMessage message, int processInd);
+        public abstract string HandleProgressMessage(TProgressMessage message, int processInd);
         public abstract string HandleLogMessage(string message, int processInd);
 
         protected abstract double GetProgressInPercents();

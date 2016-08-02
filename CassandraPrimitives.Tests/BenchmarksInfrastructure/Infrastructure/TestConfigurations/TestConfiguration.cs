@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Text.RegularExpressions;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations
 {
@@ -11,40 +10,31 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         public TestConfiguration(
             int amountOfThreads,
             int amountOfProcesses,
-            int amountOfLocksPerThread,
-            int minWaitTimeMilliseconds,
-            int maxWaitTimeMilliseconds,
             int amountOfClusterNodes,
             string remoteHostName,
             int httpPort,
-            RemoteLockImplementations remoteLockImplementation,
+            ClusterTypes clusterType,
             TestScenarios testScenario)
         {
             AmountOfThreads = amountOfThreads;
             AmountOfProcesses = amountOfProcesses;
-            AmountOfLocksPerThread = amountOfLocksPerThread;
-            MinWaitTimeMilliseconds = minWaitTimeMilliseconds;
-            MaxWaitTimeMilliseconds = maxWaitTimeMilliseconds;
             AmountOfClusterNodes = amountOfClusterNodes;
             RemoteHostName = remoteHostName;
             HttpPort = httpPort;
-            RemoteLockImplementation = remoteLockImplementation;
+            ClusterType = clusterType;
             TestScenario = testScenario;
         }
 
-        public static TestConfiguration GetFromEnvironmentWithoutRanges(IRemoteLockBenchmarkEnvironment environment)
+        public static TestConfiguration GetFromEnvironmentWithoutRanges(ITestEnvironment environment)
         {
-            var amountOfThreads = GetIntVariableFromEnvironment("AmountOfThreads", environment.AmountOfThreads);
-            var amountOfProcesses = GetIntVariableFromEnvironment("AmountOfProcesses", environment.AmountOfProcesses);
-            var amountOfLocksPerThread = GetIntVariableFromEnvironment("AmountOfLocksPerThread", environment.AmountOfLocksPerThread);
-            var minWaitTimeMilliseconds = GetIntVariableFromEnvironment("MinWaitTimeMilliseconds", environment.MinWaitTimeMilliseconds);
-            var maxWaitTimeMilliseconds = GetIntVariableFromEnvironment("MaxWaitTimeMilliseconds", environment.MaxWaitTimeMilliseconds);
-            var amountOfClusterNodes = GetIntVariableFromEnvironment("AmountOfClusterNodes", environment.AmountOfClusterNodes);
-            var httpPort = GetIntVariableFromEnvironment("HttpPort", environment.HttpPort);
+            var amountOfThreads = OptionsParser.ParseInt("AmountOfThreads", environment.AmountOfThreads);
+            var amountOfProcesses = OptionsParser.ParseInt("AmountOfProcesses", environment.AmountOfProcesses);
+            var amountOfClusterNodes = OptionsParser.ParseInt("AmountOfClusterNodes", environment.AmountOfClusterNodes);
+            var httpPort = OptionsParser.ParseInt("HttpPort", environment.HttpPort);
 
-            RemoteLockImplementations remoteLockImplementation;
-            if (!Enum.TryParse(environment.RemoteLockImplementation, out remoteLockImplementation))
-                throw new Exception(string.Format("Invalid value was given for parameter {0}", "RemoteLockImplementation"));
+            ClusterTypes clusterType;
+            if (!Enum.TryParse(environment.ClusterType, out clusterType))
+                throw new Exception(string.Format("Invalid value was given for parameter {0}", "ClusterType"));
 
             TestScenarios testScenario;
             if (!Enum.TryParse(environment.TestScenario, out testScenario))
@@ -55,40 +45,31 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return new TestConfiguration(
                 amountOfThreads,
                 amountOfProcesses,
-                amountOfLocksPerThread,
-                minWaitTimeMilliseconds,
-                maxWaitTimeMilliseconds,
                 amountOfClusterNodes,
                 remoteHostName,
                 httpPort,
-                remoteLockImplementation,
+                clusterType,
                 testScenario);
         }
 
-        public static List<TestConfiguration> GetFromEnvironmentWithRanges(IRemoteLockBenchmarkEnvironment environment)
+        public static List<TestConfiguration> ParseWithRanges(ITestEnvironment environment)
         {
-            var amountOfThreads = GetIntegerValuesOfParameterFromEnvironment("AmountOfThreads", environment.AmountOfThreads);
-            var amountOfProcesses = GetIntegerValuesOfParameterFromEnvironment("AmountOfProcesses", environment.AmountOfProcesses);
-            var amountOfLocksPerThread = GetIntegerValuesOfParameterFromEnvironment("AmountOfLocksPerThread", environment.AmountOfLocksPerThread);
-            var minWaitTimeMilliseconds = GetIntegerValuesOfParameterFromEnvironment("MinWaitTimeMilliseconds", environment.MinWaitTimeMilliseconds);
-            var maxWaitTimeMilliseconds = GetIntegerValuesOfParameterFromEnvironment("MaxWaitTimeMilliseconds", environment.MaxWaitTimeMilliseconds);
-            var amountOfClusterNodes = GetIntegerValuesOfParameterFromEnvironment("AmountOfClusterNodes", environment.AmountOfClusterNodes);
-            var httpPort = GetIntegerValuesOfParameterFromEnvironment("HttpPort", environment.HttpPort);
+            var amountOfThreads = OptionsParser.ParseInts("AmountOfThreads", environment.AmountOfThreads);
+            var amountOfProcesses = OptionsParser.ParseInts("AmountOfProcesses", environment.AmountOfProcesses);
+            var amountOfClusterNodes = OptionsParser.ParseInts("AmountOfClusterNodes", environment.AmountOfClusterNodes);
+            var httpPort = OptionsParser.ParseInts("HttpPort", environment.HttpPort);
 
-            var remoteLockImplementation = GetEnumValuesOfParameterFromEnvironment<RemoteLockImplementations>("RemoteLockImplementation", environment.RemoteLockImplementation);
-            var testScenario = GetEnumValuesOfParameterFromEnvironment<TestScenarios>("TestScenario", environment.TestScenario);
+            var clusterTypes = OptionsParser.ParseEnums<ClusterTypes>("ClusterType", environment.ClusterType);
+            var testScenario = OptionsParser.ParseEnums<TestScenarios>("TestScenario", environment.TestScenario);
 
             var remoteHostName = IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName;
 
-            var combinations = Product(
+            var combinations = OptionsParser.Product(
                 amountOfThreads.Cast<object>().ToList(),
                 amountOfProcesses.Cast<object>().ToList(),
-                amountOfLocksPerThread.Cast<object>().ToList(),
-                minWaitTimeMilliseconds.Cast<object>().ToList(),
-                maxWaitTimeMilliseconds.Cast<object>().ToList(),
                 amountOfClusterNodes.Cast<object>().ToList(),
                 httpPort.Cast<object>().ToList(),
-                remoteLockImplementation.Cast<object>().ToList(),
+                clusterTypes.Cast<object>().ToList(),
                 testScenario.Cast<object>().ToList());
 
             return combinations
@@ -96,159 +77,19 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                                            (int)combination[0],
                                            (int)combination[1],
                                            (int)combination[2],
-                                           (int)combination[3],
-                                           (int)combination[4],
-                                           (int)combination[5],
                                            remoteHostName,
-                                           (int)combination[6],
-                                           (RemoteLockImplementations)combination[7],
-                                           (TestScenarios)combination[8]))
+                                           (int)combination[3],
+                                           (ClusterTypes)combination[4],
+                                           (TestScenarios)combination[5]))
                 .ToList();
-        }
-
-        private static List<List<object>> Product(params List<object>[] lists)
-        {
-            return Product(0, lists);
-        }
-
-        private static List<List<object>> Product(int pos, params List<object>[] lists)
-        {
-            if (lists.Length == pos)
-                return new List<List<object>> {new List<object>()};
-            var subResults = Product(pos + 1, lists);
-            var results = new List<List<object>>();
-            foreach (var value in lists[pos])
-                results.AddRange(subResults.Select(subResult => new List<object> {value}.Concat(subResult).ToList()));
-            return results;
-        }
-
-        private static List<string> GetStringValuesOfParameterFromEnvironment(string rawValue)
-        {
-            rawValue = Regex.Replace(rawValue, @"\s*", "");
-            List<string> resultList;
-            if (TryParseList(rawValue, out resultList))
-                return resultList;
-            if (TryParseTeamCityFormattedList(rawValue, out resultList))
-                return resultList;
-            return new List<string> {rawValue};
-        }
-
-        private static List<TEnum> GetEnumValuesOfParameterFromEnvironment<TEnum>(string parameterName, string rawValue)
-            where TEnum : struct
-        {
-            var values = GetStringValuesOfParameterFromEnvironment(rawValue);
-            var result = new List<TEnum>();
-            foreach (var value in values)
-            {
-                TEnum currentResult;
-                if (!Enum.TryParse(value, out currentResult))
-                    throw new Exception(string.Format("Invalid value of enum parameter {0}", parameterName));
-                result.Add(currentResult);
-            }
-            return result;
-        }
-
-        private static List<int> GetIntegerValuesOfParameterFromEnvironment(string parameterName, string rawValue)
-        {
-            rawValue = Regex.Replace(rawValue, @"\s*", "");
-
-            int result;
-            if (int.TryParse(rawValue, out result))
-                return new List<int> {result};
-            List<int> resultList;
-            if (TryParseRange(rawValue, out resultList))
-                return resultList;
-            if (TryParseListOfInts(rawValue, out resultList))
-                return resultList;
-
-            throw new Exception(string.Format("Invalid value of integer parameter {0}", parameterName));
-        }
-
-        private static bool TryParseRange(string source, out List<int> result)
-        {
-            source = Regex.Replace(source, @"\s*", "");
-            var match = Regex.Match(source, @"^range\((\d+),(\d+),(\d+)\)$");
-            if (match.Success)
-            {
-                var start = int.Parse(match.Groups[1].Value);
-                var end = int.Parse(match.Groups[2].Value);
-                var step = int.Parse(match.Groups[3].Value);
-                if (start > end || step <= 0 || (end - start) / step > maxIterationsOfSingleParameter)
-                {
-                    result = null;
-                    return false;
-                }
-                result = new List<int>();
-                for (int i = start; i < end; i += step)
-                    result.Add(i);
-                return true;
-            }
-            result = null;
-            return false;
-        }
-
-        private static bool TryParseListOfInts(string source, out List<int> result)
-        {
-            List<string> parsedTokens;
-            if (!TryParseList(source, out parsedTokens) && !TryParseTeamCityFormattedList(source, out parsedTokens))
-            {
-                result = null;
-                return false;
-            }
-            var ints = new List<int>();
-            foreach (var token in parsedTokens)
-            {
-                int value;
-                if (!int.TryParse(token, out value))
-                {
-                    result = null;
-                    return false;
-                }
-                ints.Add(value);
-            }
-            result = ints;
-            return true;
-        }
-
-        private static bool TryParseList(string source, out List<string> result)
-        {
-            source = Regex.Replace(source, @"\s*", "");
-            if (source.StartsWith("[") && source.EndsWith("]"))
-            {
-                source = source.Substring(1, source.Length - 2);
-                result = source.Split(',').ToList();
-                return true;
-            }
-            result = null;
-            return false;
-        }
-
-        private static bool TryParseTeamCityFormattedList(string source, out List<string> result)
-        {
-            source = Regex.Replace(source, @"\s*", "");
-            result = source.Split('|').ToList();
-            return true;
-        }
-
-        private const int maxIterationsOfSingleParameter = 100000;
-
-        private static int GetIntVariableFromEnvironment(string parameterName, string rawValue)
-        {
-            int result;
-            if (!int.TryParse(rawValue, out result))
-                throw new Exception(string.Format("Invalid value was given for parameter {0}", parameterName));
-            return result;
         }
 
         public int AmountOfThreads { get; private set; }
         public int AmountOfProcesses { get; private set; }
-        public int AmountOfLocksPerThread { get; private set; }
-        public int MinWaitTimeMilliseconds { get; private set; }
-        public int MaxWaitTimeMilliseconds { get; private set; }
         public int AmountOfClusterNodes { get; private set; }
         public string RemoteHostName { get; private set; }
         public int HttpPort { get; private set; }
-        public RemoteLockImplementations RemoteLockImplementation { get; private set; }
+        public ClusterTypes ClusterType { get; private set; }
         public TestScenarios TestScenario { get; private set; }
     }
 }

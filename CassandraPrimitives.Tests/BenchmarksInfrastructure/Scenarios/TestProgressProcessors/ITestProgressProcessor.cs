@@ -2,7 +2,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 {
     public interface ITestProgressProcessor
     {
-        string HandlePublishProgress(string request, int processInd);
-        string HandleLogMessage(string request, int processInd);
+        string HandleRawProgressMessage(string request, int processInd);
+        string HandleRawLogMessage(string request, int processInd);
     }
 }

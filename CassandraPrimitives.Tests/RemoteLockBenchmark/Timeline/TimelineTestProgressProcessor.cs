@@ -12,9 +12,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Time
 {
     public class TimelineTestProgressProcessor : AbstractTestProgressProcessor<TimelineProgressMessage>
     {
-        public TimelineTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger, MetricsContext metricsContext)
+        public TimelineTestProgressProcessor(TestConfiguration configuration, TimelineTestOptions testOptions, ITeamCityLogger teamCityLogger, MetricsContext metricsContext)
             : base(configuration, teamCityLogger, metricsContext)
         {
+            this.testOptions = testOptions;
             allLockEvents = new List<TimelineProgressMessage.LockEvent>();
             recentLockEvents = new SortedSet<TimelineProgressMessage.LockEvent>(new TimelineProgressMessage.LockEventComparer());
 
@@ -124,7 +125,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Time
             return "TimelineTest";
         }
 
-        public override string HandlePublishProgress(TimelineProgressMessage message, int processInd)
+        public override string HandleProgressMessage(TimelineProgressMessage message, int processInd)
         {
             if (message.Final)
             {
@@ -146,12 +147,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Time
 
         protected override double GetProgressInPercents()
         {
-            return allLockEvents.Count * 100.0 / (configuration.AmountOfProcesses * configuration.AmountOfThreads * configuration.AmountOfLocksPerThread);
+            return allLockEvents.Count * 100.0 / (configuration.AmountOfProcesses * configuration.AmountOfThreads * testOptions.AmountOfLocksPerThread);
         }
 
         private readonly List<TimelineProgressMessage.LockEvent> allLockEvents;
         private readonly SortedSet<TimelineProgressMessage.LockEvent> recentLockEvents;
         private long startTime, endTime, owningTime;
         private int finishedProcesses;
+        private readonly TimelineTestOptions testOptions;
     }
 }

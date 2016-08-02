@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 
-using Newtonsoft.Json;
-
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Agents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestProgressProcessors;
@@ -22,8 +20,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             this.teamCityLogger = teamCityLogger;
 
             httpServer = new HttpServer(configuration.HttpPort);
-            httpServer.AddMethod("publish_progress", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandlePublishProgress));
-            httpServer.AddMethod("log", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandleLogMessage));
+            httpServer.AddMethod("publish_progress", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandleRawProgressMessage));
+            httpServer.AddMethod("log", c => HandleRequestWithProcessInd(c, testProgressProcessor.HandleRawLogMessage));
         }
 
         private async void HandleRequestWithProcessInd(HttpListenerContext context, Func<string, int, string> contextHandler)

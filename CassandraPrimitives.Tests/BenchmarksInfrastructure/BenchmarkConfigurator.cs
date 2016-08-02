@@ -10,6 +10,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Inf
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.MainDriver;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestOptions;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestProgressProcessors;
 using SKBKontur.Catalogue.TeamCity;
 
@@ -28,7 +29,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
     public interface IWaitingForTestConfigurationBenchmarkConfigurator
     {
-        IReadyToStartBenchmarkConfigurator WithConfiguration(TestConfiguration testConfiguration);
+        IWaitingForTestOptionsBenchmarkConfigurator WithConfiguration(TestConfiguration testConfiguration);
+    }
+
+    public interface IWaitingForTestOptionsBenchmarkConfigurator
+    {
+        IReadyToStartBenchmarkConfigurator WithTestOptions(ITestOptions testOptions);
     }
 
     public interface IReadyToStartBenchmarkConfigurator
@@ -41,10 +47,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         void StartAndWaitForFinish();
     }
 
-    public class BenchmarkConfigurator : 
+    public class BenchmarkConfigurator :
         IWaitingForRegistryCreatorBenchmarkConfigurator,
         IWaitingForAgentProviderBenchmarkConfigurator,
         IWaitingForTestConfigurationBenchmarkConfigurator,
+        IWaitingForTestOptionsBenchmarkConfigurator,
         IReadyToStartBenchmarkConfigurator
     {
         private BenchmarkConfigurator()
@@ -61,8 +68,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         public IWaitingForAgentProviderBenchmarkConfigurator WithRegistryCreator(Func<IScenariosRegistry> registryCreator)
         {
-            if (!registryCreator.Method.IsStatic)
-                throw new Exception("registryCreator should be a static method");
             this.registryCreator = registryCreator;
             return this;
         }
@@ -97,7 +102,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return this;
         }
 
-        public IReadyToStartBenchmarkConfigurator WithConfiguration(TestConfiguration testConfiguration)
+        public IWaitingForTestOptionsBenchmarkConfigurator WithConfiguration(TestConfiguration testConfiguration)
         {
             this.testConfiguration = testConfiguration;
             optionsSet["TestConfiguration"] = testConfiguration;
@@ -138,6 +143,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return this;
         }
 
+        public IReadyToStartBenchmarkConfigurator WithTestOptions(ITestOptions testOptions)
+        {
+            this.testOptions = testOptions;
+            return this;
+        }
+
         public void StartAndWaitForFinish()
         {
             try
@@ -159,13 +170,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         private ITestProgressProcessor GetTestProgressProcessor()
         {
-            var options = new ProgressMessageProcessorCreationOptions(testConfiguration, teamCityLogger, metricsContext);
+            var options = new ProgressMessageProcessorCreationOptions(testConfiguration, teamCityLogger, metricsContext, testOptions);
             return registryCreator().CreateProcessor(testConfiguration.TestScenario, options);
         }
 
         private void MainProcess()
         {
             optionsSet["LockId"] = Guid.NewGuid().ToString();
+            optionsSet["TestOptions"] = testOptions;
             teamCityLogger.BeginMessageBlock("Generating child assembly");
             ChildExecutableGenerator.Generate(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ChildExecutable"), registryCreator);
             teamCityLogger.EndMessageBlock();
@@ -180,7 +192,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             Cluster,
             Driver
         }
-        
+
         private readonly Dictionary<string, object> optionsSet;
         private readonly List<DeployStep> deploySteps;
         private ITeamCityLogger teamCityLogger;
@@ -189,6 +201,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         private TestConfiguration testConfiguration;
         private MetricsContext metricsContext;
         private Func<IScenariosRegistry> registryCreator;
+        private ITestOptions testOptions;
 
         internal class DeployStep
         {

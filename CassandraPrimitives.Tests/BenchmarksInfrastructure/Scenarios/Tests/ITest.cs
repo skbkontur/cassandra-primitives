@@ -1,4 +1,5 @@
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.ProgressMessages;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestOptions;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.Tests
 {
@@ -9,8 +10,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         void TearDown();
     }
 
-    public interface ITest<TProgressMessage> : ITest
+    public interface ITest<TProgressMessage, TTestOptions> : ITest
         where TProgressMessage : IProgressMessage
+        where TTestOptions : ITestOptions
     {
     }
 }

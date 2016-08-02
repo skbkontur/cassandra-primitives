@@ -65,7 +65,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             start.Statements.Add(initScenariosRegistry);
             start.Statements.Add(run);
             program.Members.Add(start);
-            
+
             var cr = provider.CompileAssemblyFromDom(compilerParameters, compileUnit);
 
             if (cr.Errors.Count > 0)
