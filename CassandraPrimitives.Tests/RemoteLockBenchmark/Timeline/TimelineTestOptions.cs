@@ -6,8 +6,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Time
 {
     public class TimelineTestOptions : BaseRemoteLockTestOptions
     {
-        public TimelineTestOptions(string lockId, int amountOfLocksPerThread, int minWaitTimeMilliseconds, int maxWaitTimeMilliseconds)
-            : base(amountOfLocksPerThread, minWaitTimeMilliseconds, maxWaitTimeMilliseconds)
+        public TimelineTestOptions(string lockId, int amountOfLocks, int minWaitTimeMilliseconds, int maxWaitTimeMilliseconds)
+            : base(amountOfLocks, minWaitTimeMilliseconds, maxWaitTimeMilliseconds)
         {
             LockId = lockId;
         }
@@ -21,7 +21,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Time
                 .Select(x =>
                         new TimelineTestOptions(
                             Guid.NewGuid().ToString(),
-                            x.AmountOfLocksPerThread,
+                            x.AmountOfLocks,
                             x.MinWaitTimeMilliseconds,
                             x.MaxWaitTimeMilliseconds))
                 .ToList();

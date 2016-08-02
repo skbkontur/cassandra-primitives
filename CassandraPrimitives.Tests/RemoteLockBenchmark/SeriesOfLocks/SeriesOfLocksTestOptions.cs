@@ -6,8 +6,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
 {
     public class SeriesOfLocksTestOptions : BaseRemoteLockTestOptions
     {
-        public SeriesOfLocksTestOptions(string lockIdCommonPrefix, int amountOfLocksPerThread, int minWaitTimeMilliseconds, int maxWaitTimeMilliseconds)
-            : base(amountOfLocksPerThread, minWaitTimeMilliseconds, maxWaitTimeMilliseconds)
+        public SeriesOfLocksTestOptions(string lockIdCommonPrefix, int amountOfLocks, int minWaitTimeMilliseconds, int maxWaitTimeMilliseconds)
+            : base(amountOfLocks, minWaitTimeMilliseconds, maxWaitTimeMilliseconds)
         {
             LockIdCommonPrefix = lockIdCommonPrefix;
         }
@@ -21,7 +21,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
                 .Select(x =>
                         new SeriesOfLocksTestOptions(
                             Guid.NewGuid().ToString(),
-                            x.AmountOfLocksPerThread,
+                            x.AmountOfLocks,
                             x.MinWaitTimeMilliseconds,
                             x.MaxWaitTimeMilliseconds))
                 .ToList();

@@ -36,7 +36,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Time
             var locker = remoteLockGetterProvider.GetRemoteLockGetter().Get(testOptions.LockId);
             var lockEvents = new List<TimelineProgressMessage.LockEvent>();
             var globalTimer = Stopwatch.StartNew();
-            for (var i = 0; i < testOptions.AmountOfLocksPerThread; i++)
+            for (var i = 0; i < testOptions.AmountOfLocks; i++)
             {
                 var lockEvent = new TimelineProgressMessage.LockEvent();
                 using (locker.Acquire())
