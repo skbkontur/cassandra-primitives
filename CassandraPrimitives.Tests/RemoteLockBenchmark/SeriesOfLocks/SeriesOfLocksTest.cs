@@ -28,7 +28,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
             var remoteLockGetter = remoteLockGetterProvider.GetRemoteLockGetter();
             var globalTimer = Stopwatch.StartNew();
             var amountOfLocks = 0;
-            for (var i = 0; i < testOptions.AmountOfLocksPerThread; i++)
+            for (var i = 0; i < testOptions.AmountOfLocks; i++)
             {
                 var locker = remoteLockGetter.Get(testOptions.LockIdCommonPrefix + string.Format("{0:D20}", i));
                 IDisposable remoteLock;

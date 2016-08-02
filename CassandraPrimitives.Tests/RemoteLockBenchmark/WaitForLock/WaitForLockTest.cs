@@ -29,7 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
             var locker = remoteLockGetterProvider.GetRemoteLockGetter().Get(testOptions.LockId);
             var lockWaitingDurations = new List<long>();
             var globalTimer = Stopwatch.StartNew();
-            for (var i = 0; i < testOptions.AmountOfLocksPerThread; i++)
+            for (var i = 0; i < testOptions.AmountOfLocks; i++)
             {
                 var blockedAt = globalTimer.ElapsedMilliseconds;
                 using (locker.Acquire())

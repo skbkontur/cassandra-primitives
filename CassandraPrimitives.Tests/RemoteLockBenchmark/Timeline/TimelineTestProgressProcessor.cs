@@ -147,7 +147,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Time
 
         protected override double GetProgressInPercents()
         {
-            return allLockEvents.Count * 100.0 / (configuration.AmountOfProcesses * configuration.AmountOfThreads * testOptions.AmountOfLocksPerThread);
+            return allLockEvents.Count * 100.0 / (configuration.AmountOfProcesses * configuration.AmountOfThreads * testOptions.AmountOfLocks);
         }
 
         private readonly List<TimelineProgressMessage.LockEvent> allLockEvents;

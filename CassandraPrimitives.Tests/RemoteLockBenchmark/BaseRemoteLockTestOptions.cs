@@ -8,20 +8,20 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
     public class BaseRemoteLockTestOptions : ITestOptions
     {
-        public BaseRemoteLockTestOptions(int amountOfLocksPerThread, int minWaitTimeMilliseconds, int maxWaitTimeMilliseconds)
+        public BaseRemoteLockTestOptions(int amountOfLocks, int minWaitTimeMilliseconds, int maxWaitTimeMilliseconds)
         {
-            AmountOfLocksPerThread = amountOfLocksPerThread;
+            AmountOfLocks = amountOfLocks;
             MinWaitTimeMilliseconds = minWaitTimeMilliseconds;
             MaxWaitTimeMilliseconds = maxWaitTimeMilliseconds;
         }
 
-        public int AmountOfLocksPerThread { get; private set; }
+        public int AmountOfLocks { get; private set; }
         public int MinWaitTimeMilliseconds { get; private set; }
         public int MaxWaitTimeMilliseconds { get; private set; }
 
         public static List<BaseRemoteLockTestOptions> ParseWithRanges(IRemoteLockBenchmarkEnvironment environment)
         {
-            var amountOfThreads = OptionsParser.ParseInts("AmountOfLocksPerThread", environment.AmountOfLocksPerThread);
+            var amountOfThreads = OptionsParser.ParseInts("AmountOfLocks", environment.AmountOfLocksPerThread);
             var amountOfProcesses = OptionsParser.ParseInts("MinWaitTimeMilliseconds", environment.MinWaitTimeMilliseconds);
             var amountOfClusterNodes = OptionsParser.ParseInts("MaxWaitTimeMilliseconds", environment.MaxWaitTimeMilliseconds);
 

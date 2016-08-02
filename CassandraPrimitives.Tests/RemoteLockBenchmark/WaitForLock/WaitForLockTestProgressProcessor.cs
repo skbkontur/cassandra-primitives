@@ -32,7 +32,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
 
         protected override double GetProgressInPercents()
         {
-            var totalAmountOfLocks = configuration.AmountOfProcesses * configuration.AmountOfThreads * testOptions.AmountOfLocksPerThread;
+            var totalAmountOfLocks = configuration.AmountOfProcesses * configuration.AmountOfThreads * testOptions.AmountOfLocks;
             return totalLocksAcquired * 100.0 / totalAmountOfLocks;
         }
 

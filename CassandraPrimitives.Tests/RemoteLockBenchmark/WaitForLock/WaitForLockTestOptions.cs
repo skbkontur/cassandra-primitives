@@ -6,8 +6,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
 {
     public class WaitForLockTestOptions : BaseRemoteLockTestOptions
     {
-        public WaitForLockTestOptions(string lockId, int amountOfLocksPerThread, int minWaitTimeMilliseconds, int maxWaitTimeMilliseconds)
-            : base(amountOfLocksPerThread, minWaitTimeMilliseconds, maxWaitTimeMilliseconds)
+        public WaitForLockTestOptions(string lockId, int amountOfLocks, int minWaitTimeMilliseconds, int maxWaitTimeMilliseconds)
+            : base(amountOfLocks, minWaitTimeMilliseconds, maxWaitTimeMilliseconds)
         {
             LockId = lockId;
         }
@@ -21,7 +21,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
                 .Select(x =>
                         new WaitForLockTestOptions(
                             Guid.NewGuid().ToString(),
-                            x.AmountOfLocksPerThread,
+                            x.AmountOfLocks,
                             x.MinWaitTimeMilliseconds,
                             x.MaxWaitTimeMilliseconds))
                 .ToList();

@@ -23,7 +23,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 {
                     AmountOfThreads = Environment.GetEnvironmentVariable("benchmark.AmountOfThreads"),
                     AmountOfProcesses = Environment.GetEnvironmentVariable("benchmark.AmountOfProcesses"),
-                    AmountOfLocksPerThread = Environment.GetEnvironmentVariable("benchmark.AmountOfLocksPerThread"),
+                    AmountOfLocksPerThread = Environment.GetEnvironmentVariable("benchmark.AmountOfLocks"),
                     MinWaitTimeMilliseconds = Environment.GetEnvironmentVariable("benchmark.MinWaitTimeMilliseconds"),
                     MaxWaitTimeMilliseconds = Environment.GetEnvironmentVariable("benchmark.MaxWaitTimeMilliseconds"),
                     AmountOfClusterNodes = Environment.GetEnvironmentVariable("benchmark.AmountOfClusterNodes"),
