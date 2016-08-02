@@ -44,7 +44,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
 
         protected override double GetProgressInPercents()
         {
-            return amountOfLocks * 100.0 / (configuration.AmountOfProcesses * configuration.AmountOfThreads * testOptions.AmountOfLocks);
+            return amountOfLocks * 100.0 / testOptions.AmountOfLocks;
         }
 
         private long amountOfLocks;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
@@ -30,8 +31,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
                 Thread.Sleep(100);
             httpExternalDataGetter.GetDynamicOption<bool>("response_on_start").Wait();
             externalLogger.Log("Thread {0} started", threadInd);
+
             var remoteLockGetter = remoteLockGetterProvider.GetRemoteLockGetter();
+            var locksToRelease = new Queue<Tuple<long, IDisposable>>();
             var globalTimer = Stopwatch.StartNew();
+            var reportTimer = Stopwatch.StartNew();
             var amountOfLocks = 0;
             for (var i = 0; i < testOptions.AmountOfLocks; i++)
             {
@@ -39,21 +43,21 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
                 IDisposable remoteLock;
                 if (locker.TryAcquire(out remoteLock))
                 {
-                    using (remoteLock)
+                    locksToRelease.Enqueue(Tuple.Create(globalTimer.ElapsedMilliseconds, remoteLock));
+                    amountOfLocks++;
+                    Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
+                    if (reportTimer.ElapsedMilliseconds > publishIntervalMs)
                     {
-                        amountOfLocks++;
-                        Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
-                        if (globalTimer.ElapsedMilliseconds > publishIntervalMs)
-                        {
-                            externalLogger.PublishProgress(new SeriesOfLocksProgressMessage
-                                {
-                                    AmountOfLocks = amountOfLocks,
-                                    Final = false,
-                                });
-                            amountOfLocks = 0;
-                            globalTimer.Restart();
-                        }
+                        externalLogger.PublishProgress(new SeriesOfLocksProgressMessage
+                            {
+                                AmountOfLocks = amountOfLocks,
+                                Final = false,
+                            });
+                        amountOfLocks = 0;
+                        reportTimer.Restart();
                     }
+                    while (locksToRelease.Count > 0 && globalTimer.ElapsedMilliseconds - locksToRelease.Peek().Item1 > lockLiveTimeMs)
+                        locksToRelease.Dequeue().Item2.Dispose();
                 }
             }
             externalLogger.PublishProgress(new SeriesOfLocksProgressMessage
@@ -69,6 +73,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
         }
 
         private const long publishIntervalMs = 5000;
+        private const long lockLiveTimeMs = 60000;
         private readonly Random rand;
         private readonly IExternalProgressLogger externalLogger;
         private readonly IRemoteLockGetterProvider remoteLockGetterProvider;
