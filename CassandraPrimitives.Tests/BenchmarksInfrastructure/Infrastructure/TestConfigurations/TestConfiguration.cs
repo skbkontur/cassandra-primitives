@@ -14,7 +14,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             string remoteHostName,
             int httpPort,
             ClusterTypes clusterType,
-            TestScenarios testScenario)
+            string testScenario)
         {
             AmountOfThreads = amountOfThreads;
             AmountOfProcesses = amountOfProcesses;
@@ -36,9 +36,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             if (!Enum.TryParse(environment.ClusterType, out clusterType))
                 throw new Exception(string.Format("Invalid value was given for parameter {0}", "ClusterType"));
 
-            TestScenarios testScenario;
-            if (!Enum.TryParse(environment.TestScenario, out testScenario))
-                throw new Exception(string.Format("Invalid value was given for parameter {0}", "TestScenario"));
+            var testScenario = environment.TestScenario;
 
             var remoteHostName = IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName;
 
@@ -60,7 +58,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             var httpPort = OptionsParser.ParseInts("HttpPort", environment.HttpPort);
 
             var clusterTypes = OptionsParser.ParseEnums<ClusterTypes>("ClusterType", environment.ClusterType);
-            var testScenario = OptionsParser.ParseEnums<TestScenarios>("TestScenario", environment.TestScenario);
+            var testScenario = OptionsParser.ParseStrings(environment.TestScenario);
 
             var remoteHostName = IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName;
 
@@ -80,7 +78,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                                            remoteHostName,
                                            (int)combination[3],
                                            (ClusterTypes)combination[4],
-                                           (TestScenarios)combination[5]))
+                                           (string)combination[5]))
                 .ToList();
         }
 
@@ -90,6 +88,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         public string RemoteHostName { get; private set; }
         public int HttpPort { get; private set; }
         public ClusterTypes ClusterType { get; private set; }
-        public TestScenarios TestScenario { get; private set; }
+        public string TestScenario { get; private set; }
     }
 }

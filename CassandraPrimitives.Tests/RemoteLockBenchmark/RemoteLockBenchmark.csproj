@@ -59,6 +59,7 @@
     <Compile Include="SeriesOfLocks\SeriesOfLocksTest.cs" />
     <Compile Include="SeriesOfLocks\SeriesOfLocksTestOptions.cs" />
     <Compile Include="SeriesOfLocks\SeriesOfLocksTestProgressProcessor.cs" />
+    <Compile Include="TestScenarios.cs" />
     <Compile Include="Timeline\Event.cs" />
     <Compile Include="Timeline\TimelineProgressMessage.cs" />
     <Compile Include="Timeline\TimeLineTest.cs" />

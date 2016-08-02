@@ -19,6 +19,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         public static RemoteLockBenchmarkEnvironment GetFromEnvironment()
         {
+            AssertEnvirinmentVariableDefined("benchmark.AmountOfThreads");
+            AssertEnvirinmentVariableDefined("benchmark.AmountOfProcesses");
+            AssertEnvirinmentVariableDefined("benchmark.AmountOfLocks");
+            AssertEnvirinmentVariableDefined("benchmark.MinWaitTimeMilliseconds");
+            AssertEnvirinmentVariableDefined("benchmark.MaxWaitTimeMilliseconds");
+            AssertEnvirinmentVariableDefined("benchmark.AmountOfClusterNodes");
+            AssertEnvirinmentVariableDefined("benchmark.RemoteHostName");
+            AssertEnvirinmentVariableDefined("benchmark.HttpPort");
+            AssertEnvirinmentVariableDefined("benchmark.ClusterType");
+            AssertEnvirinmentVariableDefined("benchmark.TestScenario");
             return new RemoteLockBenchmarkEnvironment
                 {
                     AmountOfThreads = Environment.GetEnvironmentVariable("benchmark.AmountOfThreads"),
@@ -32,6 +42,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     ClusterType = Environment.GetEnvironmentVariable("benchmark.ClusterType"),
                     TestScenario = Environment.GetEnvironmentVariable("benchmark.TestScenario"),
                 };
+        }
+
+        private static void AssertEnvirinmentVariableDefined(string name)
+        {
+            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(name)))
+                throw new Exception(string.Format("Environment variable {0} was not defined", name));
         }
     }
 }
