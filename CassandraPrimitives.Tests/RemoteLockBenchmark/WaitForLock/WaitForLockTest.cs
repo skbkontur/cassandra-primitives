@@ -35,8 +35,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
                 using (locker.Acquire())
                 {
                     lockWaitingDurations.Add(globalTimer.ElapsedMilliseconds - blockedAt);
-                    var waitTime = rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds);
-                    Thread.Sleep(waitTime);
+                    Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
                     if (globalTimer.ElapsedMilliseconds > publishIntervalMs)
                     {
                         externalLogger.PublishProgress(new WaitForLockProgressMessage
@@ -48,6 +47,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
                         globalTimer.Restart();
                     }
                 }
+                Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
             }
             externalLogger.PublishProgress(new WaitForLockProgressMessage
                 {
