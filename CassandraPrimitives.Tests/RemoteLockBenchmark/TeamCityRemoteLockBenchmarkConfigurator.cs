@@ -124,7 +124,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         private void InitMetrics()
         {
-            Metric.SetGlobalContextName(string.Format("EDI.Benchmarks.{0}.{1}", Process.GetCurrentProcess().ProcessName.Replace('.', '_'), Environment.MachineName.Replace('.', '_')));
+            Metric.SetGlobalContextName(string.Format("EDI.Benchmarks.{0}", Environment.MachineName.Replace('.', '_')));
             Metric.Config.WithHttpEndpoint("http://*:1234/").WithAllCounters();
             var graphiteUri = new Uri(string.Format("net.{0}://{1}:{2}", "tcp", "graphite-relay.skbkontur.ru", "2003"));
             Metric.Config.WithReporting(x => x
