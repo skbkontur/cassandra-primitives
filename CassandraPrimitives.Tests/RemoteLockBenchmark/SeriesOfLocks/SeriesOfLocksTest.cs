@@ -29,6 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
             while (!httpExternalDataGetter.GetDynamicOption<bool>("permission_to_start").Result)
                 Thread.Sleep(100);
             httpExternalDataGetter.GetDynamicOption<bool>("response_on_start").Wait();
+            externalLogger.Log("Thread {0} started", threadInd);
             var remoteLockGetter = remoteLockGetterProvider.GetRemoteLockGetter();
             var globalTimer = Stopwatch.StartNew();
             var amountOfLocks = 0;

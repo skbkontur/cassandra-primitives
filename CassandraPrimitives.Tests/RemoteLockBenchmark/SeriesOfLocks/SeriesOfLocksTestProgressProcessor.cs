@@ -33,6 +33,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
         {
             amountOfLocks += message.AmountOfLocks;
             meter.Mark(message.AmountOfLocks);
+            ReportProgressToTeamCity();
         }
 
         public override string HandleLogMessage(string message, int processInd)
