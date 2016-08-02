@@ -13,6 +13,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
     {
         public SeriesOfLocksTest(IRemoteLockGetterProvider remoteLockGetterProvider, IExternalProgressLogger externalLogger, HttpExternalDataGetter httpExternalDataGetter)
         {
+            this.httpExternalDataGetter = httpExternalDataGetter;
             testOptions = httpExternalDataGetter.GetTestOptions<SeriesOfLocksTestOptions>().Result;
             this.remoteLockGetterProvider = remoteLockGetterProvider;
             rand = new Random(Guid.NewGuid().GetHashCode());
@@ -25,6 +26,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
 
         public void DoWorkInSingleThread(int threadInd)
         {
+            while (!httpExternalDataGetter.GetDynamicOption<bool>("permission_to_start").Result)
+                Thread.Sleep(100);
+            httpExternalDataGetter.GetDynamicOption<bool>("response_on_start").Wait();
             var remoteLockGetter = remoteLockGetterProvider.GetRemoteLockGetter();
             var globalTimer = Stopwatch.StartNew();
             var amountOfLocks = 0;
@@ -69,5 +73,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
         private readonly IExternalProgressLogger externalLogger;
         private readonly IRemoteLockGetterProvider remoteLockGetterProvider;
         private readonly SeriesOfLocksTestOptions testOptions;
+        private readonly HttpExternalDataGetter httpExternalDataGetter;
     }
 }

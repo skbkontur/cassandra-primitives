@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 using log4net;
 
@@ -38,6 +39,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Configuration:\n{0}", configuration);
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Options:\n{0}", options);
 
+            bool permissionToStart = false;
+            var taskCompletionSource = new TaskCompletionSource<bool>();
+
             BenchmarkConfigurator
                 .CreateNew()
                 .WithStaticRegistryCreatorMethod(staticRegistryCreatorMethod)
@@ -47,6 +51,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 .WithMetricsContext(Metric.Context(string.Format("Test configuration - {0}, options set - {1}", configurationInd, optionsInd)))
                 .WithTeamCityLogger(teamCityLogger)
                 .WithClusterFromConfiguration()
+                .WithDynamicOption("permission_to_start", () => permissionToStart)
+                .WithDynamicOption("response_on_start", () => taskCompletionSource.Task.Result)
+                .WithAllProcessStartedHandler(() =>
+                    {
+                        Task.Run(() =>
+                            {
+                                permissionToStart = true;
+                                Task.Delay(1000).Wait();
+                                taskCompletionSource.SetResult(true);
+                            });
+                    })
                 .StartAndWaitForFinish();
         }
 
