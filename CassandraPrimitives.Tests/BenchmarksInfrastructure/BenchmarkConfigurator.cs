@@ -19,7 +19,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 {
     public interface IWaitingForRegistryCreatorBenchmarkConfigurator
     {
-        IWaitingForAgentProviderBenchmarkConfigurator WithRegistryCreator(Func<IScenariosRegistry> registryCreator);
+        IWaitingForAgentProviderBenchmarkConfigurator WithStaticRegistryCreatorMethod(Func<IScenariosRegistry> staticRegistryCreatorMethod);
     }
 
     public interface IWaitingForAgentProviderBenchmarkConfigurator
@@ -42,6 +42,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
     {
         IReadyToStartBenchmarkConfigurator WithCassandraCluster();
         IReadyToStartBenchmarkConfigurator WithZookeeperCluster();
+        IReadyToStartBenchmarkConfigurator WithClusterFromConfiguration();
         IReadyToStartBenchmarkConfigurator WithMetricsContext(MetricsContext context);
         IReadyToStartBenchmarkConfigurator WithDefaultTeamCityLogger();
         IReadyToStartBenchmarkConfigurator WithTeamCityLogger(ITeamCityLogger teamCityLogger);
@@ -68,9 +69,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return new BenchmarkConfigurator();
         }
 
-        public IWaitingForAgentProviderBenchmarkConfigurator WithRegistryCreator(Func<IScenariosRegistry> registryCreator)
+        public IWaitingForAgentProviderBenchmarkConfigurator WithStaticRegistryCreatorMethod(Func<IScenariosRegistry> staticRegistryCreatorMethod)
         {
-            this.registryCreator = registryCreator;
+            registryCreator = staticRegistryCreatorMethod;
             return this;
         }
 
@@ -137,6 +138,19 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     optionsSet["ZookeeperClusterSettings"] = zookeeperDriver.ClusterSettings;
                 }, DeployPriorities.Cluster));
             return this;
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithClusterFromConfiguration()
+        {
+            switch (testConfiguration.ClusterType)
+            {
+                case ClusterTypes.Cassandra:
+                    return WithCassandraCluster();
+                case ClusterTypes.Zookeeper:
+                    return WithZookeeperCluster();
+                default:
+                    throw new Exception(string.Format("Type of cluster for {0} is unknown", testConfiguration.ClusterType));
+            }
         }
 
         public IReadyToStartBenchmarkConfigurator WithMetricsContext(MetricsContext context)
