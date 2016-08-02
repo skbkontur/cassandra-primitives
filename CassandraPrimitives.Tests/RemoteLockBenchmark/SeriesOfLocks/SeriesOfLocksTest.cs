@@ -41,8 +41,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
                     using (remoteLock)
                     {
                         amountOfLocks++;
-                        var waitTime = rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds);
-                        Thread.Sleep(waitTime);
+                        Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
                         if (globalTimer.ElapsedMilliseconds > publishIntervalMs)
                         {
                             externalLogger.PublishProgress(new SeriesOfLocksProgressMessage
