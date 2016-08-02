@@ -16,9 +16,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         public MainDriver(ITeamCityLogger teamCityLogger, TestConfiguration configuration, ITestProgressProcessor testProgressProcessor, IAgentProvider agentProvider)
         {
             this.teamCityLogger = teamCityLogger;
-            this.agentProvider = agentProvider;
             this.configuration = configuration;
             this.testProgressProcessor = testProgressProcessor;
+            this.agentProvider = agentProvider;
         }
 
         public void Run(Dictionary<string, object> optionsSet)

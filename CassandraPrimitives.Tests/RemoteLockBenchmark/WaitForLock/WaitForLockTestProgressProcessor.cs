@@ -10,10 +10,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
 {
     public class WaitForLockTestProgressProcessor : AbstractTestProgressProcessor<WaitForLockProgressMessage>
     {
-        public WaitForLockTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger, MetricsContext metricsContext)
+        public WaitForLockTestProgressProcessor(TestConfiguration configuration, WaitForLockTestOptions testOptions, ITeamCityLogger teamCityLogger, MetricsContext metricsContext)
             : base(configuration, teamCityLogger, metricsContext)
         {
             histogram = metricsContext.Histogram("Time waiting for lock", new Unit("ms"));
+            this.testOptions = testOptions;
         }
 
         private void ProcessLockEvents(List<long> lockWaitingTimes)
@@ -31,7 +32,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
 
         protected override double GetProgressInPercents()
         {
-            var totalAmountOfLocks = configuration.AmountOfProcesses * configuration.AmountOfThreads * configuration.AmountOfLocksPerThread;
+            var totalAmountOfLocks = configuration.AmountOfProcesses * configuration.AmountOfThreads * testOptions.AmountOfLocksPerThread;
             return totalLocksAcquired * 100.0 / totalAmountOfLocks;
         }
 
@@ -40,7 +41,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
             return "WaitForLockTest";
         }
 
-        public override string HandlePublishProgress(WaitForLockProgressMessage message, int processInd)
+        public override string HandleProgressMessage(WaitForLockProgressMessage message, int processInd)
         {
             if (message.Final)
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished work", processInd);
@@ -57,5 +58,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
 
         private int totalLocksAcquired;
         private readonly Histogram histogram;
+        private readonly WaitForLockTestOptions testOptions;
     }
 }

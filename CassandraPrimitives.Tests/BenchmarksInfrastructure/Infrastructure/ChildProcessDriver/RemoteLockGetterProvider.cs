@@ -13,18 +13,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
     {
         public RemoteLockGetterProvider(HttpExternalDataGetter httpExternalDataGetter, TestConfiguration configuration, IExternalLogger externalLogger)
         {
-            switch (configuration.RemoteLockImplementation)
+            switch (configuration.ClusterType)
             {
-            case RemoteLockImplementations.Cassandra:
+            case ClusterTypes.Cassandra:
                 var cassandraClusterSettings = httpExternalDataGetter.GetCassandraSettings().Result;
                 getter = () => new CassandraRemoteLockGetter(cassandraClusterSettings);
                 break;
-            case RemoteLockImplementations.Zookeeper:
+            case ClusterTypes.Zookeeper:
                 var zookeeperClusterSettings = httpExternalDataGetter.GetZookeeperSettings().Result;
                 getter = () => new ZookeeperRemoteLockGetter(new ZookeeperLockSettings(zookeeperClusterSettings.ConnectionString, "/RemoteLockBenchmark", TimeSpan.FromSeconds(100)));
                 break;
             default:
-                throw new Exception(string.Format("Unknown remote lock implementation {0}", configuration.RemoteLockImplementation));
+                throw new Exception(string.Format("Unknown remote lock implementation {0}", configuration.ClusterType));
             }
         }
 

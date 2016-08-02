@@ -6,17 +6,15 @@ using System.Threading;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.RemoteLocks;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ExternalLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ExternalLogging.HttpLogging;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.Tests;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Timeline
 {
-    public class TimelineTest : ITest<TimelineProgressMessage>
+    public class TimelineTest : ITest<TimelineProgressMessage, TimelineTestOptions>
     {
-        public TimelineTest(TestConfiguration configuration, IRemoteLockGetterProvider remoteLockGetterProvider, IExternalProgressLogger externalLogger, HttpExternalDataGetter httpExternalDataGetter, int processInd)
+        public TimelineTest(IRemoteLockGetterProvider remoteLockGetterProvider, IExternalProgressLogger externalLogger, HttpExternalDataGetter httpExternalDataGetter, int processInd)
         {
-            this.configuration = configuration;
-            lockId = httpExternalDataGetter.GetLockId().Result;
+            testOptions = httpExternalDataGetter.GetTestOptions<TimelineTestOptions>().Result;
             this.remoteLockGetterProvider = remoteLockGetterProvider;
             rand = new Random(Guid.NewGuid().GetHashCode());
             this.externalLogger = externalLogger;
@@ -35,16 +33,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Time
 
         public void DoWorkInSingleThread(int threadInd)
         {
-            var locker = remoteLockGetterProvider.GetRemoteLockGetter().Get(lockId);
+            var locker = remoteLockGetterProvider.GetRemoteLockGetter().Get(testOptions.LockId);
             var lockEvents = new List<TimelineProgressMessage.LockEvent>();
             var globalTimer = Stopwatch.StartNew();
-            for (var i = 0; i < configuration.AmountOfLocksPerThread; i++)
+            for (var i = 0; i < testOptions.AmountOfLocksPerThread; i++)
             {
                 var lockEvent = new TimelineProgressMessage.LockEvent();
                 using (locker.Acquire())
                 {
                     lockEvent.AcquiredAt = GetCurrentTimeStamp();
-                    var waitTime = rand.Next(configuration.MinWaitTimeMilliseconds, configuration.MaxWaitTimeMilliseconds);
+                    var waitTime = rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds);
                     Thread.Sleep(waitTime);
                     if (globalTimer.ElapsedMilliseconds > publishIntervalMs)
                     {
@@ -74,12 +72,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Time
 
         private const long publishIntervalMs = 5000;
 
-        private readonly TestConfiguration configuration;
         private readonly Random rand;
         private readonly IExternalProgressLogger externalLogger;
         private readonly long timeCorrectionDelta;
         private readonly int processInd;
         private readonly IRemoteLockGetterProvider remoteLockGetterProvider;
-        private readonly string lockId;
+        private readonly TimelineTestOptions testOptions;
     }
 }

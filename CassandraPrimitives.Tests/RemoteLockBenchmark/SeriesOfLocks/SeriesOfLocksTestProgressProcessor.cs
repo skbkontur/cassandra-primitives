@@ -8,10 +8,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
 {
     public class SeriesOfLocksTestProgressProcessor : AbstractTestProgressProcessor<SeriesOfLocksProgressMessage>
     {
-        public SeriesOfLocksTestProgressProcessor(TestConfiguration configuration, ITeamCityLogger teamCityLogger, MetricsContext metricsContext)
+        public SeriesOfLocksTestProgressProcessor(TestConfiguration configuration, SeriesOfLocksTestOptions testOptions, ITeamCityLogger teamCityLogger, MetricsContext metricsContext)
             : base(configuration, teamCityLogger, metricsContext)
         {
             meter = metricsContext.Meter("Locks processes", new Unit("Locks"));
+            this.testOptions = testOptions;
         }
 
         protected override string GetTestName()
@@ -19,7 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
             return "SeriesOfLocks";
         }
 
-        public override string HandlePublishProgress(SeriesOfLocksProgressMessage message, int processInd)
+        public override string HandleProgressMessage(SeriesOfLocksProgressMessage message, int processInd)
         {
             if (message.Final)
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} finished work", processInd);
@@ -42,10 +43,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
 
         protected override double GetProgressInPercents()
         {
-            return amountOfLocks * 100.0 / (configuration.AmountOfProcesses * configuration.AmountOfThreads * configuration.AmountOfLocksPerThread);
+            return amountOfLocks * 100.0 / (configuration.AmountOfProcesses * configuration.AmountOfThreads * testOptions.AmountOfLocksPerThread);
         }
 
         private long amountOfLocks;
         private readonly Meter meter;
+        private readonly SeriesOfLocksTestOptions testOptions;
     }
 }

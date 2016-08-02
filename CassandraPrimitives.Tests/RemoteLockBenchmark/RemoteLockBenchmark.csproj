@@ -51,17 +51,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IRemoteLockBenchmarkEnvironment.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoteLockBenchmarkEnvironment.cs" />
     <Compile Include="SeriesOfLocks\SeriesOfLocksProgressMessage.cs" />
     <Compile Include="SeriesOfLocks\SeriesOfLocksTest.cs" />
+    <Compile Include="SeriesOfLocks\SeriesOfLocksTestOptions.cs" />
     <Compile Include="SeriesOfLocks\SeriesOfLocksTestProgressProcessor.cs" />
     <Compile Include="Timeline\Event.cs" />
     <Compile Include="Timeline\TimelineProgressMessage.cs" />
     <Compile Include="Timeline\TimeLineTest.cs" />
+    <Compile Include="Timeline\TimelineTestOptions.cs" />
     <Compile Include="Timeline\TimelineTestProgressProcessor.cs" />
+    <Compile Include="BaseRemoteLockTestOptions.cs" />
     <Compile Include="WaitForLock\WaitForLockProgressMessage.cs" />
     <Compile Include="WaitForLock\WaitForLockTest.cs" />
+    <Compile Include="WaitForLock\WaitForLockTestOptions.cs" />
     <Compile Include="WaitForLock\WaitForLockTestProgressProcessor.cs" />
   </ItemGroup>
   <ItemGroup>

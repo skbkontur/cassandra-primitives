@@ -140,11 +140,12 @@
     <Compile Include="Infrastructure\Registry\ScenarioCreationOptions.cs" />
     <Compile Include="Infrastructure\Registry\ScenarioEssentials.cs" />
     <Compile Include="Infrastructure\Registry\ScenariosRegistry.cs" />
-    <Compile Include="Infrastructure\TestConfigurations\IRemoteLockBenchmarkEnvironment.cs" />
-    <Compile Include="Infrastructure\TestConfigurations\RemoteLockBenchmarkEnvironment.cs" />
-    <Compile Include="Infrastructure\TestConfigurations\RemoteLockImplementations.cs" />
+    <Compile Include="Infrastructure\TestConfigurations\ITestEnvironment.cs" />
+    <Compile Include="Infrastructure\TestConfigurations\OptionsParser.cs" />
+    <Compile Include="Infrastructure\TestConfigurations\ClusterTypes.cs" />
     <Compile Include="Infrastructure\TestConfigurations\TestConfiguration.cs" />
     <Compile Include="Infrastructure\TestConfigurations\TestScenarios.cs" />
+    <Compile Include="Scenarios\TestOptions\ITestOptions.cs" />
     <Compile Include="Scenarios\TestProgressProcessors\AbstractTestProgressProcessor.cs" />
     <Compile Include="Implementations\RemoteLocks\Cassandra\CassandraRemoteLock.cs" />
     <Compile Include="Implementations\RemoteLocks\Cassandra\CassandraRemoteLockGetter.cs" />

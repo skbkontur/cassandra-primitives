@@ -1,8 +1,10 @@
 using System;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
+
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
-    public class RemoteLockBenchmarkEnvironment : IRemoteLockBenchmarkEnvironment
+    public class RemoteLockBenchmarkEnvironment : ITestEnvironment, IRemoteLockBenchmarkEnvironment
     {
         public string AmountOfThreads { get; private set; }
         public string AmountOfProcesses { get; private set; }
@@ -12,7 +14,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         public string AmountOfClusterNodes { get; private set; }
         public string RemoteHostName { get; private set; }
         public string HttpPort { get; private set; }
-        public string RemoteLockImplementation { get; private set; }
+        public string ClusterType { get; private set; }
         public string TestScenario { get; private set; }
 
         public static RemoteLockBenchmarkEnvironment GetFromEnvironment()
@@ -27,7 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     AmountOfClusterNodes = Environment.GetEnvironmentVariable("benchmark.AmountOfClusterNodes"),
                     RemoteHostName = Environment.GetEnvironmentVariable("benchmark.RemoteHostName"),
                     HttpPort = Environment.GetEnvironmentVariable("benchmark.HttpPort"),
-                    RemoteLockImplementation = Environment.GetEnvironmentVariable("benchmark.RemoteLockImplementation"),
+                    ClusterType = Environment.GetEnvironmentVariable("benchmark.ClusterType"),
                     TestScenario = Environment.GetEnvironmentVariable("benchmark.TestScenario"),
                 };
         }

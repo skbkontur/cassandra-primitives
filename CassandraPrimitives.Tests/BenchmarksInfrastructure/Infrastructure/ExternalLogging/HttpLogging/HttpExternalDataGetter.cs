@@ -75,9 +75,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return await GetAndDecodeResponse<TestConfiguration>("get_options", new NameValueCollection {{"option_name", "TestConfiguration"}}, settingsForObjectsWithIpAddresses);
         }
 
-        public async Task<string> GetLockId()
+        public async Task<TTestOptions> GetTestOptions<TTestOptions>()
         {
-            return await GetAndDecodeResponse<string>("get_options", new NameValueCollection {{"option_name", "LockId"}}, settingsForObjectsWithIpAddresses);
+            return await GetAndDecodeResponse<TTestOptions>("get_options", new NameValueCollection {{"option_name", "TestOptions"}}, settingsForObjectsWithIpAddresses);
         }
 
         public async Task<long> GetTime()
