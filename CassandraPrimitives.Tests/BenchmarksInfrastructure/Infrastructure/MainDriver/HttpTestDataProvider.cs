@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
@@ -14,15 +15,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 {
     public class HttpTestDataProvider : IDisposable
     {
-        public HttpTestDataProvider(TestConfiguration testConfiguration, Dictionary<string, object> optionsSet)
+        public HttpTestDataProvider(TestConfiguration testConfiguration, Dictionary<string, object> optionsSet, Dictionary<string, Func<object>> dynamicOptionsSet)
         {
             this.optionsSet = optionsSet;
+            this.dynamicOptionsSet = dynamicOptionsSet;
             server = new HttpServer(testConfiguration.HttpPort);
             settingsForObjectsWithAddresses = new JsonSerializerSettings();
             settingsForObjectsWithAddresses.Converters.Add(new IpAddressConverter());
             settingsForObjectsWithAddresses.Converters.Add(new IpEndPointConverter());
             settingsForObjectsWithAddresses.Formatting = Formatting.Indented;
             server.AddMethod("get_options", c => ProcessRequest(c, ProcessOptionsRequest));
+            server.AddMethod("get_dynamic_option", c => ProcessRequest(c, ProcessDynamicOptionRequest));
             server.AddMethod("get_time", c => ProcessRequest(c, _ =>
                 {
                     var time = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0)).TotalMilliseconds;
@@ -34,7 +37,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         {
             try
             {
-                var response = getResponse(context.Request.QueryString);
+                var response = await Task.Run(() => getResponse(context.Request.QueryString));
                 if (response != null)
                 {
                     using (var stream = new StreamWriter(context.Response.OutputStream))
@@ -57,6 +60,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return null;
         }
 
+        private string ProcessDynamicOptionRequest(NameValueCollection queryString)
+        {
+            var optionName = queryString["option_name"];
+            if (optionName != null && dynamicOptionsSet.ContainsKey(optionName))
+                return JsonConvert.SerializeObject(dynamicOptionsSet[optionName](), settingsForObjectsWithAddresses);
+            return null;
+        }
+
         public void Dispose()
         {
             server.Dispose();
@@ -65,5 +76,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         private readonly HttpServer server;
         private readonly Dictionary<string, object> optionsSet;
         private readonly JsonSerializerSettings settingsForObjectsWithAddresses;
+        private readonly Dictionary<string, Func<object>> dynamicOptionsSet;
     }
 }

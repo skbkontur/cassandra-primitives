@@ -46,6 +46,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         IReadyToStartBenchmarkConfigurator WithMetricsContext(MetricsContext context);
         IReadyToStartBenchmarkConfigurator WithDefaultTeamCityLogger();
         IReadyToStartBenchmarkConfigurator WithTeamCityLogger(ITeamCityLogger teamCityLogger);
+        IReadyToStartBenchmarkConfigurator WithOption(string name, object value);
+        IReadyToStartBenchmarkConfigurator WithDynamicOption(string name, Func<object> valueProvider);
+        IReadyToStartBenchmarkConfigurator WithAllProcessStartedHandler(Action onAllProcessesStarted);
         void StartAndWaitForFinish();
     }
 
@@ -62,6 +65,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             teamCityLogger = new FakeTeamCityLogger();
             toDispose = new List<IDisposable>();
             optionsSet = new Dictionary<string, object>();
+            dynamicOptionsSet = new Dictionary<string, Func<object>>();
+            onAllProcessesStarted = () => { };
         }
 
         public static IWaitingForRegistryCreatorBenchmarkConfigurator CreateNew()
@@ -78,6 +83,24 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         public IReadyToStartBenchmarkConfigurator WithTeamCityLogger(ITeamCityLogger teamCityLogger)
         {
             this.teamCityLogger = teamCityLogger;
+            return this;
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithOption(string name, object value)
+        {
+            optionsSet[name] = value;
+            return this;
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithDynamicOption(string name, Func<object> valueProvider)
+        {
+            dynamicOptionsSet[name] = valueProvider;
+            return this;
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithAllProcessStartedHandler(Action onAllProcessesStarted)
+        {
+            this.onAllProcessesStarted = onAllProcessesStarted;
             return this;
         }
 
@@ -144,12 +167,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         {
             switch (testConfiguration.ClusterType)
             {
-                case ClusterTypes.Cassandra:
-                    return WithCassandraCluster();
-                case ClusterTypes.Zookeeper:
-                    return WithZookeeperCluster();
-                default:
-                    throw new Exception(string.Format("Type of cluster for {0} is unknown", testConfiguration.ClusterType));
+            case ClusterTypes.Cassandra:
+                return WithCassandraCluster();
+            case ClusterTypes.Zookeeper:
+                return WithZookeeperCluster();
+            default:
+                throw new Exception(string.Format("Type of cluster for {0} is unknown", testConfiguration.ClusterType));
             }
         }
 
@@ -192,14 +215,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         private void MainProcess()
         {
-            optionsSet["LockId"] = Guid.NewGuid().ToString();
             optionsSet["TestOptions"] = testOptions;
             teamCityLogger.BeginMessageBlock("Generating child assembly");
             ChildExecutableGenerator.Generate(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ChildExecutable"), registryCreator);
             teamCityLogger.EndMessageBlock();
             var testProgressProcessor = GetTestProgressProcessor();
             var driver = new MainDriver(teamCityLogger, testConfiguration, testProgressProcessor, agentProvider);
-            driver.Run(optionsSet);
+            driver.AllProcessesStarted += onAllProcessesStarted;
+            driver.Run(optionsSet, dynamicOptionsSet);
         }
 
         internal enum DeployPriorities
@@ -210,6 +233,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         }
 
         private readonly Dictionary<string, object> optionsSet;
+        private readonly Dictionary<string, Func<object>> dynamicOptionsSet;
         private readonly List<DeployStep> deploySteps;
         private ITeamCityLogger teamCityLogger;
         private IAgentProvider agentProvider;
@@ -218,6 +242,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         private MetricsContext metricsContext;
         private Func<IScenariosRegistry> registryCreator;
         private ITestOptions testOptions;
+        private Action onAllProcessesStarted;
 
         internal class DeployStep
         {

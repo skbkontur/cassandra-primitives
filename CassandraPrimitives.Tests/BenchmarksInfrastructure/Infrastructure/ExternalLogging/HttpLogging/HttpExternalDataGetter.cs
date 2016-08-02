@@ -62,22 +62,32 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         public async Task<CassandraClusterSettings> GetCassandraSettings()
         {
-            return await GetAndDecodeResponse<CassandraClusterSettings>("get_options", new NameValueCollection {{"option_name", "CassandraClusterSettings"}}, settingsForObjectsWithIpAddresses);
+            return await GetOption<CassandraClusterSettings>("CassandraClusterSettings");
         }
 
         public async Task<ZookeeperClusterSettings> GetZookeeperSettings()
         {
-            return await GetAndDecodeResponse<ZookeeperClusterSettings>("get_options", new NameValueCollection {{"option_name", "ZookeeperClusterSettings"}}, settingsForObjectsWithIpAddresses);
+            return await GetOption<ZookeeperClusterSettings>("ZookeeperClusterSettings");
         }
 
         public async Task<TestConfiguration> GetTestConfiguration()
         {
-            return await GetAndDecodeResponse<TestConfiguration>("get_options", new NameValueCollection {{"option_name", "TestConfiguration"}}, settingsForObjectsWithIpAddresses);
+            return await GetOption<TestConfiguration>("TestConfiguration");
         }
 
         public async Task<TTestOptions> GetTestOptions<TTestOptions>()
         {
-            return await GetAndDecodeResponse<TTestOptions>("get_options", new NameValueCollection {{"option_name", "TestOptions"}}, settingsForObjectsWithIpAddresses);
+            return await GetOption<TTestOptions>("TestOptions");
+        }
+
+        public async Task<TOption> GetOption<TOption>(string name)
+        {
+            return await GetAndDecodeResponse<TOption>("get_options", new NameValueCollection {{"option_name", name}}, settingsForObjectsWithIpAddresses);
+        }
+
+        public async Task<TOption> GetDynamicOption<TOption>(string name)
+        {
+            return await GetAndDecodeResponse<TOption>("get_dynamic_option", new NameValueCollection {{"option_name", name}}, settingsForObjectsWithIpAddresses);
         }
 
         public async Task<long> GetTime()

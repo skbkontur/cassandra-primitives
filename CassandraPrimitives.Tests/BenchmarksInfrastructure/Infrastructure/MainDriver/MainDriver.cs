@@ -21,7 +21,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             this.agentProvider = agentProvider;
         }
 
-        public void Run(Dictionary<string, object> optionsSet)
+        public void Run(Dictionary<string, object> optionsSet, Dictionary<string, Func<object>> dynamicOptionsSet)
         {
             teamCityLogger.BeginMessageBlock("Results");
 
@@ -33,12 +33,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
             try
             {
-                using (new HttpTestDataProvider(configuration, optionsSet))
+                using (new HttpTestDataProvider(configuration, optionsSet, dynamicOptionsSet))
                 using (new HttpExternalLogProcessor(configuration, teamCityLogger, testAgents, testProgressProcessor))
                 using (var processLauncher = new RemoteProcessLauncher(teamCityLogger, testAgents, wrapperRelativePath))
                 {
                     processLauncher.StartProcesses(configuration);
-
+                    AllProcessesStarted();
                     processLauncher.WaitForProcessesToFinish();
 
                     teamCityLogger.EndMessageBlock();
@@ -50,6 +50,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 teamCityLogger.EndMessageBlock();
             }
         }
+
+        public event Action AllProcessesStarted = () => { };
 
         private readonly ITeamCityLogger teamCityLogger;
         private readonly IAgentProvider agentProvider;
