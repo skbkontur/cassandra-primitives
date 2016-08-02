@@ -89,5 +89,24 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         public int HttpPort { get; private set; }
         public ClusterTypes ClusterType { get; private set; }
         public string TestScenario { get; private set; }
+
+        public override string ToString()
+        {
+            return string.Format(
+                @"AmountOfThreads = {0}
+AmountOfProcesses = {1}
+AmountOfClusterNodes = {2}
+RemoteHostName = {3}
+HttpPort = {4}
+ClusterType = {5}
+TestScenario = {6}",
+                AmountOfThreads,
+                AmountOfProcesses,
+                AmountOfClusterNodes,
+                RemoteHostName,
+                HttpPort,
+                ClusterType,
+                TestScenario);
+        }
     }
 }

@@ -79,7 +79,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
             foreach (var indexedTestConfiguration in testConfigurations.Select((c, i) => new {Ind = i, Conf = c}))
             {
-                teamCityLogger.BeginMessageBlock(string.Format("Test configuration {0}", indexedTestConfiguration.Ind));
                 try
                 {
                     List<ITestOptions> testOptionsList;
@@ -103,6 +102,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
                     foreach (var indexedTestOptions in testOptionsList.Select((o, i) => new {Opt = o, Ind = i}))
                     {
+                        teamCityLogger.BeginMessageBlock(string.Format("Test configuration - {0}, options - {1}", indexedTestConfiguration.Ind, indexedTestOptions.Ind));
+                        teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Configuration:\n{0}", indexedTestConfiguration.Conf);
+                        teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Options:\n{0}", indexedTestOptions.Opt);
+
                         var configurator = BenchmarkConfigurator
                             .CreateNew()
                             .WithRegistryCreator(CreateRegistry)

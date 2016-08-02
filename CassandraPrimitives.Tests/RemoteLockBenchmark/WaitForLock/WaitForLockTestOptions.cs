@@ -26,5 +26,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
                             x.MaxWaitTimeMilliseconds))
                 .ToList();
         }
+
+        public override string ToString()
+        {
+            return string.Format(
+                @"AmountOfLocks = {0}
+MinWaitTimeMilliseconds = {1}
+MaxWaitTimeMilliseconds = {2}
+LockId = {3}",
+                AmountOfLocks,
+                MinWaitTimeMilliseconds,
+                MaxWaitTimeMilliseconds,
+                LockId);
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 
 using Metrics;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Agents.Providers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ChildProcessDriver;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.MainDriver;
@@ -57,6 +58,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         private BenchmarkConfigurator()
         {
             deploySteps = new List<DeployStep>();
+            teamCityLogger = new FakeTeamCityLogger();
             toDispose = new List<IDisposable>();
             optionsSet = new Dictionary<string, object>();
         }
