@@ -75,7 +75,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             var environment = RemoteLockBenchmarkEnvironment.GetFromEnvironment();
             var testConfigurations = TestConfiguration.ParseWithRanges(environment);
             var teamCityLogger = new TeamCityLogger(Console.Out);
-            teamCityLogger.FormatMessage("Going to run {0} test configuration(s)", testConfigurations.Count);
+            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Going to run {0} test configuration(s)", testConfigurations.Count);
 
             foreach (var indexedTestConfiguration in testConfigurations.Select((c, i) => new {Ind = i, Conf = c}))
             {
@@ -100,37 +100,45 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                         throw new Exception(string.Format("Unknown scenario {0}", indexedTestConfiguration.Conf.TestScenario));
                     }
 
+                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Going to run with {0} variants of options", testOptionsList.Count);
+
                     foreach (var indexedTestOptions in testOptionsList.Select((o, i) => new {Opt = o, Ind = i}))
                     {
-                        teamCityLogger.BeginMessageBlock(string.Format("Test configuration - {0}, options - {1}", indexedTestConfiguration.Ind, indexedTestOptions.Ind));
-                        teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Configuration:\n{0}", indexedTestConfiguration.Conf);
-                        teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Options:\n{0}", indexedTestOptions.Opt);
-
-                        var configurator = BenchmarkConfigurator
-                            .CreateNew()
-                            .WithRegistryCreator(CreateRegistry)
-                            .WithAgentProviderFromTeamCity()
-                            .WithConfiguration(indexedTestConfiguration.Conf)
-                            .WithTestOptions(indexedTestOptions.Opt)
-                            .WithMetricsContext(Metric.Context(string.Format("Test configuration {0}, test option {1}", indexedTestConfiguration.Ind, indexedTestOptions.Ind)))
-                            .WithTeamCityLogger(teamCityLogger);
-                        switch (indexedTestConfiguration.Conf.ClusterType)
+                        try
                         {
-                        case ClusterTypes.Cassandra:
-                            configurator.WithCassandraCluster();
-                            break;
-                        case ClusterTypes.Zookeeper:
-                            configurator.WithZookeeperCluster();
-                            break;
-                        default:
-                            throw new Exception(string.Format("Type of cluster for {0} is unknown", indexedTestConfiguration.Conf.ClusterType));
+                            teamCityLogger.BeginMessageBlock(string.Format("Test configuration - {0}, options set - {1}", indexedTestConfiguration.Ind, indexedTestOptions.Ind));
+                            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Configuration:\n{0}", indexedTestConfiguration.Conf);
+                            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Options:\n{0}", indexedTestOptions.Opt);
+
+                            var configurator = BenchmarkConfigurator
+                                .CreateNew()
+                                .WithRegistryCreator(CreateRegistry)
+                                .WithAgentProviderFromTeamCity()
+                                .WithConfiguration(indexedTestConfiguration.Conf)
+                                .WithTestOptions(indexedTestOptions.Opt)
+                                .WithMetricsContext(Metric.Context(string.Format("Test configuration {0}, test option {1}", indexedTestConfiguration.Ind, indexedTestOptions.Ind)))
+                                .WithTeamCityLogger(teamCityLogger);
+                            switch (indexedTestConfiguration.Conf.ClusterType)
+                            {
+                                case ClusterTypes.Cassandra:
+                                    configurator.WithCassandraCluster();
+                                    break;
+                                case ClusterTypes.Zookeeper:
+                                    configurator.WithZookeeperCluster();
+                                    break;
+                                default:
+                                    throw new Exception(string.Format("Type of cluster for {0} is unknown", indexedTestConfiguration.Conf.ClusterType));
+                            }
+                            configurator.StartAndWaitForFinish();
                         }
-                        configurator.StartAndWaitForFinish();
+                        finally
+                        {
+                            teamCityLogger.EndMessageBlock();
+                        }
                     }
                 }
                 finally
                 {
-                    teamCityLogger.EndMessageBlock();
                     var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs");
                     if (Directory.Exists(logsDir))
                         teamCityLogger.PublishArtifact(logsDir);
