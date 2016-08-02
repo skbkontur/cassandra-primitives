@@ -1,35 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-
-using log4net;
-
-using Metrics;
-
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ChildProcessDriver;
+﻿using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ChildProcessDriver;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestOptions;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.SeriesOfLocks;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Timeline;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.WaitForLock;
-using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
     public class Program
     {
-        public Program()
-        {
-            Log4NetConfiguration.InitializeOnce();
-            logger = LogManager.GetLogger(typeof(Program));
-            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-        }
-
         public static IScenariosRegistry CreateRegistry()
         {
             var scenariosRegistry = new ScenariosRegistry();
@@ -66,106 +44,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         private static void Main(string[] args)
         {
-            new Program().Run();
+            new TeamCityRemoteLockBenchmarkConfigurator(CreateRegistry).Run();
         }
-
-        private void Run()
-        {
-            InitMetrics();
-            var environment = RemoteLockBenchmarkEnvironment.GetFromEnvironment();
-            var testConfigurations = TestConfiguration.ParseWithRanges(environment);
-            var teamCityLogger = new TeamCityLogger(Console.Out);
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Going to run {0} test configuration(s)", testConfigurations.Count);
-
-            foreach (var indexedTestConfiguration in testConfigurations.Select((c, i) => new {Ind = i, Conf = c}))
-            {
-                try
-                {
-                    List<ITestOptions> testOptionsList;
-                    TestScenarios testScenario;
-                    if (!Enum.TryParse(indexedTestConfiguration.Conf.TestScenario, out testScenario))
-                        throw new Exception(string.Format("Unknown scenario {0}", indexedTestConfiguration.Conf.TestScenario));
-                    switch (testScenario)
-                    {
-                    case TestScenarios.Timeline:
-                        testOptionsList = TimelineTestOptions.ParseWithRanges(environment).Cast<ITestOptions>().ToList();
-                        break;
-                    case TestScenarios.WaitForLock:
-                        testOptionsList = WaitForLockTestOptions.ParseWithRanges(environment).Cast<ITestOptions>().ToList();
-                        break;
-                    case TestScenarios.SeriesOfLocks:
-                        testOptionsList = SeriesOfLocksTestOptions.ParseWithRanges(environment).Cast<ITestOptions>().ToList();
-                        break;
-                    default:
-                        throw new Exception(string.Format("Unknown scenario {0}", indexedTestConfiguration.Conf.TestScenario));
-                    }
-
-                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Going to run with {0} variants of options", testOptionsList.Count);
-
-                    foreach (var indexedTestOptions in testOptionsList.Select((o, i) => new {Opt = o, Ind = i}))
-                    {
-                        try
-                        {
-                            teamCityLogger.BeginMessageBlock(string.Format("Test configuration - {0}, options set - {1}", indexedTestConfiguration.Ind, indexedTestOptions.Ind));
-                            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Configuration:\n{0}", indexedTestConfiguration.Conf);
-                            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Options:\n{0}", indexedTestOptions.Opt);
-
-                            var configurator = BenchmarkConfigurator
-                                .CreateNew()
-                                .WithRegistryCreator(CreateRegistry)
-                                .WithAgentProviderFromTeamCity()
-                                .WithConfiguration(indexedTestConfiguration.Conf)
-                                .WithTestOptions(indexedTestOptions.Opt)
-                                .WithMetricsContext(Metric.Context(string.Format("Test configuration {0}, test option {1}", indexedTestConfiguration.Ind, indexedTestOptions.Ind)))
-                                .WithTeamCityLogger(teamCityLogger);
-                            switch (indexedTestConfiguration.Conf.ClusterType)
-                            {
-                                case ClusterTypes.Cassandra:
-                                    configurator.WithCassandraCluster();
-                                    break;
-                                case ClusterTypes.Zookeeper:
-                                    configurator.WithZookeeperCluster();
-                                    break;
-                                default:
-                                    throw new Exception(string.Format("Type of cluster for {0} is unknown", indexedTestConfiguration.Conf.ClusterType));
-                            }
-                            configurator.StartAndWaitForFinish();
-                        }
-                        finally
-                        {
-                            teamCityLogger.EndMessageBlock();
-                        }
-                    }
-                }
-                finally
-                {
-                    var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs");
-                    if (Directory.Exists(logsDir))
-                        teamCityLogger.PublishArtifact(logsDir);
-                }
-            }
-
-            teamCityLogger.SetBuildStatus(TeamCityBuildStatus.Success, "Done");
-        }
-
-        private void InitMetrics()
-        {
-            Metric.SetGlobalContextName(string.Format("EDI.Benchmarks.{0}.{1}", Process.GetCurrentProcess().ProcessName.Replace('.', '_'), Environment.MachineName.Replace('.', '_')));
-            Metric.Config.WithHttpEndpoint("http://*:1234/").WithAllCounters();
-            var graphiteUri = new Uri(string.Format("net.{0}://{1}:{2}", "tcp", "graphite-relay.skbkontur.ru", "2003"));
-            Metric.Config.WithReporting(x => x
-                                                 .WithGraphite(graphiteUri, TimeSpan.FromSeconds(5))
-                                                 .WithCSVReports(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs", "csv"), TimeSpan.FromMinutes(1))
-                                                 .WithTextFileReport(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs", "txt"), TimeSpan.FromMinutes(1)));
-        }
-
-        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            Console.WriteLine(e.ExceptionObject.ToString());
-            logger.Error(e.ExceptionObject.ToString());
-            Environment.Exit(1);
-        }
-
-        private readonly ILog logger;
     }
 }
