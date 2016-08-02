@@ -35,7 +35,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             var scenariosRegistry = new ScenariosRegistry();
 
             scenariosRegistry.Register<TimelineProgressMessage, TimelineTest, TimelineTestProgressProcessor, TimelineTestOptions>(
-                TestScenarios.Timeline,
+                TestScenarios.Timeline.ToString(),
                 options =>
                     {
                         var remoteLockGetterProvider = new RemoteLockGetterProvider(options.ExternalDataGetter, options.Configuration, options.ExternalProgressLogger);
@@ -44,7 +44,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 options => new TimelineTestProgressProcessor(options.Configuration, options.TestOptions as TimelineTestOptions, options.TeamCityLogger, options.MetricsContext));
 
             scenariosRegistry.Register<WaitForLockProgressMessage, WaitForLockTest, WaitForLockTestProgressProcessor, WaitForLockTestOptions>(
-                TestScenarios.WaitForLock,
+                TestScenarios.WaitForLock.ToString(),
                 options =>
                     {
                         var remoteLockGetterProvider = new RemoteLockGetterProvider(options.ExternalDataGetter, options.Configuration, options.ExternalProgressLogger);
@@ -53,7 +53,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 options => new WaitForLockTestProgressProcessor(options.Configuration, options.TestOptions as WaitForLockTestOptions, options.TeamCityLogger, options.MetricsContext));
 
             scenariosRegistry.Register<SeriesOfLocksProgressMessage, SeriesOfLocksTest, SeriesOfLocksTestProgressProcessor, SeriesOfLocksTestOptions>(
-                TestScenarios.SeriesOfLocks,
+                TestScenarios.SeriesOfLocks.ToString(),
                 options =>
                     {
                         var remoteLockGetterProvider = new RemoteLockGetterProvider(options.ExternalDataGetter, options.Configuration, options.ExternalProgressLogger);
@@ -83,7 +83,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 try
                 {
                     List<ITestOptions> testOptionsList;
-                    switch (indexedTestConfiguration.Conf.TestScenario)
+                    TestScenarios testScenario;
+                    if (!Enum.TryParse(indexedTestConfiguration.Conf.TestScenario, out testScenario))
+                        throw new Exception(string.Format("Unknown scenario {0}", indexedTestConfiguration.Conf.TestScenario));
+                    switch (testScenario)
                     {
                     case TestScenarios.Timeline:
                         testOptionsList = TimelineTestOptions.ParseWithRanges(environment).Cast<ITestOptions>().ToList();
