@@ -42,15 +42,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     processLauncher.WaitForProcessesToFinish();
 
                     teamCityLogger.EndMessageBlock();
-
-                    teamCityLogger.SetBuildStatus(TeamCityBuildStatus.Success, "Done");
                 }
             }
             catch (Exception e)
             {
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Failure, "Exception occured while working with child processes:\n{0}", e);
                 teamCityLogger.EndMessageBlock();
-                teamCityLogger.SetBuildStatus("Fail", "Fail because of unexpected exceptions");
             }
         }
 

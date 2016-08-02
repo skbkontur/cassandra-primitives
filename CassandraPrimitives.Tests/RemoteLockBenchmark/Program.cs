@@ -133,6 +133,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                         teamCityLogger.PublishArtifact(logsDir);
                 }
             }
+
+            teamCityLogger.SetBuildStatus(TeamCityBuildStatus.Success, "Done");
         }
 
         private void InitMetrics()
