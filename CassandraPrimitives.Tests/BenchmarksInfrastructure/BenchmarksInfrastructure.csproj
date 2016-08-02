@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BenchmarkConfigurator.cs" />
+    <Compile Include="Infrastructure\FakeTeamCityLogger.cs" />
     <Compile Include="Implementations\Cassandra\CassandraSettings\CassandraInitializerSettings.cs" />
     <Compile Include="Implementations\Cassandra\CassandraSettings\CassandraMetaProvider.cs" />
     <Compile Include="Implementations\Cassandra\CassandraSettings\ColumnFamilies.cs" />
