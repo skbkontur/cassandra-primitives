@@ -35,8 +35,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
             using (var taskScheduler = new TaskSchedulerAdapter(wrapperPath))
             {
                 var taskName = "BenchmarksJmxTrans";
-                Console.WriteLine("Ensuring that JmxTrans is not started already");
-                taskScheduler.StopAndDeleteTask(taskName);
                 Console.WriteLine("Staring JmxTrans");
                 taskScheduler.RunTaskInWrapper(taskName, Path.Combine(jmxTransWorkDirectory, "runJmxTrans.bat"), null, jmxTransWorkDirectory);
                 Console.WriteLine("JmxTrans started");
