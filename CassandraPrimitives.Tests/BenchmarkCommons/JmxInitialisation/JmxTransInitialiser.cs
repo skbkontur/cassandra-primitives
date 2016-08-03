@@ -52,7 +52,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
 
         private static void PatchSettings(string deployDirectory, List<JmxSettings> settingsList)
         {
-            var serverSettings = GetPatchedSettingsList(Path.Combine(deployDirectory, @"conf\singleServerConfigTemplate.json"), settingsList);
+            var serverConfigTemplate = File.ReadAllText(Path.Combine(deployDirectory, @"singleServerConfigTemplate.json"));
+            var serverSettings = GetPatchedSettingsList(serverConfigTemplate, settingsList);
             var joinedSettings = string.Join(",\n", serverSettings);
             var remoteConfigPath = Path.Combine(deployDirectory, @"config.json");
             var patchedConfig = File.ReadAllText(Path.Combine(deployDirectory, @"configTemplate.json")).Replace("{{servers}}", joinedSettings);
