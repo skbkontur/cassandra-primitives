@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
+using log4net;
+
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.RemoteLocks;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ExternalLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ExternalLogging.HttpLogging;
@@ -14,6 +16,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
     {
         public SeriesOfLocksTest(IRemoteLockGetterProvider remoteLockGetterProvider, IExternalProgressLogger externalLogger, HttpExternalDataGetter httpExternalDataGetter)
         {
+            logger = LogManager.GetLogger(GetType());
             this.httpExternalDataGetter = httpExternalDataGetter;
             testOptions = httpExternalDataGetter.GetTestOptions<SeriesOfLocksTestOptions>().Result;
             this.remoteLockGetterProvider = remoteLockGetterProvider;
@@ -47,6 +50,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
                     {
                         locksToRelease.Enqueue(Tuple.Create(globalTimer.ElapsedMilliseconds, remoteLock));
                         amountOfLocks++;
+                        logger.InfoFormat("Lock with ind {0} acquired by thread {1}", i, threadInd);
                         Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
                         if (reportTimer.ElapsedMilliseconds > publishIntervalMs)
                         {
@@ -86,5 +90,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
         private readonly IRemoteLockGetterProvider remoteLockGetterProvider;
         private readonly SeriesOfLocksTestOptions testOptions;
         private readonly HttpExternalDataGetter httpExternalDataGetter;
+        private readonly ILog logger;
     }
 }

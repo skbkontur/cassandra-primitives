@@ -8,6 +8,7 @@ using log4net;
 
 using Microsoft.CSharp;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ExternalLogging.HttpLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
@@ -87,7 +88,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         public static void Run(IScenariosRegistry scenariosRegistry)
         {
+            Log4NetConfiguration.InitializeOnce();
             var logger = LogManager.GetLogger("ChildRunner");
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) => OnUnhandlingExceptionInChildProcess(sender, e, logger);
             var args = Environment.GetCommandLineArgs().Skip(1).ToArray();
             if (args.Length < 3)
                 throw new Exception("Not enough arguments");
@@ -107,6 +110,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             logger.InfoFormat("Configuration was received");
 
             ChildProcessDriver.RunSingleTest(configuration, processInd, processToken, scenariosRegistry);
+        }
+
+        private static void OnUnhandlingExceptionInChildProcess(object sender, UnhandledExceptionEventArgs e, ILog logger)
+        {
+            logger.FatalFormat("Unhandled exception in child process:\n{0}", e);
         }
     }
 }
