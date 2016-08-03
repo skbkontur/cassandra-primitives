@@ -15,10 +15,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
     {
         public TaskSchedulerAdapter(RemoteMachineCredentials credentials, string wrapperPath)
         {
-            taskService = credentials == null ? new TaskService() : new TaskService(credentials.MachineName, credentials.UserName, credentials.AccountDomain, credentials.Password);
+            taskService = new TaskService(credentials.MachineName, credentials.UserName, credentials.AccountDomain, credentials.Password);
             this.credentials = credentials;
             logger = LogManager.GetLogger(GetType());
             this.wrapperPath = wrapperPath;
+        }
+
+        public TaskSchedulerAdapter(string wrapperPath) : this(new RemoteMachineCredentials(Environment.MachineName), wrapperPath)
+        {
         }
 
         public Task RunTask(string taskName, string path, string[] arguments = null, string directory = null)
@@ -88,7 +92,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 
             var taskDefinition = taskService.NewTask();
 
-            var joinedArgs = string.Join(" ", (arguments ?? new string[0]).Select(EscapeArgumentForTaskScheduler));
+            var joinedArgs = string.Join(" ", (arguments ?? new string[0]).Select(EscapeArgumentForCmd));
             var action = new ExecAction(path, joinedArgs, directory);
 
             taskDefinition.Actions.Add(action);
@@ -113,17 +117,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 
         private string EscapeArgumentForCmd(string argument)
         {
-            var r = new Regex(@"\\(?=""|$)");
+            var r = new Regex(@"\\(?=[\\]*""|$)");
             var semiEscaped = r.Replace(argument, @"\\");
             var result = string.Format("\"{0}\"", semiEscaped.Replace(@"""", @""""""));
-            return result;
-        }
-
-        private string EscapeArgumentForTaskScheduler(string argument)
-        {
-            var r = new Regex(@"\\(?=""|$)");
-            var semiEscaped = r.Replace(argument, @"\\\\");
-            var result = string.Format("\"{0}\"", semiEscaped.Replace(@"""", @""""""""""));
             return result;
         }
 
