@@ -1,0 +1,1 @@
+java -Djmxtrans.log.level=10 -jar jmxtrans-259-all.jar -e -f config.json -s 30

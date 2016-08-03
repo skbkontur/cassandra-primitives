@@ -41,7 +41,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
             return scenariosRegistry;
         }
-
+        
         private static void Main(string[] args)
         {
             new TeamCityRemoteLockBenchmarkConfigurator(CreateRegistry).Run();

@@ -51,10 +51,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
                         if (reportTimer.ElapsedMilliseconds > publishIntervalMs)
                         {
                             externalLogger.PublishProgress(new SeriesOfLocksProgressMessage
-                            {
-                                AmountOfLocks = amountOfLocks,
-                                Final = false,
-                            });
+                                {
+                                    AmountOfLocks = amountOfLocks,
+                                    Final = false,
+                                });
                             amountOfLocks = 0;
                             reportTimer.Restart();
                         }

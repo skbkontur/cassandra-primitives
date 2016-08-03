@@ -5,6 +5,8 @@ using System.Linq;
 
 using Metrics;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInitialisation;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Agents.Providers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ChildProcessDriver;
@@ -49,6 +51,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         IReadyToStartBenchmarkConfigurator WithOption(string name, object value);
         IReadyToStartBenchmarkConfigurator WithDynamicOption(string name, Func<object> valueProvider);
         IReadyToStartBenchmarkConfigurator WithAllProcessStartedHandler(Action onAllProcessesStarted);
+        IReadyToStartBenchmarkConfigurator WithJmxTrans(string graphitePrefix);
         void StartAndWaitForFinish();
     }
 
@@ -132,6 +135,24 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         {
             this.testConfiguration = testConfiguration;
             optionsSet["TestConfiguration"] = testConfiguration;
+            return this;
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithJmxTrans(string graphitePrefix)
+        {
+            deploySteps.Add(new DeployStep("JmxTrans deploy", () =>
+                {
+                    var wrapperDeployer = new WrapperDeployer(teamCityLogger);
+                    wrapperDeployer.DeployWrapper(new RemoteDirectory(AppDomain.CurrentDomain.BaseDirectory, "", ""));
+                    var initialiser = new JmxTransInitialiser();
+                    var deployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "JmxTrans");
+                    var agentNames = agentProvider.GetAllAgentNames();
+                    var settingsList = agentNames
+                        .Select(name => new JmxSettings(name, name.Split('.').First(), graphitePrefix, 7399))
+                        .ToList();
+                    initialiser.DeployJmxTrans(deployDirectory, settingsList);
+                    toDispose.Add(initialiser.RunJmxTrans(deployDirectory, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, wrapperDeployer.GetWrapperRelativePath())));
+                }, DeployPriorities.JmxTrans));
             return this;
         }
 
@@ -227,7 +248,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         internal enum DeployPriorities
         {
-            Configuration,
+            JmxTrans,
             Cluster,
             Driver
         }

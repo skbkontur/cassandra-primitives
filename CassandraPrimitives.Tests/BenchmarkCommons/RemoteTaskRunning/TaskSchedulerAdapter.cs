@@ -21,7 +21,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
             this.wrapperPath = wrapperPath;
         }
 
-        public TaskSchedulerAdapter(string wrapperPath) : this(new RemoteMachineCredentials(Environment.MachineName), wrapperPath)
+        public TaskSchedulerAdapter(string wrapperPath)
+            : this(new RemoteMachineCredentials(Environment.MachineName), wrapperPath)
         {
         }
 

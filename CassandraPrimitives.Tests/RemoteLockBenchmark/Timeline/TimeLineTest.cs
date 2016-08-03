@@ -48,10 +48,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Time
                         if (globalTimer.ElapsedMilliseconds > publishIntervalMs)
                         {
                             externalLogger.PublishProgress(new TimelineProgressMessage
-                            {
-                                LockEvents = lockEvents,
-                                Final = false,
-                            });
+                                {
+                                    LockEvents = lockEvents,
+                                    Final = false,
+                                });
                             lockEvents.Clear();
                             globalTimer.Restart();
                         }

@@ -5,7 +5,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 {
     public class AgentProviderAllAgents : AbstractAgentProvider
     {
-        protected override List<string> GetAllAgentNames()
+        public override List<string> GetAllAgentNames()
         {
             return Enumerable
                 .Range(1, 6)
