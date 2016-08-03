@@ -40,7 +40,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
                 if (!IsTaskRunning(task, taskStartTimeoutMilliseconds))
                 {
                     if (task.State == TaskState.Ready)
-                        logger.ErrorFormat("The task with name {0} on machine {1} started, but immediately finished", taskName, credentials.MachineName);
+                        logger.ErrorFormat("The task with name {0} on machine {1} started, but almost immediately finished", taskName, credentials.MachineName);
                     else
                     {
                         logger.ErrorFormat("The task with name {0} on machine {1} didn't start for some unknown reasons", taskName, credentials.MachineName);
@@ -129,7 +129,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
             taskService.Dispose();
         }
 
-        private const int taskStartTimeoutMilliseconds = 3000;
+        private const int taskStartTimeoutMilliseconds = 10000;
 
         private readonly string wrapperPath;
         private readonly TaskService taskService;
