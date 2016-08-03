@@ -31,23 +31,30 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
             var globalTimer = Stopwatch.StartNew();
             for (var i = 0; i < testOptions.AmountOfLocks; i++)
             {
-                var blockedAt = globalTimer.ElapsedMilliseconds;
-                using (locker.Acquire())
+                try
                 {
-                    lockWaitingDurations.Add(globalTimer.ElapsedMilliseconds - blockedAt);
-                    Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
-                    if (globalTimer.ElapsedMilliseconds > publishIntervalMs)
+                    var blockedAt = globalTimer.ElapsedMilliseconds;
+                    using (locker.Acquire())
                     {
-                        externalLogger.PublishProgress(new WaitForLockProgressMessage
+                        lockWaitingDurations.Add(globalTimer.ElapsedMilliseconds - blockedAt);
+                        Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
+                        if (globalTimer.ElapsedMilliseconds > publishIntervalMs)
+                        {
+                            externalLogger.PublishProgress(new WaitForLockProgressMessage
                             {
                                 LockWaitingDurationsMs = lockWaitingDurations,
                                 Final = false,
                             });
-                        lockWaitingDurations.Clear();
-                        globalTimer.Restart();
+                            lockWaitingDurations.Clear();
+                            globalTimer.Restart();
+                        }
                     }
+                    Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
                 }
-                Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
+                catch (Exception e)
+                {
+                    externalLogger.Log("Exception occured in thread {0}:\n{1}", threadInd, e);
+                }
             }
             externalLogger.PublishProgress(new WaitForLockProgressMessage
                 {

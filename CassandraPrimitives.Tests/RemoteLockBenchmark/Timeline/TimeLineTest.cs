@@ -38,25 +38,32 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Time
             var globalTimer = Stopwatch.StartNew();
             for (var i = 0; i < testOptions.AmountOfLocks; i++)
             {
-                var lockEvent = new TimelineProgressMessage.LockEvent();
-                using (locker.Acquire())
+                try
                 {
-                    lockEvent.AcquiredAt = GetCurrentTimeStamp();
-                    Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
-                    if (globalTimer.ElapsedMilliseconds > publishIntervalMs)
+                    var lockEvent = new TimelineProgressMessage.LockEvent();
+                    using (locker.Acquire())
                     {
-                        externalLogger.PublishProgress(new TimelineProgressMessage
+                        lockEvent.AcquiredAt = GetCurrentTimeStamp();
+                        Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
+                        if (globalTimer.ElapsedMilliseconds > publishIntervalMs)
+                        {
+                            externalLogger.PublishProgress(new TimelineProgressMessage
                             {
                                 LockEvents = lockEvents,
                                 Final = false,
                             });
-                        lockEvents.Clear();
-                        globalTimer.Restart();
+                            lockEvents.Clear();
+                            globalTimer.Restart();
+                        }
+                        lockEvent.ReleasedAt = GetCurrentTimeStamp();
                     }
-                    lockEvent.ReleasedAt = GetCurrentTimeStamp();
+                    lockEvents.Add(lockEvent);
+                    Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
                 }
-                lockEvents.Add(lockEvent);
-                Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
+                catch (Exception e)
+                {
+                    externalLogger.Log("Exception occured in thread {0}:\n{1}", threadInd, e);
+                }
             }
             externalLogger.PublishProgress(new TimelineProgressMessage
                 {

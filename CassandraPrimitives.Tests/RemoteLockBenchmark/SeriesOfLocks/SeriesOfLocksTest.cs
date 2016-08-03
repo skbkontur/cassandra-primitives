@@ -39,25 +39,32 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
             var amountOfLocks = 0;
             for (var i = 0; i < testOptions.AmountOfLocks; i++)
             {
-                var locker = remoteLockGetter.Get(testOptions.LockIdCommonPrefix + string.Format("{0:D20}", i));
-                IDisposable remoteLock;
-                if (locker.TryAcquire(out remoteLock))
+                try
                 {
-                    locksToRelease.Enqueue(Tuple.Create(globalTimer.ElapsedMilliseconds, remoteLock));
-                    amountOfLocks++;
-                    Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
-                    if (reportTimer.ElapsedMilliseconds > publishIntervalMs)
+                    var locker = remoteLockGetter.Get(testOptions.LockIdCommonPrefix + string.Format("{0:D20}", i));
+                    IDisposable remoteLock;
+                    if (locker.TryAcquire(out remoteLock))
                     {
-                        externalLogger.PublishProgress(new SeriesOfLocksProgressMessage
+                        locksToRelease.Enqueue(Tuple.Create(globalTimer.ElapsedMilliseconds, remoteLock));
+                        amountOfLocks++;
+                        Thread.Sleep(rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds));
+                        if (reportTimer.ElapsedMilliseconds > publishIntervalMs)
+                        {
+                            externalLogger.PublishProgress(new SeriesOfLocksProgressMessage
                             {
                                 AmountOfLocks = amountOfLocks,
                                 Final = false,
                             });
-                        amountOfLocks = 0;
-                        reportTimer.Restart();
+                            amountOfLocks = 0;
+                            reportTimer.Restart();
+                        }
+                        while (locksToRelease.Count > 0 && globalTimer.ElapsedMilliseconds - locksToRelease.Peek().Item1 > lockLiveTimeMs)
+                            locksToRelease.Dequeue().Item2.Dispose();
                     }
-                    while (locksToRelease.Count > 0 && globalTimer.ElapsedMilliseconds - locksToRelease.Peek().Item1 > lockLiveTimeMs)
-                        locksToRelease.Dequeue().Item2.Dispose();
+                }
+                catch (Exception e)
+                {
+                    externalLogger.Log("Exception occured in thread {0}:\n{1}", threadInd, e);
                 }
             }
             externalLogger.PublishProgress(new SeriesOfLocksProgressMessage
