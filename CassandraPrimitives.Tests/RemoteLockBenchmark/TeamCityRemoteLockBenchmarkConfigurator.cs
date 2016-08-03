@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -51,6 +50,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 .WithMetricsContext(Metric.Context(string.Format("Test configuration - {0}, options set - {1}", configurationInd, optionsInd)))
                 .WithTeamCityLogger(teamCityLogger)
                 .WithClusterFromConfiguration()
+                .WithJmxTrans(JmxGraphitePrefix)
                 .WithDynamicOption("permission_to_start", () => permissionToStart)
                 .WithDynamicOption("response_on_start", () => taskCompletionSource.Task.Result)
                 .WithAllProcessStartedHandler(() =>
@@ -124,7 +124,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         private void InitMetrics()
         {
-            Metric.SetGlobalContextName(string.Format("EDI.Benchmarks.{0}", Environment.MachineName.Replace('.', '_')));
+            Metric.SetGlobalContextName(MetricsGraphitePrefix);
             Metric.Config.WithHttpEndpoint("http://*:1234/").WithAllCounters();
             var graphiteUri = new Uri(string.Format("net.{0}://{1}:{2}", "tcp", "graphite-relay.skbkontur.ru", "2003"));
             Metric.Config.WithReporting(x => x
@@ -132,6 +132,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                                                  .WithCSVReports(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs", "csv"), TimeSpan.FromMinutes(1), ";")
                                                  .WithTextFileReport(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs", "textlog.txt"), TimeSpan.FromMinutes(1)));
         }
+
+        private string MetricsGraphitePrefix { get { return string.Format("EDI.Benchmarks.{0}.Metrics", Environment.MachineName.Replace('.', '_')); } }
+        private string JmxGraphitePrefix { get { return string.Format("EDI.Benchmarks.{0}.Jmx", Environment.MachineName.Replace('.', '_')); } }
 
         private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {

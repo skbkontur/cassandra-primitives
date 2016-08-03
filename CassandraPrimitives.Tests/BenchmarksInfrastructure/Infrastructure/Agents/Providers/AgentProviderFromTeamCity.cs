@@ -6,7 +6,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 {
     public class AgentProviderFromTeamCity : AbstractAgentProvider
     {
-        protected override List<string> GetAllAgentNames()
+        public override List<string> GetAllAgentNames()
         {
             var rawAgents = Environment.GetEnvironmentVariable("benchmark.Agents");
             if (rawAgents == null)

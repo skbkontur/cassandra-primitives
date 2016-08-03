@@ -36,7 +36,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 .ToList();
         }
 
-        protected abstract List<string> GetAllAgentNames();
+        public abstract List<string> GetAllAgentNames();
 
         private int used;
         private List<RemoteAgentInfo> agents;

@@ -64,6 +64,8 @@
     <Compile Include="DirectoryExtensions.cs" />
     <Compile Include="IpAddressConverter.cs" />
     <Compile Include="IpEndPointConverter.cs" />
+    <Compile Include="JmxInitialisation\JmxSettings.cs" />
+    <Compile Include="JmxInitialisation\JmxTransInitialiser.cs" />
     <Compile Include="Logging\Log4netConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CassandraInitialisation\RemoteCassandraInitializer.cs" />

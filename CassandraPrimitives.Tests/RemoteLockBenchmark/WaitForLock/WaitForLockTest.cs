@@ -41,10 +41,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Wait
                         if (globalTimer.ElapsedMilliseconds > publishIntervalMs)
                         {
                             externalLogger.PublishProgress(new WaitForLockProgressMessage
-                            {
-                                LockWaitingDurationsMs = lockWaitingDurations,
-                                Final = false,
-                            });
+                                {
+                                    LockWaitingDurationsMs = lockWaitingDurations,
+                                    Final = false,
+                                });
                             lockWaitingDurations.Clear();
                             globalTimer.Restart();
                         }

@@ -5,5 +5,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
     public interface IAgentProvider
     {
         List<RemoteAgentInfo> AcquireAgents(int amount);
+        List<string> GetAllAgentNames();
     }
 }
