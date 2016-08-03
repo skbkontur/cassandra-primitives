@@ -11,6 +11,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
     {
         public void DeployJmxTrans(string deployDirectory, List<JmxSettings> settingsList)
         {
+            using (var taskScheduler = new TaskSchedulerAdapter(null))
+            {
+                taskScheduler.StopAndDeleteTask(taskName);
+            }
             if (Directory.Exists(deployDirectory))
             {
                 Console.WriteLine("Directory {0} already exists, deleting...", deployDirectory);
@@ -34,7 +38,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
         {
             using (var taskScheduler = new TaskSchedulerAdapter(wrapperPath))
             {
-                var taskName = "BenchmarksJmxTrans";
                 Console.WriteLine("Staring JmxTrans");
                 taskScheduler.RunTaskInWrapper(taskName, Path.Combine(jmxTransWorkDirectory, "runJmxTrans.bat"), null, jmxTransWorkDirectory);
                 Console.WriteLine("JmxTrans started");
@@ -102,5 +105,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
 
             private readonly string jmxTaskName;
         }
+
+        private const string taskName = "BenchmarksJmxTrans";
     }
 }
