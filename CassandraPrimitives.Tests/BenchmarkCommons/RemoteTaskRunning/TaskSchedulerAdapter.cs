@@ -117,7 +117,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 
         private string EscapeArgumentForCmd(string argument)
         {
-            var r = new Regex(@"\\(?=[\\]*""|$)");
+            var r = new Regex(@"\\(?=[\\]*(""|$))");
             var semiEscaped = r.Replace(argument, @"\\");
             var result = string.Format("\"{0}\"", semiEscaped.Replace(@"""", @""""""));
             return result;
