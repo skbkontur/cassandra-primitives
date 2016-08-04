@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Agents.Providers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ExternalLogging.HttpLogging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Processes;
@@ -30,7 +32,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             var wrapperDeployer = new WrapperDeployer(teamCityLogger);
             wrapperDeployer.DeployWrapperToAgents(testAgents);
             var wrapperRelativePath = wrapperDeployer.GetWrapperRelativePath();
-
+            List<string> processDirectories = new List<string>();
             try
             {
                 using (new HttpTestDataProvider(configuration, optionsSet, dynamicOptionsSet))
@@ -39,6 +41,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 {
                     processLauncher.StartProcesses(configuration);
                     AllProcessesStarted();
+                    processDirectories = processLauncher.GetRunningProcessDirectories();
                     processLauncher.WaitForProcessesToFinish();
 
                     teamCityLogger.EndMessageBlock();
@@ -48,6 +51,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             {
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Failure, "Exception occured while working with child processes:\n{0}", e);
                 teamCityLogger.EndMessageBlock();
+            }
+            finally
+            {
+                foreach (var directory in processDirectories)
+                {
+                    var dirForLogArtifacts = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts", "Process_{0}_Logs");
+                    var logsDir = Path.Combine(directory, "LogsDirectory");
+                    new DirectoryInfo(logsDir).CopyTo(new DirectoryInfo(dirForLogArtifacts));
+                }
             }
         }
 

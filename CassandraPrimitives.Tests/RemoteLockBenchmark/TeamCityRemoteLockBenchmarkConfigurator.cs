@@ -8,6 +8,7 @@ using log4net;
 
 using Metrics;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
@@ -41,28 +42,37 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             bool permissionToStart = false;
             var taskCompletionSource = new TaskCompletionSource<bool>();
 
-            BenchmarkConfigurator
-                .CreateNew()
-                .WithStaticRegistryCreatorMethod(staticRegistryCreatorMethod)
-                .WithAgentProviderFromTeamCity()
-                .WithConfiguration(configuration)
-                .WithTestOptions(options)
-                .WithMetricsContext(Metric.Context(string.Format("Test configuration - {0}, options set - {1}", configurationInd, optionsInd)))
-                .WithTeamCityLogger(teamCityLogger)
-                .WithClusterFromConfiguration()
-                .WithJmxTrans(JmxGraphitePrefix)
-                .WithDynamicOption("permission_to_start", () => permissionToStart)
-                .WithDynamicOption("response_on_start", () => taskCompletionSource.Task.Result)
-                .WithAllProcessStartedHandler(() =>
-                    {
-                        Task.Run(() =>
-                            {
-                                permissionToStart = true;
-                                Task.Delay(1000).Wait();
-                                taskCompletionSource.SetResult(true);
-                            });
-                    })
-                .StartAndWaitForFinish();
+            try
+            {
+                BenchmarkConfigurator
+                    .CreateNew()
+                    .WithStaticRegistryCreatorMethod(staticRegistryCreatorMethod)
+                    .WithAgentProviderFromTeamCity()
+                    .WithConfiguration(configuration)
+                    .WithTestOptions(options)
+                    .WithMetricsContext(Metric.Context(string.Format("Test configuration - {0}, options set - {1}", configurationInd, optionsInd)))
+                    .WithTeamCityLogger(teamCityLogger)
+                    .WithClusterFromConfiguration()
+                    .WithJmxTrans(JmxGraphitePrefix)
+                    .WithDynamicOption("permission_to_start", () => permissionToStart)
+                    .WithDynamicOption("response_on_start", () => taskCompletionSource.Task.Result)
+                    .WithAllProcessStartedHandler(() =>
+                        {
+                            Task.Run(() =>
+                                {
+                                    permissionToStart = true;
+                                    Task.Delay(1000).Wait();
+                                    taskCompletionSource.SetResult(true);
+                                });
+                        })
+                    .StartAndWaitForFinish();
+            }
+            finally
+            {
+                var currentArtifactsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts");
+                var testArtifactsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", string.Format("Config_{0}_Options_{1}", configurationInd, optionsInd));
+                new DirectoryInfo(currentArtifactsPath).CopyTo(new DirectoryInfo(testArtifactsPath));
+            }
         }
 
         private void RunWithConfiguration(TestConfiguration configuration, int configurationInd)
@@ -114,9 +124,25 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             }
             finally
             {
-                var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs");
-                if (Directory.Exists(logsDir))
-                    teamCityLogger.PublishArtifact(logsDir);
+                try
+                {
+                    var metricsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs");
+                    if (Directory.Exists(metricsDir))
+                        teamCityLogger.PublishArtifact(metricsDir);
+                    new DirectoryInfo(metricsDir).CopyTo(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", "MetricsLogs")));
+                    var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LogsDirectory");
+                    if (Directory.Exists(logsDir))
+                        teamCityLogger.PublishArtifact(logsDir);
+                    new DirectoryInfo(logsDir).CopyTo(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", "MainProcessLogs")));
+                }
+                catch (Exception e)
+                {
+                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Warning, "Exception while copying artifacts: {0}", e);
+                }
+                finally
+                {
+                    teamCityLogger.PublishArtifact(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts"));
+                }
             }
 
             teamCityLogger.SetBuildStatus(TeamCityBuildStatus.Success, "Done");
@@ -130,7 +156,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             Metric.Config.WithReporting(x => x
                                                  .WithGraphite(graphiteUri, TimeSpan.FromSeconds(5))
                                                  .WithCSVReports(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs", "csv"), TimeSpan.FromMinutes(1), ";")
-                                                 .WithTextFileReport(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs", "textlog.txt"), TimeSpan.FromMinutes(1)));
+                                                 .WithTextFileReport(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs", "textMetrics.txt"), TimeSpan.FromMinutes(1)));
         }
 
         private string MetricsGraphitePrefix { get { return string.Format("EDI.Benchmarks.{0}.Metrics", Environment.MachineName.Replace('.', '_')); } }
