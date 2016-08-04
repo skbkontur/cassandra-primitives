@@ -39,18 +39,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         {
             var seedAddresses = agents.Select(agent => agent.IpAddress.ToString()).ToArray();
             return agents
-                .Zip(CassandraDeployer.GenerateTokenRing(agents.Count), (agent, token) => new {Agent = agent, Token = token})
-                .Select(agentAndToken =>
+                .Select(agent =>
                         new CassandraRemoteNodeStartInfo(
-                            agentAndToken.Agent.Credentials,
+                            agent.Credentials,
                             new CassandraNodeSettings
                                 (
                                 name : clusterName,
-                                listenAddress : agentAndToken.Agent.IpAddress.ToString(),
-                                seedAddresses : seedAddresses,
-                                initialToken : agentAndToken.Token
+                                listenAddress: agent.IpAddress.ToString(),
+                                seedAddresses : seedAddresses
                                 ),
-                            agentAndToken.Agent.WorkDirectory,
+                            agent.WorkDirectory,
                             taskWrapperRelativePath))
                 .ToList();
         }

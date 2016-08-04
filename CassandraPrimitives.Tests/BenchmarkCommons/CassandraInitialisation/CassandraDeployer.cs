@@ -17,19 +17,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
 
         internal static CassandraNode CreateNodeBySettings(CassandraNodeSettings settings, string deployDirectory)
         {
-            var node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"1.2"))
+            var node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), "2.2"))
                 {
                     Name = settings.Name,
                     JmxPort = settings.JmxPort,
                     GossipPort = settings.GossipPort,
                     RpcPort = settings.RpcPort,
                     CqlPort = settings.CqlPort,
-                    DataBaseDirectory = settings.DataBaseDirectory,
                     DeployDirectory = deployDirectory,
                     ListenAddress = settings.ListenAddress,
-                    RpsAddress = settings.RpsAddress,
+                    RpcAddress = settings.RpcAddress,
                     SeedAddresses = settings.SeedAddresses,
-                    InitialToken = settings.InitialToken,
                     ClusterName = settings.ClusterName,
                 };
             return node;
@@ -41,20 +39,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
                 throw new Exception("Can't find directory with Cassandra templates");
             var cassandraTemplateDirectory = Path.Combine(currentDir, cassandraTemplates);
             return Directory.Exists(cassandraTemplateDirectory) ? cassandraTemplateDirectory : FindCassandraTemplateDirectory(Path.GetDirectoryName(currentDir));
-        }
-
-        public static List<string> GenerateTokenRing(int nodesCount)
-        {
-            var result = new List<string>();
-            for (var i = 0; i < nodesCount; i++)
-            {
-                var tokenIndex = i + 1;
-                var bigInteger = new BigInteger(2);
-                bigInteger = BigInteger.Pow(bigInteger, 127);
-                bigInteger = tokenIndex * bigInteger / nodesCount;
-                result.Add(bigInteger.ToString());
-            }
-            return result;
         }
 
         private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
