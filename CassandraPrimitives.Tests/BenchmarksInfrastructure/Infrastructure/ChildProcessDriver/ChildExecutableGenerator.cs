@@ -6,6 +6,8 @@ using System.Linq;
 
 using log4net;
 
+using Metrics;
+
 using Microsoft.CSharp;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging;
@@ -90,7 +92,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         {
             Log4NetConfiguration.InitializeOnce();
             var logger = LogManager.GetLogger("ChildRunner");
+
             AppDomain.CurrentDomain.UnhandledException += (sender, e) => OnUnhandlingExceptionInChildProcess(sender, e, logger);
+
+            InitMetrics();
+
             var args = Environment.GetCommandLineArgs().Skip(1).ToArray();
             if (args.Length < 3)
                 throw new Exception("Not enough arguments");
@@ -110,6 +116,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             logger.InfoFormat("Configuration was received");
 
             ChildProcessDriver.RunSingleTest(configuration, processInd, processToken, scenariosRegistry);
+        }
+
+        private static void InitMetrics()
+        {
+            Metric.SetGlobalContextName(string.Format("EDI.Benchmarks.ChildProcesses.{0}", Environment.MachineName));
+            Metric.Config.WithHttpEndpoint("http://*:1234/").WithAllCounters();
+            var graphiteUri = new Uri(string.Format("net.{0}://{1}:{2}", "tcp", "graphite-relay.skbkontur.ru", "2003"));
+            Metric.Config.WithReporting(x => x
+                                                 .WithGraphite(graphiteUri, TimeSpan.FromSeconds(5))
+                                                 .WithCSVReports(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs", "csv"), TimeSpan.FromMinutes(1), ";")
+                                                 .WithTextFileReport(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs", "textMetrics.txt"), TimeSpan.FromMinutes(1)));
         }
 
         private static void OnUnhandlingExceptionInChildProcess(object sender, UnhandledExceptionEventArgs e, ILog logger)

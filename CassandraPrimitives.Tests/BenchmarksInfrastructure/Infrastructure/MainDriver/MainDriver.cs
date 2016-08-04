@@ -56,9 +56,22 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             {
                 foreach (var indexedDirectory in processDirectories.Select((d, i) => new {Dir = d, Ind = i}))
                 {
-                    var dirForLogArtifacts = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts", string.Format("Process_{0}_Logs", indexedDirectory.Ind));
-                    var logsDir = Path.Combine(indexedDirectory.Dir, "LogsDirectory");
-                    new DirectoryInfo(logsDir).CopyTo(new DirectoryInfo(dirForLogArtifacts));
+                    try
+                    {
+                        var dirForProcessArtifacts = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts", string.Format("Process_{0}", indexedDirectory.Ind));
+                        var dirForLogArtifacts = Path.Combine(dirForProcessArtifacts, "Logs");
+                        var logsDir = new DirectoryInfo(Path.Combine(indexedDirectory.Dir, "LogsDirectory"));
+                        if (logsDir.Exists)
+                            logsDir.CopyTo(new DirectoryInfo(dirForLogArtifacts));
+                        var dirForMetricsArtifacts = Path.Combine(dirForProcessArtifacts, "Metrics");
+                        var metricsDir = new DirectoryInfo(Path.Combine(indexedDirectory.Dir, "MetricsLogs"));
+                        if (metricsDir.Exists)
+                            metricsDir.CopyTo(new DirectoryInfo(dirForMetricsArtifacts));
+                    }
+                    catch (Exception e)
+                    {
+                        teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Warning, "Exception while copying artifacts of {0} process:\n{1}", indexedDirectory.Ind, e);
+                    }
                 }
             }
         }
