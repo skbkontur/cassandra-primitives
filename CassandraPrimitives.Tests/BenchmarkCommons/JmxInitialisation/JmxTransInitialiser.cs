@@ -67,7 +67,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
         {
             return new Dictionary<string, string>
                 {
-                    {"numQueryThreads", settings.NumQueryThreads.ToString()},
                     {"alias", settings.Alias},
                     {"host", settings.Host},
                     {"port", settings.Port.ToString()},

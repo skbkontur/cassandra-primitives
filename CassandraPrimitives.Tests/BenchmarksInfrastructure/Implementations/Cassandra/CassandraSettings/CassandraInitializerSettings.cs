@@ -4,7 +4,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 {
     public class CassandraInitializerSettings : ICassandraInitializerSettings
     {
-        public int RowCacheSize { get { return 0; } }
-        public int ReplicationFactor { get { return 1; } }
+        public CassandraInitializerSettings(int rowCacheSize = 0, int replicationFactor = 1)
+        {
+            RowCacheSize = rowCacheSize;
+            ReplicationFactor = replicationFactor;
+        }
+
+        public int RowCacheSize { get; private set; }
+        public int ReplicationFactor { get; private set; }
     }
 }

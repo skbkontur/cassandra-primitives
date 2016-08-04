@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 
 using SKBKontur.Cassandra.ClusterDeployment;
 
@@ -39,6 +41,20 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
                 throw new Exception("Can't find directory with Cassandra templates");
             var cassandraTemplateDirectory = Path.Combine(currentDir, cassandraTemplates);
             return Directory.Exists(cassandraTemplateDirectory) ? cassandraTemplateDirectory : FindCassandraTemplateDirectory(Path.GetDirectoryName(currentDir));
+        }
+
+        public static List<string> GenerateTokenRing(int nodesCount)
+        {
+            var result = new List<string>();
+            for (var i = 0; i < nodesCount; i++)
+            {
+                var tokenIndex = i + 1;
+                var bigInteger = new BigInteger(2);
+                bigInteger = BigInteger.Pow(bigInteger, 127);
+                bigInteger = tokenIndex * bigInteger / nodesCount;
+                result.Add(bigInteger.ToString());
+            }
+            return result;
         }
 
         private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
