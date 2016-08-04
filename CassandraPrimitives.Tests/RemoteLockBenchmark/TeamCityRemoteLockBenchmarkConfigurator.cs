@@ -128,12 +128,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 {
                     var metricsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs");
                     if (Directory.Exists(metricsDir))
-                        teamCityLogger.PublishArtifact(metricsDir);
-                    new DirectoryInfo(metricsDir).CopyTo(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", "MetricsLogs")));
+                        new DirectoryInfo(metricsDir).CopyTo(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", "MetricsLogs")));
                     var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LogsDirectory");
                     if (Directory.Exists(logsDir))
-                        teamCityLogger.PublishArtifact(logsDir);
-                    new DirectoryInfo(logsDir).CopyTo(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", "MainProcessLogs")));
+                        new DirectoryInfo(logsDir).CopyTo(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", "MainProcessLogs")));
                 }
                 catch (Exception e)
                 {

@@ -1,0 +1,276 @@
+graphite_host: "graphite-relay.skbkontur.ru"
+graphite_port: 2003
+global_host_alias:
+query_port:
+queries:
+ - name: ReadLatencyPerCF
+   obj: "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=*,scope=*,name=ReadLatency"
+   resultAlias: ColumnFamily
+   allowDottedKeys: true
+   typeName:
+    - "keyspace"
+    - "scope"
+    - "name"
+   attr:
+    - 95thPercentile
+    - 99thPercentile
+    - Mean
+    - FiveMinuteRate
+    - FifteenMinuteRate
+    - OneMinuteRate
+ - name: CoordinatorReadLatencyPerCF
+   obj: "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=*,scope=*,name=CoordinatorReadLatency"
+   resultAlias: ColumnFamily
+   allowDottedKeys: true
+   typeName:
+    - "keyspace"
+    - "scope"
+    - "name"
+   attr:
+    - 95thPercentile
+    - 99thPercentile
+    - Mean
+    - FiveMinuteRate
+    - FifteenMinuteRate
+    - OneMinuteRate
+ - name: TotalDiskSpaceUsedPerCF
+   obj: "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=*,scope=*,name=TotalDiskSpaceUsed"
+   resultAlias: ColumnFamily
+   allowDottedKeys: true
+   typeName:
+    - "keyspace"
+    - "scope"
+    - "name"
+   attr:
+    - Count
+ - name: WriteLatencyPerCF
+   obj: "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=*,scope=*,name=WriteLatency"
+   resultAlias: ColumnFamily
+   allowDottedKeys: true
+   typeName:
+     - "keyspace"
+     - "scope"
+     - "name"
+   attr:
+     - 95thPercentile
+     - 99thPercentile
+     - FiveMinuteRate
+     - FifteenMinuteRate
+     - OneMinuteRate
+ - name: SSTablesPerReadHistogramPerCF
+   obj: "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=*,scope=*,name=SSTablesPerReadHistogram"
+   resultAlias: ColumnFamily
+   allowDottedKeys: true
+   typeName:
+     - "keyspace"
+     - "scope"
+     - "name"
+   attr:
+     - 95thPercentile
+     - 99thPercentile
+     - Mean
+ - name: TombstoneScannedHistogramPerCF
+   obj: "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=*,scope=*,name=TombstoneScannedHistogram"
+   resultAlias: ColumnFamily
+   allowDottedKeys: true
+   typeName:
+     - "keyspace"
+     - "scope"
+     - "name"
+   attr:
+     - 95thPercentile
+     - 99thPercentile
+     - Mean
+ - name: LiveScannedHistogramPerCF
+   obj: "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=*,scope=*,name=LiveScannedHistogram"
+   resultAlias: ColumnFamily
+   allowDottedKeys: true
+   typeName:
+     - "keyspace"
+     - "scope"
+     - "name"
+   attr:
+     - 95thPercentile
+     - 99thPercentile
+     - Mean
+ - name: KeyCacheHitRatePerCF
+   obj: "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=*,scope=*,name=KeyCacheHitRate"
+   resultAlias: ColumnFamily
+   allowDottedKeys: true
+   typeName:
+     - "keyspace"
+     - "scope"
+     - "name"
+   attr:
+     - Value
+ - name: PendingTasksPerCF
+   obj: "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=*,scope=*,name=PendingTasks"
+   resultAlias: ColumnFamily
+   allowDottedKeys: true
+   typeName:
+     - "keyspace"
+     - "scope"
+     - "name"
+   attr:
+     - Value
+ - name: MemtableSwitchCountPerCF
+   obj: "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=*,scope=*,name=MemtableSwitchCount"
+   resultAlias: ColumnFamily
+   allowDottedKeys: true
+   typeName:
+     - "keyspace"
+     - "scope"
+     - "name"
+   attr:
+     - Value
+ - name: MemtableColumnsCountPerCF
+   obj: "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=*,scope=*,name=MemtableColumnsCount"
+   resultAlias: ColumnFamily
+   allowDottedKeys: true
+   typeName:
+     - "keyspace"
+     - "scope"
+     - "name"
+   attr:
+     - Value
+ - name: LiveSSTableCountPerCF
+   obj: "org.apache.cassandra.metrics:type=ColumnFamily,keyspace=*,scope=*,name=LiveSSTableCount"
+   resultAlias: ColumnFamily
+   allowDottedKeys: true
+   typeName:
+    - "keyspace"
+    - "scope"
+    - "name"
+   attr:
+    - Value
+ - name: LatencyPerClientRequest
+   obj: "org.apache.cassandra.metrics:type=ClientRequest,scope=*,name=Latency"
+   resultAlias: ClientRequest
+   allowDottedKeys: true
+   typeName:
+    - "scope"
+    - "name"
+   attr:
+    - 95thPercentile
+    - 99thPercentile
+    - FiveMinuteRate
+    - FifteenMinuteRate
+    - OneMinuteRate
+ - name: TimeoutsPerClientRequest
+   obj: "org.apache.cassandra.metrics:type=ClientRequest,scope=*,name=Timeouts"
+   resultAlias: ClientRequest
+   allowDottedKeys: true
+   typeName:
+    - "scope"
+    - "name"
+   attr:
+    - FiveMinuteRate
+    - FifteenMinuteRate
+    - OneMinuteRate
+ - name: UnavailablesPerClientRequest
+   obj: "org.apache.cassandra.metrics:type=ClientRequest,scope=*,name=Unavailables"
+   resultAlias: ClientRequest
+   allowDottedKeys: true
+   typeName:
+    - "scope"
+    - "name"
+   attr:
+    - FiveMinuteRate
+    - FifteenMinuteRate
+    - OneMinuteRate
+ - name: TotalCompactionsCompleted
+   obj: "org.apache.cassandra.metrics:type=Compaction,name=TotalCompactionsCompleted"
+   resultAlias: Compaction
+   allowDottedKeys: true
+   typeName:
+    - "name"
+   attr:
+    - FiveMinuteRate
+    - FifteenMinuteRate
+    - OneMinuteRate
+ - name: Compactions
+   obj: "org.apache.cassandra.metrics:type=Compaction,name=*"
+   resultAlias: Compaction
+   allowDottedKeys: true
+   typeName:
+    - "name"
+   attr:
+    - Value
+    - Count
+ - name: ThreadPools
+   obj: "org.apache.cassandra.metrics:type=ThreadPools,path=*,scope=*,name=*"
+   resultAlias: ThreadPools
+   allowDottedKeys: true
+   typeName:
+    - "path"
+    - "scope"
+    - "name"
+   attr:
+    - Value
+    - Count
+ - name: MemoryPool
+   obj: "java.lang:type=MemoryPool,name=*"
+   resultAlias: "MemoryPool"
+   allowDottedKeys: true
+   typeName:
+     - "name"
+   attr:
+     - "Usage"
+ - name: GarbageCollector
+   obj: "java.lang:type=GarbageCollector,name=*"
+   resultAlias: "GarbageCollector"
+   allowDottedKeys: true
+   typeName:
+     - "name"
+   attr:
+     - "CollectionCount"
+     - "CollectionTime"
+ - name: OperatingSystem
+   obj: "java.lang:type=OperatingSystem"
+   resultAlias: "OperatingSystem"
+   allowDottedKeys: true
+   attr:
+     - "SystemLoadAverage"
+     - "AvailableProcessors"
+     - "TotalPhysicalMemorySize"
+     - "FreePhysicalMemorySize"
+     - "TotalSwapSpaceSize"
+     - "FreeSwapSpaceSize"
+     - "OpenFileDescriptorCount"
+     - "MaxFileDescriptorCount"
+ - name: Threading
+   obj : "java.lang:type=Threading"
+   resultAlias: "Threading"
+   allowDottedKeys: true
+   attr:
+     - "DaemonThreadCount"
+     - "PeakThreadCount"
+     - "ThreadCount"
+     - "TotalStartedThreadCount"
+sets:
+  - setname: EDICassandraBenchmark
+    query_names:
+            - ReadLatencyPerCF
+            - CoordinatorReadLatencyPerCF
+            - TotalDiskSpaceUsedPerCF
+            - WriteLatencyPerCF
+            - SSTablesPerReadHistogramPerCF
+            - TombstoneScannedHistogramPerCF
+            - LiveScannedHistogramPerCF
+            - KeyCacheHitRatePerCF
+            - PendingTasksPerCF
+            - MemtableSwitchCountPerCF
+            - MemtableColumnsCountPerCF
+            - LatencyPerClientRequest
+            - TimeoutsPerClientRequest
+            - UnavailablesPerClientRequest
+            - TotalCompactionsCompleted
+            - Compactions
+            - ThreadPools
+            - LiveSSTableCountPerCF
+            - MemoryPool
+            - GarbageCollector
+            - OperatingSystem
+            - Threading
+    hosts:
+            - edi-csl-01.dev.kontur.ru:7199;edi-csl-01/EDI.Benchmarks.JmxPrefix

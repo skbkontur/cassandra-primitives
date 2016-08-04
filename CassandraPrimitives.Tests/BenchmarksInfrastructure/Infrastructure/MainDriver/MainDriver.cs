@@ -54,10 +54,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             }
             finally
             {
-                foreach (var directory in processDirectories)
+                foreach (var indexedDirectory in processDirectories.Select((d, i) => new {Dir = d, Ind = i}))
                 {
-                    var dirForLogArtifacts = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts", "Process_{0}_Logs");
-                    var logsDir = Path.Combine(directory, "LogsDirectory");
+                    var dirForLogArtifacts = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts", string.Format("Process_{0}_Logs", indexedDirectory.Ind));
+                    var logsDir = Path.Combine(indexedDirectory.Dir, "LogsDirectory");
                     new DirectoryInfo(logsDir).CopyTo(new DirectoryInfo(dirForLogArtifacts));
                 }
             }

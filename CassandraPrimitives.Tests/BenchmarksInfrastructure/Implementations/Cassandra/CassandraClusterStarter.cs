@@ -25,7 +25,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 }
                 using (var cassandraCluster = new CassandraCluster(ClusterSettings))
                 {
-                    var initializerSettings = new CassandraInitializerSettings();
+                    var initializerSettings = new CassandraInitializerSettings(replicationFactor : Math.Min(ClusterSettings.Endpoints.Length, 3));
                     var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, new CassandraMetaProvider(), initializerSettings);
                     cassandraSchemeActualizer.AddNewColumnFamilies();
                 }

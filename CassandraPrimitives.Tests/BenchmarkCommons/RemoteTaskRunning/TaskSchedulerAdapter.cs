@@ -82,9 +82,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
             while (task.State != TaskState.Running && stopwatch.ElapsedMilliseconds < timeoutMilliseconds)
             {
                 Thread.Sleep(100);
-                return false;
             }
-            return true;
+            return task.State == TaskState.Running;
         }
 
         private Task CreateTask(string taskName, string path, string[] arguments = null, string directory = null)

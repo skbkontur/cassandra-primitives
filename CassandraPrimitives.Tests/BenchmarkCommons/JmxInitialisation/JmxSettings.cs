@@ -2,9 +2,8 @@
 {
     public class JmxSettings
     {
-        public JmxSettings(string host, string @alias, string graphitePrefix, int port = 7199, string graphiteHost = "graphite-relay.skbkontur.ru", int graphitePort = 2003, int numQueryThreads = 19)
+        public JmxSettings(string host, string @alias, string graphitePrefix, int port = 7199, string graphiteHost = "graphite-relay.skbkontur.ru", int graphitePort = 2003)
         {
-            NumQueryThreads = numQueryThreads;
             Alias = alias;
             Host = host;
             Port = port;
@@ -13,7 +12,6 @@
             GraphitePrefix = graphitePrefix;
         }
 
-        public int NumQueryThreads { get; private set; }
         public string Alias { get; private set; }
         public string Host { get; private set; }
         public int Port { get; private set; }
