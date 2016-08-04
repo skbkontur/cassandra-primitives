@@ -15,14 +15,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
     {
         public TaskSchedulerAdapter(RemoteMachineCredentials credentials, string wrapperPath)
         {
-            taskService = new TaskService(credentials.MachineName, credentials.UserName, credentials.AccountDomain, credentials.Password);
-            this.credentials = credentials;
+            taskService = credentials == null ? new TaskService() : new TaskService(credentials.MachineName, credentials.UserName, credentials.AccountDomain, credentials.Password);
+            this.credentials = credentials ?? new RemoteMachineCredentials(Environment.MachineName);
             logger = LogManager.GetLogger(GetType());
             this.wrapperPath = wrapperPath;
         }
 
         public TaskSchedulerAdapter(string wrapperPath)
-            : this(new RemoteMachineCredentials(Environment.MachineName), wrapperPath)
+            : this(null, wrapperPath)
         {
         }
 
@@ -43,8 +43,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
                         logger.ErrorFormat("The task with name {0} on machine {1} started, but almost immediately finished", taskName, credentials.MachineName);
                     else
                     {
-                        logger.ErrorFormat("The task with name {0} on machine {1} didn't start for some unknown reasons", taskName, credentials.MachineName);
-                        throw new Exception("Task didn't start for some unknown reasons");
+                        logger.ErrorFormat("The task with name {0} on machine {1} didn't start for some unknown reasons. Current task state - {2}", taskName, credentials.MachineName, task.State);
+                        throw new Exception(string.Format("Task didn't start for some unknown reasons. Current task state - {0}", task.State));
                     }
                 }
                 else

@@ -47,11 +47,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             tasks.Clear();
             if (agentInfos.Count < configuration.AmountOfProcesses)
                 throw new Exception(string.Format("Not enoung agents to run {0} processes", configuration.AmountOfProcesses));
-            var agents = agentInfos
+            workingAgents = agentInfos
                 .Take(configuration.AmountOfProcesses)
                 .Select((agent, i) => new RemoteAgent(agent, i))
                 .ToList();
-            foreach (var agent in agents)
+            foreach (var agent in workingAgents)
             {
                 var testRunnerPath = Path.Combine(agent.ProcessDirectory.AsLocal, "ChildRunner.exe");
                 var wrapperPath = Path.Combine(agent.WorkDirectory.AsRemote, wrapperRelativePath);
@@ -66,6 +66,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     tasks.Add(task);
                 }
             }
+        }
+
+        public List<string> GetRunningProcessDirectories()
+        {
+            if (workingAgents == null)
+                return new List<string>();
+            return workingAgents.Select(a => a.ProcessDirectory.AsRemote).ToList();
         }
 
         public void WaitForProcessesToFinish()
@@ -98,5 +105,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         private readonly List<Task> tasks;
         private readonly List<RemoteAgentInfo> agentInfos;
         private readonly string wrapperRelativePath;
+        private List<RemoteAgent> workingAgents;
     }
 }

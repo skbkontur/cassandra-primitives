@@ -88,6 +88,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
                 .ToList();
         }
 
+        private const string taskName = "BenchmarksJmxTrans";
+
         public class JmxTransStopper : IDisposable
         {
             public JmxTransStopper(string jmxTaskName)
@@ -105,7 +107,5 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
 
             private readonly string jmxTaskName;
         }
-
-        private const string taskName = "BenchmarksJmxTrans";
     }
 }
