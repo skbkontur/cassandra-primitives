@@ -34,8 +34,8 @@ if NOT DEFINED JAVA_HOME goto :err
 REM ***** JAVA options *****
 set JAVA_OPTS=-ea^
  -javaagent:"%CASSANDRA_HOME%\lib\jamm-0.2.5.jar"^
- -Xms1G^
- -Xmx1G^
+ -Xms8G^
+ -Xmx8G^
  -XX:+HeapDumpOnOutOfMemoryError^
  -XX:+UseParNewGC^
  -XX:+UseConcMarkSweepGC^
