@@ -38,8 +38,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Zookeep
 
         private static void PatchSettings(string deployDirectory, ZookeeperNodeSettings settings)
         {
-            PatchSettingsInFile(Path.Combine(deployDirectory, @"conf\zoo.cfg"), settings);
-            PatchSettingsInFile(Path.Combine(deployDirectory, @"bin\zkServer.cmd"), settings);
+            var mappings = GetMappings(settings);
+            PatchSettingsInConfig(Path.Combine(deployDirectory, @"conf\zoo.cfg"), mappings);
+            PatchSettingsInRunner(Path.Combine(deployDirectory, @"bin\zkServer.cmd"), mappings);
             PatchMyid(Path.Combine(deployDirectory, @"data\myid"), settings.Id);
             PatchServerAddressesInFile(Path.Combine(deployDirectory, @"conf\zoo.cfg"), settings);
         }
@@ -49,9 +50,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Zookeep
             return obj == null ? null : obj.ToString();
         }
 
-        private static void PatchSettingsInFile(string filePath, ZookeeperNodeSettings settings)
+        private static Dictionary<string, string> GetMappings(ZookeeperNodeSettings settings)
         {
-            PatchSettingsInFile(filePath, new Dictionary<string, string>
+            return new Dictionary<string, string>
                 {
                     {"tickTime", SafeToString(settings.TickTime)},
                     {"initLimit", SafeToString(settings.InitLimit)},
@@ -62,16 +63,26 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Zookeep
                     {"autopurge.snapRetainCount", SafeToString(settings.AutopurgeSnapRetainCount)},
                     {"autopurge.purgeInterval", SafeToString(settings.AutopurgePurgeInterval)},
                     {"jmxPort", SafeToString(settings.JmxPort)}
-                });
+                };
         }
 
-        private static void PatchSettingsInFile(string filePath, Dictionary<string, string> values)
+        private static void PatchSettingsInConfig(string filePath, Dictionary<string, string> values)
         {
             File.WriteAllText(
                 filePath,
                 values.Aggregate(
                     File.ReadAllText(filePath),
                     (current, value) => current.Replace("{{" + value.Key + "}}", value.Value != null ? string.Format("{0}={1}", value.Key, value.Value) : string.Format("#{0}", value.Key)))
+                );
+        }
+
+        private static void PatchSettingsInRunner(string filePath, Dictionary<string, string> values)
+        {
+            File.WriteAllText(
+                filePath,
+                values.Aggregate(
+                    File.ReadAllText(filePath),
+                    (current, value) => current.Replace("{{" + value.Key + "}}", value.Value))
                 );
         }
 
