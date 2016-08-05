@@ -39,6 +39,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Zookeep
         private static void PatchSettings(string deployDirectory, ZookeeperNodeSettings settings)
         {
             PatchSettingsInFile(Path.Combine(deployDirectory, @"conf\zoo.cfg"), settings);
+            PatchSettingsInFile(Path.Combine(deployDirectory, @"bin\zkServer.cmd"), settings);
             PatchMyid(Path.Combine(deployDirectory, @"data\myid"), settings.Id);
             PatchServerAddressesInFile(Path.Combine(deployDirectory, @"conf\zoo.cfg"), settings);
         }
@@ -60,6 +61,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Zookeep
                     {"maxClientCnxns", SafeToString(settings.MaxClientCnxns)},
                     {"autopurge.snapRetainCount", SafeToString(settings.AutopurgeSnapRetainCount)},
                     {"autopurge.purgeInterval", SafeToString(settings.AutopurgePurgeInterval)},
+                    {"jmxPort", SafeToString(settings.JmxPort)}
                 });
         }
 
