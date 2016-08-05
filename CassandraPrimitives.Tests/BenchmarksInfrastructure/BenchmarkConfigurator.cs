@@ -237,12 +237,20 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         private void StopTasks()
         {
-            foreach (var agentName in agentProvider.GetAllAgentNames())
+            try
             {
-                using (var taskSchedulerAdapter = new TaskSchedulerAdapter(new RemoteMachineCredentials(agentName), TasksSettings.TasksGroup))
+                foreach (var agentName in agentProvider.GetAllAgentNames())
                 {
-                    taskSchedulerAdapter.StopAllTasksFromGroup();
+                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Stopping tasks from group {0} on machine {1}", TasksSettings.TasksGroup, agentName);
+                    using (var taskSchedulerAdapter = new TaskSchedulerAdapter(new RemoteMachineCredentials(agentName), TasksSettings.TasksGroup))
+                    {
+                        taskSchedulerAdapter.StopAllTasksFromGroup();
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Error, "Exception while stopping tasks:\n{0}", e);
             }
         }
 
