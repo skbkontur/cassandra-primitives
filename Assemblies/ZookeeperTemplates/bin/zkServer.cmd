@@ -35,7 +35,9 @@ set JAVA_OPTS=-ea^
  -XX:+UseCMSInitiatingOccupancyOnly^
  -Dcom.sun.management.jmxremote.port={{jmxPort}}^
  -Dcom.sun.management.jmxremote.ssl=false^
- -Dcom.sun.management.jmxremote.authenticate=false
+ -Dcom.sun.management.jmxremote.authenticate=false^
+ -XX:+UnlockCommercialFeatures^
+ -XX:+FlightRecorder
 
 set ZOOMAIN=org.apache.zookeeper.server.quorum.QuorumPeerMain
 echo on
