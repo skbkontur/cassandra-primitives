@@ -144,7 +144,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 {
                     var wrapperDeployer = new WrapperDeployer(teamCityLogger);
                     wrapperDeployer.DeployWrapper(new RemoteDirectory(AppDomain.CurrentDomain.BaseDirectory, "", ""));
-                    var initialiser = new JmxTransInitialiser();
+                    var initialiser = new JmxTransInitialiser(TasksSettings.TasksGroup);
                     var deployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "JmxTrans");
                     var agentNames = agentProvider.GetAllAgentNames();
                     var settingsList = agentNames

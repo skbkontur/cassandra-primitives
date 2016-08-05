@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project Name="StopBenchmarkServices" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <CatalogueDeployTasks Condition="'$(CatalogueDeployTasks)' == ''">..\Assemblies\MSBuild.DeployTasks\Catalogue.DeployTasks.dll</CatalogueDeployTasks>
+  </PropertyGroup>
+
+  <UsingTask AssemblyFile="$(CatalogueDeployTasks)" TaskName="SKBKontur.Catalogue.DeployTasks.WindowsTaskScheduler.StopServices"/>
+  <Target Name="Stop">
+    <StopServices Group="Benchmarks"/>
+  </Target>
+</Project>

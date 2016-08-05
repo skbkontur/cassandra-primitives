@@ -55,7 +55,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             {
                 var testRunnerPath = Path.Combine(agent.ProcessDirectory.AsLocal, "ChildRunner.exe");
                 var wrapperPath = Path.Combine(agent.WorkDirectory.AsRemote, wrapperRelativePath);
-                using (var taskScheduler = new TaskSchedulerAdapter(agent.Credentials, wrapperPath))
+                using (var taskScheduler = new TaskSchedulerAdapter(agent.Credentials, wrapperPath, TasksSettings.TasksGroup))
                 {
                     var taskName = string.Format("BenchmarkProcess_{0}", agent.ProcessInd);
                     teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Ensuring there is no existing task with same name ({0})...", taskName);
