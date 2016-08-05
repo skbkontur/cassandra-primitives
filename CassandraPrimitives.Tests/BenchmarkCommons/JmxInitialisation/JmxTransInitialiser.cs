@@ -16,7 +16,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
 
         public void DeployJmxTrans(string deployDirectory, List<JmxSettings> settingsList)
         {
-            using (var taskScheduler = new TaskSchedulerAdapter(null, taskGroup))
+            using (var taskScheduler = new TaskSchedulerAdapter(taskGroup))
             {
                 taskScheduler.StopAndDeleteTask(taskName);
             }
@@ -41,10 +41,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
 
         public IDisposable RunJmxTrans(string jmxTransWorkDirectory, string wrapperPath)
         {
-            using (var taskScheduler = new TaskSchedulerAdapter(wrapperPath, taskGroup))
+            using (var taskScheduler = new TaskSchedulerAdapter(taskGroup))
             {
                 Console.WriteLine("Staring JmxTrans");
-                taskScheduler.RunTaskInWrapper(taskName, Path.Combine(jmxTransWorkDirectory, "runJmxTrans.bat"), null, jmxTransWorkDirectory);
+                taskScheduler.RunTaskInWrapper(wrapperPath, taskName, Path.Combine(jmxTransWorkDirectory, "runJmxTrans.bat"), null, jmxTransWorkDirectory);
                 Console.WriteLine("JmxTrans started");
                 return new JmxTransStopper(taskName, taskGroup);
             }
@@ -105,7 +105,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
 
             public void Dispose()
             {
-                using (var taskScheduler = new TaskSchedulerAdapter(null, jmxTaskGroup))
+                using (var taskScheduler = new TaskSchedulerAdapter(jmxTaskGroup))
                 {
                     taskScheduler.StopAndDeleteTask(jmxTaskName);
                 }

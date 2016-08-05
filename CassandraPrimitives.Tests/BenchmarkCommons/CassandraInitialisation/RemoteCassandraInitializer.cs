@@ -21,12 +21,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
         public void CreateNode(CassandraNodeSettings settings)
         {
             var wrapperPath = Path.Combine(remoteWorkDir.AsLocal, taskWrapperRelativePath);
-            using (var taskSchedulerAdapter = new TaskSchedulerAdapter(credentials, wrapperPath, tasksGroup))
+            using (var taskSchedulerAdapter = new TaskSchedulerAdapter(credentials, tasksGroup))
             {
                 var deployDirectory = Path.Combine(remoteWorkDir.AsRemote, "..", "Cassandra1.2");
                 taskSchedulerAdapter.StopAndDeleteTask("CassandraNode");
                 CassandraDeployer.DeployCassandra(settings, deployDirectory);
-                var task = taskSchedulerAdapter.RunTaskInWrapper("CassandraNode", Path.Combine(remoteWorkDir.AsLocal, "..", "Cassandra1.2", "bin", "cassandra.bat"), directory : Path.Combine(remoteWorkDir.AsLocal, "..", "Cassandra1.2", "bin"));
+                var task = taskSchedulerAdapter.RunTaskInWrapper(wrapperPath, "CassandraNode", Path.Combine(remoteWorkDir.AsLocal, "..", "Cassandra1.2", "bin", "cassandra.bat"), directory : Path.Combine(remoteWorkDir.AsLocal, "..", "Cassandra1.2", "bin"));
                 remoteTasks.Add(task);
             }
         }

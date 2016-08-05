@@ -55,14 +55,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             {
                 var testRunnerPath = Path.Combine(agent.ProcessDirectory.AsLocal, "ChildRunner.exe");
                 var wrapperPath = Path.Combine(agent.WorkDirectory.AsRemote, wrapperRelativePath);
-                using (var taskScheduler = new TaskSchedulerAdapter(agent.Credentials, wrapperPath, TasksSettings.TasksGroup))
+                using (var taskScheduler = new TaskSchedulerAdapter(agent.Credentials, TasksSettings.TasksGroup))
                 {
                     var taskName = string.Format("BenchmarkProcess_{0}", agent.ProcessInd);
                     teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Ensuring there is no existing task with same name ({0})...", taskName);
                     taskScheduler.StopAndDeleteTask(taskName);
                     DeployTask(agent);
                     teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Starting process {0} on agent {1}...", agent.ProcessInd, agent.Name);
-                    var task = taskScheduler.RunTaskInWrapper(taskName, testRunnerPath, new[] {agent.ProcessInd.ToString(), configuration.RemoteHostName, agent.Token}, agent.ProcessDirectory.AsLocal);
+                    var task = taskScheduler.RunTaskInWrapper(wrapperPath, taskName, testRunnerPath, new[] { agent.ProcessInd.ToString(), configuration.RemoteHostName, agent.Token }, agent.ProcessDirectory.AsLocal);
                     tasks.Add(task);
                 }
             }
