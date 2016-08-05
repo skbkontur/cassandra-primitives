@@ -9,12 +9,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Zookeep
 {
     public class RemoteZookeeperInitializer
     {
-        public RemoteZookeeperInitializer(RemoteMachineCredentials credentials, RemoteDirectory remoteWorkDir, RemoteDirectory taskWrapperPath)
+        public RemoteZookeeperInitializer(RemoteMachineCredentials credentials, RemoteDirectory remoteWorkDir, RemoteDirectory taskWrapperPath, string taskGroup)
         {
             remoteTasks = new List<Task>();
             this.credentials = credentials;
             this.remoteWorkDir = remoteWorkDir;
             this.taskWrapperPath = taskWrapperPath;
+            this.taskGroup = taskGroup;
         }
 
         public void CreateAndStartNode(ZookeeperNodeSettings settings)
@@ -22,7 +23,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Zookeep
             var wrapperPath = taskWrapperPath.AsLocal;
 
             var deployDirectory = Path.Combine(remoteWorkDir.AsRemote, "..", "ZooKeeper");
-            using (var taskSchedulerAdapter = new TaskSchedulerAdapter(credentials, wrapperPath))
+            using (var taskSchedulerAdapter = new TaskSchedulerAdapter(credentials, wrapperPath, taskGroup))
             {
                 taskSchedulerAdapter.StopAndDeleteTask("ZookeeperNode");
                 ZookeeperDeployer.Deploy(settings, deployDirectory);
@@ -49,5 +50,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Zookeep
         private readonly RemoteMachineCredentials credentials;
         private readonly RemoteDirectory remoteWorkDir;
         private readonly RemoteDirectory taskWrapperPath;
+        private readonly string taskGroup;
     }
 }

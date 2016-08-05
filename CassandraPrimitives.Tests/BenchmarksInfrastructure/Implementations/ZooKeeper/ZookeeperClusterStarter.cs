@@ -9,17 +9,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 {
     public class ZookeeperClusterStarter : IDisposable
     {
-        public ZookeeperClusterStarter(ZookeeperClusterSettings clusterSettings, List<ZookeeperRemoteNodeStartInfo> remoteNodeStartInfos, ITeamCityLogger teamCityLogger)
+        public ZookeeperClusterStarter(ZookeeperClusterSettings clusterSettings, List<ZookeeperRemoteNodeStartInfo> remoteNodeStartInfos, ITeamCityLogger teamCityLogger, string tasksGroup)
         {
             zookeeperInitialisers = new List<RemoteZookeeperInitializer>();
             ClusterSettings = clusterSettings;
             this.teamCityLogger = teamCityLogger;
+            this.tasksGroup = tasksGroup;
             try
             {
                 foreach (var remoteNodeStartInfo in remoteNodeStartInfos)
                 {
                     teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Initialising zookeeper on {0}...", remoteNodeStartInfo.Credentials.MachineName);
-                    var zookeeperInitializer = new RemoteZookeeperInitializer(remoteNodeStartInfo.Credentials, remoteNodeStartInfo.RemoteWorkDir, remoteNodeStartInfo.TaskWrapperPath);
+                    var zookeeperInitializer = new RemoteZookeeperInitializer(remoteNodeStartInfo.Credentials, remoteNodeStartInfo.RemoteWorkDir, remoteNodeStartInfo.TaskWrapperPath, tasksGroup);
                     zookeeperInitialisers.Add(zookeeperInitializer);
                     zookeeperInitializer.CreateAndStartNode(remoteNodeStartInfo.Settings);
                 }
@@ -48,5 +49,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         private readonly List<RemoteZookeeperInitializer> zookeeperInitialisers;
         private readonly ITeamCityLogger teamCityLogger;
+        private readonly string tasksGroup;
     }
 }

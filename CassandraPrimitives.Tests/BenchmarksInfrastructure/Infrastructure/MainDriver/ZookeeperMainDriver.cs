@@ -30,7 +30,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
             ClusterSettings = new ZookeeperClusterSettings(connectionString);
 
-            return new ZookeeperClusterStarter(ClusterSettings, remoteZookeeperNodeStartInfos, teamCityLogger);
+            return new ZookeeperClusterStarter(ClusterSettings, remoteZookeeperNodeStartInfos, teamCityLogger, TasksSettings.TasksGroup);
         }
 
         public ZookeeperClusterSettings ClusterSettings { get; private set; }

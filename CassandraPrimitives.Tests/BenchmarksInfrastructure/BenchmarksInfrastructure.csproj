@@ -141,6 +141,7 @@
     <Compile Include="Infrastructure\Registry\ScenarioCreationOptions.cs" />
     <Compile Include="Infrastructure\Registry\ScenarioEssentials.cs" />
     <Compile Include="Infrastructure\Registry\ScenariosRegistry.cs" />
+    <Compile Include="Infrastructure\TasksSettings.cs" />
     <Compile Include="Infrastructure\TestConfigurations\ITestEnvironment.cs" />
     <Compile Include="Infrastructure\TestConfigurations\OptionsParser.cs" />
     <Compile Include="Infrastructure\TestConfigurations\ClusterTypes.cs" />

@@ -13,42 +13,45 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 {
     public class TaskSchedulerAdapter : IDisposable
     {
-        public TaskSchedulerAdapter(RemoteMachineCredentials credentials, string wrapperPath)
+        public TaskSchedulerAdapter(RemoteMachineCredentials credentials, string wrapperPath, string tasksGroup)
         {
             taskService = credentials == null ? new TaskService() : new TaskService(credentials.MachineName, credentials.UserName, credentials.AccountDomain, credentials.Password);
             this.credentials = credentials ?? new RemoteMachineCredentials(Environment.MachineName);
             logger = LogManager.GetLogger(GetType());
             this.wrapperPath = wrapperPath;
+            this.tasksGroup = tasksGroup;
         }
 
-        public TaskSchedulerAdapter(string wrapperPath)
-            : this(null, wrapperPath)
+        public TaskSchedulerAdapter(string wrapperPath, string tasksGroup)
+            : this(null, wrapperPath, tasksGroup)
         {
         }
 
         public Task RunTask(string taskName, string path, string[] arguments = null, string directory = null)
         {
+            var taskNameWithGroup = GetTaskNameWithGroup(taskName);
+
             var argsRepresentation = string.Format("[{0}]", string.Join(", ", arguments ?? new string[0]));
-            logger.InfoFormat("Scheduling task. Path = {0}, name = {1}, arguments = {2}, machine = {3}", path, taskName, argsRepresentation, credentials.MachineName);
+            logger.InfoFormat("Scheduling task. Path = {0}, name = {1}, arguments = {2}, machine = {3}", path, taskNameWithGroup, argsRepresentation, credentials.MachineName);
 
             StopAndDeleteTask(taskName);
 
             try
             {
-                Task task = CreateTask(taskName, path, arguments, directory);
+                Task task = CreateTask(taskNameWithGroup, path, arguments, directory);
                 task.Run();
                 if (!IsTaskRunning(task, taskStartTimeoutMilliseconds))
                 {
                     if (task.State == TaskState.Ready)
-                        logger.ErrorFormat("The task with name {0} on machine {1} started, but almost immediately finished", taskName, credentials.MachineName);
+                        logger.ErrorFormat("The task with name {0} on machine {1} started, but almost immediately finished", taskNameWithGroup, credentials.MachineName);
                     else
                     {
-                        logger.ErrorFormat("The task with name {0} on machine {1} didn't start for some unknown reasons. Current task state - {2}", taskName, credentials.MachineName, task.State);
+                        logger.ErrorFormat("The task with name {0} on machine {1} didn't start for some unknown reasons. Current task state - {2}", taskNameWithGroup, credentials.MachineName, task.State);
                         throw new Exception(string.Format("Task didn't start for some unknown reasons. Current task state - {0}", task.State));
                     }
                 }
                 else
-                    logger.InfoFormat("The task with name {0} on machine {1} successfully started", taskName, credentials.MachineName);
+                    logger.InfoFormat("The task with name {0} on machine {1} successfully started", taskNameWithGroup, credentials.MachineName);
                 return task;
             }
             catch (COMException e)
@@ -64,16 +67,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 
         public void StopAndDeleteTask(string taskName)
         {
-            var existingTask = taskService.FindTask(taskName);
+            var taskNameWithGroup = GetTaskNameWithGroup(taskName);
+            var existingTask = taskService.FindTask(taskNameWithGroup);
             if (existingTask != null)
             {
-                logger.InfoFormat("Found existing task with name {0}", taskName);
+                logger.InfoFormat("Found existing task with name {0}", taskNameWithGroup);
                 existingTask.Stop();
-                taskService.RootFolder.DeleteTask(taskName);
-                logger.InfoFormat("Existing task with name {0} successfully stopped and deleted", taskName);
+                taskService.RootFolder.DeleteTask(taskNameWithGroup);
+                logger.InfoFormat("Existing task with name {0} successfully stopped and deleted", taskNameWithGroup);
             }
             else
-                logger.InfoFormat("Existing task with name {0} not found", taskName);
+                logger.InfoFormat("Existing task with name {0} not found", taskNameWithGroup);
         }
 
         private bool IsTaskRunning(Task task, int timeoutMilliseconds)
@@ -86,7 +90,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
             return task.State == TaskState.Running;
         }
 
-        private Task CreateTask(string taskName, string path, string[] arguments = null, string directory = null)
+        private Task CreateTask(string taskNameWithGroup, string path, string[] arguments = null, string directory = null)
         {
             path = string.Format("\"{0}\"", path);
 
@@ -104,9 +108,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
             taskDefinition.Settings.AllowHardTerminate = true;
             taskDefinition.Settings.ExecutionTimeLimit = TimeSpan.Zero;
             taskDefinition.Settings.Priority = ProcessPriorityClass.High;
-            var task = taskService.RootFolder.RegisterTaskDefinition(taskName, taskDefinition, TaskCreation.CreateOrUpdate, "SYSTEM", null, TaskLogonType.Password);
+            var task = taskService.RootFolder.RegisterTaskDefinition(taskNameWithGroup, taskDefinition, TaskCreation.CreateOrUpdate, "SYSTEM", null, TaskLogonType.Password);
 
             return task;
+        }
+
+        private string GetTaskNameWithGroup(string taskName)
+        {
+            return string.Format("{{TaskGroup-{0}}}_{1}_{{TaskGroup-{0}}}", tasksGroup, taskName);
         }
 
         public Task RunTaskInWrapper(string taskName, string path, string[] arguments = null, string directory = null)
@@ -134,5 +143,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
         private readonly TaskService taskService;
         private readonly ILog logger;
         private readonly RemoteMachineCredentials credentials;
+        private readonly string tasksGroup;
     }
 }

@@ -9,9 +9,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
 {
     public class JmxTransInitialiser
     {
+        public JmxTransInitialiser(string taskGroup)
+        {
+            this.taskGroup = taskGroup;
+        }
+
         public void DeployJmxTrans(string deployDirectory, List<JmxSettings> settingsList)
         {
-            using (var taskScheduler = new TaskSchedulerAdapter(null))
+            using (var taskScheduler = new TaskSchedulerAdapter(null, taskGroup))
             {
                 taskScheduler.StopAndDeleteTask(taskName);
             }
@@ -36,12 +41,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
 
         public IDisposable RunJmxTrans(string jmxTransWorkDirectory, string wrapperPath)
         {
-            using (var taskScheduler = new TaskSchedulerAdapter(wrapperPath))
+            using (var taskScheduler = new TaskSchedulerAdapter(wrapperPath, taskGroup))
             {
                 Console.WriteLine("Staring JmxTrans");
                 taskScheduler.RunTaskInWrapper(taskName, Path.Combine(jmxTransWorkDirectory, "runJmxTrans.bat"), null, jmxTransWorkDirectory);
                 Console.WriteLine("JmxTrans started");
-                return new JmxTransStopper(taskName);
+                return new JmxTransStopper(taskName, taskGroup);
             }
         }
 
@@ -87,24 +92,26 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInit
                 .ToList();
         }
 
-        private const string taskName = "BenchmarksJmxTrans";
+        private const string taskName = "JmxTrans";
+        private readonly string taskGroup;
 
         public class JmxTransStopper : IDisposable
         {
-            public JmxTransStopper(string jmxTaskName)
+            public JmxTransStopper(string jmxTaskName, string jmxTaskGroup)
             {
                 this.jmxTaskName = jmxTaskName;
+                this.jmxTaskGroup = jmxTaskGroup;
             }
 
             public void Dispose()
             {
-                using (var taskScheduler = new TaskSchedulerAdapter(null))
+                using (var taskScheduler = new TaskSchedulerAdapter(null, jmxTaskGroup))
                 {
                     taskScheduler.StopAndDeleteTask(jmxTaskName);
                 }
             }
 
-            private readonly string jmxTaskName;
+            private readonly string jmxTaskName, jmxTaskGroup;
         }
     }
 }
