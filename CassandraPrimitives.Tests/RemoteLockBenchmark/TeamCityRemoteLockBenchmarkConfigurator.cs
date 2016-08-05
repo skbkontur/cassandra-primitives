@@ -25,9 +25,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
     {
         public TeamCityRemoteLockBenchmarkConfigurator(Func<IScenariosRegistry> staticRegistryCreatorMethod)
         {
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
+            metricsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs");
+            logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LogsDirectory");
+            artifactsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts");
+
+            ClearLogsDirectories();
             Log4NetConfiguration.InitializeOnce();
             logger = LogManager.GetLogger(typeof(TeamCityRemoteLockBenchmarkConfigurator));
-            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
             environment = RemoteLockBenchmarkEnvironment.GetFromEnvironment();
             teamCityLogger = new TeamCityLogger(Console.Out);
             this.staticRegistryCreatorMethod = staticRegistryCreatorMethod;
@@ -41,6 +48,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
             bool permissionToStart = false;
             var taskCompletionSource = new TaskCompletionSource<bool>();
+
+            var currentArtifactsDir = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts"));
+            if (currentArtifactsDir.Exists)
+                currentArtifactsDir.Delete(true);
 
             try
             {
@@ -69,9 +80,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             }
             finally
             {
-                var currentArtifactsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts");
-                var testArtifactsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", string.Format("Config_{0}_Options_{1}", configurationInd, optionsInd));
-                new DirectoryInfo(currentArtifactsPath).CopyTo(new DirectoryInfo(testArtifactsPath));
+                if (currentArtifactsDir.Exists)
+                {
+                    var testArtifactsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", string.Format("Config_{0}_Options_{1}", configurationInd, optionsInd));
+                    currentArtifactsDir.CopyTo(new DirectoryInfo(testArtifactsPath));
+                }
             }
         }
 
@@ -113,6 +126,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         public void Run()
         {
+            ClearArtifactsDirectories();
+
             InitMetrics();
             var testConfigurations = TestConfiguration.ParseWithRanges(environment);
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Going to run {0} test configuration(s)", testConfigurations.Count);
@@ -124,26 +139,43 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             }
             finally
             {
-                try
-                {
-                    var metricsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MetricsLogs");
-                    if (Directory.Exists(metricsDir))
-                        new DirectoryInfo(metricsDir).CopyTo(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", "MetricsLogs")));
-                    var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LogsDirectory");
-                    if (Directory.Exists(logsDir))
-                        new DirectoryInfo(logsDir).CopyTo(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", "MainProcessLogs")));
-                }
-                catch (Exception e)
-                {
-                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Warning, "Exception while copying artifacts: {0}", e);
-                }
-                finally
-                {
-                    teamCityLogger.PublishArtifact(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts"));
-                }
+                CopyAndPublishArtifacts();
             }
 
             teamCityLogger.SetBuildStatus(TeamCityBuildStatus.Success, "Done");
+        }
+
+        private void ClearLogsDirectories()
+        {
+            if (Directory.Exists(logsDir))
+                Directory.Delete(logsDir, true);
+        }
+
+        private void ClearArtifactsDirectories()
+        {
+            if (Directory.Exists(metricsDir))
+                Directory.Delete(metricsDir, true);
+            if (Directory.Exists(artifactsDir))
+                Directory.Delete(artifactsDir, true);
+        }
+
+        private void CopyAndPublishArtifacts()
+        {
+            try
+            {
+                if (Directory.Exists(metricsDir))
+                    new DirectoryInfo(metricsDir).CopyTo(new DirectoryInfo(Path.Combine(artifactsDir, "MetricsLogs")));
+                if (Directory.Exists(logsDir))
+                    new DirectoryInfo(logsDir).CopyTo(new DirectoryInfo(Path.Combine(artifactsDir, "MainProcessLogs")));
+            }
+            catch (Exception e)
+            {
+                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Warning, "Exception while copying artifacts: {0}", e);
+            }
+            finally
+            {
+                teamCityLogger.PublishArtifact(artifactsDir);
+            }
         }
 
         private void InitMetrics()
@@ -171,5 +203,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private readonly RemoteLockBenchmarkEnvironment environment;
         private readonly TeamCityLogger teamCityLogger;
         private readonly Func<IScenariosRegistry> staticRegistryCreatorMethod;
+        private readonly string metricsDir, logsDir, artifactsDir;
     }
 }
