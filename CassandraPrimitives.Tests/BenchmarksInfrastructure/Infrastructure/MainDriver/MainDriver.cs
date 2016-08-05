@@ -33,6 +33,27 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             wrapperDeployer.DeployWrapperToAgents(testAgents);
             var wrapperRelativePath = wrapperDeployer.GetWrapperRelativePath();
             List<string> processDirectories = new List<string>();
+
+            var dirForCurrentArtifacts = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts"));
+            if (dirForCurrentArtifacts.Exists)
+                dirForCurrentArtifacts.Delete(true);
+            foreach (var indexedDirectory in processDirectories.Select((d, i) => new { Dir = d, Ind = i }))
+            {
+                try
+                {
+                    var logsDir = new DirectoryInfo(Path.Combine(indexedDirectory.Dir, "LogsDirectory"));
+                    if (logsDir.Exists)
+                        logsDir.Delete(true);
+                    var metricsDir = new DirectoryInfo(Path.Combine(indexedDirectory.Dir, "MetricsLogs"));
+                    if (metricsDir.Exists)
+                        metricsDir.Delete(true);
+                }
+                catch (Exception e)
+                {
+                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Warning, "Exception while cleaning log directories of {0} process:\n{1}", indexedDirectory.Ind, e);
+                }
+            }
+
             try
             {
                 using (new HttpTestDataProvider(configuration, optionsSet, dynamicOptionsSet))
