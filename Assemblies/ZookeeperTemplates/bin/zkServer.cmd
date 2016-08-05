@@ -22,8 +22,23 @@ FOR /F "skip=2 tokens=2*" %%A IN ('REG QUERY "HKLM\Software\JavaSoft\Java Runtim
 setlocal
 call "%~dp0zkEnv.cmd"
 
+set JAVA_OPTS=-ea^
+ -Xms8G^
+ -Xmx8G^
+ -XX:+HeapDumpOnOutOfMemoryError^
+ -XX:+UseParNewGC^
+ -XX:+UseConcMarkSweepGC^
+ -XX:+CMSParallelRemarkEnabled^
+ -XX:SurvivorRatio=8^
+ -XX:MaxTenuringThreshold=1^
+ -XX:CMSInitiatingOccupancyFraction=75^
+ -XX:+UseCMSInitiatingOccupancyOnly^
+ -Dcom.sun.management.jmxremote.port={{jmxPort}}^
+ -Dcom.sun.management.jmxremote.ssl=false^
+ -Dcom.sun.management.jmxremote.authenticate=false
+
 set ZOOMAIN=org.apache.zookeeper.server.quorum.QuorumPeerMain
 echo on
-call %JAVA% "-Dzookeeper.log.dir=%ZOO_LOG_DIR%" "-Dzookeeper.root.logger=%ZOO_LOG4J_PROP%" -cp "%CLASSPATH%" %ZOOMAIN% "%ZOOCFG%" %*
+call %JAVA% "-Dzookeeper.log.dir=%ZOO_LOG_DIR%" "-Dzookeeper.root.logger=%ZOO_LOG4J_PROP%" %JAVA_OPTS% -cp "%CLASSPATH%" %ZOOMAIN% "%ZOOCFG%" %*
 
 endlocal
