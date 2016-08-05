@@ -49,7 +49,9 @@ set JAVA_OPTS=-ea^
  -Dcom.sun.management.jmxremote.authenticate=false^
  -Dinternalflag={{NodeInternalName}}^
  -Dlog4j.configuration=log4j-server.properties^
- -Dlog4j.defaultInitOverride=true
+ -Dlog4j.defaultInitOverride=true^
+ -XX:+UnlockCommercialFeatures^
+ -XX:+FlightRecorder
 
 REM ***** CLASSPATH library setting *****
 
