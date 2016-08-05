@@ -213,6 +213,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         {
             try
             {
+                deploySteps.Add(new DeployStep("TasksStopping", StopTasks, DeployPriorities.TasksStopping));
                 deploySteps.Add(new DeployStep("MainProcess", MainProcess, DeployPriorities.Driver));
                 foreach (var deployStep in deploySteps.OrderBy(s => s.Priority))
                 {
@@ -234,6 +235,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return registryCreator().CreateProcessor(testConfiguration.TestScenario, options);
         }
 
+        private void StopTasks()
+        {
+            foreach (var agentName in agentProvider.GetAllAgentNames())
+            {
+                using (var taskSchedulerAdapter = new TaskSchedulerAdapter(new RemoteMachineCredentials(agentName), TasksSettings.TasksGroup))
+                {
+                    taskSchedulerAdapter.StopAllTasksFromGroup();
+                }
+            }
+        }
+
         private void MainProcess()
         {
             optionsSet["TestOptions"] = testOptions;
@@ -248,9 +260,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         internal enum DeployPriorities
         {
+            TasksStopping,
             JmxTrans,
             Cluster,
-            Driver
+            Driver,
         }
 
         private readonly Dictionary<string, object> optionsSet;

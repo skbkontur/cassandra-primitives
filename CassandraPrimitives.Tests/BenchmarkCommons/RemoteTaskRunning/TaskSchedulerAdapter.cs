@@ -13,17 +13,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 {
     public class TaskSchedulerAdapter : IDisposable
     {
-        public TaskSchedulerAdapter(RemoteMachineCredentials credentials, string wrapperPath, string tasksGroup)
+        public TaskSchedulerAdapter(RemoteMachineCredentials credentials, string tasksGroup)
         {
             taskService = credentials == null ? new TaskService() : new TaskService(credentials.MachineName, credentials.UserName, credentials.AccountDomain, credentials.Password);
             this.credentials = credentials ?? new RemoteMachineCredentials(Environment.MachineName);
             logger = LogManager.GetLogger(GetType());
-            this.wrapperPath = wrapperPath;
             this.tasksGroup = tasksGroup;
         }
 
-        public TaskSchedulerAdapter(string wrapperPath, string tasksGroup)
-            : this(null, wrapperPath, tasksGroup)
+        public TaskSchedulerAdapter(string tasksGroup)
+            : this(null, tasksGroup)
         {
         }
 
@@ -80,6 +79,30 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
                 logger.InfoFormat("Existing task with name {0} not found", taskNameWithGroup);
         }
 
+        public Task RunTaskInWrapper(string wrapperPath, string taskName, string path, string[] arguments = null, string directory = null)
+        {
+            var realArguments = new[] { "--priority", "Normal", "--path", path, "--arguments", string.Join(" ", (arguments ?? new string[0]).Select(EscapeArgumentForCmd)) };
+            return RunTask(taskName, wrapperPath, realArguments, directory);
+        }
+
+        public void StopAllTasksFromGroup()
+        {
+            logger.InfoFormat("Going to stop all tasks from group {0} on machine {1}", tasksGroup, credentials.MachineName);
+            var pattern = string.Format("{{TaskGroup-{0}}}_.*_{{TaskGroup-{0}}}", tasksGroup);
+            logger.InfoFormat("Will search by pattern {0}", pattern);
+            var tasks = taskService.FindAllTasks(new Regex(pattern));
+            logger.InfoFormat("Found {0} tasks", tasks.Length);
+            foreach (var task in tasks)
+            {
+                logger.InfoFormat("Going to stop task {0}", task.Name);
+                task.Stop();
+                logger.InfoFormat("Task {0} stopped", task.Name);
+                logger.InfoFormat("Going to delete task {0}", task.Name);
+                taskService.RootFolder.DeleteTask(task.Name);
+                logger.InfoFormat("Task {0} deleted", task.Name);
+            }
+        }
+
         private bool IsTaskRunning(Task task, int timeoutMilliseconds)
         {
             var stopwatch = Stopwatch.StartNew();
@@ -118,12 +141,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
             return string.Format("{{TaskGroup-{0}}}_{1}_{{TaskGroup-{0}}}", tasksGroup, taskName);
         }
 
-        public Task RunTaskInWrapper(string taskName, string path, string[] arguments = null, string directory = null)
-        {
-            var realArguments = new[] {"--priority", "Normal", "--path", path, "--arguments", string.Join(" ", (arguments ?? new string[0]).Select(EscapeArgumentForCmd))};
-            return RunTask(taskName, wrapperPath, realArguments, directory);
-        }
-
         private string EscapeArgumentForCmd(string argument)
         {
             var r = new Regex(@"\\(?=[\\]*(""|$))");
@@ -139,7 +156,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 
         private const int taskStartTimeoutMilliseconds = 10000;
 
-        private readonly string wrapperPath;
         private readonly TaskService taskService;
         private readonly ILog logger;
         private readonly RemoteMachineCredentials credentials;
