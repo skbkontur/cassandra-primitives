@@ -262,7 +262,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             teamCityLogger.EndMessageBlock();
             var testProgressProcessor = GetTestProgressProcessor();
             foreach (var dynamicOption in testProgressProcessor.GetDynamicOptions())
-                optionsSet[dynamicOption.Key] = dynamicOption.Value;
+                dynamicOptionsSet[dynamicOption.Key] = dynamicOption.Value;
             var driver = new MainDriver(teamCityLogger, testConfiguration, testProgressProcessor, agentProvider);
             driver.AllProcessesStarted += onAllProcessesStarted;
             driver.Run(optionsSet, dynamicOptionsSet);

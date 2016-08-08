@@ -42,7 +42,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         private void RunWithConfigurationAndOptions(TestConfiguration configuration, int configurationInd, ITestOptions options, int optionsInd)
         {
-            teamCityLogger.BeginMessageBlock(string.Format("Configuration - {0}/{1}, options - {2}/{3}", configurationInd, amountOfConfigurations, optionsInd, amountOfOptionsSets));
+            var blockName = string.Format("Configuration - {0}/{1}, options - {2}/{3}", configurationInd, amountOfConfigurations, optionsInd, amountOfOptionsSets);
+            teamCityLogger.BeginMessageBlock(blockName);
+            teamCityLogger.BeginActivity(blockName);
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Configuration:\n{0}", configuration);
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Options:\n{0}", options);
 
@@ -128,6 +130,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 }
                 finally
                 {
+                    teamCityLogger.EndActivity();
                     teamCityLogger.EndMessageBlock();
                 }
             }
