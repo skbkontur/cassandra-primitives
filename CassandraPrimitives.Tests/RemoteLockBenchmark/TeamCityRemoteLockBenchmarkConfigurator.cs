@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -92,8 +93,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 }
                 if (currentArtifactsDir.Exists)
                 {
-                    var testArtifactsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", string.Format("Config_{0}_Options_{1}", configurationInd, optionsInd));
-                    currentArtifactsDir.CopyTo(new DirectoryInfo(testArtifactsPath));
+                    var testArtifactsPath = Path.Combine(artifactsDir, string.Format("Config_{0}_Options_{1}.zip", configurationInd, optionsInd));
+                    ZipFile.CreateFromDirectory(currentArtifactsDir.FullName, testArtifactsPath, compressionLevel, false);
                 }
             }
         }
@@ -176,9 +177,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             try
             {
                 if (Directory.Exists(metricsDir))
-                    new DirectoryInfo(metricsDir).CopyTo(new DirectoryInfo(Path.Combine(artifactsDir, "MetricsLogs")));
+                {
+                    ZipFile.CreateFromDirectory(metricsDir, Path.Combine(artifactsDir, "MetricsLogs.zip"), compressionLevel, false);
+                }
                 if (Directory.Exists(logsDir))
-                    new DirectoryInfo(logsDir).CopyTo(new DirectoryInfo(Path.Combine(artifactsDir, "MainProcessLogs")));
+                {
+                    ZipFile.CreateFromDirectory(logsDir, Path.Combine(artifactsDir, "MainProcessLogs.zip"), compressionLevel, false);
+                }
             }
             catch (Exception e)
             {
@@ -213,5 +218,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private readonly Func<IScenariosRegistry> staticRegistryCreatorMethod;
         private readonly string metricsDir, logsDir, artifactsDir;
         private int amountOfConfigurations, amountOfOptionsSets;
+        private const CompressionLevel compressionLevel = CompressionLevel.Optimal;
     }
 }
