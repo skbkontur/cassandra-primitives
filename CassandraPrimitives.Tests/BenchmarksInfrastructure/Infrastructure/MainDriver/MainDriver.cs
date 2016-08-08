@@ -64,35 +64,47 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     AllProcessesStarted();
                     processDirectories = processLauncher.GetRunningProcessDirectories();
                     processLauncher.WaitForProcessesToFinish();
-
-                    teamCityLogger.EndMessageBlock();
                 }
             }
             catch (Exception e)
             {
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Failure, "Exception occured while working with child processes:\n{0}", e);
-                teamCityLogger.EndMessageBlock();
             }
             finally
             {
-                foreach (var indexedDirectory in processDirectories.Select((d, i) => new {Dir = d, Ind = i}))
+                try
                 {
-                    try
+                    teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Copying artifacts...");
+                    foreach (var indexedDirectory in processDirectories.Select((d, i) => new {Dir = d, Ind = i}))
                     {
-                        var dirForProcessArtifacts = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts", string.Format("Process_{0}", indexedDirectory.Ind));
-                        var dirForLogArtifacts = Path.Combine(dirForProcessArtifacts, "Logs");
-                        var logsDir = new DirectoryInfo(Path.Combine(indexedDirectory.Dir, "LogsDirectory"));
-                        if (logsDir.Exists)
-                            logsDir.CopyTo(new DirectoryInfo(dirForLogArtifacts));
-                        var dirForMetricsArtifacts = Path.Combine(dirForProcessArtifacts, "Metrics");
-                        var metricsDir = new DirectoryInfo(Path.Combine(indexedDirectory.Dir, "MetricsLogs"));
-                        if (metricsDir.Exists)
-                            metricsDir.CopyTo(new DirectoryInfo(dirForMetricsArtifacts));
+                        try
+                        {
+                            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Copying artifacts of process {0} (from {1})", indexedDirectory.Ind, indexedDirectory.Dir);
+                            var dirForProcessArtifacts = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts", string.Format("Process_{0}", indexedDirectory.Ind));
+                            var dirForLogArtifacts = Path.Combine(dirForProcessArtifacts, "Logs");
+                            var logsDir = new DirectoryInfo(Path.Combine(indexedDirectory.Dir, "LogsDirectory"));
+                            if (logsDir.Exists)
+                            {
+                                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Copying artifact of process {0} from {1} to {2}", indexedDirectory.Ind, logsDir.FullName, dirForLogArtifacts);
+                                logsDir.CopyTo(new DirectoryInfo(dirForLogArtifacts));
+                            }
+                            var dirForMetricsArtifacts = Path.Combine(dirForProcessArtifacts, "Metrics");
+                            var metricsDir = new DirectoryInfo(Path.Combine(indexedDirectory.Dir, "MetricsLogs"));
+                            if (metricsDir.Exists)
+                            {
+                                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Copying artifact of process {0} from {1} to {2}", indexedDirectory.Ind, metricsDir.FullName, dirForMetricsArtifacts);
+                                metricsDir.CopyTo(new DirectoryInfo(dirForMetricsArtifacts));
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Warning, "Exception while copying artifacts of {0} process:\n{1}", indexedDirectory.Ind, e);
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Warning, "Exception while copying artifacts of {0} process:\n{1}", indexedDirectory.Ind, e);
-                    }
+                }
+                finally
+                {
+                    teamCityLogger.EndMessageBlock();
                 }
             }
         }

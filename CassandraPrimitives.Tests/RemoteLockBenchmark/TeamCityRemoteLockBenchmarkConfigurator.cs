@@ -170,6 +170,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 Directory.Delete(metricsDir, true);
             if (Directory.Exists(artifactsDir))
                 Directory.Delete(artifactsDir, true);
+            Directory.CreateDirectory(artifactsDir);
         }
 
         private void CopyArtifacts()
@@ -179,10 +180,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 if (Directory.Exists(metricsDir))
                 {
                     ZipFile.CreateFromDirectory(metricsDir, Path.Combine(artifactsDir, "MetricsLogs.zip"), compressionLevel, false);
-                }
-                if (Directory.Exists(logsDir))
-                {
-                    ZipFile.CreateFromDirectory(logsDir, Path.Combine(artifactsDir, "MainProcessLogs.zip"), compressionLevel, false);
                 }
             }
             catch (Exception e)
