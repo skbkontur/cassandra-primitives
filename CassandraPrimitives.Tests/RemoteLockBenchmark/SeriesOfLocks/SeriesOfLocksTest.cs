@@ -46,19 +46,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
                 {
                     var locker = remoteLockGetter.Get(testOptions.LockIdCommonPrefix + string.Format("{0:D20}", i));
                     IDisposable remoteLock;
-                    logger.InfoFormat("Thread {0} is going to acqite lock with ind {1}", threadInd, i);
                     if (locker.TryAcquire(out remoteLock))
                     {
                         locksToRelease.Enqueue(Tuple.Create(globalTimer.ElapsedMilliseconds, remoteLock));
                         amountOfLocks++;
                         logger.InfoFormat("Lock with ind {0} was acquired by thread {1}", i, threadInd);
                         var sleepTime = rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds);
-                        logger.InfoFormat("Thread {0} is going to sleep for {1} ms", threadInd, sleepTime);
                         Thread.Sleep(sleepTime);
-                        logger.InfoFormat("Thread {0} awake", threadInd);
                         if (reportTimer.ElapsedMilliseconds > publishIntervalMs)
                         {
-                            logger.InfoFormat("Thread {0} is going to publish progress", threadInd);
                             externalLogger.PublishProgress(new SeriesOfLocksProgressMessage
                                 {
                                     AmountOfLocks = amountOfLocks,
@@ -66,12 +62,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
                                 });
                             amountOfLocks = 0;
                             reportTimer.Restart();
-                            logger.InfoFormat("Thread {0} published progress", threadInd);
                         }
-                        logger.InfoFormat("Thread {0} is going to release some locks", threadInd);
                         while (locksToRelease.Count > 0 && globalTimer.ElapsedMilliseconds - locksToRelease.Peek().Item1 > lockLiveTimeMs)
                             locksToRelease.Dequeue().Item2.Dispose();
-                        logger.InfoFormat("Thread {0} finished releasing locks", threadInd);
                     }
                 }
                 catch (Exception e)

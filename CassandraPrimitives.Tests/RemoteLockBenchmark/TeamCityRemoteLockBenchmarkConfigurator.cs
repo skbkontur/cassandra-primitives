@@ -53,15 +53,19 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             if (currentArtifactsDir.Exists)
                 currentArtifactsDir.Delete(true);
 
+            MetricsContext metricsContext = null;
+            var metricsContextName = string.Format("Test configuration - {0}, options set - {1}", configurationInd, optionsInd);
+            teamCityLogger.BeginActivity(string.Format("Configuration - {0}/{1}, options - {2}/{3}", configurationInd, amountOfConfigurations, optionsInd, amountOfOptionsSets));
             try
             {
+                metricsContext = Metric.Context(metricsContextName);
                 BenchmarkConfigurator
                     .CreateNew()
                     .WithStaticRegistryCreatorMethod(staticRegistryCreatorMethod)
                     .WithAgentProviderFromTeamCity()
                     .WithConfiguration(configuration)
                     .WithTestOptions(options)
-                    .WithMetricsContext(Metric.Context(string.Format("Test configuration - {0}, options set - {1}", configurationInd, optionsInd)))
+                    .WithMetricsContext(metricsContext)
                     .WithTeamCityLogger(teamCityLogger)
                     .WithClusterFromConfiguration()
                     .WithJmxTrans(JmxGraphitePrefix)
@@ -80,6 +84,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             }
             finally
             {
+                teamCityLogger.EndActivity();
+                if (metricsContext != null)
+                {
+                    Metric.ShutdownContext(metricsContextName);
+                    metricsContext.Dispose();
+                }
                 if (currentArtifactsDir.Exists)
                 {
                     var testArtifactsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts", string.Format("Config_{0}_Options_{1}", configurationInd, optionsInd));
@@ -110,6 +120,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             }
 
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Going to run with {0} variants of options", testOptionsList.Count);
+            amountOfOptionsSets = testOptionsList.Count;
 
             foreach (var indexedTestOptions in testOptionsList.Select((o, i) => new {Opt = o, Ind = i}))
             {
@@ -130,8 +141,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
             InitMetrics();
             var testConfigurations = TestConfiguration.ParseWithRanges(environment);
+            amountOfConfigurations = testConfigurations.Count;
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Going to run {0} test configuration(s)", testConfigurations.Count);
-
             try
             {
                 foreach (var indexedTestConfiguration in testConfigurations.Select((c, i) => new {Ind = i, Conf = c}))
@@ -139,7 +150,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             }
             finally
             {
-                CopyAndPublishArtifacts();
+                CopyArtifacts();
             }
 
             teamCityLogger.SetBuildStatus(TeamCityBuildStatus.Success, "Done");
@@ -159,7 +170,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                 Directory.Delete(artifactsDir, true);
         }
 
-        private void CopyAndPublishArtifacts()
+        private void CopyArtifacts()
         {
             try
             {
@@ -171,10 +182,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             catch (Exception e)
             {
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Warning, "Exception while copying artifacts: {0}", e);
-            }
-            finally
-            {
-                teamCityLogger.PublishArtifact(artifactsDir);
             }
         }
 
@@ -204,5 +211,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
         private readonly TeamCityLogger teamCityLogger;
         private readonly Func<IScenariosRegistry> staticRegistryCreatorMethod;
         private readonly string metricsDir, logsDir, artifactsDir;
+        private int amountOfConfigurations, amountOfOptionsSets;
     }
 }
