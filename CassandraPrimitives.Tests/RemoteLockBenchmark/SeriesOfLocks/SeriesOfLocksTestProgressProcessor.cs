@@ -62,6 +62,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
         private long amountOfLocks;
         private readonly Meter meter;
         private readonly SeriesOfLocksTestOptions testOptions;
-        private long lastAcquiredLockInd;
+        private long lastAcquiredLockInd = -1;
     }
 }
