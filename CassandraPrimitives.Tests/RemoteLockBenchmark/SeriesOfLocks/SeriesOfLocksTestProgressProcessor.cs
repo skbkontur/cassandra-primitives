@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 using Metrics;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
@@ -33,6 +36,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
         {
             amountOfLocks += message.AmountOfLocks;
             meter.Mark(message.AmountOfLocks);
+            lastAcquiredLockInd = Math.Max(lastAcquiredLockInd, message.LastAcquiredLockInd);
             ReportProgressToTeamCity();
         }
 
@@ -40,6 +44,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
         {
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Process {0} says: {1}", processInd, message);
             return null;
+        }
+
+        public override Dictionary<string, Func<object>> GetDynamicOptions()
+        {
+            return new Dictionary<string, Func<object>>
+                {
+                    {"last_acquired_lock_ind", () => lastAcquiredLockInd}
+                };
         }
 
         protected override double GetProgressInPercents()
@@ -50,5 +62,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
         private long amountOfLocks;
         private readonly Meter meter;
         private readonly SeriesOfLocksTestOptions testOptions;
+        private long lastAcquiredLockInd;
     }
 }

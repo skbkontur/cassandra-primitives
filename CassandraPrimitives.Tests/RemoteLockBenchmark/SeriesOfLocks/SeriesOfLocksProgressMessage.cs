@@ -6,5 +6,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
     {
         public long AmountOfLocks { get; set; }
         public bool Final { get; set; }
+        public long LastAcquiredLockInd { get; set; }
     }
 }
