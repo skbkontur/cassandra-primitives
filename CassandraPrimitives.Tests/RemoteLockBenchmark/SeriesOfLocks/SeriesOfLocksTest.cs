@@ -40,7 +40,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
             var globalTimer = Stopwatch.StartNew();
             var reportTimer = Stopwatch.StartNew();
             var amountOfLocks = 0;
-            for (var i = 0; i < testOptions.AmountOfLocks; i++)
+            long lastAcquiredLockInd = -1;
+            for (long i = 0; i < testOptions.AmountOfLocks; i++)
             {
                 try
                 {
@@ -50,6 +51,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
                     {
                         locksToRelease.Enqueue(Tuple.Create(globalTimer.ElapsedMilliseconds, remoteLock));
                         amountOfLocks++;
+                        lastAcquiredLockInd = i;
                         logger.InfoFormat("Lock with ind {0} was acquired by thread {1}", i, threadInd);
                         var sleepTime = rand.Next(testOptions.MinWaitTimeMilliseconds, testOptions.MaxWaitTimeMilliseconds);
                         Thread.Sleep(sleepTime);
@@ -58,9 +60,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
                             externalLogger.PublishProgress(new SeriesOfLocksProgressMessage
                                 {
                                     AmountOfLocks = amountOfLocks,
+                                    LastAcquiredLockInd = i,
                                     Final = false,
                                 });
                             amountOfLocks = 0;
+                            var globalLastLockInd = httpExternalDataGetter.GetDynamicOption<long>("last_acquired_lock_ind").Result;
+                            if (globalLastLockInd - i > maxSyncLocksOffset)
+                            {
+                                externalLogger.Log("Out of sync detected in thread {0} (offset - {1}). Jump to {2}.", threadInd, globalLastLockInd - i, globalLastLockInd);
+                                i = globalLastLockInd;
+                            }
                             reportTimer.Restart();
                         }
                         while (locksToRelease.Count > 0 && globalTimer.ElapsedMilliseconds - locksToRelease.Peek().Item1 > lockLiveTimeMs)
@@ -75,6 +84,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
             externalLogger.PublishProgress(new SeriesOfLocksProgressMessage
                 {
                     AmountOfLocks = amountOfLocks,
+                    LastAcquiredLockInd = lastAcquiredLockInd,
                     Final = false,
                 });
         }
@@ -86,6 +96,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
 
         private const long publishIntervalMs = 5000;
         private const long lockLiveTimeMs = 60000;
+        private const long maxSyncLocksOffset = 100;
         private readonly Random rand;
         private readonly IExternalProgressLogger externalLogger;
         private readonly IRemoteLockGetterProvider remoteLockGetterProvider;

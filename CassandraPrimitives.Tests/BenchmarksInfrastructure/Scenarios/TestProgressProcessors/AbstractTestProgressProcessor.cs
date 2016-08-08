@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 using Metrics;
 
 using Newtonsoft.Json;
@@ -31,7 +34,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             var progressPercents = (int)GetProgressInPercents();
             if (lastReportedToTeamCityProgressPercent != progressPercents)
             {
-                teamCityLogger.ReportActivity(string.Format("{0}%", progressPercents));
+                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "{0}%", progressPercents);
                 lastReportedToTeamCityProgressPercent = progressPercents;
             }
         }
@@ -49,6 +52,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             var message = log["message"].ToString();
 
             return HandleLogMessage(message, processInd);
+        }
+
+        public virtual Dictionary<string, Func<object>> GetDynamicOptions()
+        {
+            return new Dictionary<string, Func<object>>();
         }
 
         public abstract string HandleProgressMessage(TProgressMessage message, int processInd);
