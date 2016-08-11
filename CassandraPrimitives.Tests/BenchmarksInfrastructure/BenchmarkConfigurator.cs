@@ -5,8 +5,11 @@ using System.Linq;
 
 using Metrics;
 
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.Cassandra.CassandraSettings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Agents.Providers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ChildProcessDriver;
@@ -15,6 +18,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Inf
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestOptions;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestProgressProcessors;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
@@ -43,6 +47,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
     public interface IReadyToStartBenchmarkConfigurator
     {
         IReadyToStartBenchmarkConfigurator WithCassandraCluster();
+        IReadyToStartBenchmarkConfigurator WithExistingCassandraCluster(CassandraClusterSettings clusterSettings);
         IReadyToStartBenchmarkConfigurator WithZookeeperCluster();
         IReadyToStartBenchmarkConfigurator WithClusterFromConfiguration();
         IReadyToStartBenchmarkConfigurator WithMetricsContext(MetricsContext context);
@@ -167,6 +172,21 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     toDispose.Add(cassandraDriver.StartCassandraCluster());
                     optionsSet["CassandraClusterSettings"] = cassandraDriver.ClusterSettings;
                 }, DeployPriorities.Cluster));
+            return this;
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithExistingCassandraCluster(CassandraClusterSettings clusterSettings)
+        {
+            deploySteps.Add(new DeployStep("Configure cassandra cluster", () =>
+            {
+                using (var cassandraCluster = new CassandraCluster(clusterSettings))
+                {
+                    var initializerSettings = new CassandraInitializerSettings();
+                    var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, new CassandraMetaProvider(), initializerSettings);
+                    cassandraSchemeActualizer.AddNewColumnFamilies();
+                }
+                optionsSet["CassandraClusterSettings"] = clusterSettings;
+            }, DeployPriorities.Cluster));
             return this;
         }
 
