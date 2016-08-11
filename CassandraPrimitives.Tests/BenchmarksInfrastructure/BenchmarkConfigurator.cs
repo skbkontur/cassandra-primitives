@@ -211,16 +211,22 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         public void StartAndWaitForFinish()
         {
+            var lastStep = "Preparation";
             try
             {
                 deploySteps.Add(new DeployStep("TasksStopping", StopTasks, DeployPriorities.TasksStopping));
                 deploySteps.Add(new DeployStep("MainProcess", MainProcess, DeployPriorities.Driver));
                 foreach (var deployStep in deploySteps.OrderBy(s => s.Priority))
                 {
+                    lastStep = deployStep.Name;
                     teamCityLogger.BeginMessageBlock(deployStep.Name);
                     deployStep.Action.Invoke();
                     teamCityLogger.EndMessageBlock();
                 }
+            }
+            catch (Exception e)
+            {
+                teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Failure, "Fail, exception occured in {0} step:\n{1}", lastStep, e);
             }
             finally
             {
