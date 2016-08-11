@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 
 using Metrics;
 
@@ -57,6 +58,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         IReadyToStartBenchmarkConfigurator WithDynamicOption(string name, Func<object> valueProvider);
         IReadyToStartBenchmarkConfigurator WithAllProcessStartedHandler(Action onAllProcessesStarted);
         IReadyToStartBenchmarkConfigurator WithJmxTrans(string graphitePrefix);
+        IReadyToStartBenchmarkConfigurator WithJmxTrans(string graphitePrefix, Tuple<string, int>[] additionalJmxEndPoints);
         void StartAndWaitForFinish();
     }
 
@@ -145,6 +147,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         public IReadyToStartBenchmarkConfigurator WithJmxTrans(string graphitePrefix)
         {
+            return WithJmxTrans(graphitePrefix, new Tuple<string, int>[0]);
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithJmxTrans(string graphitePrefix, Tuple<string, int>[] additionalJmxHosts)
+        {
             deploySteps.Add(new DeployStep("JmxTrans deploy", () =>
                 {
                     var wrapperDeployer = new WrapperDeployer(teamCityLogger);
@@ -154,6 +161,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     var agentNames = agentProvider.GetAllAgentNames();
                     var settingsList = agentNames
                         .Select(name => new JmxSettings(name, name.Split('.').First(), graphitePrefix, 7399))
+                        .Concat(additionalJmxHosts.Select(host => new JmxSettings(host.Item1, host.Item1.Split('.').First(), graphitePrefix, host.Item2)))
                         .ToList();
                     initialiser.DeployJmxTrans(deployDirectory, settingsList);
                     toDispose.Add(initialiser.RunJmxTrans(deployDirectory, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, wrapperDeployer.GetWrapperRelativePath())));
