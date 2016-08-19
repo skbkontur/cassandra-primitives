@@ -1,6 +1,7 @@
 using System;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.ZooKeeper.ZookeeperSettings;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration
@@ -10,6 +11,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         IReadyToStartBenchmarkConfigurator WithCassandraCluster();
         IReadyToStartBenchmarkConfigurator WithExistingCassandraCluster(CassandraClusterSettings clusterSettings);
         IReadyToStartBenchmarkConfigurator WithZookeeperCluster();
+        IReadyToStartBenchmarkConfigurator WithExistingZookeeperCluster(ZookeeperClusterSettings clusterSettings);
         IReadyToStartBenchmarkConfigurator WithClusterFromConfiguration();
         IReadyToStartBenchmarkConfigurator WithDefaultTeamCityLogger();
         IReadyToStartBenchmarkConfigurator WithTeamCityLogger(ITeamCityLogger teamCityLogger);

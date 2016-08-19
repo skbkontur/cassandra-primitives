@@ -6,6 +6,7 @@ using Metrics;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration.TestOptions;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.ZooKeeper.ZookeeperSettings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Agents.Providers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
@@ -152,6 +153,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         public IReadyToStartBenchmarkConfigurator WithZookeeperCluster()
         {
             actions.Add(benchmarkConfigurator => benchmarkConfigurator.WithZookeeperCluster());
+            return this;
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithExistingZookeeperCluster(ZookeeperClusterSettings clusterSettings)
+        {
+            actions.Add(benchmarkConfigurator => benchmarkConfigurator.WithExistingZookeeperCluster(clusterSettings));
             return this;
         }
 

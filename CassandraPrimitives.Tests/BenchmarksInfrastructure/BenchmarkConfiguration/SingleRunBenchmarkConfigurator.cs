@@ -10,6 +10,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.Cassandra.CassandraSettings;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.ZooKeeper.ZookeeperSettings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Agents.Providers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ChildProcessDriver;
@@ -173,6 +174,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     toDispose.Add(zookeeperDriver.StartZookeeperCluster());
                     optionsSet["ZookeeperClusterSettings"] = zookeeperDriver.ClusterSettings;
                 }, DeployPriorities.Cluster));
+            return this;
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithExistingZookeeperCluster(ZookeeperClusterSettings clusterSettings)
+        {
+            deploySteps.Add(new DeployStep("Configure Zookeeper cluster", () =>
+            {
+                optionsSet["ZookeeperClusterSettings"] = clusterSettings;
+            }, DeployPriorities.Cluster));
             return this;
         }
 
