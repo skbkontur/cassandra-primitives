@@ -36,6 +36,9 @@
     <Reference Include="Cassandra.ClusterDeployment">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.ClusterDeployment.dll</HintPath>
     </Reference>
+    <Reference Include="Catalogue.TeamCity">
+      <HintPath>..\..\Assemblies\Catalogue.TeamCtiy\Catalogue.TeamCity.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\Assemblies\Temp\log4net.dll</HintPath>
     </Reference>
@@ -73,6 +76,7 @@
     <Compile Include="RemoteTaskRunning\RemoteDirectory.cs" />
     <Compile Include="RemoteTaskRunning\RemoteMachineCredentials.cs" />
     <Compile Include="RemoteTaskRunning\TaskSchedulerAdapter.cs" />
+    <Compile Include="TeamCityExtensions.cs" />
     <Compile Include="ZookeeperInitialisaton\RemoteZookeeperInitializer.cs" />
     <Compile Include="ZookeeperInitialisaton\ZookeeperDeployer.cs" />
     <Compile Include="ZookeeperInitialisaton\ZookeeperNodeSettings.cs" />

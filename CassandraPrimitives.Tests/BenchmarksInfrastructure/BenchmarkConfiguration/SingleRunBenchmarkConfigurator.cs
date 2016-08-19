@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 
 using Metrics;
 
@@ -22,55 +21,16 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Sce
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 using SKBKontur.Catalogue.TeamCity;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
+namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration
 {
-    public interface IWaitingForRegistryCreatorBenchmarkConfigurator
+    internal class SingleRunBenchmarkConfigurator : IBenchmarkConfigurator
     {
-        IWaitingForAgentProviderBenchmarkConfigurator WithStaticRegistryCreatorMethod(Func<IScenariosRegistry> staticRegistryCreatorMethod);
-    }
-
-    public interface IWaitingForAgentProviderBenchmarkConfigurator
-    {
-        IWaitingForTestConfigurationBenchmarkConfigurator WithAgentProvider(IAgentProvider agentProvider);
-        IWaitingForTestConfigurationBenchmarkConfigurator WithAgentProviderFromTeamCity();
-    }
-
-    public interface IWaitingForTestConfigurationBenchmarkConfigurator
-    {
-        IWaitingForTestOptionsBenchmarkConfigurator WithConfiguration(TestConfiguration testConfiguration);
-    }
-
-    public interface IWaitingForTestOptionsBenchmarkConfigurator
-    {
-        IReadyToStartBenchmarkConfigurator WithTestOptions(ITestOptions testOptions);
-    }
-
-    public interface IReadyToStartBenchmarkConfigurator
-    {
-        IReadyToStartBenchmarkConfigurator WithCassandraCluster();
-        IReadyToStartBenchmarkConfigurator WithExistingCassandraCluster(CassandraClusterSettings clusterSettings);
-        IReadyToStartBenchmarkConfigurator WithZookeeperCluster();
-        IReadyToStartBenchmarkConfigurator WithClusterFromConfiguration();
-        IReadyToStartBenchmarkConfigurator WithMetricsContext(MetricsContext context);
-        IReadyToStartBenchmarkConfigurator WithDefaultTeamCityLogger();
-        IReadyToStartBenchmarkConfigurator WithTeamCityLogger(ITeamCityLogger teamCityLogger);
-        IReadyToStartBenchmarkConfigurator WithOption(string name, object value);
-        IReadyToStartBenchmarkConfigurator WithDynamicOption(string name, Func<object> valueProvider);
-        IReadyToStartBenchmarkConfigurator WithAllProcessStartedHandler(Action onAllProcessesStarted);
-        IReadyToStartBenchmarkConfigurator WithJmxTrans(string graphitePrefix);
-        IReadyToStartBenchmarkConfigurator WithJmxTrans(string graphitePrefix, Tuple<string, int>[] additionalJmxEndPoints);
-        void StartAndWaitForFinish();
-    }
-
-    public class BenchmarkConfigurator :
-        IWaitingForRegistryCreatorBenchmarkConfigurator,
-        IWaitingForAgentProviderBenchmarkConfigurator,
-        IWaitingForTestConfigurationBenchmarkConfigurator,
-        IWaitingForTestOptionsBenchmarkConfigurator,
-        IReadyToStartBenchmarkConfigurator
-    {
-        private BenchmarkConfigurator()
+        private SingleRunBenchmarkConfigurator(TestConfiguration testConfiguration, ITestOptions testOptions, Func<IScenariosRegistry> staticRegistryCreatorMethod, MetricsContext metricsContext)
         {
+            this.testConfiguration = testConfiguration;
+            this.testOptions = testOptions;
+            registryCreator = staticRegistryCreatorMethod;
+            this.metricsContext = metricsContext;
             deploySteps = new List<DeployStep>();
             teamCityLogger = new FakeTeamCityLogger();
             toDispose = new List<IDisposable>();
@@ -79,15 +39,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             onAllProcessesStarted = () => { };
         }
 
-        public static IWaitingForRegistryCreatorBenchmarkConfigurator CreateNew()
+        internal static IBenchmarkConfigurator CreateNew(TestConfiguration configuration, ITestOptions testOptions, Func<IScenariosRegistry> staticRegistryCreatorMethod, MetricsContext metricsContext)
         {
-            return new BenchmarkConfigurator();
-        }
-
-        public IWaitingForAgentProviderBenchmarkConfigurator WithStaticRegistryCreatorMethod(Func<IScenariosRegistry> staticRegistryCreatorMethod)
-        {
-            registryCreator = staticRegistryCreatorMethod;
-            return this;
+            return new SingleRunBenchmarkConfigurator(configuration, testOptions, staticRegistryCreatorMethod, metricsContext);
         }
 
         public IReadyToStartBenchmarkConfigurator WithTeamCityLogger(ITeamCityLogger teamCityLogger)
@@ -120,28 +74,21 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return this;
         }
 
-        public BenchmarkConfigurator WithTeamCityLogger()
+        public IReadyToStartBenchmarkConfigurator WithTeamCityLogger()
         {
             teamCityLogger = new TeamCityLogger(Console.Out);
             return this;
         }
 
-        public IWaitingForTestConfigurationBenchmarkConfigurator WithAgentProvider(IAgentProvider agentProvider)
+        public IReadyToStartBenchmarkConfigurator WithAgentProvider(IAgentProvider agentProvider)
         {
             this.agentProvider = agentProvider;
             return this;
         }
 
-        public IWaitingForTestConfigurationBenchmarkConfigurator WithAgentProviderFromTeamCity()
+        public IReadyToStartBenchmarkConfigurator WithAgentProviderFromTeamCity(IEnvironmentVariableProvider variableProvider)
         {
-            agentProvider = new AgentProviderFromTeamCity();
-            return this;
-        }
-
-        public IWaitingForTestOptionsBenchmarkConfigurator WithConfiguration(TestConfiguration testConfiguration)
-        {
-            this.testConfiguration = testConfiguration;
-            optionsSet["TestConfiguration"] = testConfiguration;
+            agentProvider = new AgentProviderFromTeamCity(variableProvider);
             return this;
         }
 
@@ -169,6 +116,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return this;
         }
 
+        public IReadyToStartBenchmarkConfigurator WithSetUpAction(Action action)
+        {
+            deploySteps.Add(new DeployStep("SetUp action", action, DeployPriorities.SetUpAction));
+            return this;
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithTearDownAction(Action action)
+        {
+            deploySteps.Add(new DeployStep("TearDown action", action, DeployPriorities.TearDownAction));
+            return this;
+        }
+
         public IReadyToStartBenchmarkConfigurator WithCassandraCluster()
         {
             deploySteps.Add(new DeployStep("Cassandra deploy", () =>
@@ -186,15 +145,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         public IReadyToStartBenchmarkConfigurator WithExistingCassandraCluster(CassandraClusterSettings clusterSettings)
         {
             deploySteps.Add(new DeployStep("Configure cassandra cluster", () =>
-            {
-                using (var cassandraCluster = new CassandraCluster(clusterSettings))
                 {
-                    var initializerSettings = new CassandraInitializerSettings();
-                    var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, new CassandraMetaProvider(), initializerSettings);
-                    cassandraSchemeActualizer.AddNewColumnFamilies();
-                }
-                optionsSet["CassandraClusterSettings"] = clusterSettings;
-            }, DeployPriorities.Cluster));
+                    using (var cassandraCluster = new CassandraCluster(clusterSettings))
+                    {
+                        var initializerSettings = new CassandraInitializerSettings();
+                        var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, new CassandraMetaProvider(), initializerSettings);
+                        cassandraSchemeActualizer.AddNewColumnFamilies();
+                    }
+                    optionsSet["CassandraClusterSettings"] = clusterSettings;
+                }, DeployPriorities.Cluster));
             return this;
         }
 
@@ -223,18 +182,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             default:
                 throw new Exception(string.Format("Type of cluster for {0} is unknown", testConfiguration.ClusterType));
             }
-        }
-
-        public IReadyToStartBenchmarkConfigurator WithMetricsContext(MetricsContext context)
-        {
-            metricsContext = context;
-            return this;
-        }
-
-        public IReadyToStartBenchmarkConfigurator WithTestOptions(ITestOptions testOptions)
-        {
-            this.testOptions = testOptions;
-            return this;
         }
 
         public void StartAndWaitForFinish()
@@ -291,6 +238,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         private void MainProcess()
         {
             optionsSet["TestOptions"] = testOptions;
+            optionsSet["TestConfiguration"] = testConfiguration;
             teamCityLogger.BeginMessageBlock("Generating child assembly");
             ChildExecutableGenerator.Generate(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ChildExecutable"), registryCreator);
             teamCityLogger.EndMessageBlock();
@@ -304,10 +252,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         internal enum DeployPriorities
         {
+            SetUpAction,
             TasksStopping,
             JmxTrans,
             Cluster,
             Driver,
+            TearDownAction
         }
 
         private readonly Dictionary<string, object> optionsSet;
@@ -316,10 +266,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         private ITeamCityLogger teamCityLogger;
         private IAgentProvider agentProvider;
         private readonly List<IDisposable> toDispose;
-        private TestConfiguration testConfiguration;
-        private MetricsContext metricsContext;
-        private Func<IScenariosRegistry> registryCreator;
-        private ITestOptions testOptions;
+        private readonly TestConfiguration testConfiguration;
+        private readonly MetricsContext metricsContext;
+        private readonly Func<IScenariosRegistry> registryCreator;
+        private readonly ITestOptions testOptions;
         private Action onAllProcessesStarted;
 
         internal class DeployStep

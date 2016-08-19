@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration.TestOptions;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestOptions;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
@@ -15,27 +12,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             MaxWaitTimeMilliseconds = maxWaitTimeMilliseconds;
         }
 
-        public int AmountOfLocks { get; private set; }
-        public int MinWaitTimeMilliseconds { get; private set; }
-        public int MaxWaitTimeMilliseconds { get; private set; }
-
-        public static List<BaseRemoteLockTestOptions> ParseWithRanges(IRemoteLockBenchmarkEnvironment environment)
+        protected BaseRemoteLockTestOptions()
         {
-            var amountOfThreads = OptionsParser.ParseInts("AmountOfLocks", environment.AmountOfLocksPerThread);
-            var amountOfProcesses = OptionsParser.ParseInts("MinWaitTimeMilliseconds", environment.MinWaitTimeMilliseconds);
-            var amountOfClusterNodes = OptionsParser.ParseInts("MaxWaitTimeMilliseconds", environment.MaxWaitTimeMilliseconds);
-
-            var combinations = OptionsParser.Product(
-                amountOfThreads.Cast<object>().ToList(),
-                amountOfProcesses.Cast<object>().ToList(),
-                amountOfClusterNodes.Cast<object>().ToList());
-
-            return combinations
-                .Select(combination => new BaseRemoteLockTestOptions(
-                                           (int)combination[0],
-                                           (int)combination[1],
-                                           (int)combination[2]))
-                .ToList();
         }
+
+        [TestOption]
+        public int AmountOfLocks { get; set; }
+
+        [TestOption]
+        public int MinWaitTimeMilliseconds { get; set; }
+
+        [TestOption]
+        public int MaxWaitTimeMilliseconds { get; set; }
     }
 }

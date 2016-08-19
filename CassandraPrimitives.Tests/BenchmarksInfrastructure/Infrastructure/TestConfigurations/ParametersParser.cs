@@ -5,14 +5,14 @@ using System.Text.RegularExpressions;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations
 {
-    public class OptionsParser
+    public class ParametersParser
     {
         public static List<List<object>> Product(params List<object>[] lists)
         {
             return Product(0, lists);
         }
 
-        public static List<List<object>> Product(int pos, params List<object>[] lists)
+        private static List<List<object>> Product(int pos, params List<object>[] lists)
         {
             if (lists.Length == pos)
                 return new List<List<object>> {new List<object>()};
@@ -45,6 +45,25 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 if (!Enum.TryParse(value, out currentResult))
                     throw new Exception(string.Format("Invalid value of enum parameter {0}", parameterName));
                 result.Add(currentResult);
+            }
+            return result;
+        }
+
+        public static List<Enum> ParseEnums(Type enumType, string parameterName, string rawValue)
+        {
+            var values = ParseStrings(rawValue);
+            var result = new List<Enum>();
+            foreach (var value in values)
+            {
+                try
+                {
+                    var currentResult = (Enum)Enum.Parse(enumType, value);
+                    result.Add(currentResult);
+                }
+                catch (Exception)
+                {
+                    throw new Exception(string.Format("Invalid value of enum parameter {0}", parameterName));
+                }
             }
             return result;
         }
