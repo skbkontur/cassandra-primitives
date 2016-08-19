@@ -27,10 +27,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         public static TestConfiguration GetFromEnvironmentWithoutRanges(ITestEnvironment environment)
         {
-            var amountOfThreads = OptionsParser.ParseInt("AmountOfThreads", environment.AmountOfThreads);
-            var amountOfProcesses = OptionsParser.ParseInt("AmountOfProcesses", environment.AmountOfProcesses);
-            var amountOfClusterNodes = OptionsParser.ParseInt("AmountOfClusterNodes", environment.AmountOfClusterNodes);
-            var httpPort = OptionsParser.ParseInt("HttpPort", environment.HttpPort);
+            var amountOfThreads = ParametersParser.ParseInt("AmountOfThreads", environment.AmountOfThreads);
+            var amountOfProcesses = ParametersParser.ParseInt("AmountOfProcesses", environment.AmountOfProcesses);
+            var amountOfClusterNodes = ParametersParser.ParseInt("AmountOfClusterNodes", environment.AmountOfClusterNodes);
+            var httpPort = ParametersParser.ParseInt("HttpPort", environment.HttpPort);
 
             ClusterTypes clusterType;
             if (!Enum.TryParse(environment.ClusterType, out clusterType))
@@ -52,17 +52,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         public static List<TestConfiguration> ParseWithRanges(ITestEnvironment environment)
         {
-            var amountOfThreads = OptionsParser.ParseInts("AmountOfThreads", environment.AmountOfThreads);
-            var amountOfProcesses = OptionsParser.ParseInts("AmountOfProcesses", environment.AmountOfProcesses);
-            var amountOfClusterNodes = OptionsParser.ParseInts("AmountOfClusterNodes", environment.AmountOfClusterNodes);
-            var httpPort = OptionsParser.ParseInts("HttpPort", environment.HttpPort);
+            var amountOfThreads = ParametersParser.ParseInts("AmountOfThreads", environment.AmountOfThreads);
+            var amountOfProcesses = ParametersParser.ParseInts("AmountOfProcesses", environment.AmountOfProcesses);
+            var amountOfClusterNodes = ParametersParser.ParseInts("AmountOfClusterNodes", environment.AmountOfClusterNodes);
+            var httpPort = ParametersParser.ParseInts("HttpPort", environment.HttpPort);
 
-            var clusterTypes = OptionsParser.ParseEnums<ClusterTypes>("ClusterType", environment.ClusterType);
-            var testScenario = OptionsParser.ParseStrings(environment.TestScenario);
+            var clusterTypes = ParametersParser.ParseEnums<ClusterTypes>("ClusterType", environment.ClusterType);
+            var testScenario = ParametersParser.ParseStrings(environment.TestScenario);
 
             var remoteHostName = IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName;
 
-            var combinations = OptionsParser.Product(
+            var combinations = ParametersParser.Product(
                 amountOfThreads.Cast<object>().ToList(),
                 amountOfProcesses.Cast<object>().ToList(),
                 amountOfClusterNodes.Cast<object>().ToList(),

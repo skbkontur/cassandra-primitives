@@ -56,10 +56,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IRemoteLockBenchmarkEnvironment.cs" />
+    <Compile Include="EnvironmentVariableProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RemoteLockBenchmarkEnvironment.cs" />
     <Compile Include="SeriesOfLocks\SeriesOfLocksProgressMessage.cs" />
     <Compile Include="SeriesOfLocks\SeriesOfLocksTest.cs" />
     <Compile Include="SeriesOfLocks\SeriesOfLocksTestOptions.cs" />

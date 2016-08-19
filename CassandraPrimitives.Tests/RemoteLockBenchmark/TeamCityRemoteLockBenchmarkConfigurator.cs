@@ -1,23 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Threading.Tasks;
 
 using log4net;
 
 using Metrics;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestOptions;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.SeriesOfLocks;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Timeline;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.WaitForLock;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
@@ -36,41 +28,33 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             Log4NetConfiguration.InitializeOnce();
             logger = LogManager.GetLogger(typeof(TeamCityRemoteLockBenchmarkConfigurator));
 
-            environment = RemoteLockBenchmarkEnvironment.GetFromEnvironment();
             teamCityLogger = new TeamCityLogger(Console.Out);
             this.staticRegistryCreatorMethod = staticRegistryCreatorMethod;
         }
 
-        private void RunWithConfigurationAndOptions(TestConfiguration configuration, int configurationInd, ITestOptions options, int optionsInd)
+        public void Run()
         {
-            var blockName = string.Format("Configuration - {0}/{1}, options - {2}/{3}", configurationInd, amountOfConfigurations, optionsInd, amountOfOptionsSets);
-            teamCityLogger.BeginMessageBlock(blockName);
-            teamCityLogger.BeginActivity(blockName);
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Configuration:\n{0}", configuration);
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Options:\n{0}", options);
+            ClearArtifactsDirectories();
 
-            bool permissionToStart = false;
-            var taskCompletionSource = new TaskCompletionSource<bool>();
-
-            var currentArtifactsDir = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts"));
-            if (currentArtifactsDir.Exists)
-                currentArtifactsDir.Delete(true);
-
-            MetricsContext metricsContext = null;
-            var metricsContextName = string.Format("Test configuration - {0}, options set - {1}", configurationInd, optionsInd);
+            InitMetrics();
             try
             {
-                metricsContext = Metric.Context(metricsContextName);
-                BenchmarkConfigurator
-                    .CreateNew()
-                    .WithStaticRegistryCreatorMethod(staticRegistryCreatorMethod)
-                    .WithAgentProviderFromTeamCity()
-                    .WithConfiguration(configuration)
-                    .WithTestOptions(options)
-                    .WithMetricsContext(metricsContext)
+                bool permissionToStart = false;
+                var taskCompletionSource = new TaskCompletionSource<bool>();
+
+                var variableProvider = new EnvironmentVariableProvider();
+
+                ManyOptionsBenchmarkConfigurator
+                    .CreateNew(variableProvider, staticRegistryCreatorMethod)
+                    .WithAgentProviderFromTeamCity(variableProvider)
                     .WithTeamCityLogger(teamCityLogger)
                     .WithClusterFromConfiguration()
                     .WithJmxTrans(JmxGraphitePrefix)
+                    .WithSetUpAction(() =>
+                        {
+                            permissionToStart = false;
+                            taskCompletionSource = new TaskCompletionSource<bool>();
+                        })
                     .WithDynamicOption("permission_to_start", () => permissionToStart)
                     .WithDynamicOption("response_on_start", () => taskCompletionSource.Task.Result)
                     .WithAllProcessStartedHandler(() =>
@@ -83,72 +67,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                                 });
                         })
                     .StartAndWaitForFinish();
-            }
-            finally
-            {
-                if (metricsContext != null)
-                {
-                    Metric.ShutdownContext(metricsContextName);
-                    metricsContext.Dispose();
-                }
-                if (currentArtifactsDir.Exists)
-                {
-                    var testArtifactsPath = Path.Combine(artifactsDir, string.Format("Config_{0}_Options_{1}.zip", configurationInd, optionsInd));
-                    ZipFile.CreateFromDirectory(currentArtifactsDir.FullName, testArtifactsPath, compressionLevel, false);
-                }
-            }
-        }
-
-        private void RunWithConfiguration(TestConfiguration configuration, int configurationInd)
-        {
-            List<ITestOptions> testOptionsList;
-            TestScenarios testScenario;
-            if (!Enum.TryParse(configuration.TestScenario, out testScenario))
-                throw new Exception(string.Format("Unknown scenario {0}", configuration.TestScenario));
-            switch (testScenario)
-            {
-            case TestScenarios.Timeline:
-                testOptionsList = TimelineTestOptions.ParseWithRanges(environment).Cast<ITestOptions>().ToList();
-                break;
-            case TestScenarios.WaitForLock:
-                testOptionsList = WaitForLockTestOptions.ParseWithRanges(environment).Cast<ITestOptions>().ToList();
-                break;
-            case TestScenarios.SeriesOfLocks:
-                testOptionsList = SeriesOfLocksTestOptions.ParseWithRanges(environment).Cast<ITestOptions>().ToList();
-                break;
-            default:
-                throw new Exception(string.Format("Unknown scenario {0}", configuration.TestScenario));
-            }
-
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Going to run with {0} variants of options", testOptionsList.Count);
-            amountOfOptionsSets = testOptionsList.Count;
-
-            foreach (var indexedTestOptions in testOptionsList.Select((o, i) => new {Opt = o, Ind = i}))
-            {
-                try
-                {
-                    RunWithConfigurationAndOptions(configuration, configurationInd, indexedTestOptions.Opt, indexedTestOptions.Ind);
-                }
-                finally
-                {
-                    teamCityLogger.EndActivity();
-                    teamCityLogger.EndMessageBlock();
-                }
-            }
-        }
-
-        public void Run()
-        {
-            ClearArtifactsDirectories();
-
-            InitMetrics();
-            var testConfigurations = TestConfiguration.ParseWithRanges(environment);
-            amountOfConfigurations = testConfigurations.Count;
-            teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Going to run {0} test configuration(s)", testConfigurations.Count);
-            try
-            {
-                foreach (var indexedTestConfiguration in testConfigurations.Select((c, i) => new {Ind = i, Conf = c}))
-                    RunWithConfiguration(indexedTestConfiguration.Conf, indexedTestConfiguration.Ind);
             }
             finally
             {
@@ -209,12 +127,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
             Environment.Exit(1);
         }
 
+        private const CompressionLevel compressionLevel = CompressionLevel.Optimal;
+
         private readonly ILog logger;
-        private readonly RemoteLockBenchmarkEnvironment environment;
         private readonly TeamCityLogger teamCityLogger;
         private readonly Func<IScenariosRegistry> staticRegistryCreatorMethod;
         private readonly string metricsDir, logsDir, artifactsDir;
-        private int amountOfConfigurations, amountOfOptionsSets;
-        private const CompressionLevel compressionLevel = CompressionLevel.Optimal;
     }
 }

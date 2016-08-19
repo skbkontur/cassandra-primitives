@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration.TestOptions;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.ProgressMessages;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestOptions;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestProgressProcessors;
@@ -25,6 +27,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return GetScenarioEssentials(scenario).CreateProcessor(options);
         }
 
+        public List<ITestOptions> GetTestOptionsList(string scenario, ITestOptionsProvider testOptionsProvider)
+        {
+            return GetScenarioEssentials(scenario).CreateTestOptions(testOptionsProvider);
+        }
+
         private IScenarioEssentials GetScenarioEssentials(string scenario)
         {
             if (!scenarioEssentials.ContainsKey(scenario))
@@ -32,13 +39,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return scenarioEssentials[scenario];
         }
 
-        public void Register<TProgressMessage, TScenario, TProgressProcessor, TTestOptions>(string scenario, Func<ScenarioCreationOptions, TScenario> testCreator, Func<ProgressMessageProcessorCreationOptions, TProgressProcessor> processorCreator)
+        public void Register<TProgressMessage, TScenario, TProgressProcessor, TTestOptions>(string scenario, Func<ScenarioCreationOptions, TScenario> testCreator, Func<ProgressMessageProcessorCreationOptions, TProgressProcessor> processorCreator, Func<ITestOptionsProvider, List<ITestOptions>> testOptionsCreator)
             where TProgressMessage : IProgressMessage
             where TScenario : ITest<TProgressMessage, TTestOptions>
             where TProgressProcessor : ITestProgressProcessor
             where TTestOptions : ITestOptions
         {
-            scenarioEssentials[scenario] = new ScenarioEssentials<TProgressMessage, TScenario, TProgressProcessor, TTestOptions>(testCreator, processorCreator);
+            scenarioEssentials[scenario] = new ScenarioEssentials<TProgressMessage, TScenario, TProgressProcessor, TTestOptions>(testCreator, processorCreator, testOptionsCreator);
         }
 
         private readonly Dictionary<string, IScenarioEssentials> scenarioEssentials;

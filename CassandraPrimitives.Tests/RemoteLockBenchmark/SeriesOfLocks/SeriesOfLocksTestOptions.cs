@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.SeriesOfLocks
 {
     public class SeriesOfLocksTestOptions : BaseRemoteLockTestOptions
@@ -12,20 +8,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Seri
             LockIdCommonPrefix = lockIdCommonPrefix;
         }
 
-        public string LockIdCommonPrefix { get; private set; }
-
-        public new static List<SeriesOfLocksTestOptions> ParseWithRanges(IRemoteLockBenchmarkEnvironment environment)
+        public SeriesOfLocksTestOptions()
         {
-            return BaseRemoteLockTestOptions
-                .ParseWithRanges(environment)
-                .Select(x =>
-                        new SeriesOfLocksTestOptions(
-                            Guid.NewGuid().ToString(),
-                            x.AmountOfLocks,
-                            x.MinWaitTimeMilliseconds,
-                            x.MaxWaitTimeMilliseconds))
-                .ToList();
         }
+
+        public string LockIdCommonPrefix { get; set; }
 
         public override string ToString()
         {
