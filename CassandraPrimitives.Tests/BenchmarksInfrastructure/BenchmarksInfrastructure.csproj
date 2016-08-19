@@ -125,6 +125,7 @@
     <Compile Include="BenchmarkConfiguration\ManyOptionsBenchmarkConfigurator.cs" />
     <Compile Include="BenchmarkConfiguration\TestOptions\TestOptionAttribute.cs" />
     <Compile Include="BenchmarkConfiguration\TestOptions\TestOptionsProvider.cs" />
+    <Compile Include="Infrastructure\AnnotationsPublisher.cs" />
     <Compile Include="Infrastructure\FakeTeamCityLogger.cs" />
     <Compile Include="Implementations\Cassandra\CassandraSettings\CassandraInitializerSettings.cs" />
     <Compile Include="Implementations\Cassandra\CassandraSettings\CassandraMetaProvider.cs" />
