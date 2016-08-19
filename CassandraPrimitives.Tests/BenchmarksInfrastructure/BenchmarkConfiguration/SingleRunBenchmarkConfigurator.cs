@@ -86,6 +86,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return this;
         }
 
+        public IReadyToStartBenchmarkConfigurator WithAgentProviderFromTeamCity()
+        {
+            throw new NotSupportedException();
+        }
+
         public IReadyToStartBenchmarkConfigurator WithAgentProviderFromTeamCity(IEnvironmentVariableProvider variableProvider)
         {
             agentProvider = new AgentProviderFromTeamCity(variableProvider);

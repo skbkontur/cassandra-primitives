@@ -34,6 +34,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         public static IBenchmarkConfigurator CreateNew(IEnvironmentVariableProvider variableProvider, Func<IScenariosRegistry> staticRegistryCreatorMethod)
         {
+            if (!staticRegistryCreatorMethod.Method.IsStatic ||
+                !staticRegistryCreatorMethod.Method.IsPublic ||
+                staticRegistryCreatorMethod.Method.DeclaringType == null ||
+                !staticRegistryCreatorMethod.Method.DeclaringType.IsPublic)
+                throw new Exception("Invalid staticRegistryCreatorMethod. It should be static, public and defined in a public class");
             var testConfigurationsList = TestConfiguration.ParseWithRanges(TestEnvironment.GetFromEnvironment(variableProvider));
             return new ManyOptionsBenchmarkConfigurator(testConfigurationsList, staticRegistryCreatorMethod, variableProvider);
         }
@@ -117,6 +122,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         public IReadyToStartBenchmarkConfigurator WithAgentProvider(IAgentProvider agentProvider)
         {
             actions.Add(benchmarkConfigurator => benchmarkConfigurator.WithAgentProvider(agentProvider));
+            return this;
+        }
+
+        public IReadyToStartBenchmarkConfigurator WithAgentProviderFromTeamCity()
+        {
+            actions.Add(benchmarkConfigurator => benchmarkConfigurator.WithAgentProviderFromTeamCity(variableProvider));
             return this;
         }
 

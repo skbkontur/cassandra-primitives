@@ -6,6 +6,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
     public interface IWaitingForAgentProviderBenchmarkConfigurator
     {
         IReadyToStartBenchmarkConfigurator WithAgentProvider(IAgentProvider agentProvider);
+        IReadyToStartBenchmarkConfigurator WithAgentProviderFromTeamCity();
         IReadyToStartBenchmarkConfigurator WithAgentProviderFromTeamCity(IEnvironmentVariableProvider variableProvider);
     }
 }
