@@ -20,7 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
             CqlPort = cqlPort;
             ListenAddress = listenAddress ?? "127.0.0.1";
             RpcAddress = rpcAddress ?? "127.0.0.1";
-            SeedAddresses = seedAddresses ?? new[] { "127.0.0.1" };
+            SeedAddresses = seedAddresses ?? new[] {"127.0.0.1"};
             ClusterName = clusterName ?? "TestCluster";
         }
 

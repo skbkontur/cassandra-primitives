@@ -45,9 +45,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                             new CassandraNodeSettings
                                 (
                                 name : clusterName,
-                                listenAddress: agent.IpAddress.ToString(),
+                                listenAddress : agent.IpAddress.ToString(),
                                 seedAddresses : seedAddresses,
-                                rpcAddress: agent.IpAddress.ToString()
+                                rpcAddress : agent.IpAddress.ToString()
                                 ),
                             agent.WorkDirectory,
                             taskWrapperRelativePath))

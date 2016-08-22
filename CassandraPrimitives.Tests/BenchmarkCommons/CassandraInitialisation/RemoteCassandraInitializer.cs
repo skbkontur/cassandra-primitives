@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 
 using Microsoft.Win32.TaskScheduler;
@@ -66,8 +65,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
                             do
                             {
                                 str = streamReader.ReadLine();
-                            }
-                            while (string.IsNullOrEmpty(str) || !str.Contains("Listening for thrift clients..."));
+                            } while (string.IsNullOrEmpty(str) || !str.Contains("Listening for thrift clients..."));
                             return true;
                         }
                     }
