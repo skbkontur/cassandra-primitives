@@ -37,7 +37,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             var dirForCurrentArtifacts = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts"));
             if (dirForCurrentArtifacts.Exists)
                 dirForCurrentArtifacts.Delete(true);
-            foreach (var indexedDirectory in processDirectories.Select((d, i) => new { Dir = d, Ind = i }))
+            foreach (var indexedDirectory in processDirectories.Select((d, i) => new {Dir = d, Ind = i}))
             {
                 try
                 {

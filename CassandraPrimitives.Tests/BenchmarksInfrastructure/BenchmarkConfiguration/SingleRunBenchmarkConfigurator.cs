@@ -6,7 +6,6 @@ using System.Linq;
 using Metrics;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning;
@@ -180,10 +179,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         public IReadyToStartBenchmarkConfigurator WithExistingZookeeperCluster(ZookeeperClusterSettings clusterSettings)
         {
-            deploySteps.Add(new DeployStep("Configure Zookeeper cluster", () =>
-            {
-                optionsSet["ZookeeperClusterSettings"] = clusterSettings;
-            }, DeployPriorities.Cluster));
+            deploySteps.Add(new DeployStep("Configure Zookeeper cluster", () => { optionsSet["ZookeeperClusterSettings"] = clusterSettings; }, DeployPriorities.Cluster));
             return this;
         }
 

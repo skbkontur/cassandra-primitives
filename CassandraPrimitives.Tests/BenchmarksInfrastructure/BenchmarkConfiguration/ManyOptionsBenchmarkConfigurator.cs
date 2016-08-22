@@ -71,7 +71,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Configuration:\n{0}", testConfiguration);
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Options:\n{0}", testOptions);
                 var metricsContextName = string.Format("Test configuration - {0}, options set - {1}", configurationInd, optionsInd);
-                
+
                 new AnnotationsPublisher().PublishAnnotation(string.Format("Benchmark start\n\nConfiguration:\n{0}\nOptions:\n{1}", testConfiguration, testOptions), "edi_benchmarks");
 
                 var currentArtifactsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts");

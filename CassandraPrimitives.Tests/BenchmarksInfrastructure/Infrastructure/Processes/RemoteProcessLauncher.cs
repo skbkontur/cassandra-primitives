@@ -62,7 +62,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     taskScheduler.StopAndDeleteTask(taskName);
                     DeployTask(agent);
                     teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Starting process {0} on agent {1}...", agent.ProcessInd, agent.Name);
-                    var task = taskScheduler.RunTaskInWrapper(wrapperPath, taskName, testRunnerPath, new[] { agent.ProcessInd.ToString(), configuration.RemoteHostName, agent.Token }, agent.ProcessDirectory.AsLocal);
+                    var task = taskScheduler.RunTaskInWrapper(wrapperPath, taskName, testRunnerPath, new[] {agent.ProcessInd.ToString(), configuration.RemoteHostName, agent.Token}, agent.ProcessDirectory.AsLocal);
                     tasks.Add(task);
                 }
             }

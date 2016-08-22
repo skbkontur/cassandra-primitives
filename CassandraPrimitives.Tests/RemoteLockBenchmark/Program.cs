@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ChildProcessDriver;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestOptions;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Implementations;
@@ -83,7 +82,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
             return scenariosRegistry;
         }
-        
+
         private static void Main(string[] args)
         {
             new TeamCityRemoteLockBenchmarkConfigurator(CreateRegistry).Run();
