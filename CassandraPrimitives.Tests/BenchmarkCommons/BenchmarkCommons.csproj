@@ -60,7 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CassandraClusterSettings.cs" />
+    <Compile Include="CassandraInitialisation\CassandraClusterSettings.cs" />
     <Compile Include="CassandraInitialisation\CassandraDeployer.cs" />
     <Compile Include="CassandraInitialisation\CassandraNodeSettings.cs" />
     <Compile Include="CassandraInitialisation\ICassandraInitialiser.cs" />

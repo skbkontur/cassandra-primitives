@@ -1,18 +1,19 @@
 using System;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.ZooKeeper.ZookeeperSettings;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration
 {
     public interface IReadyToStartBenchmarkConfigurator
     {
-        IReadyToStartBenchmarkConfigurator WithCassandraCluster();
-        IReadyToStartBenchmarkConfigurator WithExistingCassandraCluster(CassandraClusterSettings clusterSettings);
+        IReadyToStartBenchmarkConfigurator WithCassandraCluster(ICassandraMetadataProvider cassandraMetadataProvider);
+        IReadyToStartBenchmarkConfigurator WithExistingCassandraCluster(CassandraClusterSettings clusterSettings, ICassandraMetadataProvider cassandraMetadataProvider);
         IReadyToStartBenchmarkConfigurator WithZookeeperCluster();
         IReadyToStartBenchmarkConfigurator WithExistingZookeeperCluster(ZookeeperClusterSettings clusterSettings);
-        IReadyToStartBenchmarkConfigurator WithClusterFromConfiguration();
+        IReadyToStartBenchmarkConfigurator WithClusterFromConfiguration(ICassandraMetadataProvider cassandraMetadataProvider);
         IReadyToStartBenchmarkConfigurator WithDefaultTeamCityLogger();
         IReadyToStartBenchmarkConfigurator WithTeamCityLogger(ITeamCityLogger teamCityLogger);
         IReadyToStartBenchmarkConfigurator WithOption(string name, object value);
