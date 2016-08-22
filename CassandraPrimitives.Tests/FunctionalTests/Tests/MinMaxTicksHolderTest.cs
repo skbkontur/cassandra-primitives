@@ -28,7 +28,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
-            var cassandraCluster = new CassandraCluster(StartSingleCassandraSetUp.Node.CreateSettings(IPAddress.Loopback));
+            var cassandraCluster = new CassandraCluster(StartSingleCassandraSetUp.Node.CreateSettings());
             var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, new MinMaxTicksHolderCassandraMetadataProvider(), new CassandraInitializerSettings());
             cassandraSchemeActualizer.AddNewColumnFamilies();
 
