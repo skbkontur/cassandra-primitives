@@ -49,8 +49,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     .CreateNew(variableProvider, staticRegistryCreatorMethod)
                     .WithAgentProviderFromTeamCity(variableProvider)
                     .WithTeamCityLogger(teamCityLogger)
-                    //.WithClusterFromConfiguration()
-                    .WithExistingZookeeperCluster(new ZookeeperClusterSettings("10.33.63.133:2181"))
+                    .WithClusterFromConfiguration()
                     .WithJmxTrans(JmxGraphitePrefix)
                     .WithSetUpAction(() =>
                         {
