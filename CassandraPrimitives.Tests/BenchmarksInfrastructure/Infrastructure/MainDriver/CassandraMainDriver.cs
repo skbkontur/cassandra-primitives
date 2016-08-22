@@ -46,8 +46,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                                 (
                                 name : clusterName,
                                 listenAddress: agent.IpAddress.ToString(),
-                                seedAddresses : seedAddresses,
-                                rpcAddress: agent.IpAddress.ToString()
+                                seedAddresses : seedAddresses
                                 ),
                             agent.WorkDirectory,
                             taskWrapperRelativePath))
