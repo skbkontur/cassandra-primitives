@@ -149,7 +149,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         private IEventRepository CreateBoxEventRepository(Func<EventId, object, string> calculateShard, double timeoutInSeconds)
         {
             var serializer = new Serializer(new AllPropertiesExtractor());
-            var cassandraSettings = StartSingleCassandraSetUp.Node.CreateSettings();
+            var cassandraSettings = StartSingleCassandraSetUp.Node.CreateSettings(IPAddress.Loopback);
             var cassandraCluster = new CatalogueCassandraClusterWithLongWrites(new CassandraCluster(cassandraSettings), TimeSpan.FromSeconds(timeoutInSeconds));
             var eventTypeRegistry = new EventTypeRegistry();
 

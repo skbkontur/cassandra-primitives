@@ -30,7 +30,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
             node.Restart();
             try
             {
-                cassandraClusterSettings = node.CreateSettings();
+                cassandraClusterSettings = node.CreateSettings(IPAddress.Loopback);
                 var initializerSettings = new CassandraInitializerSettings();
                 var cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings), new CassandraMetaProvider(), initializerSettings);
                 cassandraSchemeActualizer.AddNewColumnFamilies();
@@ -85,17 +85,19 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
 
         private static CassandraNode CreateCassandraNode()
         {
-            return new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"2.2"))
+            return new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"1.2"))
                 {
                     Name = "node_at_9360",
                     JmxPort = 7399,
                     GossipPort = 7400,
                     RpcPort = 9360,
                     CqlPort = 9343,
-                    DeployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\Cassandra2.2"),
+                    DataBaseDirectory = @"../data/",
+                    DeployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\Cassandra1.2"),
                     ListenAddress = "127.0.0.1",
-                    RpcAddress = "127.0.0.1",
+                    RpsAddress = "0.0.0.0",
                     SeedAddresses = new[] {"127.0.0.1"},
+                    InitialToken = "",
                     ClusterName = "test_cluster"
                 };
         }

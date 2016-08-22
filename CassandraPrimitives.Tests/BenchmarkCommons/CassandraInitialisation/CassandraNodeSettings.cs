@@ -8,9 +8,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
             int gossipPort = 7400,
             int rpcPort = 9360,
             int cqlPort = 9343,
+            string dataBaseDirectory = null,
             string listenAddress = null,
-            string rpcAddress = null,
+            string rpsAddress = null,
             string[] seedAddresses = null,
+            string initialToken = null,
             string clusterName = null)
         {
             Name = name ?? "node_at_9360";
@@ -18,9 +20,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
             GossipPort = gossipPort;
             RpcPort = rpcPort;
             CqlPort = cqlPort;
+            DataBaseDirectory = dataBaseDirectory ?? @"../data/";
             ListenAddress = listenAddress ?? "127.0.0.1";
-            RpcAddress = rpcAddress ?? "127.0.0.1";
-            SeedAddresses = seedAddresses ?? new[] { "127.0.0.1" };
+            RpsAddress = rpsAddress ?? "0.0.0.0";
+            SeedAddresses = seedAddresses ?? new[] {"127.0.0.1"};
+            InitialToken = initialToken ?? "";
             ClusterName = clusterName ?? "TestCluster";
         }
 
@@ -29,9 +33,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
         public int GossipPort { get; private set; }
         public int RpcPort { get; private set; }
         public int CqlPort { get; private set; }
+        public string DataBaseDirectory { get; private set; }
         public string ListenAddress { get; private set; }
-        public string RpcAddress { get; private set; }
+        public string RpsAddress { get; private set; }
         public string[] SeedAddresses { get; private set; }
+        public string InitialToken { get; private set; }
         public string ClusterName { get; private set; }
     }
 }

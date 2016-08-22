@@ -38,11 +38,10 @@
     <Reference Include="Cassandra.CassandraClient">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
-    <Reference Include="Cassandra.ClusterDeployment, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Cassandra.ClusterDeployment">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.ClusterDeployment.dll</HintPath>
     </Reference>
-    <Reference Include="Catalogue.CassandraPrimitives.EventLog, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Catalogue.CassandraPrimitives.EventLog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.EventLog.dll</HintPath>
     </Reference>

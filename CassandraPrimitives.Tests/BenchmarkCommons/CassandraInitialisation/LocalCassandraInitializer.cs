@@ -15,7 +15,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
 
         public void CreateNode(CassandraNodeSettings settings)
         {
-            var node = CassandraDeployer.CreateNodeBySettings(settings, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "Cassandra2.2"));
+            var node = CassandraDeployer.CreateNodeBySettings(settings, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "Cassandra1.2"));
             node.Restart();
             cassandraNodes.Add(node);
         }

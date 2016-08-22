@@ -8,6 +8,4 @@ desktop.ini
 /Assemblies/Cassandra/db
 /Assemblies/Cassandra/log
 /Cassandra1.2
-/Cassandra2.2
 !/Assemblies/ZookeeperTemplates/bin
-!/Assemblies/CassandraTemplates/2.2/bin
