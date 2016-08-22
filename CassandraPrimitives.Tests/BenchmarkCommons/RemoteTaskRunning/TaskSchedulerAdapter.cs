@@ -81,7 +81,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteT
 
         public Task RunTaskInWrapper(string wrapperPath, string taskName, string path, string[] arguments = null, string directory = null)
         {
-            var realArguments = new[] { "--priority", "Normal", "--path", path, "--arguments", string.Join(" ", (arguments ?? new string[0]).Select(EscapeArgumentForCmd)) };
+            var realArguments = new[] {"--priority", "Normal", "--path", path, "--arguments", string.Join(" ", (arguments ?? new string[0]).Select(EscapeArgumentForCmd))};
             return RunTask(taskName, wrapperPath, realArguments, directory);
         }
 

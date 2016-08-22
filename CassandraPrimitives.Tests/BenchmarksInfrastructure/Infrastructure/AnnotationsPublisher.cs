@@ -8,12 +8,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 {
     class AnnotationsPublisher
     {
-        private readonly string annotationsUrl;
-
-        public AnnotationsPublisher(string annotationsUrl="https://graphite.skbkontur.ru/events/events")
+        public AnnotationsPublisher(string annotationsUrl = "https://graphite.skbkontur.ru/events/events")
         {
             this.annotationsUrl = annotationsUrl;
         }
+
         public void PublishAnnotation(string text, params string[] tags)
         {
             text = text.Replace("\r\n", "\n").Replace("\n", "<BR>");
@@ -21,5 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             var client = new HttpClient();
             client.PostAsync(new Uri(annotationsUrl), new StringContent(data, Encoding.UTF8)).Wait();
         }
+
+        private readonly string annotationsUrl;
     }
 }

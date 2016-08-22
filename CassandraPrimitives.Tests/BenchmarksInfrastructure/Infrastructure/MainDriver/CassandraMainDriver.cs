@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.Cassandra;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Agents;
