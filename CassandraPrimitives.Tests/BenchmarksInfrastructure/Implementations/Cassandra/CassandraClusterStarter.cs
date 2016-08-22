@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.Cassandra.CassandraSettings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 
@@ -12,7 +11,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 {
     public class CassandraClusterStarter : IDisposable
     {
-        public CassandraClusterStarter(CassandraClusterSettings clusterSettings, List<CassandraRemoteNodeStartInfo> remoteNodeStartInfos)
+        public CassandraClusterStarter(CassandraClusterSettings clusterSettings, List<CassandraRemoteNodeStartInfo> remoteNodeStartInfos, ICassandraMetadataProvider cassandraMetadataProvider)
         {
             cassandraInitialisers = new List<ICassandraInitialiser>();
             ClusterSettings = clusterSettings;
@@ -26,8 +25,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 }
                 using (var cassandraCluster = new CassandraCluster(ClusterSettings))
                 {
-                    var initializerSettings = new CassandraInitializerSettings(replicationFactor : Math.Min(ClusterSettings.Endpoints.Length, 3));
-                    var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, new CassandraMetaProvider(), initializerSettings);
+                    var initializerSettings = new CassandraInitializerSettings(0, Math.Min(ClusterSettings.Endpoints.Length, 3));
+                    var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, cassandraMetadataProvider, initializerSettings);
                     cassandraSchemeActualizer.AddNewColumnFamilies();
                 }
             }

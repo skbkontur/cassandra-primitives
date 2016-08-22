@@ -5,6 +5,7 @@ using System.IO;
 using Metrics;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration.TestOptions;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.ZooKeeper.ZookeeperSettings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure;
@@ -12,6 +13,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Inf
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestOptions;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration
@@ -140,15 +142,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return this;
         }
 
-        public IReadyToStartBenchmarkConfigurator WithCassandraCluster()
+        public IReadyToStartBenchmarkConfigurator WithCassandraCluster(ICassandraMetadataProvider cassandraMetadataProvider)
         {
-            actions.Add(benchmarkConfigurator => benchmarkConfigurator.WithCassandraCluster());
+            actions.Add(benchmarkConfigurator => benchmarkConfigurator.WithCassandraCluster(cassandraMetadataProvider));
             return this;
         }
 
-        public IReadyToStartBenchmarkConfigurator WithExistingCassandraCluster(CassandraClusterSettings clusterSettings)
+        public IReadyToStartBenchmarkConfigurator WithExistingCassandraCluster(CassandraClusterSettings clusterSettings, ICassandraMetadataProvider cassandraMetadataProvider)
         {
-            actions.Add(benchmarkConfigurator => benchmarkConfigurator.WithExistingCassandraCluster(clusterSettings));
+            actions.Add(benchmarkConfigurator => benchmarkConfigurator.WithExistingCassandraCluster(clusterSettings, cassandraMetadataProvider));
             return this;
         }
 
@@ -164,9 +166,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return this;
         }
 
-        public IReadyToStartBenchmarkConfigurator WithClusterFromConfiguration()
+        public IReadyToStartBenchmarkConfigurator WithClusterFromConfiguration(ICassandraMetadataProvider cassandraMetadataProvider)
         {
-            actions.Add(benchmarkConfigurator => benchmarkConfigurator.WithClusterFromConfiguration());
+            actions.Add(benchmarkConfigurator => benchmarkConfigurator.WithClusterFromConfiguration(cassandraMetadataProvider));
             return this;
         }
 

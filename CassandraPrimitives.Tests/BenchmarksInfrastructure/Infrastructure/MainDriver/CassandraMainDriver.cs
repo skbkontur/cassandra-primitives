@@ -6,6 +6,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.Cassandra;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Agents;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.MainDriver
@@ -21,7 +22,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         public CassandraClusterSettings ClusterSettings { get; private set; }
 
-        public CassandraClusterStarter StartCassandraCluster()
+        public CassandraClusterStarter StartCassandraCluster(ICassandraMetadataProvider cassandraMetadataProvider)
         {
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Initialising cassandra...");
 
@@ -32,7 +33,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 .ToArray();
             ClusterSettings = new CassandraClusterSettings(clusterName, endpoints, endpoints.First());
 
-            return new CassandraClusterStarter(ClusterSettings, remoteCassandraNodeStartInfos);
+            return new CassandraClusterStarter(ClusterSettings, remoteCassandraNodeStartInfos, cassandraMetadataProvider);
         }
 
         private List<CassandraRemoteNodeStartInfo> GetCassandraNodeInfos(string clusterName)

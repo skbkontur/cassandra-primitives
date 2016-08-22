@@ -7,9 +7,10 @@ using Metrics;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.Cassandra.CassandraSettings;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.Cassandra;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.ZooKeeper.ZookeeperSettings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Agents.Providers;
@@ -134,7 +135,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return this;
         }
 
-        public IReadyToStartBenchmarkConfigurator WithCassandraCluster()
+        public IReadyToStartBenchmarkConfigurator WithCassandraCluster(ICassandraMetadataProvider cassandraMetadataProvider)
         {
             deploySteps.Add(new DeployStep("Cassandra deploy", () =>
                 {
@@ -142,20 +143,20 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     var wrapperDeployer = new WrapperDeployer(teamCityLogger);
                     wrapperDeployer.DeployWrapperToAgents(cassandraAgents);
                     var cassandraDriver = new CassandraMainDriver(teamCityLogger, cassandraAgents, wrapperDeployer.GetWrapperRelativePath());
-                    toDispose.Add(cassandraDriver.StartCassandraCluster());
+                    toDispose.Add(cassandraDriver.StartCassandraCluster(cassandraMetadataProvider));
                     optionsSet["CassandraClusterSettings"] = cassandraDriver.ClusterSettings;
                 }, DeployPriorities.Cluster));
             return this;
         }
 
-        public IReadyToStartBenchmarkConfigurator WithExistingCassandraCluster(CassandraClusterSettings clusterSettings)
+        public IReadyToStartBenchmarkConfigurator WithExistingCassandraCluster(CassandraClusterSettings clusterSettings, ICassandraMetadataProvider cassandraMetadataProvider)
         {
             deploySteps.Add(new DeployStep("Configure cassandra cluster", () =>
                 {
                     using (var cassandraCluster = new CassandraCluster(clusterSettings))
                     {
-                        var initializerSettings = new CassandraInitializerSettings();
-                        var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, new CassandraMetaProvider(), initializerSettings);
+                        var initializerSettings = new CassandraInitializerSettings(0, Math.Min(clusterSettings.Endpoints.Length, 3));
+                        var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, cassandraMetadataProvider, initializerSettings);
                         cassandraSchemeActualizer.AddNewColumnFamilies();
                     }
                     optionsSet["CassandraClusterSettings"] = clusterSettings;
@@ -186,12 +187,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             return this;
         }
 
-        public IReadyToStartBenchmarkConfigurator WithClusterFromConfiguration()
+        public IReadyToStartBenchmarkConfigurator WithClusterFromConfiguration(ICassandraMetadataProvider cassandraMetadataProvider)
         {
             switch (testConfiguration.ClusterType)
             {
             case ClusterTypes.Cassandra:
-                return WithCassandraCluster();
+                return WithCassandraCluster(cassandraMetadataProvider);
             case ClusterTypes.Zookeeper:
                 return WithZookeeperCluster();
             default:

@@ -32,8 +32,28 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Cassandra.CassandraClient, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Temp\Cassandra.CassandraClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.CassandraPrimitives.RemoteLock, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.RemoteLock.dll</HintPath>
+    </Reference>
+    <Reference Include="Catalogue.CassandraPrimitives.Storages, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.Storages.dll</HintPath>
+    </Reference>
     <Reference Include="Catalogue.TeamCity">
       <HintPath>..\..\Assemblies\Catalogue.TeamCtiy\Catalogue.TeamCity.dll</HintPath>
+    </Reference>
+    <Reference Include="GroBuf, Version=1.1.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Temp\GroBuf.dll</HintPath>
+    </Reference>
+    <Reference Include="Kontur.Logging, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\ZooKeeper\Kontur.Logging.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -54,27 +74,42 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="ZooKeeper.Recipes, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\ZooKeeper\ZooKeeper.Recipes.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EnvironmentVariableProvider.cs" />
+    <Compile Include="Implementations\Cassandra\CassandraMetaProvider.cs" />
+    <Compile Include="Implementations\Cassandra\CassandraRemoteLock.cs" />
+    <Compile Include="Implementations\Cassandra\CassandraRemoteLockGetter.cs" />
+    <Compile Include="Implementations\Cassandra\ColumnFamilies.cs" />
+    <Compile Include="Implementations\IRemoteLock.cs" />
+    <Compile Include="Implementations\IRemoteLockGetter.cs" />
+    <Compile Include="Implementations\IRemoteLockGetterProvider.cs" />
+    <Compile Include="Implementations\RemoteLockGetterProvider.cs" />
+    <Compile Include="Implementations\Zookeeper\ZookeeperLockSettings.cs" />
+    <Compile Include="Implementations\Zookeeper\ZookeeperRemoteLock.cs" />
+    <Compile Include="Implementations\Zookeeper\ZookeeperRemoteLockGetter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SeriesOfLocks\SeriesOfLocksProgressMessage.cs" />
-    <Compile Include="SeriesOfLocks\SeriesOfLocksTest.cs" />
-    <Compile Include="SeriesOfLocks\SeriesOfLocksTestOptions.cs" />
-    <Compile Include="SeriesOfLocks\SeriesOfLocksTestProgressProcessor.cs" />
+    <Compile Include="Scenarios\SeriesOfLocks\SeriesOfLocksProgressMessage.cs" />
+    <Compile Include="Scenarios\SeriesOfLocks\SeriesOfLocksTest.cs" />
+    <Compile Include="Scenarios\SeriesOfLocks\SeriesOfLocksTestOptions.cs" />
+    <Compile Include="Scenarios\SeriesOfLocks\SeriesOfLocksTestProgressProcessor.cs" />
     <Compile Include="TeamCityRemoteLockBenchmarkConfigurator.cs" />
-    <Compile Include="TestScenarios.cs" />
-    <Compile Include="Timeline\Event.cs" />
-    <Compile Include="Timeline\TimelineProgressMessage.cs" />
-    <Compile Include="Timeline\TimeLineTest.cs" />
-    <Compile Include="Timeline\TimelineTestOptions.cs" />
-    <Compile Include="Timeline\TimelineTestProgressProcessor.cs" />
-    <Compile Include="BaseRemoteLockTestOptions.cs" />
-    <Compile Include="WaitForLock\WaitForLockProgressMessage.cs" />
-    <Compile Include="WaitForLock\WaitForLockTest.cs" />
-    <Compile Include="WaitForLock\WaitForLockTestOptions.cs" />
-    <Compile Include="WaitForLock\WaitForLockTestProgressProcessor.cs" />
+    <Compile Include="Scenarios\TestScenarios.cs" />
+    <Compile Include="Scenarios\Timeline\Event.cs" />
+    <Compile Include="Scenarios\Timeline\TimelineProgressMessage.cs" />
+    <Compile Include="Scenarios\Timeline\TimeLineTest.cs" />
+    <Compile Include="Scenarios\Timeline\TimelineTestOptions.cs" />
+    <Compile Include="Scenarios\Timeline\TimelineTestProgressProcessor.cs" />
+    <Compile Include="Scenarios\BaseRemoteLockTestOptions.cs" />
+    <Compile Include="Scenarios\WaitForLock\WaitForLockProgressMessage.cs" />
+    <Compile Include="Scenarios\WaitForLock\WaitForLockTest.cs" />
+    <Compile Include="Scenarios\WaitForLock\WaitForLockTestOptions.cs" />
+    <Compile Include="Scenarios\WaitForLock\WaitForLockTestProgressProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BenchmarkCommons\BenchmarkCommons.csproj">
@@ -85,7 +120,12 @@
       <Project>{B5A06976-66ED-420C-8D89-BDCC8647DCAB}</Project>
       <Name>BenchmarksInfrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SchemeActualizer\SchemeActualizer.csproj">
+      <Project>{8832339B-D3B3-4921-B911-40938C93DFE6}</Project>
+      <Name>SchemeActualizer</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

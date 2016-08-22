@@ -11,6 +11,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.ZooKeeper.ZookeeperSettings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Implementations.Cassandra;
 using SKBKontur.Catalogue.TeamCity;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
@@ -49,7 +50,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     .CreateNew(variableProvider, staticRegistryCreatorMethod)
                     .WithAgentProviderFromTeamCity(variableProvider)
                     .WithTeamCityLogger(teamCityLogger)
-                    .WithClusterFromConfiguration()
+                    .WithClusterFromConfiguration(new CassandraMetaProvider())
                     .WithJmxTrans(JmxGraphitePrefix)
                     .WithSetUpAction(() =>
                         {
