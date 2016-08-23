@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Cassandra;
@@ -15,7 +16,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
         private readonly ISession session;
         private readonly string tableName;
         private readonly TimeSpan lockTtl;
-        private readonly Task prolongTask;
+        private readonly Thread prolongTask;
         private bool stopped;
 
         public LeaseProlonger(IEnumerable<IPEndPoint> endpoints, string keyspaceName, string tableName, TimeSpan lockTtl)//TODO: or create it inside as in CasRemoteLocker?
@@ -28,7 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
             session = cluster.Connect(keyspaceName);
             this.tableName = tableName;
             this.lockTtl = lockTtl;
-            prolongTask = Task.Run(() => InfinetelyProlongLocks());
+            prolongTask = new Thread(InfinetelyProlongLocks);
         }
 
         public void AddLock(string lockId, string processId)
@@ -62,7 +63,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
                 {
                     Console.WriteLine("Exception while prolonging:\n{0}", e);
                 }
-                Task.Delay(prolongIntervalMs);
+                Task.Delay(prolongIntervalMs).Wait();
             }
         }
 

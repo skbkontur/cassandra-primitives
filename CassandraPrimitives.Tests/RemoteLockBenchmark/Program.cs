@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestOptions;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Implementations;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.SeriesOfLocks;
@@ -85,6 +89,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         private static void Main(string[] args)
         {
+            ThreadPool.SetMinThreads(1000, 1000);
+            ThreadPool.SetMaxThreads(1000, 1000);
             new TeamCityRemoteLockBenchmarkConfigurator(CreateRegistry).Run();
         }
     }

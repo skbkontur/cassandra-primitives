@@ -17,6 +17,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
         private readonly TimeSpan lockTtl;
         private readonly LeaseProlonger leaseProlonger;
         private static readonly string currentProcessId;
+        private static ConsistencyLevel consistencyLevel = ConsistencyLevel.Quorum;
 
         static CasRemoteLocker()
         {
@@ -38,15 +39,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
 
         public void ActualiseTables()
         {
-            //session.Execute(string.Format("DROP TABLE \"{0}\";", tableName), ConsistencyLevel.Quorum);//TODO
-            //if (session.Execute("SELECT * FROM system.schema_columnfamilies;", ConsistencyLevel.Quorum).Any(row => row.GetValue<string>("columnfamily_name") == tableName))
+            //session.Execute(string.Format("DROP TABLE \"{0}\";", tableName), consistencyLevel);//TODO
+            //if (session.Execute("SELECT * FROM system.schema_columnfamilies;", consistencyLevel).Any(row => row.GetValue<string>("columnfamily_name") == tableName))
             //    return;
             try
             {
                 session.Execute(string.Format("CREATE TABLE \"{0}\" (", tableName) +
                                             "lock_id text PRIMARY KEY," +
                                             "owner text," +
-                                            ");", ConsistencyLevel.Quorum);
+                                            ");", consistencyLevel);
             }
             catch (Exception)
             {
@@ -61,11 +62,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
 
         private bool TryAcquire(string lockId, string processId, out IDisposable releaser)
         {
-            var rowSet = session.Execute(string.Format("UPDATE \"{0}\" ", tableName) +
-                                         string.Format("USING TTL {0} ", lockTtl.Seconds) +
-                                         string.Format("SET owner = '{0}' ", processId) +
-                                         string.Format("WHERE lock_id = '{0}' ", lockId) +
-                                         "IF owner = null;", ConsistencyLevel.Quorum);
+            var query = string.Format("UPDATE \"{0}\" ", tableName) +
+                          string.Format("USING TTL {0} ", lockTtl.Seconds) +
+                          string.Format("SET owner = '{0}' ", processId) +
+                          string.Format("WHERE lock_id = '{0}' ", lockId) +
+                          "IF owner = null;";
+            var rowSet = session.Execute(query, consistencyLevel);
             var row = rowSet.Single();
             var applied = row.GetValue<bool>("[applied]");//TODO we can get owner here
             if (applied)
@@ -96,7 +98,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
             {
                 var rowSet = session.Execute(string.Format("DELETE FROM \"{0}\"", tableName) +
                                              string.Format("WHERE lock_id = '{0}'", lockId) +
-                                             string.Format("IF owner = '{0}'", processId), ConsistencyLevel.Quorum);//TODO: we can delete without CAS here, actually
+                                             string.Format("IF owner = '{0}'", processId), consistencyLevel);//TODO: we can delete without CAS here, actually
                 var applied = rowSet.Single().GetValue<bool>("[applied]");
                 if (!applied)
                     throw new Exception(string.Format("Can't release lock {0}, because we don't own it", processId));
