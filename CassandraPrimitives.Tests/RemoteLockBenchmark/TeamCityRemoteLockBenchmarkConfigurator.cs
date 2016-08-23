@@ -49,7 +49,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     .CreateNew(variableProvider, staticRegistryCreatorMethod)
                     .WithAgentProviderFromTeamCity(variableProvider)
                     .WithTeamCityLogger(teamCityLogger)
-                    .WithClusterFromConfiguration(new CassandraMetaProvider())
+                    //.WithClusterFromConfiguration(new CassandraMetaProvider())
                     .WithJmxTrans(JmxGraphitePrefix)
                     .WithSetUpAction(() =>
                         {
