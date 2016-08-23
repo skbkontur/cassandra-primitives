@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 
 using Cassandra;
 
@@ -15,6 +16,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
         private readonly string tableName;
         private readonly TimeSpan lockTtl;
         private readonly LeaseProlonger leaseProlonger;
+        private static readonly string currentProcessId;
+
+        static CasRemoteLocker()
+        {
+            currentProcessId = Guid.NewGuid().ToString();
+        }
 
         public CasRemoteLocker(List<IPEndPoint> endpoints, string keyspaceName, string tableName, TimeSpan lockTtl)
         {
@@ -39,7 +46,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
                             ");");
         }
 
-        public bool TryAcquire(string lockId, string processId, out IDisposable releaser)
+        public bool TryAcquire(string lockId, out IDisposable releaser)
+        {
+            return TryAcquire(lockId, currentProcessId + Thread.CurrentThread.ManagedThreadId, out releaser);
+        }
+
+        private bool TryAcquire(string lockId, string processId, out IDisposable releaser)
         {
             var rowSet = session.Execute(string.Format("UPDATE \"{0}\" ", tableName) +
                                          string.Format("USING TTL {0} ", lockTtl.Seconds) +

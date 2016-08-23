@@ -81,6 +81,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EnvironmentVariableProvider.cs" />
+    <Compile Include="Implementations\CASCassandra\CassandraCasRemoteLock.cs" />
+    <Compile Include="Implementations\CASCassandra\CassandraCasRemoteLockGetter.cs" />
     <Compile Include="Implementations\Cassandra\CassandraMetaProvider.cs" />
     <Compile Include="Implementations\Cassandra\CassandraRemoteLock.cs" />
     <Compile Include="Implementations\Cassandra\CassandraRemoteLockGetter.cs" />
@@ -119,6 +121,10 @@
     <ProjectReference Include="..\BenchmarksInfrastructure\BenchmarksInfrastructure.csproj">
       <Project>{B5A06976-66ED-420C-8D89-BDCC8647DCAB}</Project>
       <Name>BenchmarksInfrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CasRemoteLock\CasRemoteLock.csproj">
+      <Project>{90CD8F5F-58E3-4EE6-BE78-B7D550F77200}</Project>
+      <Name>CasRemoteLock</Name>
     </ProjectReference>
     <ProjectReference Include="..\SchemeActualizer\SchemeActualizer.csproj">
       <Project>{8832339B-D3B3-4921-B911-40938C93DFE6}</Project>

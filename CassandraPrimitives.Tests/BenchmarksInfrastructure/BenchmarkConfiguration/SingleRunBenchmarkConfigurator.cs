@@ -200,6 +200,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     .Select(name => Dns.GetHostAddresses(name).First(addr => addr.AddressFamily == AddressFamily.InterNetwork))
                     .Select(addr => new IPEndPoint(addr, testConfiguration.ClusterPort)).ToArray();
                 return WithExistingCassandraCluster(new CassandraClusterSettings("name_not_defined", endpoints, endpoints.First()), cassandraMetadataProvider);
+            case ClusterTypes.CassandraCas:
+                return WithCassandraCluster(cassandraMetadataProvider);
             case ClusterTypes.Zookeeper:
                 return WithZookeeperCluster();
             case ClusterTypes.DeployedZookeeper:
