@@ -39,7 +39,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
         public void ActualiseTables()
         {
             //session.Execute(string.Format("DROP TABLE \"{0}\";", tableName));//TODO
-
+            if (session.Execute("SELECT * FROM system.schema_columnfamilies;").Any(row => row.GetValue<string>("columnfamily_name") == tableName))
+                return;
             session.Execute(string.Format("CREATE TABLE \"{0}\" (", tableName) +
                             "lock_id text PRIMARY KEY," +
                             "owner text," +
