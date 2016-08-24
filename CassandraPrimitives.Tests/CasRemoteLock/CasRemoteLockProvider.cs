@@ -24,7 +24,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
                 .AddContactPoints(endpoints)
                 .WithQueryOptions(new QueryOptions().SetConsistencyLevel(consistencyLevel))
                 .Build();
-            
+
             session = cluster.Connect(keyspaceName);
         }
 
@@ -44,19 +44,19 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
             tryProlongStatement = session
                 .Prepare(string.Format("UPDATE \"{0}\" ", tableName) +
                          string.Format("USING TTL {0} ", lockTtl.Seconds) +
-                         "SET owner = ':Owner' " +
-                         "WHERE lock_id = ':LockId' " +
-                         "IF owner = ':Owner';");
+                         "SET owner = :Owner " +
+                         "WHERE lock_id = :LockId " +
+                         "IF owner = :Owner;");
             tryAcquireStatement = session
                 .Prepare(string.Format("UPDATE \"{0}\" ", tableName) +
                          string.Format("USING TTL {0} ", lockTtl.Seconds) +
-                         "SET owner = ':Owner' " +
-                         "WHERE lock_id = 'LockId' " +
+                         "SET owner = :Owner " +
+                         "WHERE lock_id = :LockId " +
                          "IF owner = null;");
             releaseStatement = session
-                .Prepare(string.Format("DELETE FROM \"{0}\"", tableName) +
-                         "WHERE lock_id = ':LockId'" +
-                         "IF owner = ':Owner'");
+                .Prepare(string.Format("DELETE FROM \"{0}\" ", tableName) +
+                         "WHERE lock_id = :LockId " +
+                         "IF owner = :Owner");
         }
 
         public CasRemoteLocker CreateLocker()
