@@ -11,7 +11,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 {
     public class CassandraCasRemoteLockGetter : IRemoteLockGetter
     {
-        private readonly CasRemoteLockProvider lockProvider;
+        private readonly CasRemoteLocker locker;
 
         public CassandraCasRemoteLockGetter(ICassandraClusterSettings cassandraClusterSettings)
         {
@@ -24,7 +24,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
                 "CASRemoteLock",
                 ConsistencyLevel.Quorum);*/
 
-            lockProvider = new CasRemoteLockProvider(new[]
+            var lockProvider = new CasRemoteLockProvider(
+                new[]
                     {
                         new IPEndPoint(IPAddress.Parse("10.217.9.2"), 9042),
                         new IPEndPoint(IPAddress.Parse("10.217.8.243"), 9042),
@@ -32,14 +33,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
                     }.ToList(),
                 "RemoteLockBenchmark",
                 "TestCASRemoteLock",
-                ConsistencyLevel.Quorum);
+                ConsistencyLevel.Quorum,
+                TimeSpan.FromMinutes(5));
 
             lockProvider.ActualiseTables();
+            locker = lockProvider.CreateLocker();
         }
 
         public IRemoteLock Get(string lockId)
         {
-            return new CassandraCasRemoteLock(lockProvider.CreateLocker(TimeSpan.FromMinutes(5)), lockId);
+            return new CassandraCasRemoteLock(locker, lockId);
         }
     }
 }

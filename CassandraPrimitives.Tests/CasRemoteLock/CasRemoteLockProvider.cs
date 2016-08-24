@@ -11,16 +11,39 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
         private readonly string tableName;
         private readonly ISession session;
         private readonly ConsistencyLevel consistencyLevel;
+        private readonly TimeSpan lockTtl;
+        private readonly PreparedStatement tryProlongStatement, tryAcquireStatement, releaseStatement;
 
-        public CasRemoteLockProvider(List<IPEndPoint> endpoints, string keyspaceName, string tableName, ConsistencyLevel consistencyLevel)
+        public CasRemoteLockProvider(List<IPEndPoint> endpoints, string keyspaceName, string tableName, ConsistencyLevel consistencyLevel, TimeSpan lockTtl)
         {
             this.tableName = tableName;
             this.consistencyLevel = consistencyLevel;
+            this.lockTtl = lockTtl;
             var cluster = Cluster
                 .Builder()
                 .AddContactPoints(endpoints)
                 .Build();
             session = cluster.Connect(keyspaceName);
+
+            tryProlongStatement = session
+                .Prepare(string.Format("UPDATE \"{0}\" ", tableName) +
+                         string.Format("USING TTL {0} ", lockTtl.Seconds) +
+                         "SET owner = ':Owner' " +
+                         "WHERE lock_id = ':LockId' " +
+                         "IF owner = ':Owner';")
+                .SetConsistencyLevel(consistencyLevel);
+            tryAcquireStatement = session
+                .Prepare(string.Format("UPDATE \"{0}\" ", tableName) +
+                         string.Format("USING TTL {0} ", lockTtl.Seconds) +
+                         "SET owner = ':Owner' " +
+                         "WHERE lock_id = 'LockId' " +
+                         "IF owner = null;")
+                .SetConsistencyLevel(consistencyLevel);
+            releaseStatement = session
+                .Prepare(string.Format("DELETE FROM \"{0}\"", tableName) +
+                         "WHERE lock_id = ':LockId'" +
+                         "IF owner = ':Owner'")
+                .SetConsistencyLevel(consistencyLevel);
         }
 
         public void ActualiseTables()
@@ -41,9 +64,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
             }
         }
 
-        public CasRemoteLocker CreateLocker(TimeSpan lockTtl)
+        public CasRemoteLocker CreateLocker()
         {
-            return new CasRemoteLocker(session, tableName, lockTtl, consistencyLevel);
+            return new CasRemoteLocker(session, lockTtl, tryProlongStatement, tryAcquireStatement, releaseStatement);
         }
     }
 }

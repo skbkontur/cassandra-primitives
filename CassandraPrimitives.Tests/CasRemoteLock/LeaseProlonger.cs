@@ -14,20 +14,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
     {
         private readonly ConcurrentDictionary<Tuple<string, string>, bool> locksToProlong;
         private readonly ISession session;
-        private readonly string tableName;
-        private readonly TimeSpan lockTtl;
-        private readonly Thread prolongTask;
         private readonly int prolongIntervalMs;
         private bool stopped;
+        private readonly PreparedStatement tryProlongStatement;
 
-        public LeaseProlonger(ISession session, string tableName, TimeSpan lockTtl)
+        public LeaseProlonger(ISession session, TimeSpan lockTtl, PreparedStatement tryProlongStatement)
         {
+            this.tryProlongStatement = tryProlongStatement;
             locksToProlong = new ConcurrentDictionary<Tuple<string, string>, bool>();
             this.session = session;
-            this.tableName = tableName;
-            this.lockTtl = lockTtl;
             prolongIntervalMs = (int)(lockTtl.TotalMilliseconds / 10);
-            prolongTask = new Thread(InfinetelyProlongLocks);
+            new Thread(InfinetelyProlongLocks);
         }
 
         public void AddLock(string lockId, string processId)
@@ -67,11 +64,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
 
         private bool TryProlongSingleLock(string lockId, string processId)
         {
-            var rowSet = session.Execute(string.Format("UPDATE \"{0}\" ", tableName) +
-                                         string.Format("USING TTL {0} ", lockTtl.Seconds) +
-                                         string.Format("SET owner = '{0}' ", processId) +
-                                         string.Format("WHERE lock_id = '{0}' ", lockId) +
-                                         string.Format("IF owner = '{0}';", processId));
+            var rowSet = session.Execute(tryProlongStatement.Bind(new {Owner = processId, LockId = lockId}));
             var applied = rowSet.Single().GetValue<bool>("[applied]");
             return applied;
         }
