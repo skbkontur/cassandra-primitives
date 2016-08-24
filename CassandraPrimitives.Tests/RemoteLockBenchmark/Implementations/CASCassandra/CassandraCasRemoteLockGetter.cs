@@ -32,11 +32,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
                         new IPEndPoint(IPAddress.Parse("10.33.62.133"), 9042)
                     }.ToList(),
                 "RemoteLockBenchmark",
-                "TestCASRemoteLock",
+                "CASRemoteLock",
                 ConsistencyLevel.Quorum,
                 TimeSpan.FromMinutes(5));
 
             lockProvider.ActualiseTables();
+            lockProvider.InitPreparedStatements();
             locker = lockProvider.CreateLocker();
         }
 
