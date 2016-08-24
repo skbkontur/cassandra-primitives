@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
 using System.Threading.Tasks;
 
 using log4net;
@@ -50,7 +51,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     .WithAgentProviderFromTeamCity(variableProvider)
                     .WithTeamCityLogger(teamCityLogger)
                     //.WithClusterFromConfiguration(new CassandraMetaProvider())
-                    .WithJmxTrans(JmxGraphitePrefix)
+                    .WithJmxTrans(JmxGraphitePrefix, new[]
+                        {
+                            Tuple.Create("load01localcat.kontur", 7199),
+                            Tuple.Create("load02localcat.kontur", 7199),
+                            Tuple.Create("load03localcat.kontur", 7199)
+                        })
                     .WithSetUpAction(() =>
                         {
                             permissionToStart = false;
