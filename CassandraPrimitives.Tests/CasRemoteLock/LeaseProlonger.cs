@@ -17,18 +17,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
         private readonly string tableName;
         private readonly TimeSpan lockTtl;
         private readonly Thread prolongTask;
+        private readonly int prolongIntervalMs;
         private bool stopped;
 
-        public LeaseProlonger(IEnumerable<IPEndPoint> endpoints, string keyspaceName, string tableName, TimeSpan lockTtl)//TODO: or create it inside as in CasRemoteLocker?
+        public LeaseProlonger(ISession session, string tableName, TimeSpan lockTtl)
         {
-            var cluster = Cluster
-                .Builder()
-                .AddContactPoints(endpoints)
-                .Build();
             locksToProlong = new ConcurrentDictionary<Tuple<string, string>, bool>();
-            session = cluster.Connect(keyspaceName);
+            this.session = session;
             this.tableName = tableName;
             this.lockTtl = lockTtl;
+            prolongIntervalMs = (int)(lockTtl.TotalMilliseconds / 10);
             prolongTask = new Thread(InfinetelyProlongLocks);
         }
 
@@ -84,7 +82,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
                 throw new Exception(string.Format("Can't prolong lock {0} because process {1} doesn't own it", lockId, processId));
         }
 
-        private const int prolongIntervalMs = 500;
         public void Dispose()
         {
             stopped = true;

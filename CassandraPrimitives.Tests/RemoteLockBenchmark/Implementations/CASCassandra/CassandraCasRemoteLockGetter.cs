@@ -2,29 +2,29 @@ using System;
 using System.Linq;
 using System.Net;
 
+using Cassandra;
+
 using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Implementations.CASCassandra
 {
     public class CassandraCasRemoteLockGetter : IRemoteLockGetter
     {
-        private readonly CasRemoteLocker casRemoteLocker;
+        private readonly CasRemoteLockProvider lockProvider;
 
         public CassandraCasRemoteLockGetter(ICassandraClusterSettings cassandraClusterSettings)
         {
-            /*casRemoteLocker = new CasRemoteLocker(
+            /*lockProvider = new CasRemoteLockProvider(
                 cassandraClusterSettings
                     .Endpoints
                     .Select(endpoint => new IPEndPoint(endpoint.Address, 9343))//TODO port
                     .ToList(),
                 "RemoteLockBenchmark",
                 "CASRemoteLock",
-                TimeSpan.FromMinutes(5));*/
+                ConsistencyLevel.Quorum);*/
 
-            casRemoteLocker = new CasRemoteLocker(
-                new[]
+            lockProvider = new CasRemoteLockProvider(new[]
                     {
                         new IPEndPoint(IPAddress.Parse("10.217.9.2"), 9042),
                         new IPEndPoint(IPAddress.Parse("10.217.8.243"), 9042),
@@ -32,13 +32,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
                     }.ToList(),
                 "RemoteLockBenchmark",
                 "TestCASRemoteLock",
-                TimeSpan.FromMinutes(5));
-            //casRemoteLocker.ActualiseTables();
+                ConsistencyLevel.Quorum);
+
+            lockProvider.ActualiseTables();
         }
 
         public IRemoteLock Get(string lockId)
         {
-            return new CassandraCasRemoteLock(casRemoteLocker, lockId);
+            return new CassandraCasRemoteLock(lockProvider.CreateLocker(TimeSpan.FromMinutes(5)), lockId);
         }
     }
 }

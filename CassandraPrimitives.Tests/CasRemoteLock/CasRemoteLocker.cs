@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading;
 
 using Cassandra;
@@ -10,49 +8,25 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
 {
     public class CasRemoteLocker : IDisposable
     {
-        private readonly Cluster cluster;
         private readonly ISession session;
-        private readonly string keyspaceName;
         private readonly string tableName;
         private readonly TimeSpan lockTtl;
         private readonly LeaseProlonger leaseProlonger;
         private static readonly string currentProcessId;
-        private static ConsistencyLevel consistencyLevel = ConsistencyLevel.Quorum;
+        private readonly ConsistencyLevel consistencyLevel;
 
         static CasRemoteLocker()
         {
             currentProcessId = Guid.NewGuid().ToString();
         }
 
-        public CasRemoteLocker(List<IPEndPoint> endpoints, string keyspaceName, string tableName, TimeSpan lockTtl)
+        internal CasRemoteLocker(ISession session, string tableName, TimeSpan lockTtl, ConsistencyLevel consistencyLevel)
         {
-            cluster = Cluster
-                .Builder()
-                .AddContactPoints(endpoints)
-                .Build();
-            session = cluster.Connect(keyspaceName);
-            leaseProlonger = new LeaseProlonger(endpoints, keyspaceName, tableName, lockTtl);
-            this.keyspaceName = keyspaceName;
+            this.session = session;
+            leaseProlonger = new LeaseProlonger(session, tableName, lockTtl);
             this.tableName = tableName;
             this.lockTtl = lockTtl;
-        }
-
-        public void ActualiseTables()
-        {
-            //session.Execute(string.Format("DROP TABLE \"{0}\";", tableName), consistencyLevel);//TODO
-            //if (session.Execute("SELECT * FROM system.schema_columnfamilies;", consistencyLevel).Any(row => row.GetValue<string>("columnfamily_name") == tableName))
-            //    return;
-            try
-            {
-                session.Execute(string.Format("CREATE TABLE \"{0}\" (", tableName) +
-                                            "lock_id text PRIMARY KEY," +
-                                            "owner text," +
-                                            ");", consistencyLevel);
-            }
-            catch (Exception)
-            {
-                //ignore
-            }
+            this.consistencyLevel = consistencyLevel;
         }
 
         public bool TryAcquire(string lockId, out IDisposable releaser)
@@ -68,11 +42,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
                           string.Format("WHERE lock_id = '{0}' ", lockId) +
                           "IF owner = null;";
             var rowSet = session.Execute(query, consistencyLevel);
+            Console.WriteLine("ok");
             var row = rowSet.Single();
             var applied = row.GetValue<bool>("[applied]");//TODO we can get owner here
             if (applied)
             {
-                releaser = new LockReleaser(session, tableName, lockId, processId);
+                releaser = new LockReleaser(session, tableName, lockId, processId, consistencyLevel);
                 leaseProlonger.AddLock(lockId, processId);
                 return true;
             }
@@ -86,13 +61,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
             private readonly string lockId;
             private readonly string tableName;
             private readonly string processId;
+            private readonly ConsistencyLevel consistencyLevel;
 
-            public LockReleaser(ISession session, string tableName, string lockId, string processId)
+            public LockReleaser(ISession session, string tableName, string lockId, string processId, ConsistencyLevel consistencyLevel)
             {
                 this.session = session;
                 this.lockId = lockId;
                 this.tableName = tableName;
                 this.processId = processId;
+                this.consistencyLevel = consistencyLevel;
             }
             public void Dispose()
             {
@@ -107,8 +84,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
 
         public void Dispose()
         {
-            session.Dispose();
-            cluster.Dispose();
             leaseProlonger.Dispose();
         }
     }
