@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Net;
+
+using Cassandra;
 
 using GroBuf;
 
@@ -17,10 +20,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
     public class EventRepositoryFactory : IEventRepositoryFactory
     {
         public EventRepositoryFactory(
+            IPEndPoint[] endpoints,
             ISerializer serializer,
             ICassandraCluster cassandraCluster,
             IEventTypeIdentifierProvider eventTypeIdentifierProvider)
         {
+            this.endpoints = endpoints;
             this.serializer = serializer;
             this.cassandraCluster = cassandraCluster;
             this.eventTypeIdentifierProvider = eventTypeIdentifierProvider;
@@ -36,8 +41,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
             var ticksHolder = new TicksHolder(serializer, cassandraCluster, columnFamilies.TicksHolder);
             var eventLogPointerCreator = new EventLogPointerCreator();
             var globalTime = new GlobalTime(ticksHolder);
-
-            var remoteLockImplementation = new CassandraRemoteLockImplementation(cassandraCluster, serializer, CassandraRemoteLockImplementationSettings.Default(columnFamilies.RemoteLock));
+            
+            var remoteLockImplementation = new CassandraRemoteLockImplementation(endpoints, 9343, CassandraRemoteLockImplementationSettings.Default(columnFamilies.RemoteLock));
             var remoteLocker = new RemoteLocker(remoteLockImplementation, new RemoteLockerMetrics(columnFamilies.RemoteLock.KeyspaceName));
             var eventLoggerAdditionalInfoRepository = new EventLoggerAdditionalInfoRepository(cassandraCluster, serializer, remoteLocker, columnFamilies.EventLogAdditionalInfo, columnFamilies.EventLog);
             var eventStorage = new EventStorage(columnFamilies.EventLog, eventLogPointerCreator, cassandraCluster, serializer);
@@ -46,6 +51,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
             return new EventRepository(eventTypeIdentifierProvider, eventLogger, shardCalculator, serializer);
         }
 
+        private readonly IPEndPoint[] endpoints;
         private readonly ISerializer serializer;
         private readonly ICassandraCluster cassandraCluster;
         private readonly IEventTypeIdentifierProvider eventTypeIdentifierProvider;

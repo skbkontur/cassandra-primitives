@@ -33,6 +33,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Cassandra">
+      <HintPath>..\..\Assemblies\CassandraCSharpDriver\Cassandra.dll</HintPath>
+    </Reference>
     <Reference Include="Cassandra.CassandraClient">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
@@ -45,6 +48,9 @@
     <Reference Include="log4net">
       <HintPath>..\..\Assemblies\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="LZ4">
+      <HintPath>..\..\Assemblies\lz4net\LZ4.dll</HintPath>
+    </Reference>
     <Reference Include="Metrics">
       <HintPath>..\..\Assemblies\Metrics.Net\Metrics.dll</HintPath>
     </Reference>
@@ -53,7 +59,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CassandraBaseLockOperationsPerformer.cs" />
+    <Compile Include="CassandraCqlBaseLockOperationsPerformer.cs" />
+    <Compile Include="CassandraSessionProvider.cs" />
     <Compile Include="DefaultTimestampProvider.cs" />
+    <Compile Include="ICassandraBaseLockOperationsPerformer.cs" />
     <Compile Include="ITimestampProvider.cs" />
     <Compile Include="LockRowNamesExtensions.cs" />
     <Compile Include="NewLockMetadata.cs" />

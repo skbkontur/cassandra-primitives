@@ -14,7 +14,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
 {
-    internal class CassandraBaseLockOperationsPerformer
+    internal class CassandraBaseLockOperationsPerformer : ICassandraBaseLockOperationsPerformer
     {
         public CassandraBaseLockOperationsPerformer(ICassandraCluster cassandraCluster, ISerializer serializer, CassandraRemoteLockImplementationSettings settings)
         {

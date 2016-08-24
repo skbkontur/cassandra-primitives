@@ -149,7 +149,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             var cassandraCluster = new CatalogueCassandraClusterWithLongWrites(new CassandraCluster(cassandraSettings), TimeSpan.FromSeconds(timeoutInSeconds));
             var eventTypeRegistry = new EventTypeRegistry();
 
-            var factory = new EventRepositoryFactory(serializer, cassandraCluster, eventTypeRegistry);
+            var factory = new EventRepositoryFactory(cassandraSettings.Endpoints, serializer, cassandraCluster, eventTypeRegistry);
             var eventRepositoryColumnFamilyFullNames = new EventRepositoryColumnFamilyFullNames(
                 ColumnFamilies.ticksHolder,
                 ColumnFamilies.eventLog,

@@ -15,12 +15,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
         {
             cassandraCluster = new CassandraCluster(cassandraClusterSettings);
 
-            var serializer = new Serializer(new AllPropertiesExtractor(), null, GroBufOptions.MergeOnRead);
+            //var serializer = new Serializer(new AllPropertiesExtractor(), null, GroBufOptions.MergeOnRead);
             var implementationSettings = CassandraRemoteLockImplementationSettings.Default(ColumnFamilies.RemoteLock);
 
             var remoteLockerMetrics = new RemoteLockerMetrics(ColumnFamilies.RemoteLock.KeyspaceName);
 
-            var cassandraRemoteLockImplementation = new CassandraRemoteLockImplementation(cassandraCluster, serializer, implementationSettings);
+            var cassandraRemoteLockImplementation = new CassandraRemoteLockImplementation(cassandraClusterSettings.Endpoints, 9343, implementationSettings);
             remoteLocker = new RemoteLocker(cassandraRemoteLockImplementation, remoteLockerMetrics);
         }
 

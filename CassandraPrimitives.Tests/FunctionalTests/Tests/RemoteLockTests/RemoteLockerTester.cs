@@ -28,7 +28,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
                 cassandraCluster = new FailedCassandraCluster(cassandraCluster, config.CassandraFailProbability.Value);
             var timestampProvider = new StochasticTimestampProvider(config.TimestamProviderStochasticType, config.LockTtl);
             var implementationSettings = new CassandraRemoteLockImplementationSettings(timestampProvider, ColumnFamilies.remoteLock, config.LockTtl, config.LockMetadataTtl, config.KeepLockAliveInterval, config.ChangeLockRowThreshold);
-            var cassandraRemoteLockImplementation = new CassandraRemoteLockImplementation(cassandraCluster, serializer, implementationSettings);
+            var cassandraRemoteLockImplementation = new CassandraRemoteLockImplementation(config.CassandraClusterSettings.Endpoints, 9343, implementationSettings);
             remoteLockers = new RemoteLocker[config.LockersCount];
             remoteLockerMetrics = new RemoteLockerMetrics("dummyKeyspace");
             if(localRivalOptimizationIsEnabled)
@@ -40,10 +40,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
             else
             {
                 for(var i = 0; i < config.LockersCount; i++)
-                    remoteLockers[i] = new RemoteLocker(new CassandraRemoteLockImplementation(cassandraCluster, serializer, implementationSettings), remoteLockerMetrics);
+                    remoteLockers[i] = new RemoteLocker(new CassandraRemoteLockImplementation(config.CassandraClusterSettings.Endpoints, 9343, implementationSettings), remoteLockerMetrics);
             }
             // it is important to use another CassandraCluster (with another setting of attempts, for example)
-            cassandraRemoteLockImplementationForCheckings = new CassandraRemoteLockImplementation(new CassandraCluster(CassandraClusterSettings.ForNode(SingleCassandraNodeSetUpFixture.Node)), serializer, implementationSettings);
+            cassandraRemoteLockImplementationForCheckings = new CassandraRemoteLockImplementation(CassandraClusterSettings.ForNode(SingleCassandraNodeSetUpFixture.Node).Endpoints, 9343, implementationSettings);
         }
 
         public void Dispose()

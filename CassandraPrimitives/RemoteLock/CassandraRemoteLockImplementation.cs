@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Linq;
-
-using GroBuf;
+using System.Net;
 
 using JetBrains.Annotations;
-
-using SKBKontur.Cassandra.CassandraClient.Clusters;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
 {
     public class CassandraRemoteLockImplementation : IRemoteLockImplementation
     {
-        public CassandraRemoteLockImplementation(ICassandraCluster cassandraCluster, ISerializer serializer, CassandraRemoteLockImplementationSettings settings)
+        public CassandraRemoteLockImplementation(IPEndPoint[] endpoints, int cqlPort, CassandraRemoteLockImplementationSettings settings)
         {
             lockTtl = settings.LockTtl;
             keepLockAliveInterval = settings.KeepLockAliveInterval;
             changeLockRowThreshold = settings.ChangeLockRowThreshold;
             timestampProvider = settings.TimestampProvider;
-            baseOperationsPerformer = new CassandraBaseLockOperationsPerformer(cassandraCluster, serializer, settings);
+            baseOperationsPerformer = new CassandraCqlBaseLockOperationsPerformer(endpoints, cqlPort, settings);
         }
 
         public TimeSpan KeepLockAliveInterval { get { return keepLockAliveInterval; } }
@@ -144,6 +141,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
         private readonly TimeSpan keepLockAliveInterval;
         private readonly int changeLockRowThreshold;
         private readonly ITimestampProvider timestampProvider;
-        private readonly CassandraBaseLockOperationsPerformer baseOperationsPerformer;
+        private readonly ICassandraBaseLockOperationsPerformer baseOperationsPerformer;
     }
 }
