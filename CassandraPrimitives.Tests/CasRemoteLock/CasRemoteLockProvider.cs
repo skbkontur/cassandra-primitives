@@ -33,7 +33,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
             //session.Execute(string.Format("DROP TABLE \"{0}\";", tableName), consistencyLevel);//TODO
             //if (session.Execute("SELECT * FROM system.schema_columnfamilies;", consistencyLevel).Any(row => row.GetValue<string>("columnfamily_name") == tableName))
             //    return;
-            session.Execute(string.Format("CREATE TABLE \"{0}\" IF NOT EXISTS (", tableName) +
+            session.Execute(string.Format("CREATE TABLE IF NOT EXISTS \"{0}\" (", tableName) +
                                         "lock_id text PRIMARY KEY," +
                                         "owner text," +
                                         ");", ConsistencyLevel.All);
