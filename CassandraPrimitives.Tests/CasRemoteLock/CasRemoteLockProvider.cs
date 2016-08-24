@@ -23,6 +23,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
                 .Builder()
                 .AddContactPoints(endpoints)
                 .Build();
+            
             session = cluster.Connect(keyspaceName);
 
             tryProlongStatement = session

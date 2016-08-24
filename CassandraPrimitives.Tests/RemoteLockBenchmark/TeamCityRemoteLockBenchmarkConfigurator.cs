@@ -8,6 +8,7 @@ using log4net;
 
 using Metrics;
 
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
@@ -51,6 +52,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     .WithAgentProviderFromTeamCity(variableProvider)
                     .WithTeamCityLogger(teamCityLogger)
                     //.WithClusterFromConfiguration(new CassandraMetaProvider())
+                    .WithExistingCassandraCluster(
+                        new CassandraClusterSettings(
+                            "test_cluster",
+                            new[]
+                                {
+                                    new IPEndPoint(IPAddress.Parse("10.33.63.133"), 9160),
+                                    new IPEndPoint(IPAddress.Parse("10.33.61.141"), 9160),
+                                    new IPEndPoint(IPAddress.Parse("10.33.62.133"), 9160)
+                                },
+                            new IPEndPoint(IPAddress.Parse("10.33.63.133"), 9160)),
+                        new CassandraMetaProvider())
                     .WithJmxTrans(JmxGraphitePrefix, new[]
                         {
                             Tuple.Create("load01localcat.kontur", 7199),
