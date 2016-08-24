@@ -22,6 +22,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
             var cluster = Cluster
                 .Builder()
                 .AddContactPoints(endpoints)
+                .WithQueryOptions(new QueryOptions().SetConsistencyLevel(consistencyLevel))
                 .Build();
             
             session = cluster.Connect(keyspaceName);
@@ -32,17 +33,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
             //session.Execute(string.Format("DROP TABLE \"{0}\";", tableName), consistencyLevel);//TODO
             //if (session.Execute("SELECT * FROM system.schema_columnfamilies;", consistencyLevel).Any(row => row.GetValue<string>("columnfamily_name") == tableName))
             //    return;
-            try
-            {
-                session.Execute(string.Format("CREATE TABLE \"{0}\" (", tableName) +
-                                            "lock_id text PRIMARY KEY," +
-                                            "owner text," +
-                                            ");", consistencyLevel);
-            }
-            catch (Exception)
-            {
-                //ignore
-            }
+            session.Execute(string.Format("CREATE TABLE \"{0}\" IF NOT EXISTS (", tableName) +
+                                        "lock_id text PRIMARY KEY," +
+                                        "owner text," +
+                                        ");", ConsistencyLevel.All);
         }
 
         public void InitPreparedStatements()
@@ -52,20 +46,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
                          string.Format("USING TTL {0} ", lockTtl.Seconds) +
                          "SET owner = ':Owner' " +
                          "WHERE lock_id = ':LockId' " +
-                         "IF owner = ':Owner';")
-                .SetConsistencyLevel(consistencyLevel);
+                         "IF owner = ':Owner';");
             tryAcquireStatement = session
                 .Prepare(string.Format("UPDATE \"{0}\" ", tableName) +
                          string.Format("USING TTL {0} ", lockTtl.Seconds) +
                          "SET owner = ':Owner' " +
                          "WHERE lock_id = 'LockId' " +
-                         "IF owner = null;")
-                .SetConsistencyLevel(consistencyLevel);
+                         "IF owner = null;");
             releaseStatement = session
                 .Prepare(string.Format("DELETE FROM \"{0}\"", tableName) +
                          "WHERE lock_id = ':LockId'" +
-                         "IF owner = ':Owner'")
-                .SetConsistencyLevel(consistencyLevel);
+                         "IF owner = ':Owner'");
         }
 
         public CasRemoteLocker CreateLocker()
