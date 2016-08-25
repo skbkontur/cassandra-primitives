@@ -41,7 +41,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
 
         private bool TryAcquire(string lockId, string processId, out IRemoteLock releaser)
         {
-            var rowSet = session.Execute(preparedStatements.TryAcquireStatement.Bind(new {Owner = processId, LockId = lockId}));
+            var rowSet = Execute(session, preparedStatements.TryAcquireStatement.Bind(new {Owner = processId, LockId = lockId}));
             var row = rowSet.Single();
             var applied = row.GetValue<bool>("[applied]");//TODO we can get owner here
             if (applied)
@@ -82,7 +82,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
 
         public string GetLockOwner(string lockId)
         {
-            var rowSet = session.Execute(preparedStatements.GetLockOwnerStatement.Bind(new { LockId = lockId })).ToList();
+            var rowSet = Execute(session, preparedStatements.GetLockOwnerStatement.Bind(new { LockId = lockId })).ToList();
             if (rowSet.Count == 0)
                 return null;
             if (rowSet.Count > 1)
@@ -90,6 +90,24 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
             var row = rowSet.Single();
             var owner = row.GetValue<string>("owner");
             return owner;
+        }
+
+        public static RowSet Execute(ISession session, IStatement statement, int attempts = 5)
+        {
+            Exception lastException = null;
+            for (int i = 0; i < attempts; i++)
+            {
+                try
+                {
+                    var rowSet = session.Execute(statement);
+                    return rowSet;
+                }
+                catch (Exception e)
+                {
+                    lastException = e;
+                }
+            }
+            throw new Exception(string.Format("Failed to execute statement after 5 attempts. Last exception:\n{0}", lastException));
         }
 
         private class CasRemoteLock : IRemoteLock
@@ -108,7 +126,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
             }
             public void Dispose()
             {
-                var rowSet = session.Execute(releaseStatement.Bind(new { Owner = processId, LockId = lockId }));
+                var rowSet = Execute(session, releaseStatement.Bind(new {Owner = processId, LockId = lockId}));
                 var applied = rowSet.Single().GetValue<bool>("[applied]");
                 //if (!applied)
                 //    throw new Exception(string.Format("Can't release lock {0}, because we don't own it", processId));

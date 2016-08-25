@@ -64,7 +64,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
 
         private bool TryProlongSingleLock(string lockId, string processId)
         {
-            var rowSet = session.Execute(tryProlongStatement.Bind(new {Owner = processId, LockId = lockId}));
+            var rowSet = CasRemoteLocker.Execute(session, tryProlongStatement.Bind(new {Owner = processId, LockId = lockId}));
             var applied = rowSet.Single().GetValue<bool>("[applied]");
             return applied;
         }
