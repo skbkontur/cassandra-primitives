@@ -65,7 +65,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
                                                                       CassandraCqlBaseLockOperationsPerformer.MainTableName)),
                 threadAliveStatement : session.Prepare(string.Format("SELECT COUNT(*) FROM \"{0}\" WHERE lock_id = :LockId AND threshold = :Threshold AND thread_id = :ThreadId;",
                                                                      CassandraCqlBaseLockOperationsPerformer.MainTableName)),
-                searchThreadsStatement : session.Prepare(string.Format("SELECT thread_id FROM \"{0}\" WHERE lock_id = :LockId AND threshold > :Threshold;",
+                searchThreadsStatement : session.Prepare(string.Format("SELECT thread_id FROM \"{0}\" WHERE lock_id = :LockId AND threshold >= :Threshold;",
                                                                        CassandraCqlBaseLockOperationsPerformer.MainTableName)),
                 writeLockMetadataStatement : session.Prepare(string.Format("INSERT INTO \"{0}\" " +
                                                                            "(key, lock_row_id, lock_count, previous_threshold, probable_owner_thread_id, timestamp) " +
