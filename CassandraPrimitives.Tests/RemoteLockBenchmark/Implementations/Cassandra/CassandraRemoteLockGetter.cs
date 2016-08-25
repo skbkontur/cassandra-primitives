@@ -20,7 +20,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 
             var remoteLockerMetrics = new RemoteLockerMetrics(ColumnFamilies.RemoteLock.KeyspaceName);
 
-            var cassandraRemoteLockImplementation = new CassandraRemoteLockImplementation(cassandraClusterSettings.Endpoints, 9343, implementationSettings);
+            var cassandraRemoteLockImplementation = new CassandraRemoteLockImplementation(cassandraClusterSettings.Endpoints, 9042, implementationSettings);
+
             remoteLocker = new RemoteLocker(cassandraRemoteLockImplementation, remoteLockerMetrics);
         }
 
