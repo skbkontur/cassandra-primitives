@@ -5,9 +5,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
+using Cassandra;
+
 using Metrics;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
@@ -25,6 +26,8 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Sce
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestProgressProcessors;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 using SKBKontur.Catalogue.TeamCity;
+
+using ConsistencyLevel = SKBKontur.Cassandra.CassandraClient.Abstractions.ConsistencyLevel;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration
 {
@@ -159,12 +162,37 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         {
             deploySteps.Add(new DeployStep("Configure cassandra cluster", () =>
                 {
-                    using (var cassandraCluster = new CassandraCluster(clusterSettings))
+                    var cluster = Cluster
+                        .Builder()
+                        .AddContactPoints(clusterSettings.Endpoints.Select(ep => new IPEndPoint(ep.Address, 9042)).ToArray())
+                        .WithQueryOptions(new QueryOptions().SetConsistencyLevel(global::Cassandra.ConsistencyLevel.Quorum))
+                        .WithDefaultKeyspace(cassandraMetadataProvider.GetColumnFamilies().Single().ColumnFamilyName)
+                        .Build();
+
+                    var session = cluster.ConnectAndCreateDefaultKeyspaceIfNotExists(ReplicationStrategies.CreateSimpleStrategyReplicationProperty(3));
+
+                    session.Execute(string.Format("CREATE TABLE IF NOT EXISTS \"{0}\" (", CassandraCqlBaseLockOperationsPerformer.MainTableName) +
+                                        "lock_id text," +
+                                        "threshold text," +
+                                        "thread_id text," +
+                                        "PRIMARY KEY ((lock_id), threshold, thread_id)" +
+                                        ");", global::Cassandra.ConsistencyLevel.All);
+
+                    session.Execute(string.Format("CREATE TABLE IF NOT EXISTS \"{0}\" (", CassandraCqlBaseLockOperationsPerformer.MetadataTableName) +
+                                        "key text PRIMARY KEY," +
+                                        "lock_row_id text," +
+                                        "lock_count int," +
+                                        "previous_threshold bigint," +
+                                        "probable_owner_thread_id text," +
+                                        "timestamp bigint" +
+                                        ");", global::Cassandra.ConsistencyLevel.All);
+
+                    /*using (var cassandraCluster = new CassandraCluster(clusterSettings))
                     {
                         var initializerSettings = new CassandraInitializerSettings(0, Math.Min(clusterSettings.Endpoints.Length, 3));
                         var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, cassandraMetadataProvider, initializerSettings);
                         cassandraSchemeActualizer.AddNewColumnFamilies();
-                    }
+                    }*/
                     optionsSet["CassandraClusterSettings"] = clusterSettings;
                 }, DeployPriorities.Cluster));
             return this;

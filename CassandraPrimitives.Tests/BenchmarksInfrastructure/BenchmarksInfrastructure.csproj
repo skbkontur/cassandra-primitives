@@ -52,6 +52,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Cassandra, Version=3.0.0.0, Culture=neutral, PublicKeyToken=10b231fbfc8c4b4d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Temp\Cassandra.dll</HintPath>
+    </Reference>
     <Reference Include="Cassandra.CassandraClient">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
