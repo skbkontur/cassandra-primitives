@@ -17,6 +17,8 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamil
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 using SKBKontur.Cassandra.ClusterDeployment;
+using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents.Contents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers;
@@ -96,7 +98,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             var cassandraCluster = new CassandraCluster(cassandraClusterSettings);
             var eventTypeRegistry = new EventTypeRegistry();
 
-            var factory = new EventRepositoryFactory(serializer, cassandraCluster, eventTypeRegistry);
+            var factory = new EventRepositoryFactory(serializer, cassandraCluster, new CasRemoteLockProvider(cassandraClusterSettings, CassandraRemoteLockImplementationSettings.Default(ColumnFamilies.remoteLock)), eventTypeRegistry);
             var eventRepositoryColumnFamilyFullNames = new EventRepositoryColumnFamilyFullNames(
                 ColumnFamilies.ticksHolder,
                 ColumnFamilies.eventLog,

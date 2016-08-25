@@ -46,6 +46,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.EventLog.dll</HintPath>
     </Reference>
+    <Reference Include="Catalogue.CassandraPrimitives.RemoteLock, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.RemoteLock.dll</HintPath>
+    </Reference>
     <Reference Include="Catalogue.CassandraPrimitives.Storages, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.Storages.dll</HintPath>
@@ -79,6 +83,10 @@
     <Compile Include="Settings\EmptyXmlNamespaceFactory.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CasRemoteLock\CasRemoteLock.csproj">
+      <Project>{90CD8F5F-58E3-4EE6-BE78-B7D550F77200}</Project>
+      <Name>CasRemoteLock</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Commons\Commons.csproj">
       <Project>{da4ac27e-eb66-4912-ac1f-5edee4f9fc4d}</Project>
       <Name>Commons</Name>
