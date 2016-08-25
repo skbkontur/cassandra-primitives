@@ -8,6 +8,8 @@ using System.Net.Sockets;
 using Metrics;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning;
@@ -156,12 +158,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         {
             deploySteps.Add(new DeployStep("Configure cassandra cluster", () =>
                 {
-                    using (var cassandraCluster = new CassandraCluster(clusterSettings))
+                    var provider = new CasRemoteLockProvider(clusterSettings, CassandraRemoteLockImplementationSettings.Default(cassandraMetadataProvider.GetColumnFamilies().Single()), cassandraMetadataProvider.GetColumnFamilies().Single().KeyspaceName, 9042);
+                    provider.ActualiseTables();
+                    /*using (var cassandraCluster = new CassandraCluster(clusterSettings))
                     {
                         var initializerSettings = new CassandraInitializerSettings(0, Math.Min(clusterSettings.Endpoints.Length, 3));
-                        var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, cassandraMetadataProvider, initializerSettings);
-                        cassandraSchemeActualizer.AddNewColumnFamilies();
-                    }
+                        //var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, cassandraMetadataProvider, initializerSettings);
+                        //cassandraSchemeActualizer.AddNewColumnFamilies();
+                    }*/
                     optionsSet["CassandraClusterSettings"] = clusterSettings;
                 }, DeployPriorities.Cluster));
             return this;

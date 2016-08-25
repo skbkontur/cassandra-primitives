@@ -33,15 +33,20 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
                 .WithQueryOptions(new QueryOptions().SetConsistencyLevel(consistencyLevel))
                 .WithDefaultKeyspace(keyspaceName)
                 .Build();
-            session = cluster.ConnectAndCreateDefaultKeyspaceIfNotExists();
+            session = cluster.ConnectAndCreateDefaultKeyspaceIfNotExists(ReplicationStrategies.CreateSimpleStrategyReplicationProperty(3));
         }
 
         public CasRemoteLockProvider(List<IPEndPoint> endpoints, string keyspaceName, TimeSpan lockTtl, TimeSpan prolongIntervalMs) : this(endpoints, keyspaceName, "CASRemoteLock", ConsistencyLevel.Quorum, lockTtl, prolongIntervalMs)
         {
         }
 
+        public CasRemoteLockProvider(ICassandraClusterSettings cassandraClusterSettings, CassandraRemoteLockImplementationSettings implementationSettings, string keyspaceName, int port)
+            : this(cassandraClusterSettings.Endpoints.Select(ep => new IPEndPoint(ep.Address, port)).ToList(), implementationSettings.ColumnFamilyFullName.KeyspaceName, "CASRemoteLock", ConsistencyLevel.Quorum, implementationSettings.LockTtl, implementationSettings.KeepLockAliveInterval)
+        {
+        }
+
         public CasRemoteLockProvider(ICassandraClusterSettings cassandraClusterSettings, CassandraRemoteLockImplementationSettings implementationSettings)
-            : this(cassandraClusterSettings.Endpoints.Select(ep => new IPEndPoint(ep.Address, 9343)).ToList(), implementationSettings.ColumnFamilyFullName.KeyspaceName, "CASRemoteLock", ConsistencyLevel.Quorum, implementationSettings.LockTtl, implementationSettings.KeepLockAliveInterval)
+            : this(cassandraClusterSettings, implementationSettings, "CASRemoteLock", 9343)
         {
         }
 
