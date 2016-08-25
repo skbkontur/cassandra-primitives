@@ -5,8 +5,8 @@ using log4net;
 
 using NUnit.Framework;
 
+using SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.RemoteLockTests
 {

@@ -2,13 +2,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Cassandra;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
+namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
 {
     internal class LeaseProlonger : IDisposable
     {

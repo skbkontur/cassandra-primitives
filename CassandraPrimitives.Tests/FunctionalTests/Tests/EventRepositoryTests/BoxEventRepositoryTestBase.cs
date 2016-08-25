@@ -17,8 +17,8 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamil
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 using SKBKontur.Cassandra.ClusterDeployment;
+using SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents.Contents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers;

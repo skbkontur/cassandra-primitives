@@ -42,6 +42,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.ClusterDeployment.dll</HintPath>
     </Reference>
+    <Reference Include="Catalogue.CassandraPrimitives.CasRemoteLock">
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.CasRemoteLock.dll</HintPath>
+    </Reference>
     <Reference Include="Catalogue.CassandraPrimitives.EventLog, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.EventLog.dll</HintPath>

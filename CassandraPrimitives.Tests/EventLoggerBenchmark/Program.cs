@@ -8,12 +8,12 @@ using GroBuf.DataMembersExtracters;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.ClusterDeployment;
+using SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.EventContents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.Logging;

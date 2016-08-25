@@ -41,6 +41,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.ClusterDeployment.dll</HintPath>
     </Reference>
+    <Reference Include="Catalogue.CassandraPrimitives.CasRemoteLock">
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.CasRemoteLock.dll</HintPath>
+    </Reference>
     <Reference Include="Catalogue.CassandraPrimitives.EventLog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.EventLog.dll</HintPath>
@@ -130,10 +133,6 @@
     <Compile Include="LongWritesConnection\KeyspaceConnectionWithLongWrites.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CasRemoteLock\CasRemoteLock.csproj">
-      <Project>{90CD8F5F-58E3-4EE6-BE78-B7D550F77200}</Project>
-      <Name>CasRemoteLock</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Commons\Commons.csproj">
       <Project>{da4ac27e-eb66-4912-ac1f-5edee4f9fc4d}</Project>
       <Name>Commons</Name>

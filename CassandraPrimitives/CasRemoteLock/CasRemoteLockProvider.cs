@@ -9,7 +9,7 @@ using Cassandra;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
+namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
 {
     public class CasRemoteLockProvider
     {

@@ -40,6 +40,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
+    <Reference Include="Catalogue.CassandraPrimitives.CasRemoteLock">
+      <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.CasRemoteLock.dll</HintPath>
+    </Reference>
     <Reference Include="Catalogue.CassandraPrimitives.RemoteLock, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.RemoteLock.dll</HintPath>
@@ -125,10 +128,6 @@
     <ProjectReference Include="..\BenchmarksInfrastructure\BenchmarksInfrastructure.csproj">
       <Project>{B5A06976-66ED-420C-8D89-BDCC8647DCAB}</Project>
       <Name>BenchmarksInfrastructure</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CasRemoteLock\CasRemoteLock.csproj">
-      <Project>{90CD8F5F-58E3-4EE6-BE78-B7D550F77200}</Project>
-      <Name>CasRemoteLock</Name>
     </ProjectReference>
     <ProjectReference Include="..\SchemeActualizer\SchemeActualizer.csproj">
       <Project>{8832339B-D3B3-4921-B911-40938C93DFE6}</Project>

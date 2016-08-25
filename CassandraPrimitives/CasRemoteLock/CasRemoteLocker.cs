@@ -6,7 +6,7 @@ using Cassandra;
 
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
+namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
 {
     public class CasRemoteLocker : IDisposable, IRemoteLockCreator
     {

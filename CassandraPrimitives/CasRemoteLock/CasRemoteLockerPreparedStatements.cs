@@ -1,6 +1,6 @@
 using Cassandra;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
+namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
 {
     public class CasRemoteLockerPreparedStatements
     {
