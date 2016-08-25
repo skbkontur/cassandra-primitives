@@ -9,26 +9,39 @@ using Cassandra;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
 {
+    internal class EnqueuedLockToProlong
+    {
+        public EnqueuedLockToProlong(string lockId, string processId, DateTime nextProlong)
+        {
+            LockId = lockId;
+            ProcessId = processId;
+            NextProlong = nextProlong;
+        }
+
+        public string LockId { get; private set; }
+        public string ProcessId { get; private set; }
+        public DateTime NextProlong { get; private set; }
+    }
     internal class LeaseProlonger : IDisposable
     {
-        private readonly ConcurrentDictionary<Tuple<string, string>, bool> locksToProlong;
+        private readonly ConcurrentQueue<EnqueuedLockToProlong> locksToProlong;
         private readonly ISession session;
-        private readonly int prolongIntervalMs;
+        private readonly TimeSpan prolongInterval;
         private bool stopped;
         private readonly PreparedStatement tryProlongStatement;
 
-        public LeaseProlonger(ISession session, TimeSpan prolongIntervalMs, PreparedStatement tryProlongStatement)
+        public LeaseProlonger(ISession session, TimeSpan prolongInterval, PreparedStatement tryProlongStatement)
         {
             this.tryProlongStatement = tryProlongStatement;
-            locksToProlong = new ConcurrentDictionary<Tuple<string, string>, bool>();
+            locksToProlong = new ConcurrentQueue<EnqueuedLockToProlong>();
             this.session = session;
-            this.prolongIntervalMs = (int)prolongIntervalMs.TotalMilliseconds;
+            this.prolongInterval = prolongInterval;
             new Thread(InfinetelyProlongLocks).Start();
         }
 
         public void AddLock(string lockId, string processId)
         {
-            locksToProlong.AddOrUpdate(Tuple.Create(lockId, processId), _ => true, (_a, _b) => true);
+            locksToProlong.Enqueue(new EnqueuedLockToProlong(lockId, processId, DateTime.Now.Add(prolongInterval)));
             //if (!locksToProlong.TryAdd(Tuple.Create(lockId, processId), true))
             //    throw new Exception(string.Format("Failed to add lock {0} of process {1} to prolonger", lockId, processId));
         }
@@ -39,25 +52,28 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
             {
                 try
                 {
-                    var toRemove = new List<Tuple<string, string>>();
-                    foreach (var lockAndProcess in locksToProlong)
+                    EnqueuedLockToProlong lockToProlong;
+                    if(!locksToProlong.TryDequeue(out lockToProlong))
                     {
-                        if (!TryProlongSingleLock(lockAndProcess.Key.Item1, lockAndProcess.Key.Item2))
-                        {
-                            toRemove.Add(lockAndProcess.Key);
-                        }
+                        Thread.Sleep((int)prolongInterval.TotalMilliseconds);
+                        continue;
                     }
-                    foreach (var removable in toRemove)
+
+                    var delta = lockToProlong.NextProlong.Subtract(DateTime.Now);
+                    if (delta.TotalMilliseconds < 0)
+                        Console.WriteLine("Performing outdated prolong. Delay {0} ms", delta.Duration().TotalMilliseconds);
+                    else
+                        Thread.Sleep((int)delta.TotalMilliseconds);
+
+                    if (TryProlongSingleLock(lockToProlong.LockId, lockToProlong.ProcessId))
                     {
-                        bool _;
-                        locksToProlong.TryRemove(removable, out _);
+                        locksToProlong.Enqueue(new EnqueuedLockToProlong(lockToProlong.LockId, lockToProlong.ProcessId, DateTime.Now.Add(prolongInterval)));
                     }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Exception while prolonging:\n{0}", e);
                 }
-                Task.Delay(prolongIntervalMs).Wait();
             }
         }
 
