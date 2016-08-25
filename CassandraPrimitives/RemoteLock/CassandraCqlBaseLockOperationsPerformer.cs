@@ -16,6 +16,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
             endpoints = endpoints.Select(ep => new IPEndPoint(ep.Address, cqlPort)).ToArray();
             CassandraSessionProvider.InitOnce(endpoints, ConsistencyLevel.Quorum, settings.ColumnFamilyFullName.KeyspaceName);
             session = CassandraSessionProvider.Session;
+            preparedStatements = CassandraSessionProvider.PrepareStatements();
             timestampProvider = settings.TimestampProvider;
             lockTtl = settings.LockTtl;
             lockMetadataTtl = settings.LockMetadataTtl;
@@ -23,47 +24,73 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
 
         public void WriteThread(string lockRowId, long threshold, string threadId, TimeSpan ttl)
         {
-            session.Execute(string.Format(
+            /*session.Execute(string.Format(
                 "INSERT INTO \"{0}\" (lock_id, threshold, thread_id) VALUES ('{1}', '{2}', '{3}') USING TIMESTAMP {4} AND TTL {5}",
                 MainTableName,
                 lockRowId,
                 ThresholdToString(threshold),
                 threadId,
                 GetNowTicks(),
-                ttl.TotalSeconds));
+                ttl.TotalSeconds));*/
+            session.Execute(preparedStatements.WriteThreadStatement.Bind(new
+                {
+                    LockId = lockRowId,
+                    Threshold = ThresholdToString(threshold),
+                    ThreadId = threadId,
+                    Timestamp = GetNowTicks(),
+                    Ttl = ttl.TotalSeconds
+                }));
         }
 
         public void DeleteThread(string lockRowId, long threshold, string threadId)
         {
-            session.Execute(string.Format(
+            /*session.Execute(string.Format(
                 "DELETE FROM \"{0}\" USING TIMESTAMP {1} WHERE lock_id = '{2}' AND threshold = '{3}' AND thread_id = '{4}';",
                 MainTableName,
                 GetNowTicks(),
                 lockRowId,
                 ThresholdToString(threshold),
-                threadId));
+                threadId));*/
+            session.Execute(preparedStatements.DeleteThreadStatement.Bind(new
+            {
+                Timestamp = GetNowTicks(),
+                LockId = lockRowId,
+                Threshold = ThresholdToString(threshold),
+                ThreadId = threadId
+            }));
         }
 
         public bool ThreadAlive(string lockRowId, long? threshold, string threadId)
         {
-            var rowSet = session.Execute(string.Format(
+            /* var rowSet = session.Execute(string.Format(
                 "SELECT COUNT(*) FROM \"{0}\" WHERE lock_id = '{1}' AND threshold = '{2}' AND thread_id = '{3}';",
                 MainTableName,
                 lockRowId,
                 ThresholdToString(threshold),
-                threadId)).ToList();
+                threadId)).ToList();*/
+            var rowSet = session.Execute(preparedStatements.ThreadAliveStatement.Bind(new
+            {
+                LockId = lockRowId,
+                Threshold = ThresholdToString(threshold),
+                ThreadId = threadId
+            }));
             return rowSet.Single().GetValue<long>("count") > 0;
         }
 
         public string[] SearchThreads(string lockRowId, long? threshold)
         {
-            var rowSet = session
+            /*var rowSet = session
                 .Execute(string.Format(
                     "SELECT thread_id FROM \"{0}\" WHERE lock_id = '{1}' AND threshold > '{2}';",
                     MainTableName,
                     lockRowId,
                     ThresholdToString(threshold - lockTtl.Multiply(2).Ticks)))
-                .ToList();
+                .ToList();*/
+            var rowSet = session.Execute(preparedStatements.SearchThreadsStatement.Bind(new
+            {
+                LockId = lockRowId,
+                Threshold = ThresholdToString(threshold - lockTtl.Multiply(2).Ticks)
+            }));
             return rowSet
                 .Select(row => row.GetValue<string>("thread_id"))
                 .Distinct()
@@ -74,7 +101,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
         {
             var newTimestamp = Math.Max(GetNowTicks(), oldLockMetadataTimestamp + 1);
             var key = newLockMetadata.LockId.ToLockMetadataRowKey();
-            session.Execute(string.Format(
+            /*session.Execute(string.Format(
                 "INSERT INTO \"{0}\" (key, lock_row_id, lock_count, previous_threshold, probable_owner_thread_id, timestamp) VALUES ('{1}', '{2}', {3}, {4}, '{5}', {6}) USING TIMESTAMP {7} AND TTL {8}",
                 MetadataTableName,
                 key,
@@ -84,17 +111,35 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
                 newLockMetadata.OwnerThreadId,
                 newTimestamp,
                 newTimestamp,
-                lockMetadataTtl.TotalSeconds));
+                lockMetadataTtl.TotalSeconds));*/
+
+            session.Execute(preparedStatements.WriteLockMetadataStatement.Bind(new
+            {
+                Key = key,
+                LockRowId = newLockMetadata.LockRowId,
+                LockCount = newLockMetadata.LockCount,
+                PreviousThreshold = newLockMetadata.Threshold,
+                ProbableOwnerThreadId = newLockMetadata.OwnerThreadId,
+                MetadataTimestamp = newTimestamp,
+                Timestamp = newTimestamp,
+                Ttl = lockMetadataTtl.TotalSeconds
+            }));
         }
 
         public LockMetadata TryGetLockMetadata(string lockId)
         {
             var key = lockId.ToLockMetadataRowKey();
-            var rowSet = session
+            /*var rowSet = session
                 .Execute(string.Format(
                     "SELECT * FROM \"{0}\" WHERE key = '{1}';",
                     MetadataTableName,
                     key))
+                .ToList();*/
+            var rowSet = session
+                .Execute(preparedStatements.TryGetLockMetadataStatement.Bind(new
+                    {
+                        Key = key
+                    }))
                 .ToList();
             if(rowSet.Count == 0)
                 return null;
@@ -127,5 +172,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
         private readonly TimeSpan lockTtl;
         private readonly TimeSpan lockMetadataTtl;
         private long lastTicks;
+        private readonly PreparedStatements preparedStatements;
     }
 }

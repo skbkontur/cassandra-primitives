@@ -66,6 +66,7 @@
     <Compile Include="ITimestampProvider.cs" />
     <Compile Include="LockRowNamesExtensions.cs" />
     <Compile Include="NewLockMetadata.cs" />
+    <Compile Include="PreparedStatements.cs" />
     <Compile Include="RemoteLocker\BoundedBlockingQueue.cs" />
     <Compile Include="CassandraRemoteLockImplementation.cs" />
     <Compile Include="CassandraRemoteLockImplementationSettings.cs" />
