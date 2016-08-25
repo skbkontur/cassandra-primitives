@@ -71,7 +71,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
             var rowSet = session.Execute(preparedStatements.ThreadAliveStatement.Bind(new
             {
                 LockId = lockRowId,
-                Threshold = ThresholdToString(threshold),
+                Threshold = ThresholdToString(threshold ?? 0),
                 ThreadId = threadId
             }));
             return rowSet.Single().GetValue<long>("count") > 0;
@@ -89,7 +89,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
             var rowSet = session.Execute(preparedStatements.SearchThreadsStatement.Bind(new
             {
                 LockId = lockRowId,
-                Threshold = ThresholdToString(threshold - lockTtl.Multiply(2).Ticks)
+                Threshold = ThresholdToString(threshold == null ? 0 : threshold - lockTtl.Multiply(2).Ticks)
             }));
             return rowSet
                 .Select(row => row.GetValue<string>("thread_id"))
