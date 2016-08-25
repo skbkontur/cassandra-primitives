@@ -38,7 +38,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
                     Threshold = ThresholdToString(threshold),
                     ThreadId = threadId,
                     Timestamp = GetNowTicks(),
-                    Ttl = ttl.TotalSeconds
+                    Ttl = (int)ttl.TotalSeconds
                 }));
         }
 
@@ -122,7 +122,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
                 ProbableOwnerThreadId = newLockMetadata.OwnerThreadId,
                 MetadataTimestamp = newTimestamp,
                 Timestamp = newTimestamp,
-                Ttl = lockMetadataTtl.TotalSeconds
+                Ttl = (int)lockMetadataTtl.TotalSeconds
             }));
         }
 
