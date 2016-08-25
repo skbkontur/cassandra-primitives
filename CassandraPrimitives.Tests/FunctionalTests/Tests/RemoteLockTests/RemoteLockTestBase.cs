@@ -16,6 +16,7 @@ using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.ClusterDeployment;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock.RemoteLocker;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
@@ -122,20 +123,20 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
             }
         }
 
-        protected static IRemoteLockCreator[] PrepareRemoteLockCreators(int threadCount, LocalRivalOptimization localRivalOptimization, CassandraRemoteLockImplementation remoteLockImplementation)
+        protected static IRemoteLockCreator[] PrepareRemoteLockCreators(int threadCount, LocalRivalOptimization localRivalOptimization, CasRemoteLockProvider casRemoteLockProvider)
         {
             var remoteLockCreators = new IRemoteLockCreator[threadCount];
             var remoteLockerMetrics = new RemoteLockerMetrics(null);
             if(localRivalOptimization == LocalRivalOptimization.Enabled)
             {
-                var singleRemoteLocker = new RemoteLocker(remoteLockImplementation, remoteLockerMetrics);
+                var singleRemoteLocker = casRemoteLockProvider.CreateLocker();
                 for(var i = 0; i < threadCount; i++)
                     remoteLockCreators[i] = singleRemoteLocker;
             }
             else
             {
                 for(var i = 0; i < threadCount; i++)
-                    remoteLockCreators[i] = new RemoteLocker(remoteLockImplementation, remoteLockerMetrics);
+                    remoteLockCreators[i] = casRemoteLockProvider.CreateLocker();
             }
             return remoteLockCreators;
         }

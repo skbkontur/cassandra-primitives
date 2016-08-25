@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 using GroBuf;
@@ -11,6 +12,7 @@ using Metrics.Reporters;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock.RemoteLocker;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.RemoteLockTests.FiledCassandra;
 
@@ -28,22 +30,26 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
                 cassandraCluster = new FailedCassandraCluster(cassandraCluster, config.CassandraFailProbability.Value);
             var timestampProvider = new StochasticTimestampProvider(config.TimestamProviderStochasticType, config.LockTtl);
             var implementationSettings = new CassandraRemoteLockImplementationSettings(timestampProvider, ColumnFamilies.remoteLock, config.LockTtl, config.LockMetadataTtl, config.KeepLockAliveInterval, config.ChangeLockRowThreshold);
-            var cassandraRemoteLockImplementation = new CassandraRemoteLockImplementation(cassandraCluster, serializer, implementationSettings);
-            remoteLockers = new RemoteLocker[config.LockersCount];
+            //var cassandraRemoteLockImplementation = new CassandraRemoteLockImplementation(cassandraCluster, serializer, implementationSettings);
+            remoteLockers = new CasRemoteLocker[config.LockersCount];
             remoteLockerMetrics = new RemoteLockerMetrics("dummyKeyspace");
+            var lockProvider = new CasRemoteLockProvider(config.CassandraClusterSettings.Endpoints.Select(ep => new IPEndPoint(ep.Address, 9343)).ToList(), ColumnFamilies.remoteLock.KeyspaceName, config.LockTtl, config.KeepLockAliveInterval);
+            lockProvider.ActualiseTables();
+            lockProvider.InitPreparedStatements();
             if(localRivalOptimizationIsEnabled)
             {
-                var remoteLocker = new RemoteLocker(cassandraRemoteLockImplementation, remoteLockerMetrics);
+                var remoteLocker = lockProvider.CreateLocker();
                 for(var i = 0; i < config.LockersCount; i++)
                     remoteLockers[i] = remoteLocker;
             }
             else
             {
-                for(var i = 0; i < config.LockersCount; i++)
-                    remoteLockers[i] = new RemoteLocker(new CassandraRemoteLockImplementation(cassandraCluster, serializer, implementationSettings), remoteLockerMetrics);
+                for (var i = 0; i < config.LockersCount; i++)
+                    remoteLockers[i] = lockProvider.CreateLocker();
             }
             // it is important to use another CassandraCluster (with another setting of attempts, for example)
-            cassandraRemoteLockImplementationForCheckings = new CassandraRemoteLockImplementation(new CassandraCluster(CassandraClusterSettings.ForNode(SingleCassandraNodeSetUpFixture.Node)), serializer, implementationSettings);
+            //cassandraRemoteLockImplementationForCheckings = new CassandraRemoteLockImplementation(new CassandraCluster(CassandraClusterSettings.ForNode(SingleCassandraNodeSetUpFixture.Node)), serializer, implementationSettings);
+            remoteLockerForCheckings = lockProvider.CreateLocker();
         }
 
         public void Dispose()
@@ -77,7 +83,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
             return remoteLockers.Single().TryGetLock(lockId, out remoteLock);
         }
 
-        public string[] GetThreadsInMainRow(string lockId)
+        public string GetLockOwner(string lockId)
+        {
+            return remoteLockerForCheckings.GetLockOwner(lockId);
+        }
+
+        /*public string[] GetThreadsInMainRow(string lockId)
         {
             return cassandraRemoteLockImplementationForCheckings.GetLockThreads(lockId);
         }
@@ -90,10 +101,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
         public LockMetadata GetLockMetadata(string lockId)
         {
             return cassandraRemoteLockImplementationForCheckings.GetLockMetadata(lockId);
-        }
+        }*/
 
-        private readonly RemoteLocker[] remoteLockers;
+        private readonly CasRemoteLocker[] remoteLockers;
         private readonly RemoteLockerMetrics remoteLockerMetrics;
-        private readonly CassandraRemoteLockImplementation cassandraRemoteLockImplementationForCheckings;
+        //private readonly CassandraRemoteLockImplementation cassandraRemoteLockImplementationForCheckings;
+        private readonly CasRemoteLocker remoteLockerForCheckings;
     }
 }

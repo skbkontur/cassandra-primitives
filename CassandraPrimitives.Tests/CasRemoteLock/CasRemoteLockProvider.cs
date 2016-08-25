@@ -1,8 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Threading;
 
 using Cassandra;
+
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
 {
@@ -10,15 +15,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
     {
         private readonly string tableName;
         private readonly ISession session;
-        private readonly ConsistencyLevel consistencyLevel;
         private readonly TimeSpan lockTtl;
-        private PreparedStatement tryProlongStatement, tryAcquireStatement, releaseStatement;
+        private CasRemoteLockerPreparedStatements preparedStatements;
+        private readonly TimeSpan prolongIntervalMs;
 
-        public CasRemoteLockProvider(List<IPEndPoint> endpoints, string keyspaceName, string tableName, ConsistencyLevel consistencyLevel, TimeSpan lockTtl)
+        public CasRemoteLockProvider(List<IPEndPoint> endpoints, string keyspaceName, string tableName, ConsistencyLevel consistencyLevel, TimeSpan lockTtl, TimeSpan prolongIntervalMs)
         {
+            ThreadPool.SetMaxThreads(1000, 1000);
+            ThreadPool.SetMinThreads(1000, 1000);
+
             this.tableName = tableName;
-            this.consistencyLevel = consistencyLevel;
             this.lockTtl = lockTtl;
+            this.prolongIntervalMs = prolongIntervalMs;
             var cluster = Cluster
                 .Builder()
                 .AddContactPoints(endpoints)
@@ -26,6 +34,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
                 .Build();
 
             session = cluster.Connect(keyspaceName);
+        }
+
+        public CasRemoteLockProvider(List<IPEndPoint> endpoints, string keyspaceName, TimeSpan lockTtl, TimeSpan prolongIntervalMs) : this(endpoints, keyspaceName, "CASRemoteLock", ConsistencyLevel.Quorum, lockTtl, prolongIntervalMs)
+        {
+        }
+
+        public CasRemoteLockProvider(ICassandraClusterSettings cassandraClusterSettings, CassandraRemoteLockImplementationSettings implementationSettings)
+            : this(cassandraClusterSettings.Endpoints.Select(ep => new IPEndPoint(ep.Address, 9343)).ToList(), implementationSettings.ColumnFamilyFullName.KeyspaceName, "CASRemoteLock", ConsistencyLevel.Quorum, implementationSettings.LockTtl, implementationSettings.KeepLockAliveInterval)
+        {
         }
 
         public void ActualiseTables()
@@ -41,27 +58,31 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
 
         public void InitPreparedStatements()
         {
-            tryProlongStatement = session
-                .Prepare(string.Format("UPDATE \"{0}\" ", tableName) +
-                         string.Format("USING TTL {0} ", lockTtl.Seconds) +
-                         "SET owner = :Owner " +
-                         "WHERE lock_id = :LockId " +
-                         "IF owner = :Owner;");
-            tryAcquireStatement = session
-                .Prepare(string.Format("UPDATE \"{0}\" ", tableName) +
-                         string.Format("USING TTL {0} ", lockTtl.Seconds) +
-                         "SET owner = :Owner " +
-                         "WHERE lock_id = :LockId " +
-                         "IF owner = null;");
-            releaseStatement = session
-                .Prepare(string.Format("DELETE FROM \"{0}\" ", tableName) +
-                         "WHERE lock_id = :LockId " +
-                         "IF owner = :Owner");
+            preparedStatements = new CasRemoteLockerPreparedStatements(
+                tryProlongStatement : session
+                    .Prepare(string.Format("UPDATE \"{0}\" ", tableName) +
+                             string.Format("USING TTL {0} ", (int)lockTtl.TotalSeconds) +
+                             "SET owner = :Owner " +
+                             "WHERE lock_id = :LockId " +
+                             "IF owner = :Owner;"),
+                tryAcquireStatement : session
+                    .Prepare(string.Format("UPDATE \"{0}\" ", tableName) +
+                             string.Format("USING TTL {0} ", (int)lockTtl.TotalSeconds) +
+                             "SET owner = :Owner " +
+                             "WHERE lock_id = :LockId " +
+                             "IF owner = null;"),
+                releaseStatement : session
+                    .Prepare(string.Format("DELETE FROM \"{0}\" ", tableName) +
+                             "WHERE lock_id = :LockId " +
+                             "IF owner = :Owner"),
+                getLockOwnerStatement : session
+                    .Prepare(string.Format("SELECT owner FROM \"{0}\" ", tableName) +
+                             "WHERE lock_id = :LockId;"));
         }
 
         public CasRemoteLocker CreateLocker()
         {
-            return new CasRemoteLocker(session, lockTtl, tryProlongStatement, tryAcquireStatement, releaseStatement);
+            return new CasRemoteLocker(session, prolongIntervalMs, preparedStatements);
         }
     }
 }

@@ -4,41 +4,49 @@ using System.Threading;
 
 using Cassandra;
 
+using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
+
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
 {
-    public class CasRemoteLocker : IDisposable
+    public class CasRemoteLocker : IDisposable, IRemoteLockCreator
     {
         private readonly ISession session;
         private readonly LeaseProlonger leaseProlonger;
-        private static readonly string currentProcessId;
-        private readonly PreparedStatement tryAcquireStatement, releaseStatement;
+        //private static readonly string currentProcessId;
+        private readonly CasRemoteLockerPreparedStatements preparedStatements;
+        private readonly Random random;
 
-        static CasRemoteLocker()
+        /*static CasRemoteLocker()
         {
             currentProcessId = Guid.NewGuid().ToString();
-        }
+        }*/
 
-        internal CasRemoteLocker(ISession session, TimeSpan lockTtl, PreparedStatement tryProlongStatement, PreparedStatement tryAcquireStatement, PreparedStatement releaseStatement)
+        internal CasRemoteLocker(ISession session, TimeSpan prolongIntervalMs, CasRemoteLockerPreparedStatements preparedStatements)
         {
             this.session = session;
-            this.tryAcquireStatement = tryAcquireStatement;
-            this.releaseStatement = releaseStatement;
-            leaseProlonger = new LeaseProlonger(session, lockTtl, tryProlongStatement);
+            this.preparedStatements = preparedStatements;
+            random = new Random();
+            leaseProlonger = new LeaseProlonger(session, prolongIntervalMs, preparedStatements.TryProlongStatement);
         }
 
-        public bool TryAcquire(string lockId, out IDisposable releaser)
+        /*public bool TryAcquire(string lockId, out IRemoteLock releaser)
         {
             return TryAcquire(lockId, currentProcessId + Thread.CurrentThread.ManagedThreadId, out releaser);
+        }*/
+
+        public bool TryAcquire(string lockId, out IRemoteLock releaser)
+        {
+            return TryAcquire(lockId, Guid.NewGuid().ToString(), out releaser);
         }
 
-        private bool TryAcquire(string lockId, string processId, out IDisposable releaser)
+        private bool TryAcquire(string lockId, string processId, out IRemoteLock releaser)
         {
-            var rowSet = session.Execute(tryAcquireStatement.Bind(new {Owner = processId, LockId = lockId}));
+            var rowSet = session.Execute(preparedStatements.TryAcquireStatement.Bind(new {Owner = processId, LockId = lockId}));
             var row = rowSet.Single();
             var applied = row.GetValue<bool>("[applied]");//TODO we can get owner here
             if (applied)
             {
-                releaser = new LockReleaser(session, lockId, processId, releaseStatement);
+                releaser = new CasRemoteLock(session, lockId, processId, preparedStatements.ReleaseStatement);
                 leaseProlonger.AddLock(lockId, processId);
                 return true;
             }
@@ -46,14 +54,52 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
             return false;
         }
 
-        private class LockReleaser : IDisposable
+        private IRemoteLock Acquire(string lockId, string processId)
+        {
+            while (true)
+            {
+                IRemoteLock releaser;
+                if (TryAcquire(lockId, processId, out releaser))
+                    return releaser;
+                var longSleep = random.Next(1000);
+                Thread.Sleep(longSleep);
+            }
+        }
+        public IRemoteLock Acquire(string lockId)
+        {
+            return Acquire(lockId, Guid.NewGuid().ToString());
+        }
+
+        public IRemoteLock Lock(string lockId)
+        {
+            return Acquire(lockId);
+        }
+
+        public bool TryGetLock(string lockId, out IRemoteLock releaser)
+        {
+            return TryAcquire(lockId, out releaser);
+        }
+
+        public string GetLockOwner(string lockId)
+        {
+            var rowSet = session.Execute(preparedStatements.GetLockOwnerStatement.Bind(new { LockId = lockId })).ToList();
+            if (rowSet.Count == 0)
+                return null;
+            if (rowSet.Count > 1)
+                throw new Exception("Lock has more than one owner");
+            var row = rowSet.Single();
+            var owner = row.GetValue<string>("owner");
+            return owner;
+        }
+
+        private class CasRemoteLock : IRemoteLock
         {
             private readonly ISession session;
             private readonly string lockId;
             private readonly string processId;
             private readonly PreparedStatement releaseStatement;
 
-            public LockReleaser(ISession session, string lockId, string processId, PreparedStatement releaseStatement)
+            public CasRemoteLock(ISession session, string lockId, string processId, PreparedStatement releaseStatement)
             {
                 this.session = session;
                 this.lockId = lockId;
@@ -64,9 +110,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
             {
                 var rowSet = session.Execute(releaseStatement.Bind(new { Owner = processId, LockId = lockId }));
                 var applied = rowSet.Single().GetValue<bool>("[applied]");
-                if (!applied)
-                    throw new Exception(string.Format("Can't release lock {0}, because we don't own it", processId));
+                //if (!applied)
+                //    throw new Exception(string.Format("Can't release lock {0}, because we don't own it", processId));
             }
+
+            public string LockId { get { return lockId; } }
+            public string ThreadId { get { return processId; } }
         }
 
         public void Dispose()

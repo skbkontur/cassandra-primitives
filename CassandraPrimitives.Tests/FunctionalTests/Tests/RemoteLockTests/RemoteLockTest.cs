@@ -6,6 +6,7 @@ using log4net;
 using NUnit.Framework;
 
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.RemoteLockTests
 {
@@ -15,7 +16,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
         {
             base.SetUp();
             logger = LogManager.GetLogger(typeof(RemoteLockTest));
-            remoteLockImplementation = (CassandraRemoteLockImplementation)container.Get<IRemoteLockImplementation>();
+            casRemoteLockProvider = container.Get<CasRemoteLockProvider>();
+            casRemoteLockProvider.ActualiseTables();
+            casRemoteLockProvider.InitPreparedStatements();
         }
 
         [TestCase(LocalRivalOptimization.Disabled)]
@@ -34,7 +37,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
 
         private void DoTestIncrementDecrementLock(int threadCount, TimeSpan runningTimeInterval, LocalRivalOptimization localRivalOptimization)
         {
-            var remoteLockCreators = PrepareRemoteLockCreators(threadCount, localRivalOptimization, remoteLockImplementation);
+            var remoteLockCreators = PrepareRemoteLockCreators(threadCount, localRivalOptimization, casRemoteLockProvider);
 
             for(var i = 0; i < threadCount; i++)
                 AddThread(IncrementDecrementAction, remoteLockCreators[i]);
@@ -77,13 +80,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
         {
             try
             {
-                var locks = remoteLockImplementation.GetLockThreads(lockId);
-                logger.Info("Locks: " + string.Join(", ", locks));
-                Assert.That(locks.Length <= 1, "Too many locks");
-                Assert.That(locks.Length == 1);
-                Assert.AreEqual(threadId, locks[0]);
-                var lockShades = remoteLockImplementation.GetShadeThreads(lockId);
-                logger.Info("LockShades: " + string.Join(", ", lockShades));
+                var owner = casRemoteLockProvider.CreateLocker().GetLockOwner(lockId);
+                Assert.That(owner.Length == 1);
+                Assert.AreEqual(threadId, owner[0]);
             }
             catch(Exception e)
             {
@@ -95,6 +94,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
         private const string lockId = "IncDecLock";
         private int x;
         private ILog logger;
-        private CassandraRemoteLockImplementation remoteLockImplementation;
+        private CasRemoteLockProvider casRemoteLockProvider;
+        //private CassandraRemoteLockImplementation remoteLockImplementation;
     }
 }

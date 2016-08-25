@@ -130,6 +130,10 @@
     <Compile Include="LongWritesConnection\KeyspaceConnectionWithLongWrites.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CasRemoteLock\CasRemoteLock.csproj">
+      <Project>{90CD8F5F-58E3-4EE6-BE78-B7D550F77200}</Project>
+      <Name>CasRemoteLock</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Commons\Commons.csproj">
       <Project>{da4ac27e-eb66-4912-ac1f-5edee4f9fc4d}</Project>
       <Name>Commons</Name>

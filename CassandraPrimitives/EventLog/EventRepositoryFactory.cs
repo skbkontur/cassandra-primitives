@@ -33,6 +33,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
 
         public IEventRepository CreateEventRepository(IShardCalculator shardCalculator, IEventRepositoryColumnFamilyFullNames columnFamilies, IEventLogProfiler profiler)
         {
+            throw new Exception("Event repository is temporarly not supported");
+            /*
             var ticksHolder = new TicksHolder(serializer, cassandraCluster, columnFamilies.TicksHolder);
             var eventLogPointerCreator = new EventLogPointerCreator();
             var globalTime = new GlobalTime(ticksHolder);
@@ -44,6 +46,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
             Func<IQueueRaker> createQueueRaker = () => new QueueRaker(eventStorage, eventLoggerAdditionalInfoRepository, profiler);
             var eventLogger = new EventLogger(cassandraCluster, serializer, columnFamilies.EventLog, eventLogPointerCreator, createQueueRaker, eventLoggerAdditionalInfoRepository, globalTime, profiler);
             return new EventRepository(eventTypeIdentifierProvider, eventLogger, shardCalculator, serializer);
+             * */
         }
 
         private readonly ISerializer serializer;

@@ -22,7 +22,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 
         public bool TryAcquire(out IDisposable remoteLock)
         {
-            return remoteLocker.TryAcquire(lockId, out remoteLock);
+            RemoteLock.IRemoteLock innerRemoteLock;
+            var result = remoteLocker.TryAcquire(lockId, out innerRemoteLock);
+            remoteLock = innerRemoteLock;
+            return result;
         }
 
         public void Release()

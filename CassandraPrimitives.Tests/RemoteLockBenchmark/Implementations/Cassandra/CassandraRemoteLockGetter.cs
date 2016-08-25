@@ -13,6 +13,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
     {
         public CassandraRemoteLockGetter(ICassandraClusterSettings cassandraClusterSettings)
         {
+            throw new Exception("Use CAS mode, usual remote lock is temporarly not supported");
             cassandraCluster = new CassandraCluster(cassandraClusterSettings);
 
             var serializer = new Serializer(new AllPropertiesExtractor(), null, GroBufOptions.MergeOnRead);
@@ -21,7 +22,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
             var remoteLockerMetrics = new RemoteLockerMetrics(ColumnFamilies.RemoteLock.KeyspaceName);
 
             var cassandraRemoteLockImplementation = new CassandraRemoteLockImplementation(cassandraCluster, serializer, implementationSettings);
-            remoteLocker = new RemoteLocker(cassandraRemoteLockImplementation, remoteLockerMetrics);
+            //remoteLocker = new RemoteLocker(cassandraRemoteLockImplementation, remoteLockerMetrics);
         }
 
         public IRemoteLock Get(string lockId)

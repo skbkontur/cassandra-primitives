@@ -34,7 +34,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
                 "RemoteLockBenchmark",
                 "CASRemoteLock",
                 ConsistencyLevel.Quorum,
-                TimeSpan.FromMinutes(5));
+                TimeSpan.FromMinutes(5),
+                TimeSpan.FromSeconds(30));
 
             lockProvider.ActualiseTables();
             lockProvider.InitPreparedStatements();

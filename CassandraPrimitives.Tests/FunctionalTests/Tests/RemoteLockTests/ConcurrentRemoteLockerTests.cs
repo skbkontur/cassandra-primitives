@@ -207,10 +207,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
                                     else if(rng.NextDouble() < cfg.LongRunningOpProbability)
                                         opDuration = opDuration.Add(longOpDuration);
                                     Thread.Sleep(opDuration);
-                                    CollectionAssert.AreEqual(new[] {@lock.ThreadId}, localTester.GetThreadsInMainRow(lockId));
+                                    /*CollectionAssert.AreEqual(new[] {@lock.ThreadId}, localTester.GetThreadsInMainRow(lockId));
                                     Assert.That(localTester.GetThreadsInShadeRow(lockId), Is.Not.Contains(@lock.ThreadId));
                                     var lockMetadata = localTester.GetLockMetadata(lockId);
-                                    Assert.That(lockMetadata.ProbableOwnerThreadId, Is.EqualTo(@lock.ThreadId));
+                                    Assert.That(lockMetadata.ProbableOwnerThreadId, Is.EqualTo(@lock.ThreadId));*/
+                                    Assert.That(localTester.GetLockOwner(@lock.LockId), Is.EqualTo(@lock.ThreadId));
                                     Assert.That(resources[lockId], Is.EqualTo(resource));
                                     Assert.That(opsCounters[lockId], Is.EqualTo(localOpsCounter));
                                     if(++localOpsCounter % (cfg.TesterConfig.LockersCount * cfg.OperationsPerThread / 100) == 0)
@@ -224,10 +225,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
                                      * But it must be automatically deleted after lockTtl.
                                      * For performance reason we do first check manually, because .After sleeps at least polling interval before first check
                                      */
-                                    if(localTester.GetThreadsInMainRow(lockId).Contains(@lock.ThreadId))
+                                    if(@lock.ThreadId.Equals(localTester.GetLockOwner(lockId)))
                                     {
-                                        Assert.That(() => localTester.GetThreadsInMainRow(lockId), Is.Not
-                                                                                                     .Contains(@lock.ThreadId)
+                                        Assert.That(() => localTester.GetLockOwner(lockId), Is.Not
+                                                                                                     .EqualTo(@lock.ThreadId)
                                                                                                      .After(2 * (int)cfg.TesterConfig.LockTtl.TotalMilliseconds, 100));
                                     }
                                     op++;

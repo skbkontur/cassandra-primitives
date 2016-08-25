@@ -18,13 +18,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.CasRemoteLock
         private bool stopped;
         private readonly PreparedStatement tryProlongStatement;
 
-        public LeaseProlonger(ISession session, TimeSpan lockTtl, PreparedStatement tryProlongStatement)
+        public LeaseProlonger(ISession session, TimeSpan prolongIntervalMs, PreparedStatement tryProlongStatement)
         {
             this.tryProlongStatement = tryProlongStatement;
             locksToProlong = new ConcurrentDictionary<Tuple<string, string>, bool>();
             this.session = session;
-            prolongIntervalMs = (int)(lockTtl.TotalMilliseconds / 10);
-            new Thread(InfinetelyProlongLocks);
+            this.prolongIntervalMs = (int)prolongIntervalMs.TotalMilliseconds;
+            new Thread(InfinetelyProlongLocks).Start();
         }
 
         public void AddLock(string lockId, string processId)

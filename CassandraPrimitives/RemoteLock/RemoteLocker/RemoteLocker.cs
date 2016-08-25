@@ -10,6 +10,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock.RemoteLocker
 {
     public class RemoteLocker : IDisposable, IRemoteLockCreator
     {
+        [Obsolete("To check that we use CASRemoteLocker everywhere in tests", true)]
         public RemoteLocker(IRemoteLockImplementation remoteLockImplementation, RemoteLockerMetrics metrics)
         {
             this.remoteLockImplementation = remoteLockImplementation;
