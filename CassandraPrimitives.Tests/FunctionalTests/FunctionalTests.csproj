@@ -48,7 +48,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.EventLog.dll</HintPath>
     </Reference>
-    <Reference Include="Catalogue.CassandraPrimitives.RemoteLock, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Catalogue.CassandraPrimitives.RemoteLock, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.RemoteLock.dll</HintPath>
     </Reference>

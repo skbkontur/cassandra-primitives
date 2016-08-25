@@ -31,9 +31,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
                 .Builder()
                 .AddContactPoints(endpoints)
                 .WithQueryOptions(new QueryOptions().SetConsistencyLevel(consistencyLevel))
+                .WithDefaultKeyspace(keyspaceName)
                 .Build();
-
-            session = cluster.Connect(keyspaceName);
+            session = cluster.ConnectAndCreateDefaultKeyspaceIfNotExists();
         }
 
         public CasRemoteLockProvider(List<IPEndPoint> endpoints, string keyspaceName, TimeSpan lockTtl, TimeSpan prolongIntervalMs) : this(endpoints, keyspaceName, "CASRemoteLock", ConsistencyLevel.Quorum, lockTtl, prolongIntervalMs)

@@ -198,6 +198,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
                                     @lock = Lock(remoteLockCreator, syncSignal, rng, lockId, state);
                                     if(@lock == null)
                                         break;
+                                    Assert.That(localTester.GetLockOwner(@lock.LockId), Is.EqualTo(@lock.ThreadId), "lock was acquired just now, but our thread is not owner");
                                     var localOpsCounter = opsCounters.GetOrAdd(lockId, 0);
                                     var resource = Guid.NewGuid();
                                     resources[lockId] = resource;
@@ -211,7 +212,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Re
                                     Assert.That(localTester.GetThreadsInShadeRow(lockId), Is.Not.Contains(@lock.ThreadId));
                                     var lockMetadata = localTester.GetLockMetadata(lockId);
                                     Assert.That(lockMetadata.ProbableOwnerThreadId, Is.EqualTo(@lock.ThreadId));*/
-                                    Assert.That(localTester.GetLockOwner(@lock.LockId), Is.EqualTo(@lock.ThreadId));
+                                    Assert.That(localTester.GetLockOwner(@lock.LockId), Is.EqualTo(@lock.ThreadId), "lock was acquired some time ago, and after sleep our thread is not owner more");
                                     Assert.That(resources[lockId], Is.EqualTo(resource));
                                     Assert.That(opsCounters[lockId], Is.EqualTo(localOpsCounter));
                                     if(++localOpsCounter % (cfg.TesterConfig.LockersCount * cfg.OperationsPerThread / 100) == 0)
