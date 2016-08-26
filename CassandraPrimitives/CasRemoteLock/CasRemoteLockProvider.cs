@@ -79,7 +79,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
                 releaseStatement : session
                     .Prepare(string.Format("DELETE FROM \"{0}\" ", tableName) +
                              "WHERE lock_id = :LockId " +
-                             "IF owner = :Owner"),
+                             "IF owner = :Owner;"),
                 getLockOwnerStatement : session
                     .Prepare(string.Format("SELECT owner FROM \"{0}\" ", tableName) +
                              "WHERE lock_id = :LockId;"));
