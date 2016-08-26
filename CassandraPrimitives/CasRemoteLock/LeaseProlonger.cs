@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,15 +34,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
             this.tryProlongStatement = tryProlongStatement;
             locksToProlong = new ConcurrentQueue<EnqueuedLockToProlong>();
             this.session = session;
-            this.prolongInterval = prolongInterval;
-            new Thread(InfinetelyProlongLocks).Start();
+            this.prolongInterval = TimeSpan.FromMilliseconds(Math.Max(500, prolongInterval.TotalMilliseconds - 1000));
+            for (int i = 0; i < 10; i++)
+                new Thread(InfinetelyProlongLocks).Start();
         }
 
         public void AddLock(string lockId, string processId)
         {
-            locksToProlong.Enqueue(new EnqueuedLockToProlong(lockId, processId, DateTime.Now.Add(prolongInterval)));
-            //if (!locksToProlong.TryAdd(Tuple.Create(lockId, processId), true))
-            //    throw new Exception(string.Format("Failed to add lock {0} of process {1} to prolonger", lockId, processId));
+            StartProlongAndEnqueing(lockId, processId);
         }
 
         public void InfinetelyProlongLocks()
@@ -60,24 +58,65 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
                     }
 
                     var delta = lockToProlong.NextProlong.Subtract(DateTime.Now);
-                    if (delta.TotalMilliseconds < 0)
+                    if(delta.TotalMilliseconds < 0)
                         Console.WriteLine("Performing outdated prolong. Delay {0} ms", delta.Duration().TotalMilliseconds);
                     else
-                        Thread.Sleep((int)delta.TotalMilliseconds);
-
-                    ProlongSingleLock(lockToProlong.LockId, lockToProlong.ProcessId);
-                    locksToProlong.Enqueue(new EnqueuedLockToProlong(lockToProlong.LockId, lockToProlong.ProcessId, DateTime.Now.Add(prolongInterval)));
-                    /*
-                    if (TryProlongSingleLock(lockToProlong.LockId, lockToProlong.ProcessId))
                     {
-                        locksToProlong.Enqueue(new EnqueuedLockToProlong(lockToProlong.LockId, lockToProlong.ProcessId, DateTime.Now.Add(prolongInterval)));
-                    }*/
+                        var sleepInterval = Math.Max(0, Math.Min((int)delta.TotalMilliseconds - 10, (int)prolongInterval.TotalMilliseconds / Math.Max(1, locksToProlong.Count)));
+                        if(sleepInterval > 1)
+                        {
+                            Thread.Sleep(sleepInterval);
+                        }
+                    }
+
+                    StartProlongAndEnqueing(lockToProlong.LockId, lockToProlong.ProcessId);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Exception while prolonging:\n{0}", e);
                 }
             }
+        }
+
+        private async Task StartProlongAndEnqueingAsync(string lockId, string processId)
+        {
+            var nextProlong = DateTime.Now.Add(prolongInterval);
+            if (await TryProlongSingleLockAsync(lockId, processId))
+                locksToProlong.Enqueue(new EnqueuedLockToProlong(lockId, processId, nextProlong));
+            else
+                throw new Exception(string.Format("Can't prolong lock {0} because process {1} doesn't own it", lockId, processId));
+        }
+
+        private void StartProlongAndEnqueing(string lockId, string processId)
+        {
+            Task.Run(async () =>
+                {
+                    try
+                    {
+                        var nextProlong = DateTime.Now.Add(prolongInterval);
+                        if (await TryProlongSingleLockAsync(lockId, processId))
+                            locksToProlong.Enqueue(new EnqueuedLockToProlong(lockId, processId, nextProlong));
+                        else
+                            Console.WriteLine("Can't prolong lock {0} because process {1} doesn't own it", lockId, processId);
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine("Exception while prolonging:\n{0}", e);
+                    }
+                });
+        }
+
+        private async Task<bool> TryProlongSingleLockAsync(string lockId, string processId)
+        {
+            var rowSet = await CasRemoteLocker.ExecuteAsync(session, tryProlongStatement.Bind(new { Owner = processId, LockId = lockId }));
+            var applied = rowSet.Single().GetValue<bool>("[applied]");
+            return applied;
+        }
+
+        private async Task ProlongSingleLockAsync(string lockId, string processId)
+        {
+            if (!await TryProlongSingleLockAsync(lockId, processId))
+                throw new Exception(string.Format("Can't prolong lock {0} because process {1} doesn't own it", lockId, processId));
         }
 
         private bool TryProlongSingleLock(string lockId, string processId)

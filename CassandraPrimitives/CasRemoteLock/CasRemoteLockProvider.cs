@@ -21,8 +21,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
 
         public CasRemoteLockProvider(List<IPEndPoint> endpoints, string keyspaceName, string tableName, ConsistencyLevel consistencyLevel, TimeSpan lockTtl, TimeSpan prolongIntervalMs)
         {
-            ThreadPool.SetMaxThreads(1000, 1000);
-            ThreadPool.SetMinThreads(1000, 1000);
+            ThreadPool.SetMaxThreads(2000, 2000);
+            ThreadPool.SetMinThreads(2000, 2000);
 
             this.tableName = tableName;
             this.lockTtl = lockTtl;

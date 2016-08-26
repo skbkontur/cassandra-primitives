@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 using Cassandra;
 
@@ -39,7 +40,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
             return TryAcquire(lockId, Guid.NewGuid().ToString(), out releaser);
         }
 
-        private bool TryAcquire(string lockId, string processId, out IRemoteLock releaser)
+        public bool TryAcquire(string lockId, string processId, out IRemoteLock releaser)
         {
             var rowSet = Execute(session, preparedStatements.TryAcquireStatement.Bind(new {Owner = processId, LockId = lockId}));
             var row = rowSet.Single();
@@ -100,6 +101,24 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
                 try
                 {
                     var rowSet = session.Execute(statement);
+                    return rowSet;
+                }
+                catch (Exception e)
+                {
+                    lastException = e;
+                }
+            }
+            throw new Exception(string.Format("Failed to execute statement after 5 attempts. Last exception:\n{0}", lastException));
+        }
+
+        public static async Task<RowSet> ExecuteAsync(ISession session, IStatement statement, int attempts = 5)
+        {
+            Exception lastException = null;
+            for (int i = 0; i < attempts; i++)
+            {
+                try
+                {
+                    var rowSet = await session.ExecuteAsync(statement);
                     return rowSet;
                 }
                 catch (Exception e)

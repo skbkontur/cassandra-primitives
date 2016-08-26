@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Cassandra;
 
+using SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestOptions;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Implementations;
@@ -13,6 +14,8 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenario
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.SeriesOfLocks;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.Timeline;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scenarios.WaitForLock;
+
+using IRemoteLock = SKBKontur.Catalogue.CassandraPrimitives.RemoteLock.IRemoteLock;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 {
@@ -90,8 +93,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
 
         private static void Main(string[] args)
         {
-            ThreadPool.SetMinThreads(1000, 1000);
-            ThreadPool.SetMaxThreads(1000, 1000);
+            ThreadPool.SetMinThreads(2000, 2000);
+            ThreadPool.SetMaxThreads(2000, 2000);
             new TeamCityRemoteLockBenchmarkConfigurator(CreateRegistry).Run();
         }
     }
