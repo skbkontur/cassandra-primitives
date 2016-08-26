@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventLog", "EventLog\EventLog.csproj", "{D4746A3E-7098-4359-A082-EC7A0897D4AB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{90CD8F5F-58E3-4EE6-BE78-B7D550F77200} = {90CD8F5F-58E3-4EE6-BE78-B7D550F77200}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storages", "Storages\Storages.csproj", "{706372E4-1E69-42A1-B5E5-5BA2A7EBFCCA}"
 EndProject
