@@ -65,10 +65,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
                     else
                         Thread.Sleep((int)delta.TotalMilliseconds);
 
+                    ProlongSingleLock(lockToProlong.LockId, lockToProlong.ProcessId);
+                    locksToProlong.Enqueue(new EnqueuedLockToProlong(lockToProlong.LockId, lockToProlong.ProcessId, DateTime.Now.Add(prolongInterval)));
+                    /*
                     if (TryProlongSingleLock(lockToProlong.LockId, lockToProlong.ProcessId))
                     {
                         locksToProlong.Enqueue(new EnqueuedLockToProlong(lockToProlong.LockId, lockToProlong.ProcessId, DateTime.Now.Add(prolongInterval)));
-                    }
+                    }*/
                 }
                 catch (Exception e)
                 {
