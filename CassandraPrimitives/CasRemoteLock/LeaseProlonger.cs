@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 using Cassandra;
 
+using log4net;
+
 namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
 {
     internal class EnqueuedLockToProlong
@@ -29,15 +31,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
         private readonly TimeSpan prolongInterval;
         private bool stopped;
         private readonly PreparedStatement tryProlongStatement;
+        private readonly ILog logger;
 
         public LeaseProlonger(ISession session, TimeSpan prolongInterval, PreparedStatement tryProlongStatement)
         {
+            logger = LogManager.GetLogger(typeof(LeaseProlonger));
             this.tryProlongStatement = tryProlongStatement;
             locksToProlong = new ConcurrentQueue<EnqueuedLockToProlong>();
             this.session = session;
-            this.prolongInterval = TimeSpan.FromMilliseconds(Math.Max(500, prolongInterval.TotalMilliseconds - 1000));
-            for (int i = 0; i < 10; i++)
-                new Thread(InfinetelyProlongLocks).Start();
+            this.prolongInterval = TimeSpan.FromMilliseconds(Math.Max(100, prolongInterval.TotalMilliseconds - 2000));
+            Task.Run(() => InfinetelyProlongLocks());
         }
 
         public void AddLock(string lockId, string processId)
@@ -60,7 +63,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
 
                     var delta = lockToProlong.NextProlong.Subtract(DateTime.Now);
                     if(delta.TotalMilliseconds < 0)
+                    {
+                        logger.WarnFormat("Performing outdated prolong. Delay {0} ms", delta.Duration().TotalMilliseconds);
                         Console.WriteLine("Performing outdated prolong. Delay {0} ms", delta.Duration().TotalMilliseconds);
+                    }
                     else
                     {
                         var sleepInterval = Math.Max(0, Math.Min((int)delta.TotalMilliseconds - 10, (int)prolongInterval.TotalMilliseconds / Math.Max(1, locksToProlong.Count)));
@@ -74,18 +80,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
                 }
                 catch (Exception e)
                 {
+                    logger.ErrorFormat("Exception while prolonging:\n{0}", e);
                     Console.WriteLine("Exception while prolonging:\n{0}", e);
                 }
             }
-        }
-
-        private async Task StartProlongAndEnqueingAsync(string lockId, string processId)
-        {
-            var nextProlong = DateTime.Now.Add(prolongInterval);
-            if (await TryProlongSingleLockAsync(lockId, processId))
-                locksToProlong.Enqueue(new EnqueuedLockToProlong(lockId, processId, nextProlong));
-            else
-                throw new Exception(string.Format("Can't prolong lock {0} because process {1} doesn't own it", lockId, processId));
         }
 
         private void StartProlongAndEnqueing(string lockId, string processId)
@@ -93,39 +91,40 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
             var attempts = 5;
             var timeout = (int)prolongInterval.TotalMilliseconds;
 
-            Task.Run(() =>
+            Task.Run(async () =>
                 {
                     try
                     {
                         var nextProlong = DateTime.Now.Add(prolongInterval);
                         var runningTries = new List<Task<bool>>();
 
-                        Task<bool> successfulTask = null;
-
                         for(int i = 0; i < attempts; i++)
                         {
                             var prolongTask = TryProlongSingleLockAsync(lockId, processId);
                             runningTries.Add(prolongTask);
 
-                            if(Task.WhenAny(runningTries.ToArray()).ContinueWith(t => successfulTask = t.Result).Wait(timeout / attempts))
+                            var delayTask = Task.Delay(timeout / attempts);
+                            var task = await Task.WhenAny(runningTries.Concat(new[] {delayTask}));
+                            if(task != delayTask)
                             {
-                                break;
+                                if(await await Task.WhenAny(runningTries))
+                                {
+                                    locksToProlong.Enqueue(new EnqueuedLockToProlong(lockId, processId, nextProlong));
+                                }
+                                else
+                                {
+                                    logger.WarnFormat("Can't prolong lock {0} because process {1} doesn't own it", lockId, processId);
+                                    Console.WriteLine("Can't prolong lock {0} because process {1} doesn't own it", lockId, processId);
+                                }
+                                return;
                             }
                         }
-
-                        if(successfulTask == null)
-                        {
-                            Console.WriteLine("Can't prolong lock after {0} RoundRobin attempts with timeout {1}", attempts, timeout);
-                            return;
-                        }
-
-                        if (successfulTask.Result)
-                            locksToProlong.Enqueue(new EnqueuedLockToProlong(lockId, processId, nextProlong));
-                        else
-                            Console.WriteLine("Can't prolong lock {0} because process {1} doesn't own it", lockId, processId);
+                        logger.WarnFormat("Can't prolong lock after {0} RoundRobin attempts with timeout {1}", attempts, timeout);
+                        Console.WriteLine("Can't prolong lock after {0} RoundRobin attempts with timeout {1}", attempts, timeout);
                     }
                     catch(Exception e)
                     {
+                        logger.ErrorFormat("Exception while prolonging:\n{0}", e);
                         Console.WriteLine("Exception while prolonging:\n{0}", e);
                     }
                 });
@@ -138,25 +137,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
             return applied;
         }
 
-        private async Task ProlongSingleLockAsync(string lockId, string processId)
-        {
-            if (!await TryProlongSingleLockAsync(lockId, processId))
-                throw new Exception(string.Format("Can't prolong lock {0} because process {1} doesn't own it", lockId, processId));
-        }
-
         private bool TryProlongSingleLock(string lockId, string processId)
         {
             var rowSet = CasRemoteLocker.Execute(session, tryProlongStatement.Bind(new {Owner = processId, LockId = lockId}));
             var applied = rowSet.Single().GetValue<bool>("[applied]");
             return applied;
         }
-
-        private void ProlongSingleLock(string lockId, string processId)
-        {
-            if (!TryProlongSingleLock(lockId, processId))
-                throw new Exception(string.Format("Can't prolong lock {0} because process {1} doesn't own it", lockId, processId));
-        }
-
+        
         public void Dispose()
         {
             stopped = true;

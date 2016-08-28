@@ -42,17 +42,23 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
 
         public bool TryAcquire(string lockId, string processId, out IRemoteLock releaser)
         {
-            var rowSet = Execute(session, preparedStatements.TryAcquireStatement.Bind(new {Owner = processId, LockId = lockId}));
-            var row = rowSet.Single();
-            var applied = row.GetValue<bool>("[applied]");//TODO we can get owner here
-            if (applied)
-            {
-                releaser = new CasRemoteLock(session, lockId, processId, preparedStatements.ReleaseStatement);
-                leaseProlonger.AddLock(lockId, processId);
-                return true;
-            }
-            releaser = null;
-            return false;
+            IRemoteLock remoteLock = null;
+            var result = Task.Run(async () =>
+                {
+                    var rowSet = await ExecuteAsync(session, preparedStatements.TryAcquireStatement.Bind(new {Owner = processId, LockId = lockId}));
+                    var row = rowSet.Single();
+                    var applied = row.GetValue<bool>("[applied]"); //TODO we can get owner here
+                    if(applied)
+                    {
+                        remoteLock = new CasRemoteLock(session, lockId, processId, preparedStatements.ReleaseStatement);
+                        leaseProlonger.AddLock(lockId, processId);
+                        return true;
+                    }
+                    remoteLock = null;
+                    return false;
+                }).Result;
+            releaser = remoteLock;
+            return result;
         }
 
         private IRemoteLock Acquire(string lockId, string processId)
@@ -83,14 +89,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
 
         public string GetLockOwner(string lockId)
         {
-            var rowSet = Execute(session, preparedStatements.GetLockOwnerStatement.Bind(new { LockId = lockId })).ToList();
-            if (rowSet.Count == 0)
-                return null;
-            if (rowSet.Count > 1)
-                throw new Exception("Lock has more than one owner");
-            var row = rowSet.Single();
-            var owner = row.GetValue<string>("owner");
-            return owner;
+            return Task.Run(async () =>
+                {
+                    var rowSet = (await ExecuteAsync(session, preparedStatements.GetLockOwnerStatement.Bind(new {LockId = lockId}))).ToList();
+                    if(rowSet.Count == 0)
+                        return null;
+                    if(rowSet.Count > 1)
+                        throw new Exception("Lock has more than one owner");
+                    var row = rowSet.Single();
+                    var owner = row.GetValue<string>("owner");
+                    return owner;
+                }).Result;
         }
 
         public static RowSet Execute(ISession session, IStatement statement, int attempts = 5)
@@ -145,8 +154,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
             }
             public void Dispose()
             {
-                var rowSet = Execute(session, releaseStatement.Bind(new {Owner = processId, LockId = lockId}));
-                var applied = rowSet.Single().GetValue<bool>("[applied]");
+                Task.Run(async () =>
+                    {
+                        var rowSet = await ExecuteAsync(session, releaseStatement.Bind(new {Owner = processId, LockId = lockId}));
+                        var applied = rowSet.Single().GetValue<bool>("[applied]");
+                    }).Wait();
                 //if (!applied)
                 //    throw new Exception(string.Format("Can't release lock {0}, because we don't own it", processId));
             }
