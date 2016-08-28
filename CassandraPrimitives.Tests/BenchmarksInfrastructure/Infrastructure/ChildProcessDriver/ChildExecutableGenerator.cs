@@ -15,6 +15,8 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Inf
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.Registry;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
 
+using ILog = log4net.ILog;
+
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.ChildProcessDriver
 {
     public class ChildExecutableGenerator
@@ -115,7 +117,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 configuration = httpExternalDataGetter.GetTestConfiguration().Result;
             logger.InfoFormat("Configuration was received");
 
-            ChildProcessDriver.RunSingleTest(configuration, processInd, processToken, scenariosRegistry);
+            ChildProcessDriver.RunSingleTest(configuration, processInd, processToken, scenariosRegistry, LogManager.GetLogger(typeof(ChildProcessDriver)));
+
+            logger.InfoFormat("Finish running test");
         }
 
         private static void InitMetrics()

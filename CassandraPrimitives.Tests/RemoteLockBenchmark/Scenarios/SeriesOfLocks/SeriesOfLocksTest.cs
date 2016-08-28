@@ -57,6 +57,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
                         Thread.Sleep(sleepTime);
                         if (reportTimer.ElapsedMilliseconds > publishIntervalMs)
                         {
+                            int workerThreads, completionPortThreads;
+                            ThreadPool.GetAvailableThreads(out workerThreads, out completionPortThreads);
+                            logger.InfoFormat("Available threads: workerThreads - {0}, completionPortThreads - {1}", workerThreads, completionPortThreads);
                             externalLogger.PublishProgress(new SeriesOfLocksProgressMessage
                                 {
                                     AmountOfLocks = amountOfLocks,
@@ -91,6 +94,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
 
         public void TearDown()
         {
+            logger.InfoFormat("Tear down");
             externalLogger.PublishProgress(new SeriesOfLocksProgressMessage {Final = true});
         }
 
