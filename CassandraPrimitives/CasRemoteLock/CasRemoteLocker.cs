@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 
 using Cassandra;
 
+using log4net;
+
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
@@ -16,6 +18,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
         //private static readonly string currentProcessId;
         private readonly CasRemoteLockerPreparedStatements preparedStatements;
         private readonly Random random;
+        private readonly ILog logger;
 
         /*static CasRemoteLocker()
         {
@@ -24,6 +27,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
 
         internal CasRemoteLocker(ISession session, TimeSpan prolongIntervalMs, CasRemoteLockerPreparedStatements preparedStatements)
         {
+            logger = LogManager.GetLogger(typeof(CasRemoteLock));
             this.session = session;
             this.preparedStatements = preparedStatements;
             random = new Random();
@@ -47,7 +51,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
                 {
                     while(true)
                     {
-                        var rowSet = await ExecuteAsync(session, preparedStatements.TryAcquireStatement.Bind(new {Owner = processId, LockId = lockId}));
+                        RowSet rowSet;
+                        try
+                        {
+                            rowSet = await session.ExecuteAsync(preparedStatements.TryAcquireStatement.Bind(new {Owner = processId, LockId = lockId}));
+                        }
+                        catch (WriteTimeoutException e)
+                        {
+                            logger.WarnFormat("Exception catched while trying to acquire lock, trying again: {0}", e);
+                            continue;
+                        }
                         var row = rowSet.Single();
                         var applied = row.GetValue<bool>("[applied]");
                         var ownerColumnInfo = row.GetColumn("owner");
