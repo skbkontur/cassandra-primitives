@@ -45,17 +45,25 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
             IRemoteLock remoteLock = null;
             var result = Task.Run(async () =>
                 {
-                    var rowSet = await ExecuteAsync(session, preparedStatements.TryAcquireStatement.Bind(new {Owner = processId, LockId = lockId}));
-                    var row = rowSet.Single();
-                    var applied = row.GetValue<bool>("[applied]"); //TODO we can get owner here
-                    if(applied)
+                    while(true)
                     {
-                        remoteLock = new CasRemoteLock(session, lockId, processId, preparedStatements.ReleaseStatement);
-                        leaseProlonger.AddLock(lockId, processId);
-                        return true;
+                        var rowSet = await ExecuteAsync(session, preparedStatements.TryAcquireStatement.Bind(new {Owner = processId, LockId = lockId}));
+                        var row = rowSet.Single();
+                        var applied = row.GetValue<bool>("[applied]");
+                        var ownerColumnInfo = row.GetColumn("owner");
+                        if(applied)
+                        {
+                            remoteLock = new CasRemoteLock(session, lockId, processId, preparedStatements.ReleaseStatement);
+                            leaseProlonger.AddLock(lockId, processId);
+                            return true;
+                        }
+                        if(ownerColumnInfo != null)
+                        {
+                            remoteLock = null;
+                            return false;
+                        }
+                        Thread.Sleep(random.Next(50));
                     }
-                    remoteLock = null;
-                    return false;
                 }).Result;
             releaser = remoteLock;
             return result;
