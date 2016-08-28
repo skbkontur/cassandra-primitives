@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -89,12 +90,36 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.CasRemoteLock
 
         private void StartProlongAndEnqueing(string lockId, string processId)
         {
-            Task.Run(async () =>
+            var attempts = 5;
+            var timeout = (int)prolongInterval.TotalMilliseconds;
+
+            Task.Run(() =>
                 {
                     try
                     {
                         var nextProlong = DateTime.Now.Add(prolongInterval);
-                        if (await TryProlongSingleLockAsync(lockId, processId))
+                        var runningTries = new List<Task<bool>>();
+
+                        Task<bool> successfulTask = null;
+
+                        for(int i = 0; i < attempts; i++)
+                        {
+                            var prolongTask = TryProlongSingleLockAsync(lockId, processId);
+                            runningTries.Add(prolongTask);
+
+                            if(Task.WhenAny(runningTries.ToArray()).ContinueWith(t => successfulTask = t.Result).Wait(timeout / attempts))
+                            {
+                                break;
+                            }
+                        }
+
+                        if(successfulTask == null)
+                        {
+                            Console.WriteLine("Can't prolong lock after {0} RoundRobin attempts with timeout {1}", attempts, timeout);
+                            return;
+                        }
+
+                        if (successfulTask.Result)
                             locksToProlong.Enqueue(new EnqueuedLockToProlong(lockId, processId, nextProlong));
                         else
                             Console.WriteLine("Can't prolong lock {0} because process {1} doesn't own it", lockId, processId);
