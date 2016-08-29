@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Net;
 
 using Cassandra;
 
@@ -15,22 +14,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 
         public CassandraCasRemoteLockGetter(ICassandraClusterSettings cassandraClusterSettings)
         {
-            /*lockProvider = new CasRemoteLockProvider(
-                cassandraClusterSettings
-                    .Endpoints
-                    .Select(endpoint => new IPEndPoint(endpoint.Address, 9343))//TODO port
-                    .ToList(),
-                "RemoteLockBenchmark",
-                "CASRemoteLock",
-                ConsistencyLevel.Quorum);*/
-
-            var lockProvider = new CasRemoteLockProvider(
-                new[]
-                    {
-                        new IPEndPoint(IPAddress.Parse("10.33.63.133"), 9042),
-                        new IPEndPoint(IPAddress.Parse("10.33.61.141"), 9042),
-                        new IPEndPoint(IPAddress.Parse("10.33.62.136"), 9042)
-                    }.ToList(),
+            var lockProvider = new CasRemoteLockProvider(cassandraClusterSettings.Endpoints.ToList(),
                 "RemoteLockBenchmark",
                 "CASRemoteLock",
                 ConsistencyLevel.Quorum,
