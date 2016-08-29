@@ -14,7 +14,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             string remoteHostName,
             int httpPort,
             ClusterTypes clusterType,
-            string testScenario)
+            string testScenario,
+            string clusterEndpoints,
+            int clusterPort)
         {
             AmountOfThreads = amountOfThreads;
             AmountOfProcesses = amountOfProcesses;
@@ -23,6 +25,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             HttpPort = httpPort;
             ClusterType = clusterType;
             TestScenario = testScenario;
+            ClusterEndpoints = clusterEndpoints.Split('|');
+            ClusterPort = clusterPort;
         }
 
         public static TestConfiguration GetFromEnvironmentWithoutRanges(ITestEnvironment environment)
@@ -37,6 +41,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 throw new Exception(string.Format("Invalid value was given for parameter {0}", "ClusterType"));
 
             var testScenario = environment.TestScenario;
+            var clusterEndpoints = environment.ClusterEndpoints;
+            var clusterPort = ParametersParser.ParseInt("ClusterPort", environment.ClusterPort);
 
             var remoteHostName = IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName;
 
@@ -47,7 +53,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 remoteHostName,
                 httpPort,
                 clusterType,
-                testScenario);
+                testScenario,
+                clusterEndpoints,
+                clusterPort);
         }
 
         public static List<TestConfiguration> ParseWithRanges(ITestEnvironment environment)
@@ -59,6 +67,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
             var clusterTypes = ParametersParser.ParseEnums<ClusterTypes>("ClusterType", environment.ClusterType);
             var testScenario = ParametersParser.ParseStrings(environment.TestScenario);
+            var clusterEndpoints = environment.ClusterEndpoints;
+            var clusterPort = ParametersParser.ParseInt("ClusterPort", environment.ClusterPort);
 
             var remoteHostName = IPGlobalProperties.GetIPGlobalProperties().HostName + "." + IPGlobalProperties.GetIPGlobalProperties().DomainName;
 
@@ -78,7 +88,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                                            remoteHostName,
                                            (int)combination[3],
                                            (ClusterTypes)combination[4],
-                                           (string)combination[5]))
+                                           (string)combination[5],
+                                           clusterEndpoints,
+                                           clusterPort))
                 .ToList();
         }
 
@@ -89,6 +101,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         public int HttpPort { get; private set; }
         public ClusterTypes ClusterType { get; private set; }
         public string TestScenario { get; private set; }
+        public string[] ClusterEndpoints { get; private set; }
+        public int ClusterPort { get; private set; }
 
         public override string ToString()
         {
@@ -99,14 +113,18 @@ AmountOfClusterNodes = {2}
 RemoteHostName = {3}
 HttpPort = {4}
 ClusterType = {5}
-TestScenario = {6}",
+TestScenario = {6}
+ClusterEndpoints = {7}
+ClusterPort = {8}",
                 AmountOfThreads,
                 AmountOfProcesses,
                 AmountOfClusterNodes,
                 RemoteHostName,
                 HttpPort,
                 ClusterType,
-                TestScenario);
+                TestScenario,
+                ClusterEndpoints,
+                ClusterPort);
         }
     }
 }

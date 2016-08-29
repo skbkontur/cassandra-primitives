@@ -8,5 +8,7 @@
         string HttpPort { get; }
         string TestScenario { get; }
         string ClusterType { get; }
+        string ClusterEndpoints { get; }
+        string ClusterPort { get; }
     }
 }

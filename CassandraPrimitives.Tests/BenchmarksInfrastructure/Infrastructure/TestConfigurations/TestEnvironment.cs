@@ -10,6 +10,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         public string HttpPort { get; private set; }
         public string TestScenario { get; private set; }
         public string ClusterType { get; private set; }
+        public string ClusterEndpoints { get; private set; }
+        public string ClusterPort { get; private set; }
 
         public static TestEnvironment GetFromEnvironment(IEnvironmentVariableProvider variableProvider)
         {
@@ -19,6 +21,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             AssertEnvirinmentVariableDefined(variableProvider, "HttpPort");
             AssertEnvirinmentVariableDefined(variableProvider, "ClusterType");
             AssertEnvirinmentVariableDefined(variableProvider, "TestScenario");
+            AssertEnvirinmentVariableDefined(variableProvider, "ClusterEndpoints");
+            AssertEnvirinmentVariableDefined(variableProvider, "ClusterPort");
             return new TestEnvironment
                 {
                     AmountOfThreads = variableProvider.GetValue("AmountOfThreads"),
@@ -27,6 +31,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     HttpPort = variableProvider.GetValue("HttpPort"),
                     ClusterType = variableProvider.GetValue("ClusterType"),
                     TestScenario = variableProvider.GetValue("TestScenario"),
+                    ClusterEndpoints = variableProvider.GetValue("ClusterEndpoints"),
+                    ClusterPort = variableProvider.GetValue("ClusterPort"),
                 };
         }
 
