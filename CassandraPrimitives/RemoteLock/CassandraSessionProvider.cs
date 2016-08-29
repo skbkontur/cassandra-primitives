@@ -60,15 +60,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
                 .AddContactPoints(endpoints)
                 .WithQueryOptions(new QueryOptions().SetConsistencyLevel(consistencyLevel))
                 .WithLoadBalancingPolicy(new RoundRobinPolicy())
-                .WithPoolingOptions(new PoolingOptions()
-                    .SetCoreConnectionsPerHost(HostDistance.Local, 64)
-                    .SetCoreConnectionsPerHost(HostDistance.Remote, 64)
-                    .SetMaxConnectionsPerHost(HostDistance.Local, 64)
-                    .SetMaxConnectionsPerHost(HostDistance.Local, 64)
-                    .SetMaxSimultaneousRequestsPerConnectionTreshold(HostDistance.Local, 32)
-                    .SetMaxSimultaneousRequestsPerConnectionTreshold(HostDistance.Remote, 32)
-                    .SetMinSimultaneousRequestsPerConnectionTreshold(HostDistance.Local, 32)
-                    .SetMinSimultaneousRequestsPerConnectionTreshold(HostDistance.Remote, 32))
                 .Build();
 
             var session = cluster.Connect(keyspaceName);
