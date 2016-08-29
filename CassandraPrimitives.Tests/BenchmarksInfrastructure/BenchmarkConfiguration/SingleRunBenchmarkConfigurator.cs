@@ -7,7 +7,9 @@ using System.Net.Sockets;
 
 using Metrics;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.JmxInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.RemoteTaskRunning;
@@ -147,6 +149,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     wrapperDeployer.DeployWrapperToAgents(cassandraAgents);
                     var cassandraDriver = new CassandraMainDriver(teamCityLogger, cassandraAgents, wrapperDeployer.GetWrapperRelativePath());
                     toDispose.Add(cassandraDriver.StartCassandraCluster(cassandraMetadataProvider));
+                    CassandraSessionProvider.InitOnce(cassandraDriver.ClusterSettings.Endpoints.Select(ep => new IPEndPoint(ep.Address, 9343)).ToArray(), cassandraMetadataProvider.GetColumnFamilies().Single().KeyspaceName);
                     optionsSet["CassandraClusterSettings"] = cassandraDriver.ClusterSettings;
                 }, DeployPriorities.Cluster));
             return this;

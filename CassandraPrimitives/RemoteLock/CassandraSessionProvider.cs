@@ -42,6 +42,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
             }
         }
 
+        public static void InitOnce(IPEndPoint[] endpoints, string keyspaceName)
+        {
+            InitOnce(endpoints, ConsistencyLevel.Quorum, keyspaceName);
+        }
+
         public static ISession Session
         {
             get
