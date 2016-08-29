@@ -166,6 +166,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                         .Builder()
                         .AddContactPoints(clusterSettings.Endpoints.Select(ep => new IPEndPoint(ep.Address, 9042)).ToArray())
                         .WithQueryOptions(new QueryOptions().SetConsistencyLevel(global::Cassandra.ConsistencyLevel.Quorum))
+                        .WithLoadBalancingPolicy(new TokenAwarePolicy(new RoundRobinPolicy()))
                         .WithDefaultKeyspace(cassandraMetadataProvider.GetColumnFamilies().Single().ColumnFamilyName)
                         .Build();
 
