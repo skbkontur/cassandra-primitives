@@ -172,18 +172,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     var session = cluster.ConnectAndCreateDefaultKeyspaceIfNotExists(ReplicationStrategies.CreateSimpleStrategyReplicationProperty(3));
 
                     session.Execute(string.Format("CREATE TABLE IF NOT EXISTS \"{0}\" (", CassandraCqlBaseLockOperationsPerformer.MainTableName) +
-                                        "lock_id text," +
-                                        "threshold text," +
-                                        "thread_id text," +
+                                        "lock_id varchar," +
+                                        "threshold varchar," +
+                                        "thread_id varchar," +
                                         "PRIMARY KEY ((lock_id), threshold, thread_id)" +
                                         ") WITH COMPACT STORAGE;", global::Cassandra.ConsistencyLevel.All);
 
                     session.Execute(string.Format("CREATE TABLE IF NOT EXISTS \"{0}\" (", CassandraCqlBaseLockOperationsPerformer.MetadataTableName) +
-                                        "key text PRIMARY KEY," +
-                                        "lock_row_id text," +
+                                        "key varchar PRIMARY KEY," +
+                                        "lock_row_id varchar," +
                                         "lock_count int," +
                                         "previous_threshold bigint," +
-                                        "probable_owner_thread_id text," +
+                                        "probable_owner_thread_id varchar," +
                                         "timestamp bigint" +
                                         ") WITH COMPACT STORAGE;", global::Cassandra.ConsistencyLevel.All);
 
