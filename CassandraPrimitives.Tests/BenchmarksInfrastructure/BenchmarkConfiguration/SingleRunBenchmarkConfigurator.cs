@@ -152,7 +152,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     wrapperDeployer.DeployWrapperToAgents(cassandraAgents);
                     var cassandraDriver = new CassandraMainDriver(teamCityLogger, cassandraAgents, wrapperDeployer.GetWrapperRelativePath());
                     toDispose.Add(cassandraDriver.StartCassandraCluster(cassandraMetadataProvider));
-                    CassandraSessionProvider.InitOnce(cassandraDriver.ClusterSettings.Endpoints.Select(ep => new IPEndPoint(ep.Address, 9343)).ToArray(), cassandraMetadataProvider.GetColumnFamilies().Single().KeyspaceName);
+                    CassandraSessionProvider.Init(cassandraDriver.ClusterSettings.Endpoints.Select(ep => new IPEndPoint(ep.Address, 9343)).ToArray(), cassandraMetadataProvider.GetColumnFamilies().Single().KeyspaceName);
                     optionsSet["CassandraClusterSettings"] = cassandraDriver.ClusterSettings;
                 }, DeployPriorities.Cluster));
             return this;

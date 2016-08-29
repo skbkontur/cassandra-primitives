@@ -14,9 +14,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
         public CassandraCqlBaseLockOperationsPerformer(IPEndPoint[] endpoints, int cqlPort, CassandraRemoteLockImplementationSettings settings)
         {
             endpoints = endpoints.Select(ep => new IPEndPoint(ep.Address, cqlPort)).ToArray();
-            CassandraSessionProvider.InitOnce(endpoints, ConsistencyLevel.Quorum, settings.ColumnFamilyFullName.KeyspaceName);
-            session = CassandraSessionProvider.Session;
-            preparedStatements = CassandraSessionProvider.PrepareStatements();
+            session = CassandraSessionProvider.Init(endpoints, ConsistencyLevel.Quorum, settings.ColumnFamilyFullName.KeyspaceName);
+            preparedStatements = CassandraSessionProvider.PrepareStatements(session);
             timestampProvider = settings.TimestampProvider;
             lockTtl = settings.LockTtl;
             lockMetadataTtl = settings.LockMetadataTtl;

@@ -7,10 +7,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
 {
     public static class CassandraSessionProvider
     {
-        private static readonly object locker = new object();
-        private static ISession session;
+        //private static readonly object locker = new object();
+        //private static ISession session;
 
-        public static void InitOnce(IPEndPoint[] endpoints, ConsistencyLevel consistencyLevel, string keyspaceName)
+        /*public static void InitOnce(IPEndPoint[] endpoints, ConsistencyLevel consistencyLevel, string keyspaceName)
         {
             lock (locker)
             {
@@ -51,22 +51,53 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
                                         ");", ConsistencyLevel.All);
                 }
             }
-        }
+        }*/
 
-        public static void InitOnce(IPEndPoint[] endpoints, string keyspaceName)
+        public static ISession Init(IPEndPoint[] endpoints, ConsistencyLevel consistencyLevel, string keyspaceName)
         {
-            InitOnce(endpoints, ConsistencyLevel.Quorum, keyspaceName);
+            var cluster = Cluster
+                .Builder()
+                .AddContactPoints(endpoints)
+                .WithQueryOptions(new QueryOptions().SetConsistencyLevel(consistencyLevel))
+                .WithLoadBalancingPolicy(new RoundRobinPolicy())
+                .WithPoolingOptions(new PoolingOptions()
+                    .SetCoreConnectionsPerHost(HostDistance.Local, 64)
+                    .SetCoreConnectionsPerHost(HostDistance.Remote, 64)
+                    .SetMaxConnectionsPerHost(HostDistance.Local, 64)
+                    .SetMaxConnectionsPerHost(HostDistance.Local, 64)
+                    .SetMaxSimultaneousRequestsPerConnectionTreshold(HostDistance.Local, 32)
+                    .SetMaxSimultaneousRequestsPerConnectionTreshold(HostDistance.Remote, 32)
+                    .SetMinSimultaneousRequestsPerConnectionTreshold(HostDistance.Local, 32)
+                    .SetMinSimultaneousRequestsPerConnectionTreshold(HostDistance.Remote, 32))
+                .Build();
+
+            var session = cluster.Connect(keyspaceName);
+
+            session.Execute(string.Format("CREATE TABLE IF NOT EXISTS \"{0}\" (", CassandraCqlBaseLockOperationsPerformer.MainTableName) +
+                                "lock_id text," +
+                                "threshold text," +
+                                "thread_id text," +
+                                "PRIMARY KEY ((lock_id), threshold, thread_id)" +
+                                ");", ConsistencyLevel.All);
+
+            session.Execute(string.Format("CREATE TABLE IF NOT EXISTS \"{0}\" (", CassandraCqlBaseLockOperationsPerformer.MetadataTableName) +
+                                "key text PRIMARY KEY," +
+                                "lock_row_id text," +
+                                "lock_count int," +
+                                "previous_threshold bigint," +
+                                "probable_owner_thread_id text," +
+                                "timestamp bigint" +
+                                ");", ConsistencyLevel.All);
+
+            return session;
         }
 
-        public static ISession Session
+        public static ISession Init(IPEndPoint[] endpoints, string keyspaceName)
         {
-            get
-            {
-                return session;
-            }
+            return Init(endpoints, ConsistencyLevel.Quorum, keyspaceName);
         }
 
-        public static PreparedStatements PrepareStatements()
+        public static PreparedStatements PrepareStatements(ISession session)
         {
             return new PreparedStatements(
                 writeThreadStatement : session.Prepare(string.Format("INSERT INTO \"{0}\" (lock_id, threshold, thread_id) VALUES (:LockId, :Threshold, :ThreadId) USING TIMESTAMP :Timestamp AND TTL :Ttl",
