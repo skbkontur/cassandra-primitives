@@ -51,7 +51,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     .CreateNew(variableProvider, staticRegistryCreatorMethod)
                     .WithAgentProviderFromTeamCity(variableProvider)
                     .WithTeamCityLogger(teamCityLogger)
-                    .WithExistingCassandraCluster(
+                    .WithClusterFromConfiguration(new CassandraMetaProvider())
+                    .WithJmxTrans(JmxGraphitePrefix)
+                    /*.WithExistingCassandraCluster(
                         new CassandraClusterSettings(
                             "test_cluster",
                             new[]
@@ -67,7 +69,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                             Tuple.Create("load01localcat.kontur", 7199),
                             Tuple.Create("load02localcat.kontur", 7199),
                             Tuple.Create("load03localcat.kontur", 7199)
-                        })
+                        })*/
                     .WithSetUpAction(() =>
                         {
                             permissionToStart = false;
