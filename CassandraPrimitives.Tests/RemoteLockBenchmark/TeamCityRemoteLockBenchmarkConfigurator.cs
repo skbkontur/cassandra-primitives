@@ -59,7 +59,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                                 {
                                     new IPEndPoint(IPAddress.Parse("10.33.63.133"), 9160),
                                     new IPEndPoint(IPAddress.Parse("10.33.61.141"), 9160),
-                                    new IPEndPoint(IPAddress.Parse("10.33.62.133"), 9160)
+                                    new IPEndPoint(IPAddress.Parse("10.33.62.136"), 9160)
                                 },
                             new IPEndPoint(IPAddress.Parse("10.33.63.133"), 9160)),
                         new CassandraMetaProvider())

@@ -29,7 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
                     {
                         new IPEndPoint(IPAddress.Parse("10.33.63.133"), 9042),
                         new IPEndPoint(IPAddress.Parse("10.33.61.141"), 9042),
-                        new IPEndPoint(IPAddress.Parse("10.33.62.133"), 9042)
+                        new IPEndPoint(IPAddress.Parse("10.33.62.136"), 9042)
                     }.ToList(),
                 "RemoteLockBenchmark",
                 "CASRemoteLock",
