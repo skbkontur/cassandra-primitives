@@ -18,10 +18,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
             {
                 case ClusterTypes.Cassandra:
                     var cassandraClusterSettings = httpExternalDataGetter.GetCassandraSettings().Result;
-                    getter = () => new CassandraRemoteLockGetter(cassandraClusterSettings);
-                    break;
-                case ClusterTypes.CassandraCas:
-                    cassandraClusterSettings = httpExternalDataGetter.GetCassandraSettings().Result;
                     getter = () => new CassandraCasRemoteLockGetter(cassandraClusterSettings);
                     break;
                 case ClusterTypes.Zookeeper:
@@ -33,8 +29,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 
             }
         }
-
-        private CassandraCasRemoteLockGetter cassandraCasRemoteLockGetter;
 
         public IRemoteLockGetter GetRemoteLockGetter()
         {

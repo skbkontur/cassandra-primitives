@@ -5,7 +5,6 @@
         Cassandra,
         DeployedCassandra,
         Zookeeper,
-        DeployedZookeeper,
-        CassandraCas
+        DeployedZookeeper
     }
 }
