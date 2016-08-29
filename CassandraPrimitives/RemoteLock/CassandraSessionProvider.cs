@@ -20,7 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.RemoteLock
                         .Builder()
                         .AddContactPoints(endpoints)
                         .WithQueryOptions(new QueryOptions().SetConsistencyLevel(consistencyLevel))
-                        .WithLoadBalancingPolicy(new TokenAwarePolicy(new RoundRobinPolicy()))
+                        .WithLoadBalancingPolicy(new RoundRobinPolicy())
                         .Build();
 
                     session = cluster.Connect(keyspaceName);
