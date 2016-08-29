@@ -176,7 +176,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                                         "threshold text," +
                                         "thread_id text," +
                                         "PRIMARY KEY ((lock_id), threshold, thread_id)" +
-                                        ");", global::Cassandra.ConsistencyLevel.All);
+                                        ") WITH COMPACT STORAGE;", global::Cassandra.ConsistencyLevel.All);
 
                     session.Execute(string.Format("CREATE TABLE IF NOT EXISTS \"{0}\" (", CassandraCqlBaseLockOperationsPerformer.MetadataTableName) +
                                         "key text PRIMARY KEY," +
@@ -185,7 +185,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                                         "previous_threshold bigint," +
                                         "probable_owner_thread_id text," +
                                         "timestamp bigint" +
-                                        ");", global::Cassandra.ConsistencyLevel.All);
+                                        ") WITH COMPACT STORAGE;", global::Cassandra.ConsistencyLevel.All);
 
                     /*using (var cassandraCluster = new CassandraCluster(clusterSettings))
                     {
