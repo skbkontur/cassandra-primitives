@@ -49,6 +49,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         public void StartAndWaitForFinish()
         {
             teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Going to run {0} test configuration(s)", testConfigurationsList.Count);
+            var buildInfo = new TeamCityBuildInfo(variableProvider);
             var testOptionsProvider = new TestOptionsProvider(variableProvider);
             for (int testConfigurationInd = 0; testConfigurationInd < testConfigurationsList.Count; testConfigurationInd++)
             {
@@ -57,12 +58,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 for (int testOptionsInd = 0; testOptionsInd < testOptionsList.Count; testOptionsInd++)
                 {
                     var testOptions = testOptionsList[testOptionsInd];
-                    Start(testConfiguration, testConfigurationInd, testOptions, testOptionsInd, testOptionsList.Count);
+                    Start(buildInfo, testConfiguration, testConfigurationInd, testOptions, testOptionsInd, testOptionsList.Count);
                 }
             }
         }
 
-        private void Start(TestConfiguration testConfiguration, int configurationInd, ITestOptions testOptions, int optionsInd, int totalOptionCount)
+        private void Start(TeamCityBuildInfo buildInfo, TestConfiguration testConfiguration, int configurationInd, ITestOptions testOptions, int optionsInd, int totalOptionCount)
         {
             var blockName = string.Format("Configuration - {0}/{1}, options - {2}/{3}", configurationInd + 1, testConfigurationsList.Count, optionsInd + 1, totalOptionCount);
             using (teamCityLogger.MessageBlock(blockName))
@@ -72,7 +73,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 teamCityLogger.WriteMessageFormat(TeamCityMessageSeverity.Normal, "Options:\n{0}", testOptions);
                 var metricsContextName = string.Format("Test configuration - {0}, options set - {1}", configurationInd, optionsInd);
 
-                new AnnotationsPublisher().PublishAnnotation(string.Format("Benchmark start\n\nConfiguration:\n{0}\nOptions:\n{1}", testConfiguration, testOptions), "edi_benchmarks");
+                new AnnotationsPublisher().PublishAnnotation(string.Format("Benchmark start\n\nBuild info:\n{0}\nConfiguration:\n{1}\nOptions:\n{2}", buildInfo, testConfiguration, testOptions), "edi_benchmarks");
 
                 var currentArtifactsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts");
                 var artifactsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts");
