@@ -15,10 +15,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
             switch (configuration.ClusterType)
             {
             case ClusterTypes.Cassandra:
+            case ClusterTypes.DeployedCassandra:
                 var cassandraClusterSettings = httpExternalDataGetter.GetCassandraSettings().Result;
                 getter = () => new CassandraRemoteLockGetter(cassandraClusterSettings);
                 break;
             case ClusterTypes.Zookeeper:
+            case ClusterTypes.DeployedZookeeper:
                 var zookeeperClusterSettings = httpExternalDataGetter.GetZookeeperSettings().Result;
                 getter = () => new ZookeeperRemoteLockGetter(new ZookeeperLockSettings(zookeeperClusterSettings.ConnectionString, "/RemoteLockBenchmark", TimeSpan.FromSeconds(100)));
                 break;

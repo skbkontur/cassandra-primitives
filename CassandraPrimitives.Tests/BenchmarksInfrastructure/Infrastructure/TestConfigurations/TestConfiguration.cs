@@ -15,7 +15,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             int httpPort,
             ClusterTypes clusterType,
             string testScenario,
-            string clusterEndpoints,
+            string[] clusterEndpoints,
             int clusterPort)
         {
             AmountOfThreads = amountOfThreads;
@@ -25,7 +25,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             HttpPort = httpPort;
             ClusterType = clusterType;
             TestScenario = testScenario;
-            ClusterEndpoints = clusterEndpoints.Split('|');
+            ClusterEndpoints = clusterEndpoints;
             ClusterPort = clusterPort;
         }
 
@@ -54,7 +54,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 httpPort,
                 clusterType,
                 testScenario,
-                clusterEndpoints,
+                clusterEndpoints.Split('|'),
                 clusterPort);
         }
 
@@ -89,7 +89,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                                            (int)combination[3],
                                            (ClusterTypes)combination[4],
                                            (string)combination[5],
-                                           clusterEndpoints,
+                                           clusterEndpoints.Split('|'),
                                            clusterPort))
                 .ToList();
         }
@@ -123,7 +123,7 @@ ClusterPort = {8}",
                 HttpPort,
                 ClusterType,
                 TestScenario,
-                ClusterEndpoints,
+                string.Join(", ", ClusterEndpoints),
                 ClusterPort);
         }
     }
