@@ -51,24 +51,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                     .CreateNew(variableProvider, staticRegistryCreatorMethod)
                     .WithAgentProviderFromTeamCity(variableProvider)
                     .WithTeamCityLogger(teamCityLogger)
-                    //.WithClusterFromConfiguration(new CassandraMetaProvider())
-                    .WithExistingCassandraCluster(
-                        new CassandraClusterSettings(
-                            "test_cluster",
-                            new[]
-                                {
-                                    new IPEndPoint(IPAddress.Parse("10.33.63.133"), 9160),
-                                    new IPEndPoint(IPAddress.Parse("10.33.61.141"), 9160),
-                                    new IPEndPoint(IPAddress.Parse("10.33.62.136"), 9160)
-                                },
-                            new IPEndPoint(IPAddress.Parse("10.33.63.133"), 9160)),
-                        new CassandraMetaProvider())
-                    .WithJmxTrans(JmxGraphitePrefix, new[]
-                        {
-                            Tuple.Create("load01localcat.kontur", 7199),
-                            Tuple.Create("load02localcat.kontur", 7199),
-                            Tuple.Create("load03localcat.kontur", 7199)
-                        })
+                    .WithClusterFromConfiguration(new CassandraMetaProvider())
+                    .WithJmxTrans(JmxGraphitePrefix)
                     .WithSetUpAction(() =>
                         {
                             permissionToStart = false;
