@@ -18,5 +18,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.Set
         public int Timeout { get { return 6000; } }
         public int FierceTimeout { get { return 60000; } }
         public TimeSpan? ConnectionIdleTimeout { get { return TimeSpan.FromMinutes(5); } }
+        public bool EnableMetrics { get { return false; } }
     }
 }

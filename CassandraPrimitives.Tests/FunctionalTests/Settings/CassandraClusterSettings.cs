@@ -19,6 +19,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings
         public int Timeout { get; set; }
         public int FierceTimeout { get { return (int)TimeSpan.FromSeconds(10.0).TotalMilliseconds; } }
         public TimeSpan? ConnectionIdleTimeout { get { return TimeSpan.FromMinutes(1.0); } }
+        public bool EnableMetrics { get { return false; } }
 
         public static ICassandraClusterSettings ForNode(CassandraNode node, int attempts = 5, TimeSpan? timeout = null)
         {

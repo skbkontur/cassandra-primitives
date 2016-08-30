@@ -20,6 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
             Timeout = 6000;
             FierceTimeout = 10000;
             ConnectionIdleTimeout = TimeSpan.FromMinutes(1);
+            EnableMetrics = false;
         }
 
         public string ClusterName { get; private set; }
@@ -32,5 +33,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
         public int Timeout { get; private set; }
         public int FierceTimeout { get; private set; }
         public TimeSpan? ConnectionIdleTimeout { get; private set; }
+        public bool EnableMetrics { get; private set; }
     }
 }

@@ -118,12 +118,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWrit
             columnFamilyConnection.BatchDelete(data, timestamp);
         }
 
-        public List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string startColumnName, int count)
-        {
-            BeforeExecuteCommand();
-            return columnFamilyConnection.GetRows(keys, startColumnName, count);
-        }
-
         public List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string[] columnNames)
         {
             BeforeExecuteCommand();
@@ -142,28 +136,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWrit
             return columnFamilyConnection.GetRowsExclusive(keys, exclusiveStartColumnName, count);
         }
 
-        public string[] GetRowsWhere(string exclusiveStartKey, int count, IndexExpression[] conditions, string[] columns)
-        {
-            BeforeExecuteCommand();
-            return columnFamilyConnection.GetRowsWhere(exclusiveStartKey, count, conditions, columns);
-        }
-
-        public string[] GetRowsWithColumnValue(int maximalCount, string key, byte[] value)
-        {
-            BeforeExecuteCommand();
-            return columnFamilyConnection.GetRowsWithColumnValue(maximalCount, key, value);
-        }
-
         public void Truncate()
         {
             BeforeExecuteCommand();
             columnFamilyConnection.Truncate();
-        }
-
-        public Column[] GetColumns(string key, string exclusiveStartColumnName, int count)
-        {
-            BeforeExecuteCommand();
-            return columnFamilyConnection.GetColumns(key, exclusiveStartColumnName, count);
         }
 
         public Column[] GetColumns(string key, string exclusiveStartColumnName, int count, bool reversed)
