@@ -27,6 +27,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
                     RpcAddress = settings.RpcAddress,
                     SeedAddresses = settings.SeedAddresses,
                     ClusterName = settings.ClusterName,
+                    HeapSize = settings.HeapSize
                 };
             return node;
         }

@@ -96,7 +96,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
                     ListenAddress = "127.0.0.1",
                     RpcAddress = "127.0.0.1",
                     SeedAddresses = new[] {"127.0.0.1"},
-                    ClusterName = "test_cluster"
+                    ClusterName = "test_cluster",
+                    HeapSize = "1G"
                 };
         }
 
