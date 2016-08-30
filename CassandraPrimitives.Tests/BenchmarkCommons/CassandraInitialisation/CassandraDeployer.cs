@@ -15,14 +15,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
 
         internal static CassandraNode CreateNodeBySettings(CassandraNodeSettings settings, string deployDirectory)
         {
-            var node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), "2.2"))
+            var node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), "2.2"), deployDirectory)
                 {
                     Name = settings.Name,
                     JmxPort = settings.JmxPort,
                     GossipPort = settings.GossipPort,
                     RpcPort = settings.RpcPort,
                     CqlPort = settings.CqlPort,
-                    DeployDirectory = deployDirectory,
                     ListenAddress = settings.ListenAddress,
                     RpcAddress = settings.RpcAddress,
                     SeedAddresses = settings.SeedAddresses,
