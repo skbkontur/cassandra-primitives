@@ -172,6 +172,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
                     var session = cluster.ConnectAndCreateDefaultKeyspaceIfNotExists(ReplicationStrategies.CreateSimpleStrategyReplicationProperty(3));
 
+                    session.Execute(string.Format("DROP TABLE IF EXISTS \"{0}\";", CassandraCqlBaseLockOperationsPerformer.MainTableName));
+                    session.Execute(string.Format("DROP TABLE IF EXISTS \"{0}\";", CassandraCqlBaseLockOperationsPerformer.MetadataTableName));
+
                     session.Execute(string.Format("CREATE TABLE IF NOT EXISTS \"{0}\" (", CassandraCqlBaseLockOperationsPerformer.MainTableName) +
                                         "lock_id varchar," +
                                         "threshold varchar," +
