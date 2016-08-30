@@ -167,7 +167,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                         .AddContactPoints(clusterSettings.Endpoints.ToArray())
                         .WithQueryOptions(new QueryOptions().SetConsistencyLevel(global::Cassandra.ConsistencyLevel.Quorum))
                         .WithLoadBalancingPolicy(new TokenAwarePolicy(new RoundRobinPolicy()))
-                        .WithDefaultKeyspace(cassandraMetadataProvider.GetColumnFamilies().Single().ColumnFamilyName)
+                        .WithDefaultKeyspace(cassandraMetadataProvider.GetColumnFamilies().Single().KeyspaceName)
                         .Build();
 
                     var session = cluster.ConnectAndCreateDefaultKeyspaceIfNotExists(ReplicationStrategies.CreateSimpleStrategyReplicationProperty(3));
