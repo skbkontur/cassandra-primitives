@@ -64,6 +64,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark
                                 },
                             new IPEndPoint(IPAddress.Parse("10.33.63.133"), 9160)),
                         new CassandraMetaProvider())
+                    .WithJmxTrans(JmxGraphitePrefix, new[]
+                        {
+                            Tuple.Create("load01localcat.kontur", 7199),
+                            Tuple.Create("load02localcat.kontur", 7199),
+                            Tuple.Create("load03localcat.kontur", 7199),
+                        })
                     .WithSetUpAction(() =>
                         {
                             permissionToStart = false;
