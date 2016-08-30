@@ -32,7 +32,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         [TestFixtureSetUp]
         public virtual void TestFixtureSetUp()
         {
-            cassandraClusterSettings = StartSingleCassandraSetUp.Node.CreateSettings();
+            cassandraClusterSettings = SingleCassandraNodeSetUpFixture.Node.CreateSettings();
             var initializerSettings = new CassandraInitializerSettings();
             cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings), new CassandraMetaProvider(), initializerSettings);
             cassandraSchemeActualizer.AddNewColumnFamilies();

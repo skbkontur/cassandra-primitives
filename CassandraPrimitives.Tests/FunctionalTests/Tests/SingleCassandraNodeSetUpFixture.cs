@@ -9,7 +9,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Logging;
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
 {
     [SetUpFixture]
-    public class StartSingleCassandraSetUp
+    public class SingleCassandraNodeSetUpFixture
     {
         [SetUp]
         public static void SetUp()
@@ -17,7 +17,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
             Log4NetConfiguration.InitializeOnce();
             Node = new CassandraNode(
                 Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"2.2"),
-                Path.Combine(FindSolutionRootDirectory(), @"Cassandra2.2"));
+                Path.Combine(FindSolutionRootDirectory(), @"DeployedCassandra"));
             Node.Restart();
         }
 

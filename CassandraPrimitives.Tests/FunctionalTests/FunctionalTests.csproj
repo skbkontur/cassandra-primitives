@@ -93,7 +93,7 @@
     <Compile Include="Tests\RemoteLockTests\RemoteLockerTesterConfig.cs" />
     <Compile Include="Tests\RemoteLockTests\StochasticTimestampProvider.cs" />
     <Compile Include="Tests\RemoteLockTests\TimestampProviderStochasticType.cs" />
-    <Compile Include="Tests\StartSingleCassandraSetUp.cs" />
+    <Compile Include="Tests\SingleCassandraNodeSetUpFixture.cs" />
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositoryConsistencyTest.cs" />
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositoryMultiThread1ShardTest.cs" />
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositoryMultiThread64ShardTest.cs" />

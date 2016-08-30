@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading;
 
 using GroBuf;
@@ -87,7 +86,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
         {
             return new CassandraNode(
                     Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"2.2"),
-                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\Cassandra2.2"));
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"));
         }
 
         private static string FindCassandraTemplateDirectory(string currentDir)
@@ -176,7 +175,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
             }
         }
 
-        private static ICassandraClusterSettings cassandraClusterSettings;
         private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
+
+        private static ICassandraClusterSettings cassandraClusterSettings;
     }
 }
