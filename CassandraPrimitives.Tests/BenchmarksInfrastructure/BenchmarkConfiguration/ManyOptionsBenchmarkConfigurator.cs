@@ -78,7 +78,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                 var currentArtifactsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CurrentArtifacts");
                 var artifactsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Artifacts");
 
-                using (new ArtifactsPublisher(currentArtifactsDir, artifactsDir, string.Format("Config_{0}_Options_{1}", configurationInd, optionsInd)))
+                using (new ArtifactsPublisher(teamCityLogger, currentArtifactsDir, artifactsDir, string.Format("Config_{0}_Options_{1}", configurationInd, optionsInd)))
                 {
                     try
                     {
