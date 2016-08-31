@@ -15,19 +15,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
         public static void SetUp()
         {
             Log4NetConfiguration.InitializeOnce();
-            Node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"2.2"))
-                {
-                    Name = "node_at_9360",
-                    JmxPort = 7399,
-                    GossipPort = 7400,
-                    RpcPort = 9360,
-                    CqlPort = 9343,
-                    DeployDirectory = Path.Combine(FindSolutionRootDirectory(), @"Cassandra2.2"),
-                    ListenAddress = "127.0.0.1",
-                    RpcAddress = "127.0.0.1",
-                    SeedAddresses = new[] {"127.0.0.1"},
-                    ClusterName = "test_cluster"
-                };
+            Node = new CassandraNode(
+                Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"2.2"),
+                Path.Combine(FindSolutionRootDirectory(), @"Cassandra2.2"));
             Node.Restart();
         }
 

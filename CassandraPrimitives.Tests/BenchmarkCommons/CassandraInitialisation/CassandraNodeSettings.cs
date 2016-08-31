@@ -11,7 +11,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
             string listenAddress = null,
             string rpcAddress = null,
             string[] seedAddresses = null,
-            string clusterName = null)
+            string clusterName = null,
+            string heapSize = null)
         {
             Name = name ?? "node_at_9360";
             JmxPort = jmxPort;
@@ -22,6 +23,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
             RpcAddress = rpcAddress ?? "127.0.0.1";
             SeedAddresses = seedAddresses ?? new[] {"127.0.0.1"};
             ClusterName = clusterName ?? "TestCluster";
+            HeapSize = heapSize ?? "8G";
         }
 
         public string Name { get; private set; }
@@ -33,5 +35,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
         public string RpcAddress { get; private set; }
         public string[] SeedAddresses { get; private set; }
         public string ClusterName { get; private set; }
+        public string HeapSize { get; private set; }
     }
 }
