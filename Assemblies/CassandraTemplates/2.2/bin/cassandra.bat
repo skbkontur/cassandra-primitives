@@ -59,8 +59,8 @@ REM ----------------------------------------------------------------------------
 REM JVM Opts we'll use in legacy run or installation
 set JAVA_OPTS=-ea^
  -javaagent:"%CASSANDRA_HOME%\lib\jamm-0.3.0.jar"^
- -Xms8G^
- -Xmx8G^
+ -Xms{{HeapSize}}^
+ -Xmx{{HeapSize}}^
  -XX:+HeapDumpOnOutOfMemoryError^
  -XX:+UseParNewGC^
  -XX:+UseConcMarkSweepGC^
