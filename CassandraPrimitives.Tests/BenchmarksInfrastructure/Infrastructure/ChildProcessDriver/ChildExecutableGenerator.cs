@@ -131,7 +131,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
 
         private static void OnUnhandlingExceptionInChildProcess(object sender, UnhandledExceptionEventArgs e, ILog logger)
         {
-            logger.FatalFormat("Unhandled exception in child process:\n{0}", e);
+            logger.FatalFormat("Unhandled exception in child process:\n{0}", e.ExceptionObject);
         }
     }
 }

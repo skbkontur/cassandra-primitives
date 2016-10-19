@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 
 using Metrics;
 
@@ -32,6 +34,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             this.testOptions = testOptions;
             registryCreator = staticRegistryCreatorMethod;
             this.metricsContext = metricsContext;
+            innerAdditionalJmxHosts = new List<Tuple<string, int>>();
             deploySteps = new List<DeployStep>();
             teamCityLogger = new FakeTeamCityLogger();
             toDispose = new List<IDisposable>();
@@ -114,6 +117,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     var agentNames = agentProvider.GetAllAgentNames();
                     var settingsList = agentNames
                         .Select(name => new JmxSettings(name, name.Split('.').First(), graphitePrefix, 7399))
+                        .Concat(innerAdditionalJmxHosts.Select(host => new JmxSettings(host.Item1, host.Item1.Split('.').First(), graphitePrefix, host.Item2)))
                         .Concat(additionalJmxHosts.Select(host => new JmxSettings(host.Item1, host.Item1.Split('.').First(), graphitePrefix, host.Item2)))
                         .ToList();
                     initialiser.DeployJmxTrans(deployDirectory, settingsList);
@@ -189,8 +193,22 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
             {
             case ClusterTypes.Cassandra:
                 return WithCassandraCluster(cassandraMetadataProvider);
+            case ClusterTypes.DeployedCassandra:
+                innerAdditionalJmxHosts.AddRange(testConfiguration.ClusterEndpoints.Select(ep => Tuple.Create(ep, 7199)));
+                var endpoints = testConfiguration
+                    .ClusterEndpoints
+                    .Select(name => Dns.GetHostAddresses(name).First(addr => addr.AddressFamily == AddressFamily.InterNetwork))
+                    .Select(addr => new IPEndPoint(addr, testConfiguration.ClusterPort)).ToArray();
+                return WithExistingCassandraCluster(new CassandraClusterSettings("name_not_defined", endpoints, endpoints.First()), cassandraMetadataProvider);
             case ClusterTypes.Zookeeper:
                 return WithZookeeperCluster();
+            case ClusterTypes.DeployedZookeeper:
+                innerAdditionalJmxHosts.AddRange(testConfiguration.ClusterEndpoints.Select(ep => Tuple.Create(ep, 7199)));
+                var endpointAddresses = testConfiguration
+                    .ClusterEndpoints
+                    .Select(name => Dns.GetHostAddresses(name).First(addr => addr.AddressFamily == AddressFamily.InterNetwork));
+                var connectionString = string.Join(",", endpointAddresses.Select(addr => addr.ToString() + ":" + testConfiguration.ClusterPort));
+                return WithExistingZookeeperCluster(new ZookeeperClusterSettings(connectionString));
             default:
                 throw new Exception(string.Format("Type of cluster for {0} is unknown", testConfiguration.ClusterType));
             }
@@ -283,6 +301,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         private readonly Func<IScenariosRegistry> registryCreator;
         private readonly ITestOptions testOptions;
         private Action onAllProcessesStarted;
+        private readonly List<Tuple<string, int>> innerAdditionalJmxHosts;
 
         internal class DeployStep
         {

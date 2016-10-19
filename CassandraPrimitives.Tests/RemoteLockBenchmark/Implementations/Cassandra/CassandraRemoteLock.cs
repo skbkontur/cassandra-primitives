@@ -20,6 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 
         public bool TryAcquire(out IDisposable remoteLock)
         {
+            lastCassandraRemoteLock = null;
             var result = remoteLocker.TryGetLock(lockId, out lastCassandraRemoteLock);
             remoteLock = lastCassandraRemoteLock;
             return result;
@@ -27,7 +28,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Impl
 
         public void Release()
         {
-            remoteLocker.Lock(lockId).Dispose();
+            if (lastCassandraRemoteLock != null)
+                lastCassandraRemoteLock.Dispose();
         }
 
         private readonly RemoteLocker remoteLocker;

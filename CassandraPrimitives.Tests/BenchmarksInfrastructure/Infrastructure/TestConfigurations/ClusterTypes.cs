@@ -3,6 +3,8 @@
     public enum ClusterTypes
     {
         Cassandra,
-        Zookeeper
+        DeployedCassandra,
+        Zookeeper,
+        DeployedZookeeper
     }
 }
