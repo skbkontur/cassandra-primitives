@@ -14,7 +14,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
         public SeriesOfLocksTestProgressProcessor(TestConfiguration configuration, SeriesOfLocksTestOptions testOptions, ITeamCityLogger teamCityLogger, MetricsContext metricsContext)
             : base(configuration, teamCityLogger, metricsContext)
         {
-            meter = metricsContext.Meter("Soft locks", new Unit("Locks"));
+            meter = metricsContext.Meter("Soft locks", Unit.Custom("Locks"));
             this.testOptions = testOptions;
         }
 

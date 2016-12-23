@@ -13,7 +13,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark.Scen
         public WaitForLockTestProgressProcessor(TestConfiguration configuration, WaitForLockTestOptions testOptions, ITeamCityLogger teamCityLogger, MetricsContext metricsContext)
             : base(configuration, teamCityLogger, metricsContext)
         {
-            histogram = metricsContext.Histogram("Time waiting for lock", new Unit("ms"));
+            histogram = metricsContext.Histogram("Time waiting for lock", Unit.Custom("ms"));
             this.testOptions = testOptions;
         }
 
