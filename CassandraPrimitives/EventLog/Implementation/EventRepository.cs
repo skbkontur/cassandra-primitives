@@ -63,8 +63,27 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         public IEnumerable<Event> GetEvents(EventInfo exclusiveEventInfo, string[] shards, out EventInfo newExclusiveEventInfoIfEmpty)
         {
-            var events = GetEventsWithUnstableZone(exclusiveEventInfo, shards, out newExclusiveEventInfoIfEmpty);
-            return events.TakeWhile(x => x.StableZone).Select(x => x.Event);
+            var rawEvents = GetEventsWithUnstableZone(exclusiveEventInfo, shards, out newExclusiveEventInfoIfEmpty);
+            var events = rawEvents.TakeWhile(x => x.StableZone).Select(x => x.Event).ToArray();
+
+            if(events.Length != 0)
+            {
+                newExclusiveEventInfoIfEmpty = events.Last().EventInfo;
+            }
+            else if(rawEvents.Any())
+            {
+                var firstUnstableEventInfo = rawEvents.First().Event.EventInfo;
+                if(firstUnstableEventInfo.Ticks - exclusiveEventInfo.Ticks <= 1)
+                {
+                    newExclusiveEventInfoIfEmpty = exclusiveEventInfo;
+                }
+                else
+                {
+                    newExclusiveEventInfoIfEmpty = new EventInfo { Ticks = firstUnstableEventInfo.Ticks - 1, Id = new EventId()};
+                }
+            }
+
+            return events;
         }
 
         public IEnumerable<EventContainer> GetEventsWithUnstableZone(EventInfo exclusiveEventInfo, string[] shards)
