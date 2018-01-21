@@ -8,6 +8,8 @@ FOR %%S IN (CassandraPrimitives, CassandraPrimitives.Tests) DO (
 	FOR /F "tokens=*" %%G IN ('DIR /B /AD /S obj') DO DEL /S /Q "%%G\*.dll" > nul 2> nul
 	FOR /F "tokens=*" %%G IN ('DIR /B /AD /S obj') DO DEL /S /Q "%%G\*.pdb"	> nul 2> nul
 	
+	..\nuget.exe restore
+	
 	c:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe "%%S.sln" /target:Clean;Rebuild /p:Configuration=Release /verbosity:m /p:zip=false
 
 	popd

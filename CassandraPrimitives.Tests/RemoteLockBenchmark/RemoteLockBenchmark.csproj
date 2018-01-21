@@ -47,9 +47,11 @@
     <Reference Include="Catalogue.TeamCity">
       <HintPath>..\..\Assemblies\Catalogue.TeamCtiy\Catalogue.TeamCity.dll</HintPath>
     </Reference>
-    <Reference Include="GroBuf, Version=1.1.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Temp\GroBuf.dll</HintPath>
+    <Reference Include="GrEmit, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GrEmit.2.2.1\lib\net45\GrEmit.dll</HintPath>
+    </Reference>
+    <Reference Include="GroBuf, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GroBuf.1.3.0\lib\net45\GroBuf.dll</HintPath>
     </Reference>
     <Reference Include="Kontur.Logging, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -61,6 +63,9 @@
     </Reference>
     <Reference Include="Metrics">
       <HintPath>..\..\Assemblies\Temp\Metrics.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Reflection, Version=1.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Reflection.1.1.0.0\lib\Mono.Reflection.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -125,7 +130,9 @@
       <Name>SchemeActualizer</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

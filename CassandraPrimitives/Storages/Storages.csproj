@@ -36,11 +36,17 @@
     <Reference Include="Cassandra.CassandraClient">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
-    <Reference Include="GroBuf">
-      <HintPath>..\..\Assemblies\GroBuf.dll</HintPath>
+    <Reference Include="GrEmit, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GrEmit.2.2.1\lib\net45\GrEmit.dll</HintPath>
+    </Reference>
+    <Reference Include="GroBuf, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GroBuf.1.3.0\lib\net45\GroBuf.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations">
       <HintPath>..\..\Assemblies\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Reflection, Version=1.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Reflection.1.1.0.0\lib\Mono.Reflection.dll</HintPath>
     </Reference>
     <Reference Include="MoreLinq">
       <HintPath>..\..\Assemblies\MoreLinq\MoreLinq.dll</HintPath>
@@ -62,6 +68,9 @@
     <Compile Include="PersistentStorages\PersistentBlobStorage.cs" />
     <Compile Include="Primitives\ColumnFamilyFullName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

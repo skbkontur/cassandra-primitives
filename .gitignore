@@ -1,6 +1,8 @@
 *.suo
 *.user
+.vs/
 _ReSharper.*
 /DeployedCassandra
+/CassandraPrimitives*/packages
 /CassandraPrimitives*/**/bin
 /CassandraPrimitives*/**/obj
