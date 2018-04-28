@@ -21,8 +21,11 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Inf
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure.TestConfigurations;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestOptions;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Scenarios.TestProgressProcessors;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 using SKBKontur.Catalogue.TeamCity;
+
+using Vostok.Logging;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.BenchmarkConfiguration
 {
@@ -156,7 +159,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         {
             deploySteps.Add(new DeployStep("Configure cassandra cluster", () =>
                 {
-                    using (var cassandraCluster = new CassandraCluster(clusterSettings))
+                    using (var cassandraCluster = new CassandraCluster(clusterSettings, logger))
                     {
                         var initializerSettings = new CassandraInitializerSettings(0, Math.Min(clusterSettings.Endpoints.Length, 3));
                         var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, cassandraMetadataProvider, initializerSettings);
@@ -302,6 +305,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         private readonly ITestOptions testOptions;
         private Action onAllProcessesStarted;
         private readonly List<Tuple<string, int>> innerAdditionalJmxHosts;
+        private static readonly ILog logger = new Log4NetWrapper(typeof(SingleRunBenchmarkConfigurator));
 
         internal class DeployStep
         {

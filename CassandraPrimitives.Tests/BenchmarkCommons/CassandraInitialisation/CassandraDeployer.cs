@@ -2,6 +2,9 @@ using System;
 using System.IO;
 
 using SKBKontur.Cassandra.ClusterDeployment;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Logging;
+
+using Vostok.Logging;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation
 {
@@ -15,7 +18,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
 
         internal static CassandraNode CreateNodeBySettings(CassandraNodeSettings settings, string deployDirectory)
         {
-            var node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), "2.2"), deployDirectory)
+            var node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), "2.2"), deployDirectory, logger)
                 {
                     Name = settings.Name,
                     JmxPort = settings.JmxPort,
@@ -40,5 +43,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
         }
 
         private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
+        private static readonly ILog logger = new Log4NetWrapper(typeof(CassandraDeployer));
     }
 }
