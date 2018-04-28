@@ -10,7 +10,7 @@ FOR %%S IN (CassandraPrimitives, CassandraPrimitives.Tests) DO (
 	
 	..\nuget.exe restore
 	
-	c:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe "%%S.sln" /target:Clean;Rebuild /p:Configuration=Release /verbosity:m /p:zip=false
+	"C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\MsBuild.exe" "%%S.sln" /target:Clean;Rebuild /p:Configuration=Release /verbosity:m /p:zip=false
 
 	popd
 		if errorlevel 1 goto fail
