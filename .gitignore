@@ -6,3 +6,4 @@ _ReSharper.*
 /CassandraPrimitives*/packages
 /CassandraPrimitives*/**/bin
 /CassandraPrimitives*/**/obj
+/CassandraPrimitives*/.idea
