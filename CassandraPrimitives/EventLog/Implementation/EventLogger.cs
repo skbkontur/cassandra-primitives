@@ -178,7 +178,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                         timeOfSleep += sleepStopwatch.Elapsed;
                     }
                     if(attempt > 1)
-                        logger.Warn(string.Format("Big attempt: attempt = {0}, sleepTime = {1}", attempt, sleepTime));
+                        logger.Warn("Big attempt: attempt = {0}, sleepTime = {1}", attempt, sleepTime);
                 }
             }
             finally
