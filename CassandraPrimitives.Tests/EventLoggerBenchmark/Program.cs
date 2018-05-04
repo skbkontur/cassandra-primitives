@@ -6,8 +6,9 @@ using System.Threading;
 using GroBuf;
 using GroBuf.DataMembersExtracters;
 
+using SkbKontur.Cassandra.Local;
+
 using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.ClusterDeployment;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
@@ -16,11 +17,15 @@ using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.EventContents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.Logging;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.Settings;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 using SKBKontur.Catalogue.TeamCity;
 
 using Vostok.Logging;
+
+using CassandraInitializerSettings = SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.Settings.CassandraInitializerSettings;
+using CassandraMetaProvider = SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.Settings.CassandraMetaProvider;
+using ColumnFamilies = SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.Settings.ColumnFamilies;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
 {
@@ -85,13 +90,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
             return eventRepository;
         }
 
-        private static CassandraNode CreateCassandraNode()
+        private static LocalCassandraNode CreateCassandraNode()
         {
-            return new CassandraNode(
-                Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"2.2"),
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"),
-                logger
-            );
+            return new LocalCassandraNode(
+                Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"v2.2.x"),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"));
         }
 
         private static string FindCassandraTemplateDirectory(string currentDir)
@@ -180,7 +183,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
             }
         }
 
-        private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
+        private const string cassandraTemplates = @"cassandra-local\cassandra";
 
         private static ICassandraClusterSettings cassandraClusterSettings;
         private static readonly ILog logger = new Log4NetWrapper(typeof(Program));

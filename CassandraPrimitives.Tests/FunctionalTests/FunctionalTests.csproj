@@ -37,10 +37,6 @@
     <Reference Include="Cassandra.CassandraClient">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
-    <Reference Include="Cassandra.ClusterDeployment, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Cassandra\Cassandra.ClusterDeployment.dll</HintPath>
-    </Reference>
     <Reference Include="Catalogue.CassandraPrimitives.EventLog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.EventLog.dll</HintPath>
@@ -86,8 +82,12 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\Assemblies\Nunit-2.6.2\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="SkbKontur.Cassandra.Local, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkbKontur.Cassandra.Local.1.0.1\lib\net471\SkbKontur.Cassandra.Local.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
     <Reference Include="Vostok.Logging, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Logging.dll</HintPath>
@@ -95,6 +95,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Settings\LocalCassandraNodeExtensions.cs" />
     <Compile Include="Tests\MinMaxTicksHolderExtensions.cs" />
     <Compile Include="Tests\RemoteLockTests\BasicRemoteLockerTests.cs" />
     <Compile Include="Helpers\MultithreadingTestHelper.cs" />
@@ -114,7 +115,7 @@
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositoryShardTests.cs" />
     <Compile Include="Tests\EventRepositoryTests\BoxEventRepositorySimpleTests.cs" />
     <Compile Include="Logging\Log4netConfiguration.cs" />
-    <Compile Include="Settings\CassandraClusterSettings.cs" />
+    <Compile Include="Settings\SingleNodeCassandraClusterSettings.cs" />
     <Compile Include="Settings\CassandraInitializerSettings.cs" />
     <Compile Include="Settings\ColumnFamilies.cs" />
     <Compile Include="EventContents\BoxEventType.cs" />
@@ -158,6 +159,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

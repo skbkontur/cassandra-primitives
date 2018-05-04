@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading;
 
 using GroboContainer.Infection;
@@ -14,7 +13,6 @@ using MoreLinq;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.ClusterDeployment;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Logging;

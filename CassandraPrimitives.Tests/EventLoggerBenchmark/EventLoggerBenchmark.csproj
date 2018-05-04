@@ -38,10 +38,6 @@
     <Reference Include="Cassandra.CassandraClient">
       <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
-    <Reference Include="Cassandra.ClusterDeployment, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Cassandra\Cassandra.ClusterDeployment.dll</HintPath>
-    </Reference>
     <Reference Include="Catalogue.CassandraPrimitives.EventLog, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.EventLog.dll</HintPath>
@@ -72,8 +68,12 @@
     <Reference Include="Mono.Reflection, Version=1.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Reflection.1.1.0.0\lib\Mono.Reflection.dll</HintPath>
     </Reference>
+    <Reference Include="SkbKontur.Cassandra.Local, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkbKontur.Cassandra.Local.1.0.1\lib\net471\SkbKontur.Cassandra.Local.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
     <Reference Include="Vostok.Logging, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Logging.dll</HintPath>
@@ -95,6 +95,10 @@
     <ProjectReference Include="..\Commons\Commons.csproj">
       <Project>{da4ac27e-eb66-4912-ac1f-5edee4f9fc4d}</Project>
       <Name>Commons</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FunctionalTests\FunctionalTests.csproj">
+      <Project>{141AC881-3536-4978-AD10-9D29B88A2988}</Project>
+      <Name>FunctionalTests</Name>
     </ProjectReference>
     <ProjectReference Include="..\SchemeActualizer\SchemeActualizer.csproj">
       <Project>{8832339B-D3B3-4921-B911-40938C93DFE6}</Project>

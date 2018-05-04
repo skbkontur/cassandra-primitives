@@ -8,7 +8,6 @@ using GroBuf.DataMembersExtracters;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.ClusterDeployment;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;

@@ -1,10 +1,7 @@
 using System;
 using System.IO;
 
-using SKBKontur.Cassandra.ClusterDeployment;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Logging;
-
-using Vostok.Logging;
+using SkbKontur.Cassandra.Local;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation
 {
@@ -16,11 +13,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
             node.Deploy();
         }
 
-        internal static CassandraNode CreateNodeBySettings(CassandraNodeSettings settings, string deployDirectory)
+        internal static LocalCassandraNode CreateNodeBySettings(CassandraNodeSettings settings, string deployDirectory)
         {
-            var node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), "2.2"), deployDirectory, logger)
+            var node = new LocalCassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), "v2.2.x"), deployDirectory)
                 {
-                    Name = settings.Name,
+                    LocalNodeName = settings.Name,
                     JmxPort = settings.JmxPort,
                     GossipPort = settings.GossipPort,
                     RpcPort = settings.RpcPort,
@@ -42,7 +39,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
             return Directory.Exists(cassandraTemplateDirectory) ? cassandraTemplateDirectory : FindCassandraTemplateDirectory(Path.GetDirectoryName(currentDir));
         }
 
-        private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
-        private static readonly ILog logger = new Log4NetWrapper(typeof(CassandraDeployer));
+        private const string cassandraTemplates = @"cassandra-local\cassandra";
     }
 }
