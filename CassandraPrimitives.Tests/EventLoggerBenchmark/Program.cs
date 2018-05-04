@@ -12,12 +12,15 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.EventContents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 using SKBKontur.Catalogue.TeamCity;
+
+using Vostok.Logging;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
 {
@@ -31,7 +34,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
             {
                 cassandraClusterSettings = node.CreateSettings();
                 var initializerSettings = new CassandraInitializerSettings();
-                var cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings), new CassandraMetaProvider(), initializerSettings);
+                var cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings, logger), new CassandraMetaProvider(), initializerSettings);
                 cassandraSchemeActualizer.AddNewColumnFamilies();
                 Log4NetConfiguration.InitializeOnce();
                 var teamCityLogger = new TeamCityLogger(Console.Out);
@@ -68,10 +71,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
         protected static IEventRepository CreateBoxEventRepository(Func<EventId, object, string> calculateShard)
         {
             var serializer = new Serializer(new AllPropertiesExtractor());
-            var cassandraCluster = new CassandraCluster(cassandraClusterSettings);
+            var cassandraCluster = new CassandraCluster(cassandraClusterSettings, logger);
             var eventTypeRegistry = new EventTypeRegistry();
 
-            var factory = new EventRepositoryFactory(serializer, cassandraCluster, eventTypeRegistry);
+            var factory = new EventRepositoryFactory(serializer, cassandraCluster, eventTypeRegistry, logger);
             var eventRepositoryColumnFamilyFullNames = new EventRepositoryColumnFamilyFullNames(
                 ColumnFamilies.ticksHolder,
                 ColumnFamilies.eventLog,
@@ -85,8 +88,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
         private static CassandraNode CreateCassandraNode()
         {
             return new CassandraNode(
-                    Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"2.2"),
-                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"));
+                Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"2.2"),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"),
+                logger
+            );
         }
 
         private static string FindCassandraTemplateDirectory(string currentDir)
@@ -178,5 +183,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.EventLoggerBenchmark
         private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
 
         private static ICassandraClusterSettings cassandraClusterSettings;
+        private static readonly ILog logger = new Log4NetWrapper(typeof(Program));
     }
 }

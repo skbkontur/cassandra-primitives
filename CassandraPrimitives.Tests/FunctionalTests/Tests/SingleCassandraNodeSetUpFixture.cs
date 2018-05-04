@@ -4,7 +4,10 @@ using System.IO;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.ClusterDeployment;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Logging;
+
+using Vostok.Logging;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
 {
@@ -17,7 +20,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
             Log4NetConfiguration.InitializeOnce();
             Node = new CassandraNode(
                 Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"2.2"),
-                Path.Combine(FindSolutionRootDirectory(), @"DeployedCassandra"));
+                Path.Combine(FindSolutionRootDirectory(), @"DeployedCassandra"),
+                logger
+            );
             Node.Restart();
         }
 
@@ -51,5 +56,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
         }
 
         private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
+        private static readonly ILog logger = new Log4NetWrapper(typeof(SingleCassandraNodeSetUpFixture));
     }
 }

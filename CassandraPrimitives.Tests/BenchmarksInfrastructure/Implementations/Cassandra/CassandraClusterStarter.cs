@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Infrastructure;
+using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
+
+using Vostok.Logging;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure.Implementations.Cassandra
 {
@@ -22,7 +25,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
                     cassandraInitialisers.Add(cassandraInitializer);
                     cassandraInitializer.CreateNode(remoteNodeStartInfo.Settings);
                 }
-                using (var cassandraCluster = new CassandraCluster(ClusterSettings))
+                using (var cassandraCluster = new CassandraCluster(ClusterSettings, logger))
                 {
                     var initializerSettings = new CassandraInitializerSettings(0, Math.Min(ClusterSettings.Endpoints.Length, 3));
                     var cassandraSchemeActualizer = new CassandraSchemeActualizer(cassandraCluster, cassandraMetadataProvider, initializerSettings);
@@ -52,5 +55,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarksInfrastructure
         }
 
         private readonly List<ICassandraInitialiser> cassandraInitialisers;
+        private static readonly ILog logger = new Log4NetWrapper(typeof(CassandraClusterStarter));
     }
 }

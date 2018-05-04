@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 using GroBuf;
 
-using log4net;
-
 using MoreLinq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -19,6 +17,9 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
+
+using Vostok.Logging;
+using Vostok.Logging.Extensions;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
@@ -32,7 +33,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             Func<IQueueRaker> createQueueRaker,
             IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository,
             IGlobalTime globalTime,
-            IEventLogProfiler profiler)
+            IEventLogProfiler profiler,
+            ILog logger
+            )
         {
             this.serializer = serializer;
             this.eventLogPointerCreator = eventLogPointerCreator;
@@ -40,6 +43,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             this.eventLoggerAdditionalInfoRepository = eventLoggerAdditionalInfoRepository;
             this.globalTime = globalTime;
             this.profiler = profiler;
+            this.logger = logger;
             columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(eventLogColumnFamily.KeyspaceName, eventLogColumnFamily.ColumnFamilyName);
         }
 
@@ -87,7 +91,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             var finishEventInfo = eventLoggerAdditionalInfoRepository.GetGoodLastEventInfo();
             if(finishEventInfo == null)
             {
-                logger.InfoFormat("FinishEventPointer not found");
+                logger.Info("FinishEventPointer not found");
                 newExclusiveEventInfo = startEventInfo;
                 return new EventStorageElementContainer[0];
             }
@@ -174,7 +178,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                         timeOfSleep += sleepStopwatch.Elapsed;
                     }
                     if(attempt > 1)
-                        logger.Warn(string.Format("Big attempt: attempt = {0}, sleepTime = {1}", attempt, sleepTime));
+                        logger.Warn("Big attempt: attempt = {0}, sleepTime = {1}", attempt, sleepTime);
                 }
             }
             finally
@@ -267,7 +271,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         private const int attemptCount = 20;
 
-        private readonly ILog logger = LogManager.GetLogger(typeof(EventLogger));
+        private readonly ILog logger;
 
         private readonly ISerializer serializer;
         private readonly IEventLogPointerCreator eventLogPointerCreator;

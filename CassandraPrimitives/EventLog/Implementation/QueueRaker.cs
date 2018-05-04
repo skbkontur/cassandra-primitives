@@ -6,14 +6,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using log4net;
-
 using MoreLinq;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils;
+
+using Vostok.Logging;
+using Vostok.Logging.Extensions;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {
@@ -22,11 +23,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         public QueueRaker(
             IEventStorage eventStorage,
             IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository,
-            IEventLogProfiler profiler)
+            IEventLogProfiler profiler,
+            ILog logger
+            )
         {
             this.eventStorage = eventStorage;
             this.eventLoggerAdditionalInfoRepository = eventLoggerAdditionalInfoRepository;
             this.profiler = profiler;
+            this.logger = logger;
             manualResetEventPool = new ManualResetEventPool();
             queue = new Queue<QueueEntry>();
             Start();
@@ -231,6 +235,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         private readonly object lockObject = new object();
         private Thread thread;
         private readonly Queue<QueueEntry> queue;
-        private readonly ILog logger = LogManager.GetLogger(typeof(QueueRaker));
+        private readonly ILog logger;
     }
 }

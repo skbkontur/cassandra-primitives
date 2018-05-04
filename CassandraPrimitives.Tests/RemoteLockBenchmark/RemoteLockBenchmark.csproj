@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark</RootNamespace>
     <AssemblyName>Catalogue.CassandraPrimitives.Tests.RemoteLockBenchmark</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -53,13 +53,16 @@
     <Reference Include="GroBuf, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GroBuf.1.3.0\lib\net45\GroBuf.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
+      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Kontur.Logging, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\ZooKeeper\Kontur.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Temp\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a">
+      <HintPath>..\..\Assemblies\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Metrics">
       <HintPath>..\..\Assemblies\Temp\Metrics.dll</HintPath>
@@ -79,6 +82,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Vostok.Logging, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ZooKeeper.Recipes, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\ZooKeeper\ZooKeeper.Recipes.dll</HintPath>
@@ -124,6 +131,10 @@
     <ProjectReference Include="..\BenchmarksInfrastructure\BenchmarksInfrastructure.csproj">
       <Project>{B5A06976-66ED-420C-8D89-BDCC8647DCAB}</Project>
       <Name>BenchmarksInfrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Commons\Commons.csproj">
+      <Project>{da4ac27e-eb66-4912-ac1f-5edee4f9fc4d}</Project>
+      <Name>Commons</Name>
     </ProjectReference>
     <ProjectReference Include="..\SchemeActualizer\SchemeActualizer.csproj">
       <Project>{8832339B-D3B3-4921-B911-40938C93DFE6}</Project>
