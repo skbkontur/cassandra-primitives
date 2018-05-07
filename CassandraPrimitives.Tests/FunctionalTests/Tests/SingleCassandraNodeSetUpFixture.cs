@@ -16,9 +16,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
         public static void SetUp()
         {
             Log4NetConfiguration.InitializeOnce();
-            Node = new LocalCassandraNode(
-                Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"v2.2.x"),
-                Path.Combine(FindSolutionRootDirectory(), @"DeployedCassandra"));
+            var templateDirectory = Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"v2.2.x");
+            var deployDirectory = Path.Combine(FindSolutionRootDirectory(), @"DeployedCassandra");
+            Node = new LocalCassandraNode(templateDirectory, deployDirectory)
+                {
+                    RpcPort = 9360,
+                    CqlPort = 9343,
+                    JmxPort = 7399,
+                    GossipPort = 7400,
+                };
             Node.Restart();
         }
 
