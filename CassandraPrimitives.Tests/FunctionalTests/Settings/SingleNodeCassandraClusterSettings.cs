@@ -22,7 +22,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings
         public bool AllowNullTimestamp => false;
         public int Attempts { get; set; }
         public int Timeout { get; set; }
-        public int FierceTimeout => (int)TimeSpan.FromSeconds(10.0).TotalMilliseconds;
+        public int FierceTimeout => (int)TimeSpan.FromSeconds(30.0).TotalMilliseconds;
         public TimeSpan? ConnectionIdleTimeout => TimeSpan.FromSeconds(30);
         public bool EnableMetrics => false;
     }
