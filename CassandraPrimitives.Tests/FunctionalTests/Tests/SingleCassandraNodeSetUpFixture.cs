@@ -16,7 +16,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
         public static void SetUp()
         {
             Log4NetConfiguration.InitializeOnce();
-            var templateDirectory = Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"v2.2.x");
+            var templateDirectory = Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"v3.11.x");
             var deployDirectory = Path.Combine(FindSolutionRootDirectory(), @"DeployedCassandra");
             Node = new LocalCassandraNode(templateDirectory, deployDirectory)
                 {
