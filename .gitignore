@@ -3,7 +3,7 @@
 .vs/
 _ReSharper.*
 /DeployedCassandra
-/CassandraPrimitives*/packages
+/packages/*
 /CassandraPrimitives*/**/bin
 /CassandraPrimitives*/**/obj
 /CassandraPrimitives*/.idea
