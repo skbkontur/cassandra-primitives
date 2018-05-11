@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-using SKBKontur.Cassandra.ClusterDeployment;
+using SkbKontur.Cassandra.Local;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.CassandraInitialisation
 {
@@ -10,7 +10,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
     {
         public LocalCassandraInitializer()
         {
-            cassandraNodes = new List<CassandraNode>();
+            cassandraNodes = new List<LocalCassandraNode>();
         }
 
         public void CreateNode(CassandraNodeSettings settings)
@@ -31,6 +31,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.BenchmarkCommons.Cassand
             StopAllNodes();
         }
 
-        private readonly List<CassandraNode> cassandraNodes;
+        private readonly List<LocalCassandraNode> cassandraNodes;
     }
 }
