@@ -83,9 +83,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Metrics, Version=0.2.16.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Metrics.Net\Metrics.dll</HintPath>
+    <Reference Include="Metrics, Version=0.4.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SkbKontur.Metrics.Net.0.4.7\lib\net45\Metrics.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Win32.TaskScheduler, Version=1.9.0.23355, Culture=neutral, PublicKeyToken=0d013ddd5178a2ae, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
