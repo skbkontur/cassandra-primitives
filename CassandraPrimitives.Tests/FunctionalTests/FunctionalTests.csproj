@@ -34,9 +34,6 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cassandra.CassandraClient">
-      <HintPath>..\..\Assemblies\Cassandra\Cassandra.CassandraClient.dll</HintPath>
-    </Reference>
     <Reference Include="Catalogue.CassandraPrimitives.EventLog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Temp\Catalogue.CassandraPrimitives.EventLog.dll</HintPath>
@@ -83,6 +80,9 @@
     </Reference>
     <Reference Include="SkbKontur.Cassandra.Local, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SkbKontur.Cassandra.Local.1.0.7\lib\net471\SkbKontur.Cassandra.Local.dll</HintPath>
+    </Reference>
+    <Reference Include="SkbKontur.Cassandra.ThriftClient, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SkbKontur.Cassandra.ThriftClient.2.0.0-rc2\lib\net471\SkbKontur.Cassandra.ThriftClient.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration">
