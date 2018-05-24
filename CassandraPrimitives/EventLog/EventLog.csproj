@@ -53,6 +53,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\MoreLinq\MoreLinq.dll</HintPath>
     </Reference>
+    <Reference Include="SkbKontur.Cassandra.DistributedLock, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SkbKontur.Cassandra.DistributedLock.2.0.0-rc5\lib\net471\SkbKontur.Cassandra.DistributedLock.dll</HintPath>
+    </Reference>
     <Reference Include="SkbKontur.Cassandra.ThriftClient, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SkbKontur.Cassandra.ThriftClient.2.0.0-rc5\lib\net471\SkbKontur.Cassandra.ThriftClient.dll</HintPath>
     </Reference>
@@ -125,10 +128,6 @@
     <Compile Include="SpecificStorages\ScopedPersistentStorage.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RemoteLock\RemoteLock.csproj">
-      <Project>{24e35ae2-d120-4140-9e18-b9ca614eccb7}</Project>
-      <Name>RemoteLock</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Storages\Storages.csproj">
       <Project>{706372e4-1e69-42a1-b5e5-5ba2a7ebfcca}</Project>
       <Name>Storages</Name>

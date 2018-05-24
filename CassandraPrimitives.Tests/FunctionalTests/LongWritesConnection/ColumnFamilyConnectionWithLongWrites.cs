@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-using GroboContainer.Infection;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
 {
-    [IgnoredImplementation]
     public class ColumnFamilyConnectionWithLongWrites : IColumnFamilyConnection
     {
         public ColumnFamilyConnectionWithLongWrites(IColumnFamilyConnection columnFamilyConnection, ColumnFamilyFullName columnFamilyFullName)

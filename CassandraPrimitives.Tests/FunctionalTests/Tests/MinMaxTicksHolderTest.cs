@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-using GroboContainer.Infection;
-
 using GroBuf;
 using GroBuf.DataMembersExtracters;
 
@@ -121,7 +119,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
         private static readonly ColumnFamilyFullName minTicksColumnFamily = new ColumnFamilyFullName("CassandraPrimitives", "MinMaxTicksHolderTest_MinTicks");
         private static readonly ColumnFamilyFullName maxTicksColumnFamily = new ColumnFamilyFullName("CassandraPrimitives", "MinMaxTicksHolderTest_MaxTicks");
 
-        [IgnoredImplementation]
         private class MinMaxTicksHolderCassandraMetadataProvider : ICassandraMetadataProvider
         {
             public ColumnFamilyFullName[] GetColumnFamilies()

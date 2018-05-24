@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using GroboContainer.Infection;
-
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 using SKBKontur.Cassandra.CassandraClient.Connections;
@@ -12,7 +10,6 @@ using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
 {
-    [IgnoredImplementation]
     public class CatalogueCassandraClusterWithLongWrites : ICassandraCluster
     {
         private readonly ICassandraCluster cluster;

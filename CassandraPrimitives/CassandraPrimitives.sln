@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventLog", "EventLog\EventLog.csproj", "{D4746A3E-7098-4359-A082-EC7A0897D4AB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storages", "Storages\Storages.csproj", "{706372E4-1E69-42A1-B5E5-5BA2A7EBFCCA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteLock", "RemoteLock\RemoteLock.csproj", "{24E35AE2-D120-4140-9E18-B9CA614ECCB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,12 +21,11 @@ Global
 		{706372E4-1E69-42A1-B5E5-5BA2A7EBFCCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{706372E4-1E69-42A1-B5E5-5BA2A7EBFCCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{706372E4-1E69-42A1-B5E5-5BA2A7EBFCCA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{24E35AE2-D120-4140-9E18-B9CA614ECCB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{24E35AE2-D120-4140-9E18-B9CA614ECCB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{24E35AE2-D120-4140-9E18-B9CA614ECCB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{24E35AE2-D120-4140-9E18-B9CA614ECCB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {02376825-292C-404D-8336-0043910D466A}
 	EndGlobalSection
 EndGlobal
