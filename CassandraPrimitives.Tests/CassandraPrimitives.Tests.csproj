@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <TargetFramework>net471</TargetFramework>
+    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
+    <PackageReference Include="NUnit" Version="3.10.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+    <PackageReference Include="SkbKontur.Cassandra.Local" Version="1.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CassandraPrimitives\CassandraPrimitives.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Tests\EventLog\Sharding\Files\dict.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
