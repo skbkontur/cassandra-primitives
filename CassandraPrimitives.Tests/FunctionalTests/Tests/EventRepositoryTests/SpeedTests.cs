@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,7 +10,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 
-using log4net;
+using Vostok.Logging.Extensions;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
@@ -30,7 +30,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             base.TearDown();
         }
 
-        [Test, Ignore]
+        [Test, Ignore("Long running")]
         public void DoTestMultipleRepositoriesMultiThread()
         {
             totalWrittenEvents = 0;
@@ -113,7 +113,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                 {
                     var sw1 = Stopwatch.StartNew();
                     var readEvents = repository.GetEventsWithUnstableZone(exclusiveEventInfo, GetAllShards()).ToList();
-                    logger.InfoFormat("reader: {0} events for {1} ms", readEvents.Count, sw1.ElapsedMilliseconds);
+                    Logger.Instance.Info("reader: {0} events for {1} ms", readEvents.Count, sw1.ElapsedMilliseconds);
                     sw1.Stop();
 
                     foreach(var readEvent in readEvents)
@@ -167,7 +167,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         }
 
         private volatile int totalWrittenEvents;
-        private readonly ILog logger = LogManager.GetLogger(typeof(SpeedTests));
         private IEventRepository eventRepositoryForWrite;
         private IEventRepository eventRepositoryForRead;
         private const int shardsCount = 1;

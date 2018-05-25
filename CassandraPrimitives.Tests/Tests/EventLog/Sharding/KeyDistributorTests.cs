@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -39,7 +39,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Tests.EventLog.Sharding
             const int shardsCount = 10;
             var keyDistributor = KeyDistributor.Create(shardsCount);
             var array = new int[shardsCount];
-            var words = File.ReadAllText(@"EventLog\Sharding\Files\dict.txt").Split('\n', '\r').Where(s => !string.IsNullOrEmpty(s)).ToArray();
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Tests/EventLog/Sharding/Files/dict.txt");
+            var words = File.ReadAllText(path).Split('\n', '\r').Where(s => !string.IsNullOrEmpty(s)).ToArray();
             var sw = Stopwatch.StartNew();
             for(var i = 0; i < words.Length; i++)
             {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,12 +12,9 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
-
-using Vostok.Logging;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
@@ -148,10 +145,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         {
             var serializer = new Serializer(new AllPropertiesExtractor());
             var cassandraSettings = SingleCassandraNodeSetUpFixture.Node.CreateSettings();
-            var cassandraCluster = new CatalogueCassandraClusterWithLongWrites(new CassandraCluster(cassandraSettings, logger), TimeSpan.FromSeconds(timeoutInSeconds));
+            var cassandraCluster = new CatalogueCassandraClusterWithLongWrites(new CassandraCluster(cassandraSettings, Logger.Instance), TimeSpan.FromSeconds(timeoutInSeconds));
             var eventTypeRegistry = new EventTypeRegistry();
 
-            var factory = new EventRepositoryFactory(serializer, cassandraCluster, eventTypeRegistry, logger);
+            var factory = new EventRepositoryFactory(serializer, cassandraCluster, eventTypeRegistry, Logger.Instance);
             var eventRepositoryColumnFamilyFullNames = new EventRepositoryColumnFamilyFullNames(
                 ColumnFamilies.ticksHolder,
                 ColumnFamilies.eventLog,
@@ -164,7 +161,5 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
         private string[] boxIds;
         private Random globalRandom;
-
-        private static readonly ILog logger = new Log4NetWrapper(typeof(BoxEventRepositorySimpleTestsWithLongWrites));
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,29 +15,24 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents.Contents;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Logging;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
-
-using Vostok.Logging;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
     [TestFixture]
     public abstract class BoxEventRepositoryTestBase
     {
-        [TestFixtureSetUp]
-        public virtual void TestFixtureSetUp()
+        [OneTimeSetUp]
+        public void TestFixtureSetUp()
         {
             cassandraClusterSettings = SingleCassandraNodeSetUpFixture.Node.CreateSettings();
             var initializerSettings = new CassandraInitializerSettings();
-            cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings, logger), new CassandraMetaProvider(), initializerSettings);
+            cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings, Logger.Instance), new CassandraMetaProvider(), initializerSettings);
             cassandraSchemeActualizer.AddNewColumnFamilies();
-            Log4NetConfiguration.InitializeOnce();
             globalRandom = new Random(Guid.NewGuid().GetHashCode());
         }
 
@@ -94,10 +89,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         protected virtual IEventRepository CreateBoxEventRepository(Func<EventId, object, string> calculateShard)
         {
             var serializer = new Serializer(new AllPropertiesExtractor());
-            var cassandraCluster = new CassandraCluster(cassandraClusterSettings, logger);
+            var cassandraCluster = new CassandraCluster(cassandraClusterSettings, Logger.Instance);
             var eventTypeRegistry = new EventTypeRegistry();
 
-            var factory = new EventRepositoryFactory(serializer, cassandraCluster, eventTypeRegistry, logger);
+            var factory = new EventRepositoryFactory(serializer, cassandraCluster, eventTypeRegistry, Logger.Instance);
             var eventRepositoryColumnFamilyFullNames = new EventRepositoryColumnFamilyFullNames(
                 ColumnFamilies.ticksHolder,
                 ColumnFamilies.eventLog,
@@ -165,6 +160,5 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         private readonly bool needDetailedComparison = false;
         private Hashtable logHashtable;
         private Random globalRandom;
-        private static readonly ILog logger = new Log4NetWrapper(typeof(BoxEventRepositoryTestBase));
     }
 }

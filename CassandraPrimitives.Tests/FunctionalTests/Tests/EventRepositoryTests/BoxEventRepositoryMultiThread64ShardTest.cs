@@ -1,10 +1,10 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
     public class BoxEventRepositoryMultiThread64ShardTest : BoxEventRepositoryMultiThreadTestBase
     {
-        [Test, Ignore]
+        [Test, Ignore("Long running")]
         public void TestMultiple()
         {
             DoTestMultiple();

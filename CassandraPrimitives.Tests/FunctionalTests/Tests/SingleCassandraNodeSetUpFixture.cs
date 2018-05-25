@@ -1,23 +1,20 @@
-﻿using System;
+using System;
 using System.IO;
 
 using NUnit.Framework;
 
 using SkbKontur.Cassandra.Local;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Logging;
-
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
 {
     [SetUpFixture]
     public class SingleCassandraNodeSetUpFixture
     {
-        [SetUp]
+        [OneTimeSetUp]
         public static void SetUp()
         {
-            Log4NetConfiguration.InitializeOnce();
             var templateDirectory = Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"v3.11.x");
-            var deployDirectory = Path.Combine(FindSolutionRootDirectory(), @"DeployedCassandra");
+            var deployDirectory = Path.Combine(Path.GetTempPath(), "deployed_cassandra_v3.11.x");
             Node = new LocalCassandraNode(templateDirectory, deployDirectory)
                 {
                     RpcPort = 9360,
@@ -28,26 +25,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
             Node.Restart();
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public static void TearDown()
         {
             Node.Stop();
         }
 
         internal static LocalCassandraNode Node { get; private set; }
-
-        private static string FindSolutionRootDirectory()
-        {
-            var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            while(!File.Exists(Path.Combine(currentDirectory, "Common.DotSettings")))
-            {
-                if(Directory.GetParent(currentDirectory) == null)
-                    throw new Exception(string.Format("Cannot find project root directory. Trying to find from: '{0}'", AppDomain.CurrentDomain.BaseDirectory));
-                currentDirectory = Directory.GetParent(currentDirectory).FullName;
-            }
-
-            return currentDirectory;
-        }
 
         private static string FindCassandraTemplateDirectory(string currentDir)
         {
