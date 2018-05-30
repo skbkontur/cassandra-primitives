@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using GroBuf;
 
@@ -12,7 +12,7 @@ using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock.RemoteLocker;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;
 
-using Vostok.Logging;
+using Vostok.Logging.Abstractions;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
 {
