@@ -20,7 +20,6 @@
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" PrivateAssets="All" />
     <PackageReference Include="morelinq" Version="2.10.0" />
     <PackageReference Include="SkbKontur.Cassandra.DistributedLock" Version="2.0.0-rc7" />
-    <PackageReference Include="Vostok.Logging.FileLog" Version="0.0.5" />
   </ItemGroup>
 
 </Project>
