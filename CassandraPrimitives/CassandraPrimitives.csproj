@@ -6,7 +6,7 @@
     <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives</RootNamespace>
     <PackageId>$(AssemblyName)</PackageId>
     <VersionPrefix>2.0.0</VersionPrefix>
-    <Version>$(VersionPrefix)-rc7</Version>
+    <Version>$(VersionPrefix)-rc7.1</Version>
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <Authors>Ivan Burmistrov, Fedor Fominykh, Evgeny Tikhonov</Authors>
     <PackageTags>cassandra event log</PackageTags>
