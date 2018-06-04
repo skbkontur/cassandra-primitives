@@ -28,7 +28,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
             this.serializer = serializer;
             this.cassandraCluster = cassandraCluster;
             this.eventTypeIdentifierProvider = eventTypeIdentifierProvider;
-            this.logger = logger;
+            this.logger = logger.WithContext("CassandraPrimitives.EventLog");
         }
 
         public IEventRepository CreateEventRepository(IShardCalculator shardCalculator, IEventRepositoryColumnFamilyFullNames columnFamilies)
