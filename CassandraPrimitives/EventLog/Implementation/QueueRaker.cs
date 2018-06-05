@@ -198,6 +198,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                     logger.Error(e);
                     foreach(var entry in batch)
                         entry.Completed(TotalFailedEnqueueResult(entry));
+                    if(e is ThreadAbortException)
+                        throw; // workaround for https://github.com/dotnet/coreclr/issues/16122 on net471
                 }
             }
         }
