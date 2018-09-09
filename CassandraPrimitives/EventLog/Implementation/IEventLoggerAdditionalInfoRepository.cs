@@ -6,7 +6,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
     {
         EventInfo GetFirstEventInfo();
         EventInfo GetOrCreateFirstEventInfo(EventInfo eventInfo);
-        
+
         void SetLastEventInfo(EventInfo eventInfo);
         EventInfo GetGoodLastEventInfo();
     }

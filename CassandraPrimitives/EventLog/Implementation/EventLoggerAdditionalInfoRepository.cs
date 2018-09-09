@@ -1,4 +1,4 @@
-﻿using GroBuf;
+using GroBuf;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
@@ -27,20 +27,20 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         public EventInfo GetFirstEventInfo()
         {
-            if(localFirstEventInfo == null)
+            if (localFirstEventInfo == null)
                 throw new EventLoggerNeedInitializationException();
             return localFirstEventInfo;
         }
 
         public EventInfo GetOrCreateFirstEventInfo(EventInfo eventInfo)
         {
-            if(localFirstEventInfo == null)
+            if (localFirstEventInfo == null)
             {
-                var lockId = string.Format("eventLoggerFirstEventWriting_{0}_{1}", eventLogColumnFamily.KeyspaceName, eventLogColumnFamily.ColumnFamilyName);
-                using(remoteLockCreator.Lock(lockId))
+                var lockId = $"eventLoggerFirstEventWriting_{eventLogColumnFamily.KeyspaceName}_{eventLogColumnFamily.ColumnFamilyName}";
+                using (remoteLockCreator.Lock(lockId))
                 {
                     var result = ReadEventInfo(firstEventInfoRow, firstEventInfoColumn);
-                    if(result == null)
+                    if (result == null)
                     {
                         result = eventInfo;
                         WriteEventInfo(eventInfo, firstEventInfoRow, firstEventInfoColumn);
@@ -55,26 +55,26 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         public void SetLastEventInfo(EventInfo eventInfo)
         {
             var needWriting = false;
-            lock(lockObject)
+            lock (lockObject)
             {
-                if(localLastGoodEventInfo.CompareTo(eventInfo) < 0)
+                if (localLastGoodEventInfo.CompareTo(eventInfo) < 0)
                 {
                     localLastGoodEventInfo = eventInfo;
                     needWriting = true;
                 }
             }
-            if(needWriting)
+            if (needWriting)
                 WriteEventInfo(eventInfo, lastGoodEventInfoRow, lastGoodEventInfoColumn);
         }
 
         public EventInfo GetGoodLastEventInfo()
         {
             var globalLastEventInfo = ReadEventInfo(lastGoodEventInfoRow, lastGoodEventInfoColumn);
-            if(globalLastEventInfo == null)
+            if (globalLastEventInfo == null)
                 return localLastGoodEventInfo;
-            lock(lockObject)
+            lock (lockObject)
             {
-                if(localLastGoodEventInfo == null || localLastGoodEventInfo.CompareTo(globalLastEventInfo) < 0)
+                if (localLastGoodEventInfo == null || localLastGoodEventInfo.CompareTo(globalLastEventInfo) < 0)
                     localLastGoodEventInfo = globalLastEventInfo;
             }
             return localLastGoodEventInfo;
@@ -83,7 +83,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         private EventInfo ReadEventInfo(string rowKey, string columnName)
         {
             Column column;
-            if(!columnFamilyConnection.TryGetColumn(rowKey, columnName, out column))
+            if (!columnFamilyConnection.TryGetColumn(rowKey, columnName, out column))
                 return null;
             return serializer.Deserialize<EventInfo>(column.Value);
         }
@@ -100,6 +100,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                     });
         }
 
+        private const string firstEventInfoRow = "firstEvent";
+        private const string firstEventInfoColumn = "firstEventColumn";
+
+        private const string lastGoodEventInfoRow = "lastGoodEvent";
+        private const string lastGoodEventInfoColumn = "lastGoodEventColumn";
+
         private readonly ColumnFamilyFullName eventLogColumnFamily;
         private readonly ISerializer serializer;
         private readonly IRemoteLockCreator remoteLockCreator;
@@ -108,11 +114,5 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         private volatile EventInfo localFirstEventInfo;
         private volatile EventInfo localLastGoodEventInfo;
         private readonly object lockObject = new object();
-
-        private const string firstEventInfoRow = "firstEvent";
-        private const string firstEventInfoColumn = "firstEventColumn";
-        
-        private const string lastGoodEventInfoRow = "lastGoodEvent";
-        private const string lastGoodEventInfoColumn = "lastGoodEventColumn";
     }
 }

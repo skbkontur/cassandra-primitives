@@ -9,7 +9,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
         IEventRepository CreateEventRepository(
             IShardCalculator shardCalculator,
             IEventRepositoryColumnFamilyFullNames columnFamilies);
-        
+
         IEventRepository CreateEventRepository(
             IShardCalculator shardCalculator,
             IEventRepositoryColumnFamilyFullNames columnFamilies,

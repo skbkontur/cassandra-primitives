@@ -37,17 +37,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         public void Dispose()
         {
-            if(wasDisposed)
+            if (wasDisposed)
                 return;
             wasDisposed = true;
             @event.Set();
             thread.Join();
             @event.Dispose();
 
-            lock(lockObject)
+            lock (lockObject)
             {
                 var batch = queue.ToList();
-                foreach(var entry in batch)
+                foreach (var entry in batch)
                     entry.Completed(TotalFailedEnqueueResult(entry));
                 queue.Clear();
             }
@@ -61,14 +61,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         public async Task<ProcessResult> ProcessAsync(EventStorageElement[] events, int priority)
         {
-            if(wasDisposed)
+            if (wasDisposed)
                 throw new CouldNotWriteBoxEventException("This instance of eventLogger was disposed");
             var tcs = new TaskCompletionSource<ProcessResult>();
             var queueEntry = new QueueEntry(tcs, events, priority);
-            lock(lockObject)
+            lock (lockObject)
             {
                 queue.Enqueue(queueEntry);
-                if(queue.Count * runs >= sum && queue.Count >= 10)
+                if (queue.Count * runs >= sum && queue.Count >= 10)
                     @event.Set();
             }
 
@@ -86,7 +86,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         private List<QueueEntry> GetBatchFromQueue()
         {
-            lock(lockObject)
+            lock (lockObject)
             {
                 var result = queue.OrderBy(entry => entry.priority).ToList();
                 queue.Clear();
@@ -96,14 +96,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         private void Rake()
         {
-            while(!wasDisposed)
+            while (!wasDisposed)
             {
                 var stopwatch = Stopwatch.StartNew();
                 @event.WaitOne(1);
                 var batch = GetBatchFromQueue();
                 @event.Reset();
                 var batchCount = batch.Sum(x => x.events.Length);
-                if(batchCount == 0)
+                if (batchCount == 0)
                     continue;
 
                 totalCount++;
@@ -111,7 +111,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 totalEventCount += batchCount;
                 totalEventBatchCount += batch.Count;
                 profiler.BeforeRake(stopwatch.Elapsed, totalEventCount, totalEventBatchCount, batch.Select(x => x.SinceCreateElapsed).ToArray());
-                if(DateTime.Now - outputDateTime > TimeSpan.FromMinutes(1))
+                if (DateTime.Now - outputDateTime > TimeSpan.FromMinutes(1))
                 {
                     logger.Info(GetRakeStatistics());
                     outputDateTime = DateTime.Now;
@@ -133,9 +133,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                     getGoodLastEventInfo1Stopwatch.Stop();
 
                     var index = 0;
-                    foreach(var entry in batch)
+                    foreach (var entry in batch)
                     {
-                        foreach(var e in entry.events)
+                        foreach (var e in entry.events)
                         {
                             e.EventInfo.Ticks = nowTicks + index + entry.priority * 10;
                             index++;
@@ -155,18 +155,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                     var goodEvents = eventsBatch.Where(x => x.EventInfo.Ticks > lastGoodEventInfo.Ticks).ToArray();
 
                     var deleteBadEventsStopwatch = Stopwatch.StartNew();
-                    if(badEvents.Length > 0)
+                    if (badEvents.Length > 0)
                         eventStorage.Delete(badEvents.Select(x => x.EventInfo).ToArray(), nowTicks + 1);
                     deleteBadEventsStopwatch.Stop();
 
                     Stopwatch setLastEventInfoStopwatch = null;
                     Stopwatch setEventsGoodStopwatch = null;
-                    if(goodEvents.Length > 0)
+                    if (goodEvents.Length > 0)
                     {
                         var lastEventInfoFromCurrentBatch = eventsBatch.MaxBy(x => x.EventInfo.Ticks).First().EventInfo;
 
                         setLastEventInfoStopwatch = Stopwatch.StartNew();
-                        if(lastEventInfoFromCurrentBatch.Ticks > lastGoodEventInfo.Ticks)
+                        if (lastEventInfoFromCurrentBatch.Ticks > lastGoodEventInfo.Ticks)
                             eventLoggerAdditionalInfoRepository.SetLastEventInfo(lastEventInfoFromCurrentBatch);
                         setLastEventInfoStopwatch.Stop();
 
@@ -175,7 +175,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                         setEventsGoodStopwatch.Stop();
                     }
 
-                    foreach(var entry in batch)
+                    foreach (var entry in batch)
                     {
                         var enqueueResult = new ProcessResult(
                             entry.events.Where(x => x.EventInfo.Ticks > lastGoodEventInfo.Ticks).Select(x => x.EventInfo).ToArray(),
@@ -192,12 +192,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                         GetElapsed(setLastEventInfoStopwatch),
                         GetElapsed(setEventsGoodStopwatch));
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     logger.Error(e);
-                    foreach(var entry in batch)
+                    foreach (var entry in batch)
                         entry.Completed(TotalFailedEnqueueResult(entry));
-                    if(e is ThreadAbortException)
+                    if (e is ThreadAbortException)
                         throw; // workaround for https://github.com/dotnet/coreclr/issues/16122 on net471
                 }
             }

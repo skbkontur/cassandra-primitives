@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -36,7 +36,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
             var writeThreads = new List<Thread>();
             var writtenEventsByThread = new List<Event>[count];
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
                 var currentList = writtenEventsByThread[i] = new List<Event>();
                 var idx = i;
@@ -46,7 +46,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
             var readThreads = new List<Thread>();
             var readEventsByThread = new SortedSet<Event>[count];
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
                 var currentSet = readEventsByThread[i] = new SortedSet<Event>(new EventComparer());
                 var idx = i;
@@ -56,26 +56,26 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
             var watch = Stopwatch.StartNew();
             watch.Start();
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
                 writeThreads[i].Start();
                 readThreads[i].Start();
             }
 
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
                 writeThreads[i].Join();
 
             var elapsed = watch.Elapsed;
             Console.WriteLine(elapsed.TotalMilliseconds);
             totalWrittenEvents = writtenEventsByThread.Sum(x => x.Count);
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
                 readThreads[i].Join();
             watch.Stop();
             Console.WriteLine(watch.ElapsedMilliseconds);
 
             var actualBoxEvents = globalEventRepository.GetEvents(null, GetAllShards()).ToArray();
             CheckEqualEvents(writtenEventsByThread, actualBoxEvents);
-            for(var i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 var readEvents = readEventsByThread[i];
                 var writtenEvents = writtenEventsByThread[i];
@@ -88,14 +88,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         {
             const int numberOfRepositories = 5;
             var boxEventRepositories = new List<IEventRepository>();
-            for(var i = 0; i < numberOfRepositories; ++i)
+            for (var i = 0; i < numberOfRepositories; ++i)
                 boxEventRepositories.Add(CreateBoxEventRepository());
             totalWrittenEvents = 0;
             const int count = 20;
 
             var writeThreads = new List<Thread>();
             var writtenEventsByThread = new List<Event>[count];
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
                 var currentList = writtenEventsByThread[i] = new List<Event>();
                 var idx = i;
@@ -105,7 +105,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
             var readThreads = new List<Thread>();
             var readEventsByThread = new SortedSet<Event>[count];
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
                 var currentList = readEventsByThread[i] = new SortedSet<Event>(new EventComparer());
                 var idx = i;
@@ -115,19 +115,19 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
             var watch = Stopwatch.StartNew();
             watch.Start();
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
                 writeThreads[i].Start();
                 readThreads[i].Start();
             }
 
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
                 writeThreads[i].Join();
 
             var elapsed = watch.Elapsed;
             Console.WriteLine(elapsed.TotalMilliseconds);
             totalWrittenEvents = writtenEventsByThread.Sum(x => x.Count);
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
                 readThreads[i].Join();
             watch.Stop();
             Console.WriteLine(watch.ElapsedMilliseconds);
@@ -135,14 +135,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             var actualBoxEvents = globalEventRepository.GetEvents(null, GetAllShards()).ToArray();
             LogEventBatch("allEvents", actualBoxEvents);
             CheckEqualEvents(writtenEventsByThread, actualBoxEvents);
-            for(var i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 var readEvents = readEventsByThread[i];
                 var writtenEvents = writtenEventsByThread[i];
                 CheckEqualEvents(writtenEvents.ToArray(), readEvents.ToArray());
             }
 
-            foreach(var eventRepository in boxEventRepositories)
+            foreach (var eventRepository in boxEventRepositories)
                 eventRepository.Dispose();
         }
 
@@ -152,13 +152,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         {
             try
             {
-                for(var i = 0; i < 1000; ++i)
+                for (var i = 0; i < 1000; ++i)
                 {
                     string scopeId;
                     do
                     {
                         scopeId = Guid.NewGuid().ToString();
-                    } while(!shards.Contains(CalculateShard(scopeId)));
+                    } while (!shards.Contains(CalculateShard(scopeId)));
 
                     var eventContent = GenerateEventContent();
                     var eventInfo = repository.AddEvent(scopeId, eventContent);
@@ -171,7 +171,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                     LogEventBatch("ThreadWriter" + threadId.ToString("D2"), new[] {eventInfo});
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("Throws exception " + e.GetType().Name + ". " + e.Message + Environment.NewLine + e.StackTrace);
                 throw;
@@ -185,27 +185,27 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             {
                 var random = new Random(Guid.NewGuid().GetHashCode());
                 EventInfo exclusiveStartEventInfo = null;
-                while(true)
+                while (true)
                 {
                     var readEvents = repository.GetEventsWithUnstableZone(exclusiveStartEventInfo, shards).ToList();
                     var stableZone = readEvents.TakeWhile(x => x.StableZone).ToList();
                     exclusiveStartEventInfo = stableZone.Select(x => x.Event.EventInfo).LastOrDefault() ?? exclusiveStartEventInfo;
-                    foreach(var readEvent in stableZone)
+                    foreach (var readEvent in stableZone)
                         result.Add(readEvent.Event);
 
                     var exclusiveId = exclusiveStartEventInfo == null ? "null" : exclusiveStartEventInfo.Id.ScopeId + "_" + exclusiveStartEventInfo.Id.Id;
                     LogEventBatch("ThreadReader" + threadId.ToString("D2"), stableZone.Select(x => x.Event).ToArray(), "readEventsFrom: " + exclusiveId);
 
-                    if(result.Count > 1000)
-                        throw new Exception(string.Format("BUG {0} > 1000", result.Count));
-                    if(totalWrittenEvents != 0 && result.Count == 1000)
+                    if (result.Count > 1000)
+                        throw new Exception($"BUG {result.Count} > 1000");
+                    if (totalWrittenEvents != 0 && result.Count == 1000)
                         return;
                     Thread.Sleep(random.Next(100));
-                    if(sw.ElapsedMilliseconds > 480000)
-                        throw new Exception(string.Format("Expected {0} but was {1}", totalWrittenEvents, result.Count));
+                    if (sw.ElapsedMilliseconds > 480000)
+                        throw new Exception($"Expected {totalWrittenEvents} but was {result.Count}");
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("ThreadReader #" + threadId + " failed. Throws exception " + e.GetType().Name + ". " + e.Message + Environment.NewLine + e.StackTrace);
                 throw;
@@ -218,7 +218,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             var l = len * idx;
             var r = idx == count - 1 ? ShardsCount : len * (idx + 1);
             var list = new List<string>();
-            for(var i = l; i < r; i++)
+            for (var i = l; i < r; i++)
                 list.Add(i.ToString());
             return list.ToArray();
         }

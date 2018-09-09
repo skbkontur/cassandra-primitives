@@ -26,11 +26,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             boxIds = new[] {Guid.NewGuid().ToString(), Guid.NewGuid().ToString()};
             globalRandom = new Random(Guid.NewGuid().GetHashCode());
 
-            using(var eventRepository = CreateBoxEventRepository((id, obj) => commonShard, 1))
+            using (var eventRepository = CreateBoxEventRepository((id, obj) => commonShard, 1))
             {
                 var expectedEvents = new List<Event>();
                 const int count = 1;
-                for(var i = 0; i < count; ++i)
+                for (var i = 0; i < count; ++i)
                 {
                     var scopeId = GenerateScopeId();
                     var eventContent = GenerateEventContent();
@@ -38,16 +38,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                     Assert.AreEqual(scopeId, eventInfo.Id.ScopeId);
 
                     expectedEvents.Add(new Event
-                                           {
-                                               EventInfo = eventInfo,
-                                               EventContent = eventContent,
-                                           });
+                        {
+                            EventInfo = eventInfo,
+                            EventContent = eventContent,
+                        });
                 }
 
                 var actualEvents = eventRepository.GetEvents(null, new[] {commonShard}).ToArray();
                 CheckEqualEvents(expectedEvents.ToArray(), actualEvents);
 
-                for(var i = 0; i < expectedEvents.Count; ++i)
+                for (var i = 0; i < expectedEvents.Count; ++i)
                 {
                     actualEvents = eventRepository.GetEvents(expectedEvents[i].EventInfo, new[] {commonShard}).ToArray();
                     CheckEqualEvents(expectedEvents.Skip(i + 1).ToArray(), actualEvents);
@@ -61,11 +61,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             boxIds = new[] {Guid.NewGuid().ToString(), Guid.NewGuid().ToString()};
             globalRandom = new Random(Guid.NewGuid().GetHashCode());
 
-            using(var eventRepository = CreateBoxEventRepository((id, obj) => commonShard, 0))
+            using (var eventRepository = CreateBoxEventRepository((id, obj) => commonShard, 0))
             {
                 var expectedEvents = new List<Event>();
                 const int count = 30;
-                for(var i = 0; i < count; ++i)
+                for (var i = 0; i < count; ++i)
                 {
                     Console.WriteLine("Start write event {0}", i);
                     var scopeId = GenerateScopeId();
@@ -74,16 +74,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                     Assert.AreEqual(scopeId, eventInfo.Id.ScopeId);
 
                     expectedEvents.Add(new Event
-                                           {
-                                               EventInfo = eventInfo,
-                                               EventContent = eventContent,
-                                           });
+                        {
+                            EventInfo = eventInfo,
+                            EventContent = eventContent,
+                        });
                 }
 
                 Console.WriteLine("Get events: all.");
                 var actualEvents = eventRepository.GetEvents(null, new[] {commonShard}).ToArray();
                 CheckEqualEvents(expectedEvents.ToArray(), actualEvents);
-                for(var i = 0; i < expectedEvents.Count; ++i)
+                for (var i = 0; i < expectedEvents.Count; ++i)
                 {
                     Console.WriteLine("Get events: from {0}.", i);
                     actualEvents = eventRepository.GetEvents(expectedEvents[i].EventInfo, new[] {commonShard}).ToArray();
@@ -98,15 +98,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             boxIds = new[] {Guid.NewGuid().ToString(), Guid.NewGuid().ToString()};
             globalRandom = new Random(Guid.NewGuid().GetHashCode());
 
-            using(var eventRepository = CreateBoxEventRepository((eventId, obj) =>
-                                                                     {
-                                                                         var keyDistributor = new KeyDistributor(64);
-                                                                         return keyDistributor.Distribute(eventId.ScopeId).ToString();
-                                                                     }, 0))
+            using (var eventRepository = CreateBoxEventRepository((eventId, obj) =>
+                {
+                    var keyDistributor = new KeyDistributor(64);
+                    return keyDistributor.Distribute(eventId.ScopeId).ToString();
+                }, 0))
             {
                 var expectedEvents = new List<Event>();
                 const int count = 30;
-                for(var i = 0; i < count; ++i)
+                for (var i = 0; i < count; ++i)
                 {
                     Console.WriteLine("Start write event {0}", i);
                     var scopeId = GenerateScopeId();
@@ -115,17 +115,17 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                     Assert.AreEqual(scopeId, eventInfo.Id.ScopeId);
 
                     expectedEvents.Add(new Event
-                                           {
-                                               EventInfo = eventInfo,
-                                               EventContent = eventContent,
-                                           });
+                        {
+                            EventInfo = eventInfo,
+                            EventContent = eventContent,
+                        });
                 }
 
                 var shards = new string[64].Select((x, idx) => (idx.ToString())).ToArray();
                 Console.WriteLine("Get events: all.");
                 var actualEvents = eventRepository.GetEvents(null, shards).ToArray();
                 CheckEqualEvents(expectedEvents.ToArray(), actualEvents);
-                for(var i = 0; i < expectedEvents.Count; ++i)
+                for (var i = 0; i < expectedEvents.Count; ++i)
                 {
                     Console.WriteLine("Get events: from {0}.", i);
                     actualEvents = eventRepository.GetEvents(expectedEvents[i].EventInfo, shards).ToArray();

@@ -21,7 +21,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder
         public long? GetMinTicks([NotNull] string key)
         {
             Column column;
-            if(!minTicksConnection.TryGetColumn(key, ticksColumnName, out column))
+            if (!minTicksConnection.TryGetColumn(key, ticksColumnName, out column))
                 return null;
             return long.MaxValue - serializer.Deserialize<long>(column.Value);
         }
@@ -29,7 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder
         public void UpdateMinTicks([NotNull] string key, long ticks)
         {
             long minTicks;
-            if(persistedMinTicks.TryGetValue(key, out minTicks) && ticks >= minTicks)
+            if (persistedMinTicks.TryGetValue(key, out minTicks) && ticks >= minTicks)
                 return;
             minTicksConnection.AddColumn(key, new Column
                 {

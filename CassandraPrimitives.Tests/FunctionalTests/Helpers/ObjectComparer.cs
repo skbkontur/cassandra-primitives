@@ -19,9 +19,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers
         public static void AssertArrayEqualsTo<T>(this T[] actual, T[] expected, Action<T> beforeAssertAction = null)
         {
             Assert.AreEqual(expected.Length, actual.Length);
-            for(var i = 0; i < expected.Length; i++)
+            for (var i = 0; i < expected.Length; i++)
             {
-                if(beforeAssertAction != null)
+                if (beforeAssertAction != null)
                 {
                     beforeAssertAction(expected[i]);
                     beforeAssertAction(actual[i]);

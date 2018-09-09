@@ -86,7 +86,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
             var valuesByThread = values.Batch(countPerThread, Enumerable.ToArray).ToArray();
             var threads = new List<Thread>();
             var startSignal = new ManualResetEvent(false);
-            for(var i = 0; i < threadsCount; i++)
+            for (var i = 0; i < threadsCount; i++)
             {
                 var threadIndex = i;
                 var thread = new Thread(() =>
@@ -94,7 +94,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
                         startSignal.WaitOne();
                         var minTicksHolder = threadIndex % 2 == 0 ? minTicksHolder1 : minTicksHolder2;
                         var maxTicksHolder = threadIndex % 2 == 0 ? maxTicksHolder1 : maxTicksHolder2;
-                        foreach(var value in valuesByThread[threadIndex])
+                        foreach (var value in valuesByThread[threadIndex])
                         {
                             minTicksHolder.UpdateMinTicks(key, value);
                             maxTicksHolder.UpdateMaxTicks(key, value);

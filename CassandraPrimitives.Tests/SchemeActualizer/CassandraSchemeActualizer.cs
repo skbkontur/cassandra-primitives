@@ -25,9 +25,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer
         public void TruncateAllColumnFamilies()
         {
             var keyspaces = GetKeyspacesFromCassandra();
-            foreach(var keyspace in keyspaces)
+            foreach (var keyspace in keyspaces)
             {
-                foreach(var columnFamily in keyspace.ColumnFamilies.Values)
+                foreach (var columnFamily in keyspace.ColumnFamilies.Values)
                     cassandraCluster.RetrieveColumnFamilyConnection(keyspace.Name, columnFamily.Name).Truncate();
             }
         }
@@ -40,9 +40,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer
         public void DropDatabase()
         {
             var keyspaces = GetKeyspacesFromCassandra();
-            foreach(var keyspace in keyspaces)
+            foreach (var keyspace in keyspaces)
             {
-                foreach(var columnFamily in keyspace.ColumnFamilies)
+                foreach (var columnFamily in keyspace.ColumnFamilies)
                     cassandraCluster.RetrieveColumnFamilyConnection(keyspace.Name, columnFamily.Key).Truncate();
             }
         }

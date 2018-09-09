@@ -12,9 +12,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWrit
 {
     public class CatalogueCassandraClusterWithLongWrites : ICassandraCluster
     {
-        private readonly ICassandraCluster cluster;
-        private readonly TimeSpan columnFamilyConnectionTimeout;
-
         public CatalogueCassandraClusterWithLongWrites(ICassandraCluster cluster, TimeSpan columnFamilyConnectionTimeout)
         {
             this.cluster = cluster;
@@ -38,7 +35,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWrit
 
         public IColumnFamilyConnection RetrieveColumnFamilyConnection(string keyspace, string columnFamily)
         {
-            return new ColumnFamilyConnectionWithLongWrites(cluster.RetrieveColumnFamilyConnection(keyspace, columnFamily), new ColumnFamilyFullName(keyspace, columnFamily), columnFamilyConnectionTimeout); 
+            return new ColumnFamilyConnectionWithLongWrites(cluster.RetrieveColumnFamilyConnection(keyspace, columnFamily), new ColumnFamilyFullName(keyspace, columnFamily), columnFamilyConnectionTimeout);
         }
 
         public IColumnFamilyConnectionImplementation RetrieveColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)
@@ -55,5 +52,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWrit
         {
             cluster.ActualizeKeyspaces(keyspaces, eventListener, changeExistingKeyspaceMetadata);
         }
+
+        private readonly ICassandraCluster cluster;
+        private readonly TimeSpan columnFamilyConnectionTimeout;
     }
 }

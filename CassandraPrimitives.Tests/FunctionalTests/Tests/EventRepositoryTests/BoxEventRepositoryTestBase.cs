@@ -42,9 +42,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             cassandraSchemeActualizer.TruncateAllColumnFamilies();
             stopwatch = Stopwatch.StartNew();
             logDirectory = Guid.NewGuid().ToString();
-            if(needLog)
+            if (needLog)
             {
-                if(!Directory.Exists(logDirectory))
+                if (!Directory.Exists(logDirectory))
                     Directory.CreateDirectory(logDirectory);
                 Console.WriteLine("Reader logs path: {0}", logDirectory);
                 logHashtable = new Hashtable();
@@ -60,13 +60,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
         protected void LogEventBatch(string fileName, Event[] events, string comment = null)
         {
-            if(needLog)
+            if (needLog)
                 LogEventBatch(fileName, events.Select(x => x.EventInfo).ToArray(), comment);
         }
 
         protected void LogEventBatch(string fileName, EventInfo[] eventInfos, string comment = null)
         {
-            if(needLog)
+            if (needLog)
             {
                 var eventTexts = eventInfos.Select(x => string.Format("{2:D20}. ScopeId={0} Id={1}", x.Id.ScopeId, x.Id.Id, x.Ticks)).ToArray();
                 var title = string.IsNullOrEmpty(comment) ? "" : comment + "\n";
@@ -74,11 +74,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                 var filePath = Path.Combine(logDirectory, fileName + ".txt");
                 var text = title + string.Join("\n", eventTexts) + "\n\n";
 
-                if(!logHashtable.ContainsKey(filePath) || ((int)logHashtable[filePath] != text.GetHashCode()))
+                if (!logHashtable.ContainsKey(filePath) || ((int)logHashtable[filePath] != text.GetHashCode()))
                 {
                     File.AppendAllText(filePath, text);
 
-                    lock(logLockObject)
+                    lock (logLockObject)
                     {
                         logHashtable[filePath] = text.GetHashCode();
                     }
@@ -108,21 +108,21 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             object eventContent;
             switch (globalRandom.Next(3))
             {
-                case 0:
-                    {
-                        eventContent = new OutboxRawMessageEventContent { EntityId = Guid.NewGuid().ToString() };
-                        break;
-                    }
-                case 1:
-                    {
-                        eventContent = new InboxRawMessageEventContent { EntityId = Guid.NewGuid().ToString() };
-                        break;
-                    }
-                default:
-                    {
-                        eventContent = new SentEventContent { EntityId = Guid.NewGuid().ToString(), TransportType = "AS2" };
-                        break;
-                    }
+            case 0:
+                {
+                    eventContent = new OutboxRawMessageEventContent {EntityId = Guid.NewGuid().ToString()};
+                    break;
+                }
+            case 1:
+                {
+                    eventContent = new InboxRawMessageEventContent {EntityId = Guid.NewGuid().ToString()};
+                    break;
+                }
+            default:
+                {
+                    eventContent = new SentEventContent {EntityId = Guid.NewGuid().ToString(), TransportType = "AS2"};
+                    break;
+                }
             }
             return eventContent;
         }
@@ -130,7 +130,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         protected void CheckEqualEvents(Event[] expectedEvents, Event[] actualEvents)
         {
             Assert.AreEqual(expectedEvents.Length, actualEvents.Length);
-            if(needDetailedComparison)
+            if (needDetailedComparison)
                 actualEvents.AssertArrayEqualsTo(expectedEvents);
             else
                 actualEvents.AssertEqualsToUsingGrobuf(expectedEvents);

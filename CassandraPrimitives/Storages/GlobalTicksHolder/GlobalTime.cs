@@ -20,7 +20,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder
             return Math.Max(ticksHolder.GetMaxTicks(globalTicksName), DateTime.UtcNow.Ticks);
         }
 
-        private readonly ITicksHolder ticksHolder;
         private const string globalTicksName = "GlobalTicks";
+
+        private readonly ITicksHolder ticksHolder;
     }
 }

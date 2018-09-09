@@ -49,9 +49,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         public void Dispose()
         {
             wasDisposed = true;
-            lock(lockObject)
+            lock (lockObject)
             {
-                if(wasInitialized)
+                if (wasInitialized)
                     queueRaker.Dispose();
             }
         }
@@ -61,7 +61,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             InitializeOnce();
             var eventBatches = events.Batch(1000).Select(x => x.ToArray());
             var eventInfos = new List<EventInfo>();
-            foreach(var eventBatch in eventBatches)
+            foreach (var eventBatch in eventBatches)
             {
                 //todo maybe in parallel ??
                 var writeBatch = await WriteBatchAsync(eventBatch).ConfigureAwait(false);
@@ -81,14 +81,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         public IEnumerable<EventStorageElementContainer> ReadEventsWithUnstableZone(EventInfo startEventInfo, string[] shards, out EventInfo newExclusiveEventInfo)
         {
             InitializeOnce();
-            if(shards == null || shards.Length == 0)
+            if (shards == null || shards.Length == 0)
                 throw new ShardsArrayIsEmptyException();
 
-            if(startEventInfo == null)
+            if (startEventInfo == null)
                 startEventInfo = eventLoggerAdditionalInfoRepository.GetFirstEventInfo();
 
             var finishEventInfo = eventLoggerAdditionalInfoRepository.GetGoodLastEventInfo();
-            if(finishEventInfo == null)
+            if (finishEventInfo == null)
             {
                 logger.Info("FinishEventPointer not found");
                 newExclusiveEventInfo = startEventInfo;
@@ -98,17 +98,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             return ReadEventsWithUnstableZone(startEventInfo, finishEventInfo, shards);
         }
 
-
         private IEnumerable<EventStorageElementContainer> ReadEventsWithUnstableZone(EventInfo startEventInfo, EventInfo finishEventInfo, string[] shards)
         {
             var eventRecords = InnerReadEvents(startEventInfo, finishEventInfo, shards, 1000);
             var stableZone = true;
-            foreach(var eventLogRecord in eventRecords)
+            foreach (var eventLogRecord in eventRecords)
             {
-                if(eventLogRecord.StorageElement.EventInfo.Ticks > finishEventInfo.Ticks)
+                if (eventLogRecord.StorageElement.EventInfo.Ticks > finishEventInfo.Ticks)
                     yield break;
 
-                if(eventLogRecord.IsBad)
+                if (eventLogRecord.IsBad)
                     stableZone = false;
 
                 yield return new EventStorageElementContainer
@@ -121,13 +120,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         private void InitializeOnce()
         {
-            if(!wasInitialized)
+            if (!wasInitialized)
             {
-                lock(lockObject)
+                lock (lockObject)
                 {
-                    if(wasDisposed)
+                    if (wasDisposed)
                         throw new EventLoggerWasDisposedException();
-                    if(!wasInitialized)
+                    if (!wasInitialized)
                     {
                         var nowTicks = globalTime.GetNowTicks();
                         eventLoggerAdditionalInfoRepository.GetOrCreateFirstEventInfo(new EventInfo
@@ -159,13 +158,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             var timeOfSleep = TimeSpan.FromTicks(0);
             try
             {
-                for(var attempt = 0; !wasDisposed && attempt < attemptCount; ++attempt)
+                for (var attempt = 0; !wasDisposed && attempt < attemptCount; ++attempt)
                 {
                     totalAttemptCount++;
                     var enqueueResult = await queueRaker.ProcessAsync(batchForWrite, attempt).ConfigureAwait(false);
                     batchForWrite = enqueueResult.failureIds.Select(x => dict[x]).ToArray();
                     result.AddRange(enqueueResult.successInfos);
-                    if(batchForWrite.Length == 0) return result.ToArray();
+                    if (batchForWrite.Length == 0) return result.ToArray();
                     var sleepTime = random.Next(10, 20);
                     var sleepStopwatch = Stopwatch.StartNew();
                     try
@@ -176,7 +175,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                     {
                         timeOfSleep += sleepStopwatch.Elapsed;
                     }
-                    if(attempt > 1)
+                    if (attempt > 1)
                         logger.Warn("Big attempt: attempt = {0}, sleepTime = {1}", attempt, sleepTime);
                 }
             }
@@ -185,9 +184,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 profiler.AfterWriteBatch(stopwatch.Elapsed, eventBatch.Length, totalAttemptCount, timeOfSleep);
             }
 
-            if(wasDisposed)
+            if (wasDisposed)
                 throw new CouldNotWriteBoxEventException("This instance of eventLogger was disposed");
-            throw new CouldNotWriteBoxEventException(string.Format("Could not write in {0} attempts", attemptCount));
+            throw new CouldNotWriteBoxEventException($"Could not write in {attemptCount} attempts");
         }
 
         private IEnumerable<EventLogRecord> InnerReadEvents(EventInfo startEventInfo, EventInfo finishEventInfo, string[] shards, int batchCount)
@@ -201,7 +200,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             var rows1 = columnFamilyConnection.GetRowsExclusive(rowKeys, startEventPointer.ColumnName, getRowsBatchCount).ToDictionary(x => x.Key, x => x.Value);
             var rows2 = new Dictionary<string, Column[]>();
             var needColumns2 = false;
-            if(startRowNumber < finishRowNumber && rows1.Count(x => x.Value.Length < getRowsBatchCount) > 2) //todo подумать над константой
+            if (startRowNumber < finishRowNumber && rows1.Count(x => x.Value.Length < getRowsBatchCount) > 2) //todo подумать над константой
             {
                 var rowKeys2 = shards.Select(shard => eventLogPointerCreator.ChangeShard(startRowNumber + 1, shard)).ToArray();
                 rows2 = columnFamilyConnection.GetRowsExclusive(rowKeys2, null, getRowsBatchCount).ToDictionary(x => x.Key, x => x.Value);
@@ -209,7 +208,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             }
 
             var list = new List<IEnumerable<EventLogRecord>>();
-            foreach(var shard in shards)
+            foreach (var shard in shards)
             {
                 var rowKey1 = eventLogPointerCreator.ChangeShard(startRowNumber, shard);
                 var rowKey2 = eventLogPointerCreator.ChangeShard(startRowNumber + 1, shard);
@@ -228,34 +227,34 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         private static Column[] GetColumnsFromDict(Dictionary<string, Column[]> rows, string rowKey)
         {
             Column[] columns;
-            if(!rows.TryGetValue(rowKey, out columns) || columns == null)
+            if (!rows.TryGetValue(rowKey, out columns) || columns == null)
                 columns = new Column[0];
             return columns;
         }
 
         private IEnumerable<EventLogRecord> GetEventsEnumerable(string shard, long startRowNumber, string startEventColumnName, long finishRowNumber, Column[][] columns, int batchCount, int getRowsBatchCount)
         {
-            for(var i = startRowNumber; i <= finishRowNumber; i++)
+            for (var i = startRowNumber; i <= finishRowNumber; i++)
             {
                 string currentExclusiveColumn = null;
 
-                if(i - startRowNumber < columns.Length)
+                if (i - startRowNumber < columns.Length)
                 {
                     var cols = columns[i - startRowNumber];
                     currentExclusiveColumn = cols.Length > 0 ? cols.Last().Name : (i == startRowNumber ? startEventColumnName : null);
 
-                    foreach(var column in cols)
+                    foreach (var column in cols)
                         yield return GetEventLogRecord(column);
-                    if(cols.Length < getRowsBatchCount)
+                    if (cols.Length < getRowsBatchCount)
                         continue;
                 }
 
                 var currentRowKey = eventLogPointerCreator.ChangeShard(i, shard);
-                while(true)
+                while (true)
                 {
                     var cols = columnFamilyConnection.GetColumns(currentRowKey, currentExclusiveColumn, batchCount);
-                    if(cols.Length == 0) break;
-                    foreach(var column in cols)
+                    if (cols.Length == 0) break;
+                    foreach (var column in cols)
                         yield return GetEventLogRecord(column);
                     currentExclusiveColumn = cols.Last().Name;
                 }

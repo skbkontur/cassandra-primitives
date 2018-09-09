@@ -18,14 +18,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             var keyDistributor = new KeyDistributor(64);
 
             var threads = Enumerable.Range(0, 5).Select(number =>
-            {
-                var repository = CreateBoxEventRepository((id,obj)=>keyDistributor.Distribute(id.ScopeId).ToString());
+                {
+                    var repository = CreateBoxEventRepository((id, obj) => keyDistributor.Distribute(id.ScopeId).ToString());
 
-                var testEventWriter = new TestEventWriter(repository, OperationsSpeed.PerSecond(10000), 1000);
-                var thread = new Thread(testEventWriter.BeginExecution);
-                thread.Start();
-                return new { Thread = thread, Writer = testEventWriter };
-            }).ToList();
+                    var testEventWriter = new TestEventWriter(repository, OperationsSpeed.PerSecond(10000), 1000);
+                    var thread = new Thread(testEventWriter.BeginExecution);
+                    thread.Start();
+                    return new {Thread = thread, Writer = testEventWriter};
+                }).ToList();
 
             Thread.Sleep(TimeSpan.FromSeconds(30));
 

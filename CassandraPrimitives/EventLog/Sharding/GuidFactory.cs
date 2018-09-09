@@ -8,7 +8,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding
     {
         public static Guid GetDeterministicGuid(this string input)
         {
-            if(provider == null)
+            if (provider == null)
                 provider = new MD5CryptoServiceProvider();
             var inputBytes = Encoding.UTF8.GetBytes(input ?? "");
             var hashBytes = provider.ComputeHash(inputBytes);

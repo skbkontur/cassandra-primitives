@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
@@ -39,9 +39,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.SpecificStorages
                 {
                     builder.Append(scopeId[i]);
                 }
-
             }
-            return string.Format("{0}_{1}", builder, id);
+            return $"{builder}_{id}";
         }
 
         public EventId RowKeyToId(string rowKey)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
@@ -20,7 +20,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             var exceptionEvent = new ManualResetEvent(false);
             const int count = 5;
             var threads = new Thread[count];
-            for(var i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 var threadId = i;
                 var eventRepositoryForWrite = CreateBoxEventRepository();
@@ -31,20 +31,20 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             stopped = false;
             exceptionEvent.WaitOne(TimeSpan.FromMinutes(1));
             stopped = true;
-            foreach(var thread in threads)
+            foreach (var thread in threads)
             {
                 try
                 {
                     thread.Join();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     joinException = e;
                 }
             }
-            if(threadException != null)
+            if (threadException != null)
                 throw threadException;
-            if(joinException != null)
+            if (joinException != null)
                 throw joinException;
         }
 
@@ -73,13 +73,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         {
             try
             {
-                while(stopped)
+                while (stopped)
                 {
                 }
                 EventInfo lastEventInfo = null;
                 var totalWrittenEvents = 0;
                 var totalReadEvents = 1;
-                while(!stopped)
+                while (!stopped)
                 {
                     var bag = new ConcurrentBag<EventId>();
                     var actions = new int[12].Select<int, Action>(i => (() =>
@@ -88,7 +88,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                             {
                                 bag.Add(eventRepositoryForWrite.AddEvent(Guid.NewGuid().ToString(), GenerateEventContent()).Id);
                             }
-                            catch(Exception e)
+                            catch (Exception e)
                             {
                                 threadException = e;
                             }
@@ -99,26 +99,27 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                     var allCurrentEvents = eventRepositoryForRead.GetEventsWithUnstableZone(lastEventInfo, shards).ToArray();
                     totalReadEvents += allCurrentEvents.Length;
                     lastEventInfo = allCurrentEvents
-                        .TakeWhile(container => container.StableZone)
-                        .Select(container => container.Event.EventInfo).LastOrDefault() ?? lastEventInfo;
-                    foreach(var eventId in bag)
+                                        .TakeWhile(container => container.StableZone)
+                                        .Select(container => container.Event.EventInfo).LastOrDefault() ?? lastEventInfo;
+                    foreach (var eventId in bag)
                     {
-                        if(!allCurrentEvents.Any(container => container.Event.EventInfo.Id.Equals(eventId)))
-                            throw new Exception(string.Format("Поток {0} записал эвент [ScopeId = {1}, EventId = {2}], но не прочитал его", threadId, eventId.ScopeId, eventId.Id));
+                        if (!allCurrentEvents.Any(container => container.Event.EventInfo.Id.Equals(eventId)))
+                            throw new Exception($"Поток {threadId} записал эвент [ScopeId = {eventId.ScopeId}, EventId = {eventId.Id}], но не прочитал его");
                     }
                 }
                 Console.WriteLine("Thread # {0} statistics: write {1} events, read {2} events", threadId, totalWrittenEvents, totalReadEvents);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 threadException = e;
                 exceptionEvent.Set();
             }
         }
 
+        private const int shardsCount = 64;
+
         private volatile Exception threadException;
         private volatile Exception joinException;
         private volatile bool stopped;
-        private const int shardsCount = 64;
     }
 }

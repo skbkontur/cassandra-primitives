@@ -30,19 +30,19 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed
             try
             {
                 stopEvent.Reset();
-                while(true)
+                while (true)
                 {
-                    if(stopEvent.WaitOne(0))
+                    if (stopEvent.WaitOne(0))
                         break;
 
                     totalCount += objectsPerBatch;
                     DoWrite();
                     var actualSpeed = SpeedMeasurement.FromMeasurement(totalCount, totalStopwatch.Elapsed);
-                    if(actualSpeed.Speed > speed)
+                    if (actualSpeed.Speed > speed)
                     {
                         var timeoutToGetDesiredSpeed = actualSpeed.TimeoutToGetDesiredSpeed(speed);
                         Thread.Sleep(timeoutToGetDesiredSpeed);
-                    }   
+                    }
                 }
             }
             finally

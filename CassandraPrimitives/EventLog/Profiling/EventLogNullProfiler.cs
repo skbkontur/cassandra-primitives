@@ -35,11 +35,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling
         {
             get
             {
-                if(instance == null)
+                if (instance == null)
                 {
-                    lock(instanceLockObject)
+                    lock (instanceLockObject)
                     {
-                        if(instance == null)
+                        if (instance == null)
                             instance = new EventLogNullProfiler();
                     }
                 }

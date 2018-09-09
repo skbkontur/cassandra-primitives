@@ -35,7 +35,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
         private EventInfo AddEvent(string scopeId, object eventContent)
         {
-            if(asyncWrite)
+            if (asyncWrite)
                 return eventRepository.AddEventsAsync(new[] {new KeyValuePair<string, object>(scopeId, eventContent),}).Result.First();
             return eventRepository.AddEvent(scopeId, eventContent);
         }
@@ -45,10 +45,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         {
             var guid1 = Guid.NewGuid().ToString();
             var guid2 = Guid.NewGuid().ToString();
-            using(var er = CreateBoxEventRepository((x, y) =>
+            using (var er = CreateBoxEventRepository((x, y) =>
                 {
-                    if(x.ScopeId == guid1) return "1";
-                    if(x.ScopeId == guid2) return "2";
+                    if (x.ScopeId == guid1) return "1";
+                    if (x.ScopeId == guid2) return "2";
                     return "3";
                 }))
             {
@@ -79,7 +79,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         {
             var expectedEvents = new List<Event>();
             const int count = 20;
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
                 var scopeId = GenerateScopeId();
                 var eventContent = GenerateEventContent();
@@ -96,7 +96,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             var actualEvents = eventRepository.GetEvents(null, new[] {commonShard}).ToArray();
             CheckEqualEvents(expectedEvents.ToArray(), actualEvents);
 
-            for(var i = 0; i < expectedEvents.Count; ++i)
+            for (var i = 0; i < expectedEvents.Count; ++i)
             {
                 actualEvents = eventRepository.GetEvents(expectedEvents[i].EventInfo, new[] {commonShard}).ToArray();
                 CheckEqualEvents(expectedEvents.Skip(i + 1).ToArray(), actualEvents);
@@ -116,7 +116,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             var expectedEvents = new List<Event>();
             var watch = Stopwatch.StartNew();
             watch.Start();
-            for(var i = 0; i < 10000; ++i)
+            for (var i = 0; i < 10000; ++i)
             {
                 var boxEvent = GenerateEventContent();
                 var eventInfo = AddEvent(GenerateScopeId(), boxEvent);

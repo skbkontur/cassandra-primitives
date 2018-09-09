@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed
@@ -7,7 +7,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed
     {
         public OperationsSpeed(double operationsPerSecond)
         {
-            this.operationsPerSecond = operationsPerSecond;
+            this.OperationsPerSecond = operationsPerSecond;
         }
 
         public int CompareTo(OperationsSpeed other)
@@ -51,7 +51,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed
 
         public override string ToString()
         {
-            return string.Format("Speed: {0} ops", OperationsPerSecond);
+            return $"Speed: {OperationsPerSecond} ops";
         }
 
         public static bool operator <(OperationsSpeed speed1, OperationsSpeed speed2)
@@ -84,13 +84,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed
             return new OperationsSpeed(speed1.OperationsPerSecond + speed2.OperationsPerSecond);
         }
 
-        public double OperationsPerSecond { get { return operationsPerSecond; } }
+        public double OperationsPerSecond { get; }
 
         private TimeSpan GetTimeSpanToExecuteOperations(int operationsPerAttempt)
         {
             return TimeSpan.FromSeconds(operationsPerAttempt / OperationsPerSecond);
         }
-
-        private readonly double operationsPerSecond;
     }
 }

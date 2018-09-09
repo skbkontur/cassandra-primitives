@@ -5,9 +5,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed
 {
     public class SpeedMeasurement
     {
-        private readonly int operations;
-        private readonly TimeSpan interval;
-
         public SpeedMeasurement(int operations, TimeSpan interval)
         {
             this.operations = operations;
@@ -39,5 +36,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed
         {
             return TimeSpan.FromMilliseconds(operations / (speed.OperationsPerSecond / 1000) - interval.TotalMilliseconds);
         }
+
+        private readonly int operations;
+        private readonly TimeSpan interval;
     }
 }

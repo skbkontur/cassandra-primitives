@@ -2,6 +2,6 @@
 {
     public class OutboxRawMessageEventContent
     {
-        public string EntityId { get; set; } 
+        public string EntityId { get; set; }
     }
 }

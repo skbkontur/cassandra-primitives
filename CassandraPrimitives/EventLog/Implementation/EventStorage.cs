@@ -27,18 +27,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         public void Write(EventLogRecord[] events, long timestamp, int? ttl = null)
         {
             var columns = events
-                       .Select(x => new KeyValuePair<EventPointer, EventLogRecord>(eventLogPointerCreator.Create(x.StorageElement.EventInfo), x))
-                       .GroupBy(x => x.Key.RowKey)
-                       .Select(eventsGropedByRow =>
-                               new KeyValuePair<string, IEnumerable<Column>>(
-                                   eventsGropedByRow.Key,
-                                   eventsGropedByRow.Select(x => new Column
-                                   {
-                                       Name = x.Key.ColumnName,
-                                       Value = serializer.Serialize(x.Value),
-                                       Timestamp = timestamp,
-                                       TTL = ttl
-                                   }))).ToArray();
+                .Select(x => new KeyValuePair<EventPointer, EventLogRecord>(eventLogPointerCreator.Create(x.StorageElement.EventInfo), x))
+                .GroupBy(x => x.Key.RowKey)
+                .Select(eventsGropedByRow =>
+                        new KeyValuePair<string, IEnumerable<Column>>(
+                            eventsGropedByRow.Key,
+                            eventsGropedByRow.Select(x => new Column
+                                {
+                                    Name = x.Key.ColumnName,
+                                    Value = serializer.Serialize(x.Value),
+                                    Timestamp = timestamp,
+                                    TTL = ttl
+                                }))).ToArray();
             columnFamilyConnection.BatchInsert(columns);
         }
 

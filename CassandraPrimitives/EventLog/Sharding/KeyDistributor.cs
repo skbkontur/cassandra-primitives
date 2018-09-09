@@ -4,7 +4,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding
     {
         public KeyDistributor(int shardsCount)
         {
-            this.shardsCount = shardsCount;
+            this.ShardsCount = shardsCount;
         }
 
         public int Distribute(string key)
@@ -15,13 +15,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding
             }
         }
 
-        public int ShardsCount { get { return shardsCount; } }
+        public int ShardsCount { get; }
 
         public static KeyDistributor Create(int shardsCount)
         {
             return new KeyDistributor(shardsCount);
         }
-
-        private readonly int shardsCount;
     }
 }

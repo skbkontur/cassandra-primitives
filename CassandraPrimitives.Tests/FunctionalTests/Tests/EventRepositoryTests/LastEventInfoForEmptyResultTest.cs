@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -31,13 +31,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                             var random = new Random(i);
                             Thread.Sleep(random.Next(1) * 100);
                             var list = new List<EventInfo>();
-                            for(var j = 0; j < eventCount; j++)
+                            for (var j = 0; j < eventCount; j++)
                             {
                                 list.Add(eventRepository.AddEvent(i.ToString(), GenerateEventContent()));
-                                if(random.Next(2) == 1)
+                                if (random.Next(2) == 1)
                                     Thread.Sleep(100);
                             }
-                            LogEventBatch("Writer"+i, list.ToArray());
+                            LogEventBatch("Writer" + i, list.ToArray());
                             Console.WriteLine("Write {0} completed", i);
                         })
                 )
@@ -51,27 +51,27 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                     i => (ThreadStart)(() =>
                         {
                             Console.WriteLine("Read {0} started", i);
-                            
+
                             var lastNotEmptyResultTime = DateTime.Now;
                             EventInfo lastEventInfo = null;
-                            while(readEvents[i].Count < eventCount && ((DateTime.Now - lastNotEmptyResultTime) < TimeSpan.FromMinutes(1)))
+                            while (readEvents[i].Count < eventCount && ((DateTime.Now - lastNotEmptyResultTime) < TimeSpan.FromMinutes(1)))
                             {
                                 EventInfo newExclusiveEventInfoIfEmpty;
                                 var events = eventRepository.GetEventsWithUnstableZone(lastEventInfo, new[] {i.ToString()}, out newExclusiveEventInfoIfEmpty).ToList();
                                 var stableEvents = events.TakeWhile(x => x.StableZone).ToList();
 
-                                Func<EventInfo, string> toString = ei => ei == null ? "" : string.Format("({2}){0}_{1}",ei.Id.ScopeId, ei.Id.Id, ei.Ticks);
-                                LogEventBatch("Reader" + i, stableEvents.Select(x => x.Event).ToArray(), string.Format("Read from {0}. Stable:{1}, Total:{2}, LastGoodEvent:{3}", toString(lastEventInfo), stableEvents.Count, events.Count, toString(newExclusiveEventInfoIfEmpty)));
+                                Func<EventInfo, string> toString = ei => ei == null ? "" : string.Format("({2}){0}_{1}", ei.Id.ScopeId, ei.Id.Id, ei.Ticks);
+                                LogEventBatch("Reader" + i, stableEvents.Select(x => x.Event).ToArray(), $"Read from {toString(lastEventInfo)}. Stable:{stableEvents.Count}, Total:{events.Count}, LastGoodEvent:{toString(newExclusiveEventInfoIfEmpty)}");
 
-                                if(stableEvents.Count > 0)
+                                if (stableEvents.Count > 0)
                                     lastNotEmptyResultTime = DateTime.Now;
 
                                 readEvents[i].AddRange(stableEvents.Select(x => x.Event));
 
-                                if(events.Count == 0 && newExclusiveEventInfoIfEmpty != null)
+                                if (events.Count == 0 && newExclusiveEventInfoIfEmpty != null)
                                     lastEventInfo = new[] {lastEventInfo, newExclusiveEventInfoIfEmpty}.Max();
-                                
-                                if(stableEvents.Count > 0)
+
+                                if (stableEvents.Count > 0)
                                     lastEventInfo = new[] {lastEventInfo, stableEvents.Last().Event.EventInfo}.Max();
 
                                 Thread.Sleep(1);

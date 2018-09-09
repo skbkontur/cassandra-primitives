@@ -15,36 +15,36 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq
 
         public static IEnumerable<T> SortedMerge<T>(this IEnumerable<T> seq1, IEnumerable<T> seq2, Func<T, T, int> compare)
         {
-            if(seq1 == null) seq1 = new T[0];
-            if(seq2 == null) seq2 = new T[0];
+            if (seq1 == null) seq1 = new T[0];
+            if (seq2 == null) seq2 = new T[0];
             var en1 = seq1.GetEnumerator();
             var en2 = seq2.GetEnumerator();
-            if(!MoveNext(en1))
+            if (!MoveNext(en1))
             {
-                while(MoveNext(en2))
+                while (MoveNext(en2))
                     yield return en2.Current;
                 yield break;
             }
-            if(!MoveNext(en2))
+            if (!MoveNext(en2))
             {
                 yield return en1.Current;
-                while(MoveNext(en1))
+                while (MoveNext(en1))
                     yield return en1.Current;
                 yield break;
             }
 
             var l = en1.Current;
             var r = en2.Current;
-            while(true)
+            while (true)
             {
                 var res = compare(l, r);
-                if(res < 0)
+                if (res < 0)
                 {
                     yield return l;
-                    if(!MoveNext(en1))
+                    if (!MoveNext(en1))
                     {
                         yield return en2.Current;
-                        while(MoveNext(en2))
+                        while (MoveNext(en2))
                             yield return en2.Current;
                         yield break;
                     }
@@ -53,10 +53,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq
                 else
                 {
                     yield return r;
-                    if(!MoveNext(en2))
+                    if (!MoveNext(en2))
                     {
                         yield return en1.Current;
-                        while(MoveNext(en1))
+                        while (MoveNext(en1))
                             yield return en1.Current;
                         yield break;
                     }
@@ -71,7 +71,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq
             {
                 return (enumerator.MoveNext());
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new CantMoveNextException(e);
             }

@@ -7,7 +7,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives
         public int CompareTo(EventInfo other)
         {
             var ticksComparisonResult = Ticks.CompareTo(other.Ticks);
-            if(ticksComparisonResult != 0) return ticksComparisonResult;
+            if (ticksComparisonResult != 0) return ticksComparisonResult;
             return Id.CompareTo(other.Id);
         }
 

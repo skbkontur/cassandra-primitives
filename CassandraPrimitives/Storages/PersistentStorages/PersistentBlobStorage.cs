@@ -30,8 +30,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
         {
             const int batchSize = 1000;
 
-            objects.ForEach(x=>cassandraObjectIdConverter.CheckObjectIdentity(x));
-            objects.Batch(batchSize, Enumerable.ToArray).ForEach(x=>WriteInternal(x, timestamp));
+            objects.ForEach(x => cassandraObjectIdConverter.CheckObjectIdentity(x));
+            objects.Batch(batchSize, Enumerable.ToArray).ForEach(x => WriteInternal(x, timestamp));
         }
 
         public void Write(T data, DateTime timestamp)
@@ -84,7 +84,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
         private void DeleteInternal(TId[] ids, DateTime? timestamp)
         {
             MakeInConnection(
-                connection => connection.DeleteRows(ids.Select(x=>cassandraObjectIdConverter.IdToRowKey(x)).ToArray(), timestamp.HasValue ? timestamp.Value.Ticks : (long?)null));
+                connection => connection.DeleteRows(ids.Select(x => cassandraObjectIdConverter.IdToRowKey(x)).ToArray(), timestamp.HasValue ? timestamp.Value.Ticks : (long?)null));
         }
 
         public void Update(TId id, Action<T> updateAction, DateTime timestamp)
@@ -130,7 +130,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
         private void WriteInternal(T[] objects, DateTime timestamp)
         {
             var batchToInsert = objects
-                .Select(x=>CreateObjectRow(x, timestamp))
+                .Select(x => CreateObjectRow(x, timestamp))
                 .ToList();
 
             MakeInConnection(connection => connection.BatchInsert(batchToInsert));

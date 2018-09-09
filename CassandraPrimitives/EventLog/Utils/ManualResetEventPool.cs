@@ -13,9 +13,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils
 
         public void Dispose()
         {
-            lock(eventsLock)
+            lock (eventsLock)
             {
-                while(events.Count != 0)
+                while (events.Count != 0)
                 {
                     var manualResetEvent = events.Dequeue();
                     manualResetEvent.Dispose();
@@ -25,7 +25,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils
 
         public void Release(ManualResetEvent manualResetEvent)
         {
-            lock(eventsLock)
+            lock (eventsLock)
             {
                 events.Enqueue(manualResetEvent);
             }
@@ -33,7 +33,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils
 
         public ManualResetEvent Acquire()
         {
-            lock(eventsLock)
+            lock (eventsLock)
             {
                 return events.Count == 0 ? new ManualResetEvent(false) : events.Dequeue();
             }

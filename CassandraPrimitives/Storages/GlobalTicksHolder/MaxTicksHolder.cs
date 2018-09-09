@@ -21,7 +21,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder
         public long? GetMaxTicks([NotNull] string key)
         {
             Column column;
-            if(!cfConnection.TryGetColumn(key, ticksColumnName, out column))
+            if (!cfConnection.TryGetColumn(key, ticksColumnName, out column))
                 return null;
             return serializer.Deserialize<long>(column.Value);
         }
@@ -29,7 +29,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder
         public void UpdateMaxTicks([NotNull] string key, long ticks)
         {
             long maxTicks;
-            if(persistedMaxTicks.TryGetValue(key, out maxTicks) && ticks <= maxTicks)
+            if (persistedMaxTicks.TryGetValue(key, out maxTicks) && ticks <= maxTicks)
                 return;
             cfConnection.AddColumn(key, new Column
                 {

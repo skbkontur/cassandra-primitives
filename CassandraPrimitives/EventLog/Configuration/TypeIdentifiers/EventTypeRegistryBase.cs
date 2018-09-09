@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.TypeIdentifiers
@@ -7,15 +7,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.TypeIde
     {
         public Type GetTypeByIdentifier(string eventType)
         {
-            if(!typeByEventType.ContainsKey(eventType))
-                throw new Exception(string.Format("Unknown boxEventType {0}", eventType));
+            if (!typeByEventType.ContainsKey(eventType))
+                throw new Exception($"Unknown boxEventType {eventType}");
             return typeByEventType[eventType];
         }
 
         public string GetIdentifierByType(Type eventContentType)
         {
-            if(!eventTypeByType.ContainsKey(eventContentType))
-                throw new Exception(string.Format("Unknown eventContentType {0}", eventContentType.FullName));
+            if (!eventTypeByType.ContainsKey(eventContentType))
+                throw new Exception($"Unknown eventContentType {eventContentType.FullName}");
             return eventTypeByType[eventContentType];
         }
 

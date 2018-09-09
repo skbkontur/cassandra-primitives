@@ -4,5 +4,5 @@
     {
         int RowCacheSize { get; }
         int ReplicationFactor { get; }
-    } 
+    }
 }

@@ -20,10 +20,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Tests.EventLog.Sharding
             var array = new int[shardsCount];
             const int guidsCount = 10000;
             var sw = Stopwatch.StartNew();
-            for(var i = 0; i < guidsCount; i++)
+            for (var i = 0; i < guidsCount; i++)
             {
                 var idx = keyDistributor.Distribute(Guid.NewGuid().ToString());
-                if(idx < 0 || idx >= shardsCount)
+                if (idx < 0 || idx >= shardsCount)
                     Assert.That(false);
                 array[idx]++;
             }
@@ -42,10 +42,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Tests.EventLog.Sharding
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Tests/EventLog/Sharding/Files/dict.txt");
             var words = File.ReadAllText(path).Split('\n', '\r').Where(s => !string.IsNullOrEmpty(s)).ToArray();
             var sw = Stopwatch.StartNew();
-            for(var i = 0; i < words.Length; i++)
+            for (var i = 0; i < words.Length; i++)
             {
                 var idx = keyDistributor.Distribute(words[i]);
-                if(idx < 0 || idx >= shardsCount)
+                if (idx < 0 || idx >= shardsCount)
                     Assert.That(false);
                 array[idx]++;
             }

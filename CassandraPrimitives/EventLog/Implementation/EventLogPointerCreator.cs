@@ -67,14 +67,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         private static string GetIdString(EventId eventId)
         {
-            if(eventId == null) return "";
+            if (eventId == null) return "";
             return eventId.ScopeId + "_" + eventId.Id;
         }
 
         private ColumnNameInformation ParseColumnName(string columnName)
         {
             var args = columnName.Split('_');
-            if(args.Length != 3) throw new Exception("BUG");
+            if (args.Length != 3) throw new Exception("BUG");
             return new ColumnNameInformation(long.Parse(args[0]), args[1], args[2]);
         }
 
@@ -83,9 +83,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             var idx = rowKey.IndexOf('_');
             if (idx == -1) throw new Exception("BUG");
             var ticksPartitionToken = rowKey.Substring(0, idx);
-            var shardToken = rowKey.Substring(idx+1);
+            var shardToken = rowKey.Substring(idx + 1);
             return new RowKeyInformation(long.Parse(ticksPartitionToken), shardToken);
         }
+
+        private const long ticksPartition = TimeSpan.TicksPerMinute * 10;
 
         private class RowKeyInformation
         {
@@ -112,7 +114,5 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             public string EventScopeId { get; private set; }
             public string EventId { get; private set; }
         }
-
-        private const long ticksPartition = TimeSpan.TicksPerMinute * 10;
     }
 }
