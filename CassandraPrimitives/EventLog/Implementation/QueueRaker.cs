@@ -163,7 +163,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                     Stopwatch setEventsGoodStopwatch = null;
                     if(goodEvents.Length > 0)
                     {
-                        var lastEventInfoFromCurrentBatch = eventsBatch.MaxBy(x => x.EventInfo.Ticks).EventInfo;
+                        var lastEventInfoFromCurrentBatch = eventsBatch.MaxBy(x => x.EventInfo.Ticks).First().EventInfo;
 
                         setLastEventInfoStopwatch = Stopwatch.StartNew();
                         if(lastEventInfoFromCurrentBatch.Ticks > lastGoodEventInfo.Ticks)
