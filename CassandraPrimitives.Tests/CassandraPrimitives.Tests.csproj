@@ -2,16 +2,16 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
     <PackageReference Include="SkbKontur.Cassandra.Local" Version="1.0.10" />
-    <PackageReference Include="Vostok.Logging.FileLog" Version="0.0.5" />
+    <PackageReference Include="Vostok.Logging.File" Version="0.1.0" />
   </ItemGroup>
 
   <ItemGroup>

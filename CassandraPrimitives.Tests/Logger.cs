@@ -3,8 +3,9 @@ using System.IO;
 using System.Text;
 
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Core.Configuration;
-using Vostok.Logging.FileLog;
+using Vostok.Logging.File;
+using Vostok.Logging.File.Configuration;
+using Vostok.Logging.Formatting;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests
 {
@@ -15,17 +16,16 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests
         private static ILog InitFileLogger()
         {
             var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-            if(!Directory.Exists(logsDir))
+            if (!Directory.Exists(logsDir))
                 Directory.CreateDirectory(logsDir);
-            FileLog.Configure(() => new FileLogSettings
+            return new FileLog(() => new FileLogSettings
                 {
-                    AppendToFile = false,
-                    EnableRolling = false,
                     Encoding = Encoding.UTF8,
-                    ConversionPattern = ConversionPattern.Default,
-                    FilePath = Path.Combine(logsDir, $"FunctionalTests-{DateTime.Now:yyyy-MM-dd.HH-mm-ss}.log"),
+                    FileOpenMode = FileOpenMode.Rewrite,
+                    OutputTemplate = OutputTemplate.Default,
+                    RollingStrategy = new RollingStrategyOptions {Type = RollingStrategyType.None},
+                    FilePath = Path.Combine(logsDir, $"FunctionalTests-{DateTime.Now:yyyy-MM-dd.HH-mm-ss}.log")
                 });
-            return new FileLog();
         }
 
         private static ILog log;

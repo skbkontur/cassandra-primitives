@@ -7,14 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CassandraPrimitives", "Cass
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CassandraPrimitives.Tests", "CassandraPrimitives.Tests\CassandraPrimitives.Tests.csproj", "{74560CD0-D369-4BFE-8418-8795FE24D43E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9BFDE5B9-8F08-4C42-9E20-55F684DF9818}"
-	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props = Directory.Build.props
-		Directory.Build.targets = Directory.Build.targets
-		global.json = global.json
-		nuget.config = nuget.config
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

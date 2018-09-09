@@ -14,7 +14,6 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils;
 
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Abstractions.Extensions;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 {

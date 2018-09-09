@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <AssemblyName>SkbKontur.Cassandra.Primitives</AssemblyName>
     <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives</RootNamespace>
     <PackageId>$(AssemblyName)</PackageId>
     <VersionPrefix>2.0.0</VersionPrefix>
-    <Version>$(VersionPrefix)-rc9</Version>
+    <Version>$(VersionPrefix)-rc9-03</Version>
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <Authors>Ivan Burmistrov, Fedor Fominykh, Evgeny Tikhonov</Authors>
     <PackageTags>cassandra event log</PackageTags>
@@ -17,9 +17,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" PrivateAssets="All" />
-    <PackageReference Include="morelinq" Version="2.10.0" />
-    <PackageReference Include="SkbKontur.Cassandra.DistributedLock" Version="2.0.0-rc9" />
+    <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" PrivateAssets="All" />
+    <PackageReference Include="morelinq" Version="3.0.0" />
+    <PackageReference Include="SkbKontur.Cassandra.DistributedLock" Version="2.0.0-rc9-03" />
   </ItemGroup>
 
 </Project>
