@@ -22,7 +22,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
                     JmxPort = 7399,
                     GossipPort = 7400,
                 };
-            Node.Restart();
+            Node.Restart(timeout: TimeSpan.FromMinutes(1));
         }
 
         [OneTimeTearDown]
