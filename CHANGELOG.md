@@ -11,4 +11,3 @@
   and nuget package versions.
 - Implement workaround for "ThreadAbortException not re-thrown by the runtime" 
   [issue](https://github.com/dotnet/coreclr/issues/16122) on net471.
-
