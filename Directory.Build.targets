@@ -12,7 +12,7 @@
       <PackageId>$(AssemblyName)</PackageId>
       <Authors>Ivan Burmistrov, Fedor Fominykh, Evgeny Tikhonov</Authors>
       <PackageTags>cassandra event log</PackageTags>
-      <Description>.NET library implementing various primitives using Apache Cassandra</Description>
+      <PackageDescription>.NET library implementing various primitives using Apache Cassandra</PackageDescription>
       <RepositoryType>git</RepositoryType>
       <RepositoryUrl>https://github.com/skbkontur/cassandra-primitives</RepositoryUrl>
       <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
