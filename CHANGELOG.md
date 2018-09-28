@@ -5,7 +5,7 @@
 [SkbKontur.Cassandra.DistributedLock](https://github.com/skbkontur/cassandra-distributed-lock) packages from NuGet.
 - Use [SkbKontur.Cassandra.Local](https://github.com/skbkontur/cassandra-local) module for integration testing.
 - Switch to SDK-style project format and dotnet core build tooling.
-- Set TargetFramework to net472.
+- Set TargetFramework to net471.
 - Use [Vostok.Logging.Abstractions](https://github.com/vostok/logging.abstractions) as a logging framework facade.
 - Use [Nerdbank.GitVersioning](https://github.com/AArnott/Nerdbank.GitVersioning) to automate generation of assembly 
   and nuget package versions.
