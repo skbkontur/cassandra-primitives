@@ -6,9 +6,9 @@ using System.Threading;
 using GroBuf;
 using GroBuf.DataMembersExtracters;
 
-using NUnit.Framework;
-
 using MoreLinq;
+
+using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;

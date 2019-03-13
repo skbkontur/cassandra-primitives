@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-using NUnit.Framework;
-
 using MoreLinq;
+
+using NUnit.Framework;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 

@@ -4,7 +4,7 @@
     <TargetFramework>net471</TargetFramework>
     <AssemblyName>SkbKontur.Cassandra.Primitives</AssemblyName>
     <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives</RootNamespace>
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
