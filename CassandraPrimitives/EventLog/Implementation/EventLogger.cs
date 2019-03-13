@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 using GroBuf;
 
+using MoreLinq;
+
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;

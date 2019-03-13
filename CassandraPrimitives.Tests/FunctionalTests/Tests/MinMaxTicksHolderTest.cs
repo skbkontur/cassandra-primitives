@@ -8,8 +8,9 @@ using GroBuf.DataMembersExtracters;
 
 using NUnit.Framework;
 
+using MoreLinq;
+
 using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;

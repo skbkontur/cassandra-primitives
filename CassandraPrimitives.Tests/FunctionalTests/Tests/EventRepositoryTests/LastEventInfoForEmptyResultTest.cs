@@ -5,7 +5,8 @@ using System.Threading;
 
 using NUnit.Framework;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
+using MoreLinq;
+
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
@@ -86,7 +87,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             writeThreads.ForEach(x => x.Join());
             readThreads.ForEach(x => x.Join());
 
-            Enumerable.Range(0, threadCount).ForEach(i => CheckEqualEvents(eventRepository.GetEvents(null, new[] {i.ToString()}).ToArray(), readEvents[i].ToArray()));
+            foreach(var threadIdx in Enumerable.Range(0, threadCount))
+                CheckEqualEvents(eventRepository.GetEvents(null, new[] {threadIdx.ToString()}).ToArray(), readEvents[threadIdx].ToArray());
         }
     }
 }

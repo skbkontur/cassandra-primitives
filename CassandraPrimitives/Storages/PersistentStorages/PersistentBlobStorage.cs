@@ -4,10 +4,11 @@ using System.Linq;
 
 using GroBuf;
 
+using MoreLinq;
+
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Exceptions;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
@@ -29,8 +30,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
         {
             const int batchSize = 1000;
 
-            objects.ForEach(x => cassandraObjectIdConverter.CheckObjectIdentity(x));
-            objects.Batch(batchSize, Enumerable.ToArray).ForEach(x => WriteInternal(x, timestamp));
+            foreach(var @object in objects)
+                cassandraObjectIdConverter.CheckObjectIdentity(@object);
+            foreach(var batch in objects.Batch(batchSize, Enumerable.ToArray))
+                WriteInternal(batch, timestamp);
         }
 
         public void Write(T data, DateTime timestamp)
@@ -49,7 +52,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
             var cassandraIds = ids.Select(x => cassandraObjectIdConverter.IdToRowKey(x)).ToArray();
 
             var rows = new List<KeyValuePair<string, Column[]>>();
-            cassandraIds.Batch(1000, Enumerable.ToArray).ForEach(batchIds => MakeInConnection(connection => rows.AddRange(connection.GetRowsExclusive(batchIds, null, maximalColumnsCount))));
+            foreach(var batchIds in cassandraIds.Batch(1000, Enumerable.ToArray))
+                MakeInConnection(connection => rows.AddRange(connection.GetRowsExclusive(batchIds, null, maximalColumnsCount)));
             var rowsDict = rows.ToDictionary(row => row.Key);
             var result = new T[cassandraIds.Length];
             for (var i = 0; i < cassandraIds.Length; i++)
@@ -77,7 +81,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
         public void Delete(TId[] ids, DateTime timestamp)
         {
             CheckObjectIdentitiesValidness(ids);
-            ids.Batch(1000, Enumerable.ToArray).ForEach(x => DeleteInternal(x, timestamp));
+            foreach(var batchIds in ids.Batch(1000, Enumerable.ToArray))
+                DeleteInternal(batchIds, timestamp);
         }
 
         private void DeleteInternal(TId[] ids, DateTime? timestamp)
@@ -162,7 +167,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
             if (rowKeys == null) throw new ArgumentNullException("rowKeys");
             if (rowKeys.Length == 0) return new T[0];
             var rows = new List<KeyValuePair<string, Column[]>>();
-            rowKeys.Batch(1000, Enumerable.ToArray).ForEach(batchIds => MakeInConnection(connection => rows.AddRange(connection.GetRowsExclusive(batchIds, null, maximalColumnsCount))));
+            foreach(var batchIds in rowKeys.Batch(1000, Enumerable.ToArray))
+                MakeInConnection(connection => rows.AddRange(connection.GetRowsExclusive(batchIds, null, maximalColumnsCount)));
             var rowsDict = rows.ToDictionary(row => row.Key);
             return rowKeys.Where(rowsDict.ContainsKey).Select(id => Read(rowsDict[id].Value)).Where(obj => obj != null).ToArray();
         }
