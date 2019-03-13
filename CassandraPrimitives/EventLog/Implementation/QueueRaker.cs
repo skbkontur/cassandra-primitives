@@ -6,9 +6,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using MoreLinq;
-
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils;
@@ -163,7 +162,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                     Stopwatch setEventsGoodStopwatch = null;
                     if (goodEvents.Length > 0)
                     {
-                        var lastEventInfoFromCurrentBatch = eventsBatch.MaxBy(x => x.EventInfo.Ticks).First().EventInfo;
+                        var lastEventInfoFromCurrentBatch = eventsBatch.MaxBy(x => x.EventInfo.Ticks).EventInfo;
 
                         setLastEventInfoStopwatch = Stopwatch.StartNew();
                         if (lastEventInfoFromCurrentBatch.Ticks > lastGoodEventInfo.Ticks)

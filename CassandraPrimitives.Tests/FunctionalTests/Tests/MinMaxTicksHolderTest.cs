@@ -6,11 +6,10 @@ using System.Threading;
 using GroBuf;
 using GroBuf.DataMembersExtracters;
 
-using MoreLinq;
-
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;

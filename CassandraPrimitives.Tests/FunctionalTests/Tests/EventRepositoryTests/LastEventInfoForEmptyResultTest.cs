@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-using MoreLinq;
-
 using NUnit.Framework;
 
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests

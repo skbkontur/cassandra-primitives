@@ -4,11 +4,10 @@ using System.Linq;
 
 using GroBuf;
 
-using MoreLinq;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Exceptions;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 

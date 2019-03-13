@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 using GroBuf;
 
-using MoreLinq;
-
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.TypeIdentifiers;
+using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 
