@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.1.0 - 2019.10.12
+## v2.1.3 - 2019.10.12
 - Target .NET Standard 2.0 (PR [#2](https://github.com/skbkontur/cassandra-primitives/pull/2)).
 
 ## v2.0 - 2018.09.12
