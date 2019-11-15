@@ -6,6 +6,8 @@ using System.Threading;
 
 using NUnit.Framework;
 
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
@@ -107,7 +109,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             var sw = Stopwatch.StartNew();
             try
             {
-                var random = new Random(Guid.NewGuid().GetHashCode());
                 EventInfo exclusiveEventInfo = null;
                 while (true)
                 {
@@ -133,7 +134,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                         Console.WriteLine("ThreadReader" + threadId.ToString("D2") + " finished.");
                         return;
                     }
-                    Thread.Sleep(random.Next(100));
+                    Thread.Sleep(ThreadLocalRandom.Instance.Next(100));
                     if (sw.ElapsedMilliseconds > 180000)
                         throw new Exception($"Expected {totalWrittenEvents} but was {result.Count}");
                 }
@@ -150,18 +151,18 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             return CreateBoxEventRepository(CalculateShard);
         }
 
-        private string CalculateShard(EventId eventId, object eventContent)
+        private static string CalculateShard(EventId eventId, object eventContent)
         {
             var keyDistributor = new KeyDistributor(shardsCount);
             return keyDistributor.Distribute(eventId.ScopeId).ToString();
         }
 
-        private string[] GetAllShards()
+        private static string[] GetAllShards()
         {
             return new string[shardsCount].Select((x, idx) => GetShardByIndex(idx)).ToArray();
         }
 
-        private string GetShardByIndex(int idx)
+        private static string GetShardByIndex(int idx)
         {
             return idx.ToString();
         }

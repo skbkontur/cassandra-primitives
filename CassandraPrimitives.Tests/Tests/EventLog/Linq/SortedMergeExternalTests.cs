@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 using NUnit.Framework;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 
@@ -105,16 +107,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Tests.EventLog.Linq
         public void StressTestRandom()
         {
             const int arrLen = 20;
-            var random = new Random();
             for (var testIteration = 0; testIteration < 10000; testIteration++)
             {
-                var aSize = random.Next(arrLen);
+                var aSize = ThreadLocalRandom.Instance.Next(arrLen);
                 var bSize = arrLen - aSize;
                 var a = new List<int>();
                 var b = new List<int>();
                 for (var i = 1; i <= arrLen; i++)
                 {
-                    var idx = GetZeroOrOne(random, aSize - a.Count, bSize - b.Count);
+                    var idx = GetZeroOrOne(aSize - a.Count, bSize - b.Count);
                     if (idx == 0)
                         a.Add(i);
                     else
@@ -148,11 +149,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Tests.EventLog.Linq
             }
         }
 
-        private int GetZeroOrOne(Random random, int zeroP, int oneP)
+        private static int GetZeroOrOne(int zeroP, int oneP)
         {
-            var x = random.Next(zeroP + oneP);
-            if (x < zeroP) return 0;
-            return 1;
+            return ThreadLocalRandom.Instance.Next(zeroP + oneP) < zeroP ? 0 : 1;
         }
     }
 }

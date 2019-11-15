@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -59,8 +59,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
             for (var i = 0; i < cassandraIds.Length; i++)
             {
                 var id = cassandraIds[i];
-                KeyValuePair<string, Column[]> row;
-                if (rowsDict.TryGetValue(id, out row))
+                if (rowsDict.TryGetValue(id, out var row))
                     result[i] = Read(row.Value);
             }
             return result;
@@ -107,8 +106,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
             MakeInConnection(
                 conn =>
                     {
-                        Column column;
-                        if (conn.TryGetColumn(cassandraObjectIdConverter.IdToRowKey(id), "Content", out column))
+                        if (conn.TryGetColumn(cassandraObjectIdConverter.IdToRowKey(id), "Content", out var column))
                             temp = serializer.Deserialize<T>(column.Value);
                     });
             var result = temp;

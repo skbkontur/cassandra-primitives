@@ -57,8 +57,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         public IEnumerable<Event> GetEvents(EventInfo exclusiveEventInfo, string[] shards)
         {
-            EventInfo newExclusiveEventInfo;
-            return GetEvents(exclusiveEventInfo, shards, out newExclusiveEventInfo);
+            return GetEvents(exclusiveEventInfo, shards, out var newExclusiveEventInfo);
         }
 
         public IEnumerable<Event> GetEvents(EventInfo exclusiveEventInfo, string[] shards, out EventInfo newExclusiveEventInfoIfEmpty)
@@ -69,8 +68,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         public IEnumerable<EventContainer> GetEventsWithUnstableZone(EventInfo exclusiveEventInfo, string[] shards)
         {
-            EventInfo newExclusiveEventInfo;
-            return GetEventsWithUnstableZone(exclusiveEventInfo, shards, out newExclusiveEventInfo);
+            return GetEventsWithUnstableZone(exclusiveEventInfo, shards, out var newExclusiveEventInfo);
         }
 
         public IEnumerable<EventContainer> GetEventsWithUnstableZone(EventInfo exclusiveEventInfo, string[] shards, out EventInfo newExclusiveEventInfoIfEmpty)

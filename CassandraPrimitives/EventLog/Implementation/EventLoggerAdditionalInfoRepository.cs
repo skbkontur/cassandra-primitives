@@ -82,8 +82,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         private EventInfo ReadEventInfo(string rowKey, string columnName)
         {
-            Column column;
-            if (!columnFamilyConnection.TryGetColumn(rowKey, columnName, out column))
+            if (!columnFamilyConnection.TryGetColumn(rowKey, columnName, out var column))
                 return null;
             return serializer.Deserialize<EventInfo>(column.Value);
         }

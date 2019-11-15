@@ -11,6 +11,9 @@ using MoreLinq;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
@@ -148,7 +151,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         private async Task<EventInfo[]> WriteBatchAsync(EventStorageElement[] eventBatch)
         {
-            var random = new Random(Guid.NewGuid().GetHashCode());
             var dict = eventBatch.ToDictionary(x => x.EventInfo.Id);
             var result = new List<EventInfo>();
 
@@ -165,7 +167,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                     batchForWrite = enqueueResult.failureIds.Select(x => dict[x]).ToArray();
                     result.AddRange(enqueueResult.successInfos);
                     if (batchForWrite.Length == 0) return result.ToArray();
-                    var sleepTime = random.Next(10, 20);
+                    var sleepTime = ThreadLocalRandom.Instance.Next(10, 20);
                     var sleepStopwatch = Stopwatch.StartNew();
                     try
                     {
@@ -226,8 +228,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
 
         private static Column[] GetColumnsFromDict(Dictionary<string, Column[]> rows, string rowKey)
         {
-            Column[] columns;
-            if (!rows.TryGetValue(rowKey, out columns) || columns == null)
+            if (!rows.TryGetValue(rowKey, out var columns) || columns == null)
                 columns = new Column[0];
             return columns;
         }

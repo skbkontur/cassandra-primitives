@@ -11,6 +11,9 @@ using MoreLinq;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
@@ -81,8 +84,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
             const int threadsCount = 8;
             const int countPerThread = 1000 * 1000;
             const int valuesCount = threadsCount * countPerThread;
-            var rng = new Random(Guid.NewGuid().GetHashCode());
-            var values = Enumerable.Range(0, valuesCount).Select(x => rng.Next(valuesCount)).ToList();
+            var values = Enumerable.Range(0, valuesCount).Select(x => ThreadLocalRandom.Instance.Next(valuesCount)).ToList();
             var valuesByThread = values.Batch(countPerThread, Enumerable.ToArray).ToArray();
             var threads = new List<Thread>();
             var startSignal = new ManualResetEvent(false);

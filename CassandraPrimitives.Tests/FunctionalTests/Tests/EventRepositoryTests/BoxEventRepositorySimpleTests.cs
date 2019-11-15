@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
 using NUnit.Framework;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
@@ -24,7 +26,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             base.SetUp();
             eventRepository = CreateBoxEventRepository((id, obj) => commonShard);
             boxIds = new[] {Guid.NewGuid().ToString(), Guid.NewGuid().ToString()};
-            globalRandom = new Random(Guid.NewGuid().GetHashCode());
         }
 
         public override void TearDown()
@@ -55,8 +56,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                 var ev1 = er.AddEvent(guid1, GenerateEventContent());
                 var ev2 = er.AddEvent(guid1, GenerateEventContent());
                 var ev3 = er.AddEvent(guid1, GenerateEventContent());
-                EventInfo eventInfo;
-                Assert.That(er.GetEventsWithUnstableZone(null, new[] {"2", "3"}, out eventInfo).ToArray().Length == 0);
+                Assert.That(er.GetEventsWithUnstableZone(null, new[] {"2", "3"}, out var eventInfo).ToArray().Length == 0);
                 Assert.That(eventInfo.CompareTo(ev3) == 0);
                 Assert.That(er.GetEventsWithUnstableZone(ev1, new[] {"2", "3"}, out eventInfo).ToArray().Length == 0);
                 Assert.That(eventInfo.CompareTo(ev3) == 0);
@@ -135,7 +135,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
         private string GenerateScopeId()
         {
-            return boxIds[globalRandom.Next(boxIds.Length)];
+            return boxIds[ThreadLocalRandom.Instance.Next(boxIds.Length)];
         }
 
         private const string commonShard = "commonShard";
@@ -143,6 +143,5 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
         private IEventRepository eventRepository;
         private string[] boxIds;
-        private Random globalRandom;
     }
 }

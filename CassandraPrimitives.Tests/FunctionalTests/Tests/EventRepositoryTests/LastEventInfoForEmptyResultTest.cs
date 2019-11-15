@@ -7,6 +7,8 @@ using MoreLinq;
 
 using NUnit.Framework;
 
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
@@ -28,13 +30,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                     i => (ThreadStart)(() =>
                         {
                             Console.WriteLine("Write {0} started", i);
-                            var random = new Random(i);
-                            Thread.Sleep(random.Next(1) * 100);
+                            Thread.Sleep(ThreadLocalRandom.Instance.Next(1) * 100);
                             var list = new List<EventInfo>();
                             for (var j = 0; j < eventCount; j++)
                             {
                                 list.Add(eventRepository.AddEvent(i.ToString(), GenerateEventContent()));
-                                if (random.Next(2) == 1)
+                                if (ThreadLocalRandom.Instance.Next(2) == 1)
                                     Thread.Sleep(100);
                             }
                             LogEventBatch("Writer" + i, list.ToArray());
@@ -56,8 +57,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                             EventInfo lastEventInfo = null;
                             while (readEvents[i].Count < eventCount && ((DateTime.Now - lastNotEmptyResultTime) < TimeSpan.FromMinutes(1)))
                             {
-                                EventInfo newExclusiveEventInfoIfEmpty;
-                                var events = eventRepository.GetEventsWithUnstableZone(lastEventInfo, new[] {i.ToString()}, out newExclusiveEventInfoIfEmpty).ToList();
+                                var events = eventRepository.GetEventsWithUnstableZone(lastEventInfo, new[] {i.ToString()}, out var newExclusiveEventInfoIfEmpty).ToList();
                                 var stableEvents = events.TakeWhile(x => x.StableZone).ToList();
 
                                 Func<EventInfo, string> toString = ei => ei == null ? "" : string.Format("({2}){0}_{1}", ei.Id.ScopeId, ei.Id.Id, ei.Ticks);

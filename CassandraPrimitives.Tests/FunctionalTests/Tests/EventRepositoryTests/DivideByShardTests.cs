@@ -6,6 +6,8 @@ using System.Threading;
 
 using NUnit.Framework;
 
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
@@ -17,7 +19,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         public override void SetUp()
         {
             base.SetUp();
-            keyDistributor = new KeyDistributor(ShardsCount);
+            keyDistributor = new KeyDistributor(shardsCount);
             globalEventRepository = CreateBoxEventRepository();
         }
 
@@ -32,7 +34,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         {
             totalWrittenEvents = 0;
             const int count = 5;
-            Assert.That(count <= ShardsCount);
+            Assert.That(count <= shardsCount);
 
             var writeThreads = new List<Thread>();
             var writtenEventsByThread = new List<Event>[count];
@@ -146,7 +148,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                 eventRepository.Dispose();
         }
 
-        protected int ShardsCount { get { return 64; } }
+        private const int shardsCount = 64;
 
         private void ThreadWriter(IEventRepository repository, List<Event> result, int threadId, string[] shards)
         {
@@ -183,7 +185,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             var sw = Stopwatch.StartNew();
             try
             {
-                var random = new Random(Guid.NewGuid().GetHashCode());
                 EventInfo exclusiveStartEventInfo = null;
                 while (true)
                 {
@@ -200,7 +201,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                         throw new Exception($"BUG {result.Count} > 1000");
                     if (totalWrittenEvents != 0 && result.Count == 1000)
                         return;
-                    Thread.Sleep(random.Next(100));
+                    Thread.Sleep(ThreadLocalRandom.Instance.Next(100));
                     if (sw.ElapsedMilliseconds > 480000)
                         throw new Exception($"Expected {totalWrittenEvents} but was {result.Count}");
                 }
@@ -212,11 +213,11 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             }
         }
 
-        private string[] GetShardsPart(int idx, int count)
+        private static string[] GetShardsPart(int idx, int count)
         {
-            var len = ShardsCount / count;
+            var len = shardsCount / count;
             var l = len * idx;
-            var r = idx == count - 1 ? ShardsCount : len * (idx + 1);
+            var r = idx == count - 1 ? shardsCount : len * (idx + 1);
             var list = new List<string>();
             for (var i = l; i < r; i++)
                 list.Add(i.ToString());
@@ -238,12 +239,12 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             return keyDistributor.Distribute(eventId.ScopeId).ToString();
         }
 
-        private string[] GetAllShards()
+        private static string[] GetAllShards()
         {
-            return new string[ShardsCount].Select((x, idx) => GetShardByIndex(idx)).ToArray();
+            return new string[shardsCount].Select((x, idx) => GetShardByIndex(idx)).ToArray();
         }
 
-        private string GetShardByIndex(int idx)
+        private static string GetShardByIndex(int idx)
         {
             return idx.ToString();
         }

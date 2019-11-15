@@ -11,6 +11,9 @@ using GroBuf.DataMembersExtracters;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
@@ -33,7 +36,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             var initializerSettings = new CassandraInitializerSettings();
             cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings, Logger.Instance), new CassandraMetaProvider(), initializerSettings);
             cassandraSchemeActualizer.AddNewColumnFamilies();
-            globalRandom = new Random(Guid.NewGuid().GetHashCode());
         }
 
         [SetUp]
@@ -103,10 +105,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             return eventRepository;
         }
 
-        protected object GenerateEventContent()
+        protected static object GenerateEventContent()
         {
             object eventContent;
-            switch (globalRandom.Next(3))
+            switch (ThreadLocalRandom.Instance.Next(3))
             {
             case 0:
                 {
@@ -127,7 +129,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             return eventContent;
         }
 
-        protected void CheckEqualEvents(Event[] expectedEvents, Event[] actualEvents)
+        protected static void CheckEqualEvents(Event[] expectedEvents, Event[] actualEvents)
         {
             Assert.AreEqual(expectedEvents.Length, actualEvents.Length);
             if (needDetailedComparison)
@@ -156,9 +158,8 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         private Stopwatch stopwatch;
 
         private readonly object logLockObject = new object();
-        private readonly bool needLog = false;
-        private readonly bool needDetailedComparison = false;
+        private const bool needLog = false;
+        private const bool needDetailedComparison = false;
         private Hashtable logHashtable;
-        private Random globalRandom;
     }
 }

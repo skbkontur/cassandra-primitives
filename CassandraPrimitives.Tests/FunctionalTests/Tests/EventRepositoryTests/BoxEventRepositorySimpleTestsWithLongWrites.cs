@@ -8,6 +8,9 @@ using GroBuf.DataMembersExtracters;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
@@ -24,7 +27,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         public void TestReadWrite()
         {
             boxIds = new[] {Guid.NewGuid().ToString(), Guid.NewGuid().ToString()};
-            globalRandom = new Random(Guid.NewGuid().GetHashCode());
 
             using (var eventRepository = CreateBoxEventRepository((id, obj) => commonShard, 1))
             {
@@ -59,7 +61,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         public void TestWriteAndRead1Shard()
         {
             boxIds = new[] {Guid.NewGuid().ToString(), Guid.NewGuid().ToString()};
-            globalRandom = new Random(Guid.NewGuid().GetHashCode());
 
             using (var eventRepository = CreateBoxEventRepository((id, obj) => commonShard, 0))
             {
@@ -96,7 +97,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         public void TestWriteAndRead64Shard()
         {
             boxIds = new[] {Guid.NewGuid().ToString(), Guid.NewGuid().ToString()};
-            globalRandom = new Random(Guid.NewGuid().GetHashCode());
 
             using (var eventRepository = CreateBoxEventRepository((eventId, obj) =>
                 {
@@ -136,7 +136,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
         private string GenerateScopeId()
         {
-            return boxIds[globalRandom.Next(boxIds.Length)];
+            return boxIds[ThreadLocalRandom.Instance.Next(boxIds.Length)];
         }
 
         private const string commonShard = "commonShard";
@@ -160,6 +160,5 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
         }
 
         private string[] boxIds;
-        private Random globalRandom;
     }
 }

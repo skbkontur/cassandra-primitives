@@ -28,8 +28,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder
 
         public long GetMaxTicks(string name)
         {
-            Column column;
-            if (!connection.TryGetColumn(name, maxTicksColumnName, out column))
+            if (!connection.TryGetColumn(name, maxTicksColumnName, out var column))
                 return 0;
             return serializer.Deserialize<long>(column.Value);
         }
@@ -47,8 +46,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder
 
         public long GetMinTicks(string name)
         {
-            Column column;
-            if (!connection.TryGetColumn(name, minTicksColumnName, out column))
+            if (!connection.TryGetColumn(name, minTicksColumnName, out var column))
                 return 0;
             return long.MaxValue - serializer.Deserialize<long>(column.Value);
         }
