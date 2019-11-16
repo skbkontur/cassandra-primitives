@@ -53,9 +53,9 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                         {
                             Console.WriteLine("Read {0} started", i);
 
-                            var lastNotEmptyResultTime = DateTime.Now;
+                            var lastNotEmptyResultTime = Timestamp.Now;
                             EventInfo lastEventInfo = null;
-                            while (readEvents[i].Count < eventCount && ((DateTime.Now - lastNotEmptyResultTime) < TimeSpan.FromMinutes(1)))
+                            while (readEvents[i].Count < eventCount && (Timestamp.Now - lastNotEmptyResultTime) < TimeSpan.FromMinutes(1))
                             {
                                 var events = eventRepository.GetEventsWithUnstableZone(lastEventInfo, new[] {i.ToString()}, out var newExclusiveEventInfoIfEmpty).ToList();
                                 var stableEvents = events.TakeWhile(x => x.StableZone).ToList();
@@ -64,7 +64,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
                                 LogEventBatch("Reader" + i, stableEvents.Select(x => x.Event).ToArray(), $"Read from {toString(lastEventInfo)}. Stable:{stableEvents.Count}, Total:{events.Count}, LastGoodEvent:{toString(newExclusiveEventInfoIfEmpty)}");
 
                                 if (stableEvents.Count > 0)
-                                    lastNotEmptyResultTime = DateTime.Now;
+                                    lastNotEmptyResultTime = Timestamp.Now;
 
                                 readEvents[i].AddRange(stableEvents.Select(x => x.Event));
 

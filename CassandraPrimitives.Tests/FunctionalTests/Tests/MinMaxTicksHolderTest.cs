@@ -52,7 +52,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
         [Test]
         public void MinTicks()
         {
-            var ticks = DateTime.UtcNow.Ticks;
+            var ticks = Timestamp.Now.Ticks;
             var key = Guid.NewGuid().ToString();
             Assert.That(minTicksHolder1.GetMinTicks(key), Is.Null);
             Assert.That(minTicksHolder2.GetMinTicks(key), Is.Null);
@@ -66,7 +66,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests
         [Test]
         public void MaxTicks()
         {
-            var ticks = DateTime.UtcNow.Ticks;
+            var ticks = Timestamp.Now.Ticks;
             var key = Guid.NewGuid().ToString();
             Assert.That(maxTicksHolder1.GetMaxTicks(key), Is.Null);
             Assert.That(maxTicksHolder2.GetMaxTicks(key), Is.Null);

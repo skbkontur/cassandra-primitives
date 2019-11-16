@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 using MoreLinq;
 
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
@@ -111,10 +113,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 totalEventCount += batchCount;
                 totalEventBatchCount += batch.Count;
                 profiler.BeforeRake(stopwatch.Elapsed, totalEventCount, totalEventBatchCount, batch.Select(x => x.SinceCreateElapsed).ToArray());
-                if (DateTime.Now - outputDateTime > TimeSpan.FromMinutes(1))
+                if (Timestamp.Now - outputDateTime > TimeSpan.FromMinutes(1))
                 {
                     logger.Info(GetRakeStatistics());
-                    outputDateTime = DateTime.Now;
+                    outputDateTime = Timestamp.Now;
                     totalEventCount = 0;
                     totalEventBatchCount = 0;
                     totalWaitTime = TimeSpan.FromMilliseconds(0);
@@ -129,7 +131,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 {
                     var writeStopwatch = Stopwatch.StartNew();
                     var getGoodLastEventInfo1Stopwatch = Stopwatch.StartNew();
-                    var nowTicks = Math.Max(eventLoggerAdditionalInfoRepository.GetGoodLastEventInfo().Ticks, DateTime.UtcNow.Ticks);
+                    var nowTicks = Math.Max(eventLoggerAdditionalInfoRepository.GetGoodLastEventInfo().Ticks, Timestamp.Now.Ticks);
                     getGoodLastEventInfo1Stopwatch.Stop();
 
                     var index = 0;
@@ -219,7 +221,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             return result.ToString();
         }
 
-        private DateTime outputDateTime = DateTime.Now;
+        private Timestamp outputDateTime = Timestamp.Now;
         private long totalEventCount;
         private long totalEventBatchCount;
         private TimeSpan totalWaitTime = TimeSpan.FromMilliseconds(0);

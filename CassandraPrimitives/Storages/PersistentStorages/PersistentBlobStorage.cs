@@ -87,7 +87,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
         private void DeleteInternal(TId[] ids, DateTime? timestamp)
         {
             MakeInConnection(
-                connection => connection.DeleteRows(ids.Select(x => cassandraObjectIdConverter.IdToRowKey(x)).ToArray(), timestamp.HasValue ? timestamp.Value.Ticks : (long?)null));
+                connection => connection.DeleteRows(ids.Select(x => cassandraObjectIdConverter.IdToRowKey(x)).ToArray(), timestamp?.Ticks));
         }
 
         public void Update(TId id, Action<T> updateAction, DateTime timestamp)

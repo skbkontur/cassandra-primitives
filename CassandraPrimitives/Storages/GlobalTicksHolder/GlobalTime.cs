@@ -1,4 +1,6 @@
-﻿using System;
+using System;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder
 {
@@ -11,13 +13,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder
 
         public long UpdateNowTicks()
         {
-            var actualTicks = ticksHolder.UpdateMaxTicks(globalTicksName, DateTime.UtcNow.Ticks);
+            var actualTicks = ticksHolder.UpdateMaxTicks(globalTicksName, Timestamp.Now.Ticks);
             return actualTicks;
         }
 
         public long GetNowTicks()
         {
-            return Math.Max(ticksHolder.GetMaxTicks(globalTicksName), DateTime.UtcNow.Ticks);
+            return Math.Max(ticksHolder.GetMaxTicks(globalTicksName), Timestamp.Now.Ticks);
         }
 
         private const string globalTicksName = "GlobalTicks";

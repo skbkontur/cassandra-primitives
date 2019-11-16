@@ -34,7 +34,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             {
                 TearDown();
                 SetUp();
-                Console.WriteLine("Run {0}. Time {1:dd.MM.yyyy HH:mm:ss}", i, DateTime.UtcNow);
+                Console.WriteLine("Run {0}. Time {1:dd.MM.yyyy HH:mm:ss}", i, Timestamp.Now.ToDateTime());
                 DoTestMultiThread();
             }
         }
