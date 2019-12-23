@@ -1,8 +1,9 @@
-﻿using System.Linq;
+using System.Linq;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Scheme;
+
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer

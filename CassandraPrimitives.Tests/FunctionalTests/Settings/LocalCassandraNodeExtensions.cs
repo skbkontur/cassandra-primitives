@@ -2,8 +2,7 @@ using System;
 using System.Net;
 
 using SkbKontur.Cassandra.Local;
-
-using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings
 {

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Connections;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Connections;
+
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection

@@ -1,6 +1,7 @@
-﻿using GroBuf;
+using GroBuf;
 
-using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 

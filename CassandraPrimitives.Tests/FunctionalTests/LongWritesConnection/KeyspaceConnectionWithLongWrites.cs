@@ -1,5 +1,5 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Connections;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Connections;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
 {

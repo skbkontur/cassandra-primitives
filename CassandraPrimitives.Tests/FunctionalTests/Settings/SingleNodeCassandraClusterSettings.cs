@@ -1,8 +1,8 @@
 using System;
 using System.Net;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings
 {

@@ -1,11 +1,12 @@
 using GroBuf;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Connections;
+using SkbKontur.Cassandra.DistributedLock;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Connections;
+
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
-using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation

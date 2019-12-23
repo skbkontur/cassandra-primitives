@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 using GroBuf;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Connections;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Connections;
+
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
@@ -30,7 +31,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 .Select(x => new KeyValuePair<EventPointer, EventLogRecord>(eventLogPointerCreator.Create(x.StorageElement.EventInfo), x))
                 .GroupBy(x => x.Key.RowKey)
                 .Select(eventsGropedByRow =>
-                        new KeyValuePair<string, IEnumerable<Column>>(
+                            new KeyValuePair<string, IEnumerable<Column>>(
                             eventsGropedByRow.Key,
                             eventsGropedByRow.Select(x => new Column
                                 {
@@ -48,7 +49,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                 .Select(x => eventLogPointerCreator.Create(x))
                 .GroupBy(x => x.RowKey)
                 .Select(eventsGropedByRow =>
-                        new KeyValuePair<string, IEnumerable<string>>(
+                            new KeyValuePair<string, IEnumerable<string>>(
                             eventsGropedByRow.Key,
                             eventsGropedByRow.Select(x => x.ColumnName)))
                 .ToArray();

@@ -2,14 +2,15 @@ using System;
 
 using GroBuf;
 
-using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SkbKontur.Cassandra.DistributedLock;
+using SkbKontur.Cassandra.DistributedLock.RemoteLocker;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.TypeIdentifiers;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
-using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock;
-using SKBKontur.Catalogue.CassandraPrimitives.RemoteLock.RemoteLocker;
 
 using Vostok.Logging.Abstractions;
 

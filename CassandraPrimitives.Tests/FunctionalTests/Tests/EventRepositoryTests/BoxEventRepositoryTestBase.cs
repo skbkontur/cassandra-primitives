@@ -10,8 +10,7 @@ using GroBuf.DataMembersExtracters;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-
+using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
