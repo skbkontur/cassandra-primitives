@@ -1,4 +1,4 @@
-﻿namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Contents
+﻿namespace CassandraPrimitives.Tests.Commons.Contents
 {
     public class TestContent
     {

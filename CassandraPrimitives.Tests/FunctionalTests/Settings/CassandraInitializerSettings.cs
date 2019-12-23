@@ -1,6 +1,6 @@
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
+using CassandraPrimitives.Tests.SchemeActualizer;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings
+namespace CassandraPrimitives.Tests.FunctionalTests.Settings
 {
     public class CassandraInitializerSettings : ICassandraInitializerSettings
     {

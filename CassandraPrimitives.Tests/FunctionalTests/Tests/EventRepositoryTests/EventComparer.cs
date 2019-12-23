@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
+using SkbKontur.Cassandra.Primitives.EventLog.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
+namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
     public class EventComparer : IComparer<Event>
     {

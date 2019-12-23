@@ -2,23 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using CassandraPrimitives.Tests.FunctionalTests.EventContents;
+using CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection;
+using CassandraPrimitives.Tests.FunctionalTests.Settings;
+
 using GroBuf;
 using GroBuf.DataMembersExtracters;
 
 using NUnit.Framework;
 
+using SkbKontur.Cassandra.Primitives.EventLog;
+using SkbKontur.Cassandra.Primitives.EventLog.Configuration.ColumnFamilies;
+using SkbKontur.Cassandra.Primitives.EventLog.Primitives;
+using SkbKontur.Cassandra.Primitives.EventLog.Sharding;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings;
-
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
+namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
     public class BoxEventRepositorySimpleTestsWithLongWrites : BoxEventRepositoryTestBase
     {

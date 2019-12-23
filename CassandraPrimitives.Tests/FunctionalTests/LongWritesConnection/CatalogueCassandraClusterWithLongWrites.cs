@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 
+using SkbKontur.Cassandra.Primitives.Storages.Primitives;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.ThriftClient.Clusters.ActualizationEventListener;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 using SkbKontur.Cassandra.ThriftClient.Core.Pools;
 using SkbKontur.Cassandra.ThriftClient.Scheme;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
-
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
+namespace CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
 {
     public class CatalogueCassandraClusterWithLongWrites : ICassandraCluster
     {

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 using NUnit.Framework;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
+using SkbKontur.Cassandra.Primitives.EventLog;
+using SkbKontur.Cassandra.Primitives.EventLog.Primitives;
+using SkbKontur.Cassandra.Primitives.EventLog.Sharding;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
+namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
     public class BoxEventRepositoryConsistencyTest : BoxEventRepositoryTestBase
     {

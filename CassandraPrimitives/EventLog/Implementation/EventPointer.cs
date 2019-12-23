@@ -1,4 +1,4 @@
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
+namespace SkbKontur.Cassandra.Primitives.EventLog.Implementation
 {
     internal class EventPointer
     {

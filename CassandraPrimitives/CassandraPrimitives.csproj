@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SkbKontur.Cassandra.Primitives</AssemblyName>
-    <RootNamespace>SKBKontur.Catalogue.CassandraPrimitives</RootNamespace>
+    <RootNamespace>$(AssemblyName)</RootNamespace>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 

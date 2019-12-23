@@ -1,12 +1,11 @@
 using System.Linq;
 
+using SkbKontur.Cassandra.Primitives.Storages.Primitives;
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.ThriftClient.Scheme;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
-
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer
+namespace CassandraPrimitives.Tests.SchemeActualizer
 {
     public class CassandraSchemeActualizer : ICassandraSchemeActualizer
     {

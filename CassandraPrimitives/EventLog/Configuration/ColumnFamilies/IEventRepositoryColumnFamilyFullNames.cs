@@ -1,6 +1,6 @@
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
+using SkbKontur.Cassandra.Primitives.Storages.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies
+namespace SkbKontur.Cassandra.Primitives.EventLog.Configuration.ColumnFamilies
 {
     public interface IEventRepositoryColumnFamilyFullNames
     {

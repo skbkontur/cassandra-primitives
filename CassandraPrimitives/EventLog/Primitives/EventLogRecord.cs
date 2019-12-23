@@ -1,4 +1,4 @@
-﻿namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives
+﻿namespace SkbKontur.Cassandra.Primitives.EventLog.Primitives
 {
     internal class EventLogRecord
     {

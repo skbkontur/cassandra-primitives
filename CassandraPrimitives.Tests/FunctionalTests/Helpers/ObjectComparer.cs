@@ -5,7 +5,7 @@ using GroBuf.DataMembersExtracters;
 
 using NUnit.Framework;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Helpers
+namespace CassandraPrimitives.Tests.FunctionalTests.Helpers
 {
     public static class ObjectComparer
     {

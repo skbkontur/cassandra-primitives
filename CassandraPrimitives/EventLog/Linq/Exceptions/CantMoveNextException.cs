@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq.Exceptions
+namespace SkbKontur.Cassandra.Primitives.EventLog.Linq.Exceptions
 {
     internal class CantMoveNextException : Exception
     {

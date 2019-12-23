@@ -3,10 +3,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Contents;
+using CassandraPrimitives.Tests.Commons.Contents;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed
+using SkbKontur.Cassandra.Primitives.EventLog;
+
+namespace CassandraPrimitives.Tests.Commons.Speed
 {
     public class TestEventWriter
     {

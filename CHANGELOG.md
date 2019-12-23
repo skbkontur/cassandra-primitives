@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.2.x - 2019.12.??
+- Adjust root namespace name to match assembly name.
+
 ## v2.2.4 - 2019.11.17
 - Use precise monotonic timestamp from [SkbKontur.Cassandra.TimeGuid](https://github.com/skbkontur/cassandra-time-guid) package.
 - Use [SourceLink](https://github.com/dotnet/sourcelink) to help ReSharper decompiler show actual code.

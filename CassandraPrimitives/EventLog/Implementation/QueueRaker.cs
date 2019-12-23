@@ -8,16 +8,15 @@ using System.Threading.Tasks;
 
 using MoreLinq;
 
+using SkbKontur.Cassandra.Primitives.EventLog.Exceptions;
+using SkbKontur.Cassandra.Primitives.EventLog.Primitives;
+using SkbKontur.Cassandra.Primitives.EventLog.Profiling;
+using SkbKontur.Cassandra.Primitives.EventLog.Utils;
 using SkbKontur.Cassandra.TimeBasedUuid;
-
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Utils;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
+namespace SkbKontur.Cassandra.Primitives.EventLog.Implementation
 {
     internal class QueueRaker : IQueueRaker
     {

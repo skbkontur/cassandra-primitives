@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions
+namespace SkbKontur.Cassandra.Primitives.EventLog.Exceptions
 {
     public class ShardsArrayIsEmptyException : Exception
     {

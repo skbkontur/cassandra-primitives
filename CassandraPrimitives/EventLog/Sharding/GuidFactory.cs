@@ -2,7 +2,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding
+namespace SkbKontur.Cassandra.Primitives.EventLog.Sharding
 {
     internal static class GuidFactory
     {

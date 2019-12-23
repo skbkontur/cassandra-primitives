@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.TypeIdentifiers
+namespace SkbKontur.Cassandra.Primitives.EventLog.Configuration.TypeIdentifiers
 {
     public abstract class EventTypeRegistryBase : IEventTypeIdentifierProvider
     {

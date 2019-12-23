@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq.Exceptions;
+using SkbKontur.Cassandra.Primitives.EventLog.Linq.Exceptions;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq
+namespace SkbKontur.Cassandra.Primitives.EventLog.Linq
 {
     public static class CassandraPrimitivesEnumerableExtensions
     {

@@ -5,12 +5,11 @@ using System.Linq;
 
 using NUnit.Framework;
 
+using SkbKontur.Cassandra.Primitives.EventLog;
+using SkbKontur.Cassandra.Primitives.EventLog.Primitives;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
-
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
+namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
     [TestFixture(true)]
     [TestFixture(false)]

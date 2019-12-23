@@ -1,7 +1,8 @@
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
+using CassandraPrimitives.Tests.SchemeActualizer;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings
+using SkbKontur.Cassandra.Primitives.Storages.Primitives;
+
+namespace CassandraPrimitives.Tests.FunctionalTests.Settings
 {
     public class CassandraMetaProvider : ICassandraMetadataProvider
     {

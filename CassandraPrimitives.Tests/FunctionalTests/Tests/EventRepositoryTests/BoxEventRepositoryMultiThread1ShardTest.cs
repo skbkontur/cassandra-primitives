@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
+namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
     public class BoxEventRepositoryMultiThread1ShardTest : BoxEventRepositoryMultiThreadTestBase
     {

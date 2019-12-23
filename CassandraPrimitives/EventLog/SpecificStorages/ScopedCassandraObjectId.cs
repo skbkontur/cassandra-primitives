@@ -1,4 +1,4 @@
-﻿namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.SpecificStorages
+﻿namespace SkbKontur.Cassandra.Primitives.EventLog.SpecificStorages
 {
     internal class ScopedCassandraObjectId
     {

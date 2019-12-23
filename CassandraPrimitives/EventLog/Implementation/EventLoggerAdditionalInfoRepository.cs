@@ -1,15 +1,14 @@
 using GroBuf;
 
 using SkbKontur.Cassandra.DistributedLock;
+using SkbKontur.Cassandra.Primitives.EventLog.Exceptions;
+using SkbKontur.Cassandra.Primitives.EventLog.Primitives;
+using SkbKontur.Cassandra.Primitives.Storages.Primitives;
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
-
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
+namespace SkbKontur.Cassandra.Primitives.EventLog.Implementation
 {
     internal class EventLoggerAdditionalInfoRepository : IEventLoggerAdditionalInfoRepository
     {

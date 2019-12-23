@@ -1,10 +1,10 @@
 using System;
 using System.Text;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages;
+using SkbKontur.Cassandra.Primitives.EventLog.Exceptions;
+using SkbKontur.Cassandra.Primitives.Storages.PersistentStorages;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.SpecificStorages
+namespace SkbKontur.Cassandra.Primitives.EventLog.SpecificStorages
 {
     internal class ScopedCassandraObjectIdConverter<T> : ICassandraObjectIdConverter<T, ScopedCassandraObjectId>
         where T : class, IScopedCassandraObject

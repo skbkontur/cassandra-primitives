@@ -1,6 +1,6 @@
-﻿using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
+﻿using SkbKontur.Cassandra.Primitives.Storages.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer
+namespace CassandraPrimitives.Tests.SchemeActualizer
 {
     public interface ICassandraMetadataProvider
     {

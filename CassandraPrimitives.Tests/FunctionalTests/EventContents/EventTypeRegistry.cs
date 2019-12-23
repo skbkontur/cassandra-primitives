@@ -1,8 +1,9 @@
-﻿using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.TypeIdentifiers;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Contents;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents.Contents;
+﻿using CassandraPrimitives.Tests.Commons.Contents;
+using CassandraPrimitives.Tests.FunctionalTests.EventContents.Contents;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents
+using SkbKontur.Cassandra.Primitives.EventLog.Configuration.TypeIdentifiers;
+
+namespace CassandraPrimitives.Tests.FunctionalTests.EventContents
 {
     internal class EventTypeRegistry : EventTypeRegistryBase
     {

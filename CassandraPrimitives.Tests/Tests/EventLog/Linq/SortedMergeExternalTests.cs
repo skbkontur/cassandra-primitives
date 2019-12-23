@@ -4,11 +4,10 @@ using System.Linq;
 
 using NUnit.Framework;
 
+using SkbKontur.Cassandra.Primitives.EventLog.Linq;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
-
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Tests.EventLog.Linq
+namespace CassandraPrimitives.Tests.Tests.EventLog.Linq
 {
     [TestFixture]
     public class SortedMergeExternalTests

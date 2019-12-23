@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
+using SkbKontur.Cassandra.Primitives.Storages.Primitives;
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
-
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
+namespace CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
 {
     public class ColumnFamilyConnectionWithLongWrites : IColumnFamilyConnection
     {

@@ -7,7 +7,7 @@ using Vostok.Logging.File;
 using Vostok.Logging.File.Configuration;
 using Vostok.Logging.Formatting;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests
+namespace CassandraPrimitives.Tests
 {
     public static class Logger
     {

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
+using SkbKontur.Cassandra.Primitives.EventLog.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
+namespace SkbKontur.Cassandra.Primitives.EventLog
 {
     public interface IEventRepository : IDisposable
     {

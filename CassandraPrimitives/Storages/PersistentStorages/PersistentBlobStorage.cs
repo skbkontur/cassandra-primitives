@@ -6,14 +6,13 @@ using GroBuf;
 
 using MoreLinq;
 
+using SkbKontur.Cassandra.Primitives.Storages.Exceptions;
+using SkbKontur.Cassandra.Primitives.Storages.Primitives;
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.Exceptions;
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
-
-namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
+namespace SkbKontur.Cassandra.Primitives.Storages.PersistentStorages
 {
     public class PersistentBlobStorage<T, TId> : IPersistentStorage<T, TId>
         where T : class

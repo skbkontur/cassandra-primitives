@@ -1,4 +1,4 @@
-﻿namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents.Contents
+﻿namespace CassandraPrimitives.Tests.FunctionalTests.EventContents.Contents
 {
     public class SentEventContent
     {

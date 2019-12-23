@@ -1,11 +1,10 @@
 using GroBuf;
 
+using SkbKontur.Cassandra.Primitives.Storages.PersistentStorages;
+using SkbKontur.Cassandra.Primitives.Storages.Primitives;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages;
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
-
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.SpecificStorages
+namespace SkbKontur.Cassandra.Primitives.EventLog.SpecificStorages
 {
     internal class ScopedPersistentStorage<T> : PersistentBlobStorage<T, ScopedCassandraObjectId>
         where T : class, IScopedCassandraObject

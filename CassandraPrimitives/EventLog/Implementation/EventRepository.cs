@@ -7,11 +7,11 @@ using GroBuf;
 
 using MoreLinq;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.TypeIdentifiers;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
+using SkbKontur.Cassandra.Primitives.EventLog.Configuration.TypeIdentifiers;
+using SkbKontur.Cassandra.Primitives.EventLog.Primitives;
+using SkbKontur.Cassandra.Primitives.EventLog.Sharding;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
+namespace SkbKontur.Cassandra.Primitives.EventLog.Implementation
 {
     internal class EventRepository : IEventRepository
     {

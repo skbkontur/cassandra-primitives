@@ -1,6 +1,6 @@
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
+using SkbKontur.Cassandra.Primitives.Storages.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings
+namespace CassandraPrimitives.Tests.FunctionalTests.Settings
 {
     public static class ColumnFamilies
     {

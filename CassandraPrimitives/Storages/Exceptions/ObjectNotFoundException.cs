@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.Exceptions
+namespace SkbKontur.Cassandra.Primitives.Storages.Exceptions
 {
     public class ObjectNotFoundException : Exception
     {

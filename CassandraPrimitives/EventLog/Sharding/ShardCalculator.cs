@@ -1,8 +1,8 @@
 using System;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
+using SkbKontur.Cassandra.Primitives.EventLog.Primitives;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding
+namespace SkbKontur.Cassandra.Primitives.EventLog.Sharding
 {
     public class ShardCalculator : IShardCalculator
     {

@@ -1,4 +1,4 @@
-﻿namespace SKBKontur.Catalogue.CassandraPrimitives.Storages.PersistentStorages
+﻿namespace SkbKontur.Cassandra.Primitives.Storages.PersistentStorages
 {
     public interface ICassandraObjectIdConverter<T, TId>
     {

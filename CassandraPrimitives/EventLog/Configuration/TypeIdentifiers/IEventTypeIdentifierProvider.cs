@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.TypeIdentifiers
+namespace SkbKontur.Cassandra.Primitives.EventLog.Configuration.TypeIdentifiers
 {
     public interface IEventTypeIdentifierProvider
     {

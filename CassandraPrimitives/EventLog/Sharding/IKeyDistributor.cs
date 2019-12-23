@@ -1,4 +1,4 @@
-﻿namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding
+﻿namespace SkbKontur.Cassandra.Primitives.EventLog.Sharding
 {
     public interface IKeyDistributor
     {

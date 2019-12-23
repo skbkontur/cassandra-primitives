@@ -1,4 +1,4 @@
-﻿namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.EventContents
+﻿namespace CassandraPrimitives.Tests.FunctionalTests.EventContents
 {
     public static class BoxEventType
     {

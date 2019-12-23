@@ -4,17 +4,16 @@ using GroBuf;
 
 using SkbKontur.Cassandra.DistributedLock;
 using SkbKontur.Cassandra.DistributedLock.RemoteLocker;
+using SkbKontur.Cassandra.Primitives.EventLog.Configuration.ColumnFamilies;
+using SkbKontur.Cassandra.Primitives.EventLog.Configuration.TypeIdentifiers;
+using SkbKontur.Cassandra.Primitives.EventLog.Implementation;
+using SkbKontur.Cassandra.Primitives.EventLog.Profiling;
+using SkbKontur.Cassandra.Primitives.EventLog.Sharding;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
-
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.ColumnFamilies;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Configuration.TypeIdentifiers;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog
+namespace SkbKontur.Cassandra.Primitives.EventLog
 {
     public class EventRepositoryFactory : IEventRepositoryFactory
     {

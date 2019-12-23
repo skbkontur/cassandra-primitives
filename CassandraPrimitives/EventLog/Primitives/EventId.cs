@@ -1,6 +1,6 @@
 using System;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives
+namespace SkbKontur.Cassandra.Primitives.EventLog.Primitives
 {
     public class EventId : IComparable<EventId>
     {

@@ -8,20 +8,19 @@ using GroBuf;
 
 using MoreLinq;
 
+using SkbKontur.Cassandra.Primitives.EventLog.Exceptions;
+using SkbKontur.Cassandra.Primitives.EventLog.Linq;
+using SkbKontur.Cassandra.Primitives.EventLog.Primitives;
+using SkbKontur.Cassandra.Primitives.EventLog.Profiling;
+using SkbKontur.Cassandra.Primitives.Storages.Primitives;
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
-
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
+namespace SkbKontur.Cassandra.Primitives.EventLog.Implementation
 {
     internal class EventLogger : IEventLogger
     {

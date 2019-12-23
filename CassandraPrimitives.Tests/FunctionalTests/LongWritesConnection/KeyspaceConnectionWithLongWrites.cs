@@ -1,7 +1,7 @@
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
+namespace CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
 {
     public class KeyspaceConnectionWithLongWrites : IKeyspaceConnection
     {

@@ -6,15 +6,14 @@ using System.Threading;
 
 using NUnit.Framework;
 
+using SkbKontur.Cassandra.Primitives.EventLog;
+using SkbKontur.Cassandra.Primitives.EventLog.Primitives;
+using SkbKontur.Cassandra.Primitives.EventLog.Sharding;
 using SkbKontur.Cassandra.TimeBasedUuid;
-
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
+namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
     public class SpeedTests : BoxEventRepositoryTestBase
     {

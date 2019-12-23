@@ -2,12 +2,13 @@
 using System.Linq;
 using System.Threading;
 
+using CassandraPrimitives.Tests.Commons.Speed;
+
 using NUnit.Framework;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
-using SKBKontur.Catalogue.CassandraPrimitives.Tests.Commons.Speed;
+using SkbKontur.Cassandra.Primitives.EventLog.Sharding;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
+namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
 {
     [TestFixture]
     public class BoxEventRepositoryShardTests : BoxEventRepositoryTestBase

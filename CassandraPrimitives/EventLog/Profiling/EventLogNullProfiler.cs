@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling
+namespace SkbKontur.Cassandra.Primitives.EventLog.Profiling
 {
     internal sealed class EventLogNullProfiler : IEventLogProfiler
     {

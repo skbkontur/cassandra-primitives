@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation;
+using SkbKontur.Cassandra.Primitives.EventLog.Implementation;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives
+namespace SkbKontur.Cassandra.Primitives.EventLog.Primitives
 {
     internal class QueueEntry
     {

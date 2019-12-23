@@ -5,9 +5,9 @@ using System.Linq;
 
 using NUnit.Framework;
 
-using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Sharding;
+using SkbKontur.Cassandra.Primitives.EventLog.Sharding;
 
-namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.Tests.EventLog.Sharding
+namespace CassandraPrimitives.Tests.Tests.EventLog.Sharding
 {
     [TestFixture]
     public class KeyDistributorTests
