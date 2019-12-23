@@ -96,7 +96,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
             var factory = new EventRepositoryFactory(serializer, cassandraCluster, eventTypeRegistry, Logger.Instance);
             var eventRepositoryColumnFamilyFullNames = new EventRepositoryColumnFamilyFullNames(
-                ColumnFamilies.ticksHolder,
                 ColumnFamilies.eventLog,
                 ColumnFamilies.eventLogAdditionalInfo,
                 ColumnFamilies.remoteLock);
@@ -152,14 +151,15 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
             Console.WriteLine("CheckEqualEvents finished");
         }
 
+        private const bool needLog = false;
+        private const bool needDetailedComparison = false;
+
         private CassandraSchemeActualizer cassandraSchemeActualizer;
         private ICassandraClusterSettings cassandraClusterSettings;
         private string logDirectory;
         private Stopwatch stopwatch;
 
         private readonly object logLockObject = new object();
-        private const bool needLog = false;
-        private const bool needDetailedComparison = false;
         private Hashtable logHashtable;
     }
 }

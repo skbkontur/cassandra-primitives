@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -11,17 +11,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWrit
 {
     public class ColumnFamilyConnectionWithLongWrites : IColumnFamilyConnection
     {
-        public ColumnFamilyConnectionWithLongWrites(IColumnFamilyConnection columnFamilyConnection, ColumnFamilyFullName columnFamilyFullName)
-            : this(columnFamilyConnection, columnFamilyFullName, TimeSpan.FromMilliseconds(10))
-        {
-        }
-
-        public ColumnFamilyConnectionWithLongWrites(IColumnFamilyConnection columnFamilyConnection, ColumnFamilyFullName columnFamilyFullName, TimeSpan timeout)
-            : this(columnFamilyConnection, columnFamilyFullName, timeout, 20)
-        {
-        }
-
-        public ColumnFamilyConnectionWithLongWrites(IColumnFamilyConnection columnFamilyConnection, ColumnFamilyFullName columnFamilyFullName, TimeSpan timeout, int attempts)
+        public ColumnFamilyConnectionWithLongWrites(IColumnFamilyConnection columnFamilyConnection, ColumnFamilyFullName columnFamilyFullName, TimeSpan timeout, int attempts = 20)
         {
             this.columnFamilyConnection = columnFamilyConnection;
             this.columnFamilyFullName = columnFamilyFullName;
@@ -207,7 +197,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.LongWrit
             Thread.Sleep(TimeSpan.FromTicks(timeout.Ticks * (withAttempts ? attempts : 1)));
         }
 
-        private static volatile int count = 0;
+        private static volatile int count;
 
         private readonly IColumnFamilyConnection columnFamilyConnection;
         private readonly ColumnFamilyFullName columnFamilyFullName;

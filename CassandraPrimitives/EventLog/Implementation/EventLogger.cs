@@ -18,7 +18,6 @@ using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Exceptions;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Linq;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.EventLog.Profiling;
-using SKBKontur.Catalogue.CassandraPrimitives.Storages.GlobalTicksHolder;
 using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 
 using Vostok.Logging.Abstractions;
@@ -34,16 +33,13 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
             IEventLogPointerCreator eventLogPointerCreator,
             Func<IQueueRaker> createQueueRaker,
             IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository,
-            IGlobalTime globalTime,
             IEventLogProfiler profiler,
-            ILog logger
-            )
+            ILog logger)
         {
             this.serializer = serializer;
             this.eventLogPointerCreator = eventLogPointerCreator;
             this.createQueueRaker = createQueueRaker;
             this.eventLoggerAdditionalInfoRepository = eventLoggerAdditionalInfoRepository;
-            this.globalTime = globalTime;
             this.profiler = profiler;
             this.logger = logger;
             columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(eventLogColumnFamily.KeyspaceName, eventLogColumnFamily.ColumnFamilyName);
@@ -131,11 +127,10 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
                         throw new EventLoggerWasDisposedException();
                     if (!wasInitialized)
                     {
-                        var nowTicks = globalTime.GetNowTicks();
                         eventLoggerAdditionalInfoRepository.GetOrCreateFirstEventInfo(new EventInfo
                             {
                                 Shard = "Null",
-                                Ticks = nowTicks,
+                                Ticks = Timestamp.Now.Ticks,
                                 Id = new EventId
                                     {
                                         ScopeId = Guid.NewGuid().ToString(),
@@ -271,17 +266,14 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.EventLog.Implementation
         private const int attemptCount = 20;
 
         private readonly ILog logger;
-
         private readonly ISerializer serializer;
         private readonly IEventLogPointerCreator eventLogPointerCreator;
         private readonly Func<IQueueRaker> createQueueRaker;
         private readonly IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository;
-        private readonly IGlobalTime globalTime;
         private readonly IEventLogProfiler profiler;
         private readonly IColumnFamilyConnection columnFamilyConnection;
 
         private volatile IQueueRaker queueRaker;
-
         private volatile bool wasDisposed;
         private volatile bool wasInitialized;
         private readonly object lockObject = new object();

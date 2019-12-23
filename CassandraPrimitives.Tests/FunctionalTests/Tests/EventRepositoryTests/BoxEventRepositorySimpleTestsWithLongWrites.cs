@@ -150,7 +150,6 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Tests.Ev
 
             var factory = new EventRepositoryFactory(serializer, cassandraCluster, eventTypeRegistry, Logger.Instance);
             var eventRepositoryColumnFamilyFullNames = new EventRepositoryColumnFamilyFullNames(
-                ColumnFamilies.ticksHolder,
                 ColumnFamilies.eventLog,
                 ColumnFamilies.eventLogAdditionalInfo,
                 ColumnFamilies.remoteLock);

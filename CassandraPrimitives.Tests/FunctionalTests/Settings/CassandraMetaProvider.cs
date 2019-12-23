@@ -1,4 +1,4 @@
-﻿using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
+using SKBKontur.Catalogue.CassandraPrimitives.Storages.Primitives;
 using SKBKontur.Catalogue.CassandraPrimitives.Tests.SchemeActualizer;
 
 namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings
@@ -7,7 +7,7 @@ namespace SKBKontur.Catalogue.CassandraPrimitives.Tests.FunctionalTests.Settings
     {
         public ColumnFamilyFullName[] GetColumnFamilies()
         {
-            return new[] {ColumnFamilies.eventLog, ColumnFamilies.ticksHolder, ColumnFamilies.eventLogAdditionalInfo, ColumnFamilies.remoteLock};
+            return new[] {ColumnFamilies.eventLog, ColumnFamilies.eventLogAdditionalInfo, ColumnFamilies.remoteLock};
         }
     }
 }
