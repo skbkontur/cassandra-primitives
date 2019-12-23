@@ -2,6 +2,8 @@
 
 ## v2.2.x - 2019.12.??
 - Adjust root namespace name to match assembly name.
+- Move `MinTicksHolder` and `MaxTicksHolder` to [Cassandra.GlobalTimestamp](https://github.com/skbkontur/cassandra-global-timestamp) repository.
+- Remove `TicksHolder` and `GlobalTime` since `TicksHolder` column family was never updated.
 
 ## v2.2.4 - 2019.11.17
 - Use precise monotonic timestamp from [SkbKontur.Cassandra.TimeGuid](https://github.com/skbkontur/cassandra-time-guid) package.
