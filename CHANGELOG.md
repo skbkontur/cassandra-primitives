@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.2.x - 2019.12.??
+## v2.2.10 - 2019.12.24
 - Adjust root namespace name to match assembly name.
 - Move `MinTicksHolder` and `MaxTicksHolder` to [Cassandra.GlobalTimestamp](https://github.com/skbkontur/cassandra-global-timestamp) repository.
 - Remove `TicksHolder` and `GlobalTime` since `TicksHolder` column family was never updated.
