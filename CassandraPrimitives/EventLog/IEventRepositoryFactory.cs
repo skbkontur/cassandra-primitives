@@ -1,4 +1,6 @@
-﻿using SkbKontur.Cassandra.Primitives.EventLog.Configuration.ColumnFamilies;
+﻿using System;
+
+using SkbKontur.Cassandra.Primitives.EventLog.Configuration.ColumnFamilies;
 using SkbKontur.Cassandra.Primitives.EventLog.Profiling;
 using SkbKontur.Cassandra.Primitives.EventLog.Sharding;
 
@@ -13,6 +15,7 @@ namespace SkbKontur.Cassandra.Primitives.EventLog
         IEventRepository CreateEventRepository(
             IShardCalculator shardCalculator,
             IEventRepositoryColumnFamilyFullNames columnFamilies,
-            IEventLogProfiler profiler);
+            IEventLogProfiler profiler,
+            TimeSpan? eventsTtl = null);
     }
 }
