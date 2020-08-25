@@ -153,7 +153,7 @@ namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
                 ColumnFamilies.eventLogAdditionalInfo,
                 ColumnFamilies.remoteLock);
             var shardCalculator = new ShardCalculator(calculateShard);
-            var result = factory.CreateEventRepository(shardCalculator, eventRepositoryColumnFamilyFullNames);
+            var result = factory.CreateEventRepository(shardCalculator, eventRepositoryColumnFamilyFullNames, TimeSpan.FromDays(1));
             return result;
         }
 

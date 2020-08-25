@@ -25,7 +25,7 @@ namespace SkbKontur.Cassandra.Primitives.EventLog.Implementation
             IEventLoggerAdditionalInfoRepository eventLoggerAdditionalInfoRepository,
             IEventLogProfiler profiler,
             ILog logger,
-            TimeSpan? eventsTtl)
+            TimeSpan eventsTtl)
         {
             this.eventStorage = eventStorage;
             this.eventLoggerAdditionalInfoRepository = eventLoggerAdditionalInfoRepository;
@@ -173,7 +173,7 @@ namespace SkbKontur.Cassandra.Primitives.EventLog.Implementation
                         setLastEventInfoStopwatch.Stop();
 
                         setEventsGoodStopwatch = Stopwatch.StartNew();
-                        eventStorage.Write(goodEvents.Select(x => new EventLogRecord {IsBad = false, StorageElement = x}).ToArray(), nowTicks + 1, (int?)eventsTtl?.TotalSeconds);
+                        eventStorage.Write(goodEvents.Select(x => new EventLogRecord {IsBad = false, StorageElement = x}).ToArray(), nowTicks + 1, (int)eventsTtl.TotalSeconds);
                         setEventsGoodStopwatch.Stop();
                     }
 
@@ -239,6 +239,6 @@ namespace SkbKontur.Cassandra.Primitives.EventLog.Implementation
         private Thread thread;
         private readonly Queue<QueueEntry> queue;
         private readonly ILog logger;
-        private readonly TimeSpan? eventsTtl;
+        private readonly TimeSpan eventsTtl;
     }
 }
