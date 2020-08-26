@@ -29,11 +29,6 @@ namespace SkbKontur.Cassandra.Primitives.EventLog
             this.logger = logger.ForContext("CassandraPrimitives.EventLog");
         }
 
-        public IEventRepository CreateEventRepository(IShardCalculator shardCalculator, IEventRepositoryColumnFamilyFullNames columnFamilies, TimeSpan eventsTtl)
-        {
-            return CreateEventRepository(shardCalculator, columnFamilies, EventLogNullProfiler.Instance, eventsTtl);
-        }
-
         public IEventRepository CreateEventRepository(IShardCalculator shardCalculator, IEventRepositoryColumnFamilyFullNames columnFamilies, IEventLogProfiler profiler, TimeSpan eventsTtl)
         {
             var eventLogPointerCreator = new EventLogPointerCreator();

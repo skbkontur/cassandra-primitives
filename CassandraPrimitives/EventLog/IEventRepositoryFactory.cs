@@ -11,11 +11,6 @@ namespace SkbKontur.Cassandra.Primitives.EventLog
         IEventRepository CreateEventRepository(
             IShardCalculator shardCalculator,
             IEventRepositoryColumnFamilyFullNames columnFamilies,
-            TimeSpan eventsTtl);
-
-        IEventRepository CreateEventRepository(
-            IShardCalculator shardCalculator,
-            IEventRepositoryColumnFamilyFullNames columnFamilies,
             IEventLogProfiler profiler,
             TimeSpan eventsTtl);
     }
