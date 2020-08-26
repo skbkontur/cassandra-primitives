@@ -1,6 +1,6 @@
 # Changelog
 
-## v3.1.XX - 2020.08.26
+## v3.1.2 - 2020.08.26
 - Breaking changes: `IEventRepositoryFactory` requires `eventsTtl` parameter, all event log records are written with the ttl
 - Breaking changes: `IEventRepositoryFactory` requires `IEventLogProfiler` parameter, `EventLogNullProfiler` is now a public class
 
