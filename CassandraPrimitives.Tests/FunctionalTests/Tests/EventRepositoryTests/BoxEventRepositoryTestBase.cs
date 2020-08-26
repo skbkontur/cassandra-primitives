@@ -19,6 +19,7 @@ using NUnit.Framework;
 using SkbKontur.Cassandra.Primitives.EventLog;
 using SkbKontur.Cassandra.Primitives.EventLog.Configuration.ColumnFamilies;
 using SkbKontur.Cassandra.Primitives.EventLog.Primitives;
+using SkbKontur.Cassandra.Primitives.EventLog.Profiling;
 using SkbKontur.Cassandra.Primitives.EventLog.Sharding;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.TimeBasedUuid;
@@ -99,7 +100,7 @@ namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
                 ColumnFamilies.eventLogAdditionalInfo,
                 ColumnFamilies.remoteLock);
             var shardCalculator = new ShardCalculator(calculateShard);
-            var eventRepository = factory.CreateEventRepository(shardCalculator, eventRepositoryColumnFamilyFullNames);
+            var eventRepository = factory.CreateEventRepository(shardCalculator, eventRepositoryColumnFamilyFullNames, new EventLogNullProfiler(), TimeSpan.FromDays(1));
             return eventRepository;
         }
 

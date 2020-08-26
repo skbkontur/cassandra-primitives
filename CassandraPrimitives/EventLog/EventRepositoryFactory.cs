@@ -29,12 +29,7 @@ namespace SkbKontur.Cassandra.Primitives.EventLog
             this.logger = logger.ForContext("CassandraPrimitives.EventLog");
         }
 
-        public IEventRepository CreateEventRepository(IShardCalculator shardCalculator, IEventRepositoryColumnFamilyFullNames columnFamilies)
-        {
-            return CreateEventRepository(shardCalculator, columnFamilies, EventLogNullProfiler.Instance);
-        }
-
-        public IEventRepository CreateEventRepository(IShardCalculator shardCalculator, IEventRepositoryColumnFamilyFullNames columnFamilies, IEventLogProfiler profiler)
+        public IEventRepository CreateEventRepository(IShardCalculator shardCalculator, IEventRepositoryColumnFamilyFullNames columnFamilies, IEventLogProfiler profiler, TimeSpan eventsTtl)
         {
             var eventLogPointerCreator = new EventLogPointerCreator();
 
@@ -42,7 +37,7 @@ namespace SkbKontur.Cassandra.Primitives.EventLog
             var remoteLocker = new RemoteLocker(remoteLockImplementation, new RemoteLockerMetrics(columnFamilies.RemoteLock.KeyspaceName), logger);
             var eventLoggerAdditionalInfoRepository = new EventLoggerAdditionalInfoRepository(cassandraCluster, serializer, remoteLocker, columnFamilies.EventLogAdditionalInfo, columnFamilies.EventLog);
             var eventStorage = new EventStorage(columnFamilies.EventLog, eventLogPointerCreator, cassandraCluster, serializer);
-            Func<IQueueRaker> createQueueRaker = () => new QueueRaker(eventStorage, eventLoggerAdditionalInfoRepository, profiler, logger);
+            Func<IQueueRaker> createQueueRaker = () => new QueueRaker(eventStorage, eventLoggerAdditionalInfoRepository, profiler, logger, eventsTtl);
             var eventLogger = new EventLogger(cassandraCluster, serializer, columnFamilies.EventLog, eventLogPointerCreator, createQueueRaker, eventLoggerAdditionalInfoRepository, profiler, logger);
             return new EventRepository(eventTypeIdentifierProvider, eventLogger, shardCalculator, serializer);
         }
