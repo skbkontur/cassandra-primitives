@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.XX - 2020.08.26
+- Breaking changes: `IEventRepositoryFactory` requires `eventsTtl` parameter, all event log records are written with the ttl
+- Breaking changes: `IEventRepositoryFactory` requires `IEventLogProfiler` parameter, `EventLogNullProfiler` is now a public class
+
 ## v2.2.10 - 2019.12.24
 - Adjust root namespace name to match assembly name.
 - Move `MinTicksHolder` and `MaxTicksHolder` to [Cassandra.GlobalTimestamp](https://github.com/skbkontur/cassandra-global-timestamp) repository.
