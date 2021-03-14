@@ -3,10 +3,8 @@ using System.Collections.Generic;
 
 using SkbKontur.Cassandra.Primitives.Storages.Primitives;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
-using SkbKontur.Cassandra.ThriftClient.Clusters.ActualizationEventListener;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 using SkbKontur.Cassandra.ThriftClient.Core.Pools;
-using SkbKontur.Cassandra.ThriftClient.Scheme;
 
 namespace CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
 {
@@ -51,11 +49,6 @@ namespace CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
         public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
         {
             return cluster.GetKnowledges();
-        }
-
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null, bool changeExistingKeyspaceMetadata = false)
-        {
-            cluster.ActualizeKeyspaces(keyspaces, eventListener, changeExistingKeyspaceMetadata);
         }
 
         private readonly ICassandraCluster cluster;

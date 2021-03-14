@@ -25,5 +25,6 @@ namespace CassandraPrimitives.Tests.FunctionalTests.Settings
         public int FierceTimeout => (int)TimeSpan.FromSeconds(30.0).TotalMilliseconds;
         public TimeSpan? ConnectionIdleTimeout => TimeSpan.FromSeconds(30);
         public bool EnableMetrics => false;
+        public Credentials Credentials { get; }
     }
 }

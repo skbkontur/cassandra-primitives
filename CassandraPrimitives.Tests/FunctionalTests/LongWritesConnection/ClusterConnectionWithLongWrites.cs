@@ -38,7 +38,7 @@ namespace CassandraPrimitives.Tests.FunctionalTests.LongWritesConnection
             return clusterConnection.DescribeVersion();
         }
 
-        public void WaitUntilSchemeAgreementIsReached(TimeSpan timeout)
+        public void WaitUntilSchemaAgreementIsReached(TimeSpan timeout)
         {
             throw new NotImplementedException();
         }

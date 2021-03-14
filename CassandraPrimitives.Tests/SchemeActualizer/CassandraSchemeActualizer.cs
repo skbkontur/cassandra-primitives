@@ -1,60 +1,24 @@
 using System.Linq;
 
-using SkbKontur.Cassandra.Primitives.Storages.Primitives;
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
-using SkbKontur.Cassandra.ThriftClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Schema;
 
 namespace CassandraPrimitives.Tests.SchemeActualizer
 {
-    public class CassandraSchemeActualizer : ICassandraSchemeActualizer
+    public class CassandraSchemeActualizer
     {
         public CassandraSchemeActualizer(ICassandraCluster cassandraCluster, ICassandraMetadataProvider cassandraMetadataProvider, ICassandraInitializerSettings cassandraInitializerSettings)
         {
             this.cassandraCluster = cassandraCluster;
             this.cassandraMetadataProvider = cassandraMetadataProvider;
             this.cassandraInitializerSettings = cassandraInitializerSettings;
+            cassandraSchemaActualizer = new CassandraSchemaActualizer(cassandraCluster, eventListener : null, Logger.Instance);
         }
 
         public void AddNewColumnFamilies()
         {
-            var keyspacesFromRegistry = BuildClusterKeyspaces(cassandraMetadataProvider.GetColumnFamilies());
-            cassandraCluster.ActualizeKeyspaces(keyspacesFromRegistry);
-        }
-
-        public void TruncateAllColumnFamilies()
-        {
-            var keyspaces = GetKeyspacesFromCassandra();
-            foreach (var keyspace in keyspaces)
-            {
-                foreach (var columnFamily in keyspace.ColumnFamilies.Values)
-                    cassandraCluster.RetrieveColumnFamilyConnection(keyspace.Name, columnFamily.Name).Truncate();
-            }
-        }
-
-        public void TruncateColumnFamily(string keyspace, string columnFamily)
-        {
-            cassandraCluster.RetrieveColumnFamilyConnection(keyspace, columnFamily).Truncate();
-        }
-
-        public void DropDatabase()
-        {
-            var keyspaces = GetKeyspacesFromCassandra();
-            foreach (var keyspace in keyspaces)
-            {
-                foreach (var columnFamily in keyspace.ColumnFamilies)
-                    cassandraCluster.RetrieveColumnFamilyConnection(keyspace.Name, columnFamily.Key).Truncate();
-            }
-        }
-
-        private Keyspace[] GetKeyspacesFromCassandra()
-        {
-            return cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray();
-        }
-
-        private KeyspaceScheme[] BuildClusterKeyspaces(ColumnFamilyFullName[] columnFamilies)
-        {
-            var keyspaces = columnFamilies.GroupBy(x => x.KeyspaceName).Select(x => new KeyspaceScheme
+            var keyspaceShemas = cassandraMetadataProvider.GetColumnFamilies().GroupBy(x => x.KeyspaceName).Select(x => new KeyspaceSchema
                 {
                     Name = x.Key,
                     Configuration = new KeyspaceConfiguration
@@ -67,11 +31,22 @@ namespace CassandraPrimitives.Tests.SchemeActualizer
                                 }).Values.ToArray(),
                         },
                 }).ToArray();
-            return keyspaces;
+            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceShemas, changeExistingKeyspaceMetadata : false);
+        }
+
+        public void TruncateAllColumnFamilies()
+        {
+            var keyspaces = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray();
+            foreach (var keyspace in keyspaces)
+            {
+                foreach (var columnFamily in keyspace.ColumnFamilies.Values)
+                    cassandraCluster.RetrieveColumnFamilyConnection(keyspace.Name, columnFamily.Name).Truncate();
+            }
         }
 
         private readonly ICassandraCluster cassandraCluster;
         private readonly ICassandraMetadataProvider cassandraMetadataProvider;
         private readonly ICassandraInitializerSettings cassandraInitializerSettings;
+        private readonly CassandraSchemaActualizer cassandraSchemaActualizer;
     }
 }
