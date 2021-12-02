@@ -40,9 +40,9 @@ namespace SkbKontur.Cassandra.Primitives.Storages.PersistentStorages
         {
             cassandraObjectIdConverter.CheckObjectIdentity(data);
             MakeInConnection(conn => conn.AddColumn(
-                cassandraObjectIdConverter.GetRowKey(data),
-                CreateColumn(data, timestamp))
-                );
+                                 cassandraObjectIdConverter.GetRowKey(data),
+                                 CreateColumn(data, timestamp))
+            );
         }
 
         public T[] ReadQuiet(TId[] ids)
@@ -132,8 +132,8 @@ namespace SkbKontur.Cassandra.Primitives.Storages.PersistentStorages
         private void WriteInternal(T[] objects, DateTime timestamp)
         {
             var batchToInsert = objects
-                .Select(x => CreateObjectRow(x, timestamp))
-                .ToList();
+                                .Select(x => CreateObjectRow(x, timestamp))
+                                .ToList();
 
             MakeInConnection(connection => connection.BatchInsert(batchToInsert));
         }

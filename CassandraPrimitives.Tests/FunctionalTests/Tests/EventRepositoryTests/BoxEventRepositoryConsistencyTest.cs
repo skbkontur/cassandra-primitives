@@ -99,8 +99,8 @@ namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
                     var allCurrentEvents = eventRepositoryForRead.GetEventsWithUnstableZone(lastEventInfo, shards).ToArray();
                     totalReadEvents += allCurrentEvents.Length;
                     lastEventInfo = allCurrentEvents
-                                        .TakeWhile(container => container.StableZone)
-                                        .Select(container => container.Event.EventInfo).LastOrDefault() ?? lastEventInfo;
+                                    .TakeWhile(container => container.StableZone)
+                                    .Select(container => container.Event.EventInfo).LastOrDefault() ?? lastEventInfo;
                     foreach (var eventId in bag)
                     {
                         if (!allCurrentEvents.Any(container => container.Event.EventInfo.Id.Equals(eventId)))

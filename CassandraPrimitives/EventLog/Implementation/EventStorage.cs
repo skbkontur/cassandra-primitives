@@ -27,31 +27,31 @@ namespace SkbKontur.Cassandra.Primitives.EventLog.Implementation
         public void Write(EventLogRecord[] events, long timestamp, int? ttl = null)
         {
             var columns = events
-                .Select(x => new KeyValuePair<EventPointer, EventLogRecord>(eventLogPointerCreator.Create(x.StorageElement.EventInfo), x))
-                .GroupBy(x => x.Key.RowKey)
-                .Select(eventsGropedByRow =>
-                            new KeyValuePair<string, IEnumerable<Column>>(
-                            eventsGropedByRow.Key,
-                            eventsGropedByRow.Select(x => new Column
-                                {
-                                    Name = x.Key.ColumnName,
-                                    Value = serializer.Serialize(x.Value),
-                                    Timestamp = timestamp,
-                                    TTL = ttl
-                                }))).ToArray();
+                          .Select(x => new KeyValuePair<EventPointer, EventLogRecord>(eventLogPointerCreator.Create(x.StorageElement.EventInfo), x))
+                          .GroupBy(x => x.Key.RowKey)
+                          .Select(eventsGropedByRow =>
+                                      new KeyValuePair<string, IEnumerable<Column>>(
+                                          eventsGropedByRow.Key,
+                                          eventsGropedByRow.Select(x => new Column
+                                              {
+                                                  Name = x.Key.ColumnName,
+                                                  Value = serializer.Serialize(x.Value),
+                                                  Timestamp = timestamp,
+                                                  TTL = ttl
+                                              }))).ToArray();
             columnFamilyConnection.BatchInsert(columns);
         }
 
         public void Delete(EventInfo[] eventInfos, long timestamp)
         {
             var eventsForDelete = eventInfos
-                .Select(x => eventLogPointerCreator.Create(x))
-                .GroupBy(x => x.RowKey)
-                .Select(eventsGropedByRow =>
-                            new KeyValuePair<string, IEnumerable<string>>(
-                            eventsGropedByRow.Key,
-                            eventsGropedByRow.Select(x => x.ColumnName)))
-                .ToArray();
+                                  .Select(x => eventLogPointerCreator.Create(x))
+                                  .GroupBy(x => x.RowKey)
+                                  .Select(eventsGropedByRow =>
+                                              new KeyValuePair<string, IEnumerable<string>>(
+                                                  eventsGropedByRow.Key,
+                                                  eventsGropedByRow.Select(x => x.ColumnName)))
+                                  .ToArray();
             columnFamilyConnection.BatchDelete(eventsForDelete, timestamp);
         }
 

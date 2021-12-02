@@ -24,61 +24,61 @@ namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
             const int threadCount = 10;
 
             var writeThreads = Enumerable
-                .Range(0, threadCount)
-                .Select(
-                    i => (ThreadStart)(() =>
-                        {
-                            Console.WriteLine("Write {0} started", i);
-                            Thread.Sleep(ThreadLocalRandom.Instance.Next(1) * 100);
-                            var list = new List<EventInfo>();
-                            for (var j = 0; j < eventCount; j++)
-                            {
-                                list.Add(eventRepository.AddEvent(i.ToString(), GenerateEventContent()));
-                                if (ThreadLocalRandom.Instance.Next(2) == 1)
-                                    Thread.Sleep(100);
-                            }
-                            LogEventBatch("Writer" + i, list.ToArray());
-                            Console.WriteLine("Write {0} completed", i);
-                        })
-                )
-                .Select(p => new Thread(p)).ToList();
+                               .Range(0, threadCount)
+                               .Select(
+                                   i => (ThreadStart)(() =>
+                                                             {
+                                                                 Console.WriteLine("Write {0} started", i);
+                                                                 Thread.Sleep(ThreadLocalRandom.Instance.Next(1) * 100);
+                                                                 var list = new List<EventInfo>();
+                                                                 for (var j = 0; j < eventCount; j++)
+                                                                 {
+                                                                     list.Add(eventRepository.AddEvent(i.ToString(), GenerateEventContent()));
+                                                                     if (ThreadLocalRandom.Instance.Next(2) == 1)
+                                                                         Thread.Sleep(100);
+                                                                 }
+                                                                 LogEventBatch("Writer" + i, list.ToArray());
+                                                                 Console.WriteLine("Write {0} completed", i);
+                                                             })
+                               )
+                               .Select(p => new Thread(p)).ToList();
 
             var readEvents = new List<List<Event>>();
             var readThreads = Enumerable
-                .Range(0, threadCount)
-                .Pipe(i => readEvents.Add(new List<Event>()))
-                .Select(
-                    i => (ThreadStart)(() =>
-                        {
-                            Console.WriteLine("Read {0} started", i);
+                              .Range(0, threadCount)
+                              .Pipe(i => readEvents.Add(new List<Event>()))
+                              .Select(
+                                  i => (ThreadStart)(() =>
+                                                            {
+                                                                Console.WriteLine("Read {0} started", i);
 
-                            var lastNotEmptyResultTime = Timestamp.Now;
-                            EventInfo lastEventInfo = null;
-                            while (readEvents[i].Count < eventCount && (Timestamp.Now - lastNotEmptyResultTime) < TimeSpan.FromMinutes(1))
-                            {
-                                var events = eventRepository.GetEventsWithUnstableZone(lastEventInfo, new[] {i.ToString()}, out var newExclusiveEventInfoIfEmpty).ToList();
-                                var stableEvents = events.TakeWhile(x => x.StableZone).ToList();
+                                                                var lastNotEmptyResultTime = Timestamp.Now;
+                                                                EventInfo lastEventInfo = null;
+                                                                while (readEvents[i].Count < eventCount && (Timestamp.Now - lastNotEmptyResultTime) < TimeSpan.FromMinutes(1))
+                                                                {
+                                                                    var events = eventRepository.GetEventsWithUnstableZone(lastEventInfo, new[] {i.ToString()}, out var newExclusiveEventInfoIfEmpty).ToList();
+                                                                    var stableEvents = events.TakeWhile(x => x.StableZone).ToList();
 
-                                Func<EventInfo, string> toString = ei => ei == null ? "" : string.Format("({2}){0}_{1}", ei.Id.ScopeId, ei.Id.Id, ei.Ticks);
-                                LogEventBatch("Reader" + i, stableEvents.Select(x => x.Event).ToArray(), $"Read from {toString(lastEventInfo)}. Stable:{stableEvents.Count}, Total:{events.Count}, LastGoodEvent:{toString(newExclusiveEventInfoIfEmpty)}");
+                                                                    Func<EventInfo, string> toString = ei => ei == null ? "" : string.Format("({2}){0}_{1}", ei.Id.ScopeId, ei.Id.Id, ei.Ticks);
+                                                                    LogEventBatch("Reader" + i, stableEvents.Select(x => x.Event).ToArray(), $"Read from {toString(lastEventInfo)}. Stable:{stableEvents.Count}, Total:{events.Count}, LastGoodEvent:{toString(newExclusiveEventInfoIfEmpty)}");
 
-                                if (stableEvents.Count > 0)
-                                    lastNotEmptyResultTime = Timestamp.Now;
+                                                                    if (stableEvents.Count > 0)
+                                                                        lastNotEmptyResultTime = Timestamp.Now;
 
-                                readEvents[i].AddRange(stableEvents.Select(x => x.Event));
+                                                                    readEvents[i].AddRange(stableEvents.Select(x => x.Event));
 
-                                if (events.Count == 0 && newExclusiveEventInfoIfEmpty != null)
-                                    lastEventInfo = new[] {lastEventInfo, newExclusiveEventInfoIfEmpty}.Max();
+                                                                    if (events.Count == 0 && newExclusiveEventInfoIfEmpty != null)
+                                                                        lastEventInfo = new[] {lastEventInfo, newExclusiveEventInfoIfEmpty}.Max();
 
-                                if (stableEvents.Count > 0)
-                                    lastEventInfo = new[] {lastEventInfo, stableEvents.Last().Event.EventInfo}.Max();
+                                                                    if (stableEvents.Count > 0)
+                                                                        lastEventInfo = new[] {lastEventInfo, stableEvents.Last().Event.EventInfo}.Max();
 
-                                Thread.Sleep(1);
-                            }
-                            Console.WriteLine("Read {0} completed", i);
-                        })
-                )
-                .Select(p => new Thread(p)).ToList();
+                                                                    Thread.Sleep(1);
+                                                                }
+                                                                Console.WriteLine("Read {0} completed", i);
+                                                            })
+                              )
+                              .Select(p => new Thread(p)).ToList();
 
             readThreads.ForEach(t => t.Start());
             writeThreads.ForEach(x => x.Start());
@@ -86,7 +86,7 @@ namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
             writeThreads.ForEach(x => x.Join());
             readThreads.ForEach(x => x.Join());
 
-            foreach(var threadIdx in Enumerable.Range(0, threadCount))
+            foreach (var threadIdx in Enumerable.Range(0, threadCount))
                 CheckEqualEvents(eventRepository.GetEvents(null, new[] {threadIdx.ToString()}).ToArray(), readEvents[threadIdx].ToArray());
         }
     }
