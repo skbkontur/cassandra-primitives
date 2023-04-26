@@ -144,7 +144,7 @@ namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
         private IEventRepository CreateBoxEventRepository(Func<EventId, object, string> calculateShard, double timeoutInSeconds)
         {
             var serializer = new Serializer(new AllPropertiesExtractor());
-            var cassandraSettings = SingleCassandraNodeSetUpFixture.Node.CreateSettings();
+            var cassandraSettings = LocalCassandraSettingsFactory.CreateSettings();
             var cassandraCluster = new CatalogueCassandraClusterWithLongWrites(new CassandraCluster(cassandraSettings, Logger.Instance), TimeSpan.FromSeconds(timeoutInSeconds));
             var eventTypeRegistry = new EventTypeRegistry();
 

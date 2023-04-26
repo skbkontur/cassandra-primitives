@@ -10,7 +10,7 @@ env:
   SOLUTION_FILE: CassandraPrimitives.sln
 jobs:
   test:
-    runs-on: windows-2019
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
         with:
@@ -30,8 +30,15 @@ jobs:
       - name: Check codestyle
         run: dotnet jb cleanupcode ${{ env.SOLUTION_FILE }} --profile=CatalogueCleanup --exclude=CassandraPrimitives/MoreLinq/**/*.cs --verbosity=WARN && git diff --exit-code
 
+      - name: Run docker
+        run: docker compose up --wait
+
       - name: Run tests
         run: dotnet test --no-build --configuration Release ${{ env.SOLUTION_FILE }}
+
+      - name: Stop docker
+        if: always()
+        run: docker compose down
   publish:
     runs-on: windows-2019
     needs: test

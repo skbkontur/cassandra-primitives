@@ -32,7 +32,7 @@ namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
         [OneTimeSetUp]
         public void TestFixtureSetUp()
         {
-            cassandraClusterSettings = SingleCassandraNodeSetUpFixture.Node.CreateSettings();
+            cassandraClusterSettings = LocalCassandraSettingsFactory.CreateSettings();
             var initializerSettings = new CassandraInitializerSettings();
             cassandraSchemeActualizer = new CassandraSchemeActualizer(new CassandraCluster(cassandraClusterSettings, Logger.Instance), new CassandraMetaProvider(), initializerSettings);
             cassandraSchemeActualizer.AddNewColumnFamilies();
