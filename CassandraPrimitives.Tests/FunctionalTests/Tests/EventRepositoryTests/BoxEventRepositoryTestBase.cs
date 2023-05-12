@@ -151,8 +151,8 @@ namespace CassandraPrimitives.Tests.FunctionalTests.Tests.EventRepositoryTests
             Console.WriteLine("CheckEqualEvents finished");
         }
 
-        private const bool needLog = false;
-        private const bool needDetailedComparison = false;
+        private static readonly bool needLog = false;
+        private static readonly bool needDetailedComparison = false;
 
         private CassandraSchemeActualizer cassandraSchemeActualizer;
         private ICassandraClusterSettings cassandraClusterSettings;
