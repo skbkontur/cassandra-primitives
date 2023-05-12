@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SkbKontur.Cassandra.DistributedLock" Version="2.2.16" />
+    <PackageReference Include="SkbKontur.Cassandra.DistributedLock" Version="2.2.24" />
   </ItemGroup>
 
 </Project>
